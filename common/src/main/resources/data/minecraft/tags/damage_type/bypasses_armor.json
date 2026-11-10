@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "copperslug:pistola_perforante",
+    "copperslug:pistola_ruleta",
+    "copperslug:escopeta_presion",
+    "copperslug:rifle_perforante",
+    "copperslug:armafuego_perforante"
+  ]
+}
