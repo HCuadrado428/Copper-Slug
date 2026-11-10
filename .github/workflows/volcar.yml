@@ -1,0 +1,54 @@
+name: Volcar classpath
+
+# Solo para desarrollo: copia el classpath de compilación de cada subproyecto, lo cifra con una clave pública (solo
+# quien tiene la privada puede abrirlo) y lo deja en una release borrador (no pública), para compilar en local sin
+# Gradle. Se lanza a mano.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  volcar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+      - name: Volcar
+        run: |
+          chmod +x gradlew
+          for i in 1 2 3 4 5 6; do ./gradlew --version >/dev/null 2>&1 && break; sleep 30; done
+          ./gradlew volcarClasspath --no-daemon --stacktrace
+          for p in */build/cp; do echo "$p: $(ls $p | wc -l) jars"; done
+          tar czf cp.tgz */build/cp
+          ls -la cp.tgz
+      - name: Cifrar y subir a una release borrador
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cat > pub.pem <<'PEM'
+          -----BEGIN PUBLIC KEY-----
+          MIIBojANBgkqhkiG9w0BAQEFAAOCAY8AMIIBigKCAYEAq1yAhJkLBB86ACPbFrF6
+          X33sGsnDOih+1I1y90p685p5rkMnLzdizDWybL1iOY6JveBzBA6tSOxIGVOB4IvL
+          N03TLC6a4pRgdeKShp37wmyAQuN7VSvwK98/39W1ptFN+OrX7n426RNkNUsgAe4+
+          Jr8TmXtUGZLJs0wtNfPtRq5GfrMTl5URRLkeP48bJHduc46sJRv+NpEn7kwrw5+X
+          sRpHnUW2v570wRror4qG3CXV4bjEQxaOUWZrzOtieTZvhzt8yGH5RDWWQk80Grzf
+          o/1jK/+Vk0W463Gj8D2UpHsQIFV/HD+ncb9mvfgruVe6F9iNzFtwPsM/HHIHv94j
+          QMbd412oBXetcXBOIaEFobFmDe77KlRLMuSXBJiwZXzpy4yVv3Wtn72mMCboBN18
+          08GuNqs48PATzPXWptxxKokHC7v7ZSawosMl+6vldoMShLQ6KGd4JadPw6qz0Iwl
+          yRr9dA845QnGUIJThLVXVfmTJZZk6BXs8FGxE0+BT+LtAgMBAAE=
+          -----END PUBLIC KEY-----
+          PEM
+          sed -i 's/^ *//' pub.pem
+          openssl rand -hex 32 > k.txt
+          openssl pkeyutl -encrypt -pubin -inkey pub.pem -in k.txt -out k.bin
+          openssl enc -aes-256-cbc -pbkdf2 -salt -in cp.tgz -out cp.enc -pass file:k.txt
+          rm k.txt cp.tgz
+          T="cp-${GITHUB_REF_NAME}-${GITHUB_RUN_NUMBER}"
+          gh release create "$T" --draft --title "$T" --notes "classpath cifrado (desarrollo)" cp.enc k.bin
