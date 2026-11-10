@@ -37,6 +37,8 @@ public class CopperSlugForge {
                 e.getEntity(), e.getFrom(), e.getTo())));
         f.addListener((PlayerEvent.PlayerRespawnEvent e) -> Bus.post(new com.copperslug.shim.event.entity.player.PlayerEvent.PlayerRespawnEvent(
                 e.getEntity(), e.isEndConquered())));
+        f.addListener((net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp e) -> Bus.post(new com.copperslug.shim.event.entity.player.PlayerXpEvent.PickupXp(
+                e.getEntity(), e.getOrb())));
         f.addListener((PlayerEvent.ItemPickupEvent e) -> Bus.post(new com.copperslug.shim.event.entity.player.PlayerEvent.ItemPickupEvent(
                 e.getEntity(), e.getOriginalEntity(), e.getStack())));
         f.addListener((PlayerInteractEvent.EntityInteract e) -> {

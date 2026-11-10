@@ -6,3 +6,4 @@ accessible field net/minecraft/world/entity/Mob goalSelector Lnet/minecraft/worl
 accessible field net/minecraft/world/entity/Mob targetSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;
 accessible method net/minecraft/advancements/CriteriaTriggers register (Lnet/minecraft/advancements/CriterionTrigger;)Lnet/minecraft/advancements/CriterionTrigger;
 accessible class net/minecraft/client/particle/ParticleEngine$SpriteParticleRegistration
+accessible class net/minecraft/world/item/enchantment/EnchantmentHelper$EnchantmentVisitor

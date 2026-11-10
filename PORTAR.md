@@ -66,5 +66,8 @@ En la rama `1.21.1` se añade `--rama-mc 1.21.1`. Así se aplican antes los camb
 - Tecla de la manga de la Derringer: va en la categoría «Copper Slug» de los controles.
 - El reparto de daño `DanoArma`: solo queda la marca `extra`. Las armas de fuego hacen su reparto en su propio código.
 - Fabric 1.20.1 no tiene atributo de alcance: la bayoneta del mosquete no llega más lejos (en Forge y NeoForge sí).
+- Los encantamientos de la espada calada en la bayoneta: en Forge van por `getEnchantmentLevel`/`getAllEnchantments`
+  del objeto y `PlayerXpEvent.PickupXp` (Reparación). En Fabric los hacen `EnchantmentHelperMixin` (nivel y recorrido
+  de los encantamientos al golpear) y `ExperienceOrbMixin` (el `PickupXp` del shim).
 - Las texturas de la polea, las palomitas y la bengala se han redibujado a 16×16. Todo lo de objetos y bloques es
   16×16 (lo comprueban el CI y la prueba en el juego).

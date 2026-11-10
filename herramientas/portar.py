@@ -57,7 +57,7 @@ JEI_INFO = ['revolver_botin', 'escopeta_botin', 'rifle_botin', 'gatling_botin', 
 
 FORGE_SIN_OVERRIDE = ['shouldCauseReequipAnimation', 'shouldCauseBlockBreakReset', 'canContinueUsing', 'onEntitySwing',
                       'shouldRiderSit', 'getAttributeModifiers', 'canApplyAtEnchantingTable', 'isBookEnchantable',
-                      'onLeftClickEntity', 'getAddEntityPacket_no']
+                      'onLeftClickEntity', 'getAddEntityPacket_no', 'getEnchantmentLevel', 'getAllEnchantments']
 
 
 def transformar_java(t):
@@ -78,6 +78,10 @@ def transformar_java(t):
     # initializeClient choca con el de Forge (misma firma borrada): se llama de otra forma y lo lee la plataforma
     t = re.sub(r'(?:@Override\s*\n\s*)?public void initializeClient\(', 'public void extensionesCliente(', t)
     t = t.replace('super.getAttributeModifiers(slot, s)', 'super.getDefaultAttributeModifiers(slot)')
+    # los encantamientos por objeto de IForgeItem: lo que hace Forge por defecto, y los de ItemStack con EnchantmentHelper
+    t = re.sub(r'super\.getEnchantmentLevel\((\w+), (\w+)\)', r'net.minecraft.world.item.enchantment.EnchantmentHelper.deserializeEnchantments(\1.getEnchantmentTags()).getOrDefault(\2, 0)', t)
+    t = re.sub(r'super\.getAllEnchantments\((\w+)\)', r'net.minecraft.world.item.enchantment.EnchantmentHelper.deserializeEnchantments(\1.getEnchantmentTags())', t)
+    t = re.sub(r'(\w+(?:\([^()]*\))?)\.getAllEnchantments\(\)', r'net.minecraft.world.item.enchantment.EnchantmentHelper.getEnchantments(\1)', t)
     t = re.sub(r'\b(\w+) instanceof FakePlayer\b', r'com.copperslug.plataforma.Plataforma.get().esJugadorFalso(\1)', t)
     t = t.replace('import com.copperslug.shim.common.util.FakePlayer;\n', '')
     # modelos sueltos: getModel(ResourceLocation) es de Forge; renderModel sin ModelData ni RenderType
