@@ -3064,6 +3064,8 @@ public final class PruebaCI {
         // si los perdigones no han dado a la diana (se reparten al azar; con mala suerte ardía aún), otro tiro
         sin("esc_escarcha_otra", 5, () -> {
             var h = escEntidad(escHusk);
+            // lo congelado se va pasando: con shaders (pocos fotogramas) el paso siguiente llega muchos ticks después
+            PI.put("escarcha_congela", h.getTicksFrozen());
             if (h.isOnFire() || h.getTicksFrozen() <= 0) {
                 RESUMEN.add("  escopeta: el primer tiro de escarcha no ha dado bien; otro");
                 PI.put("escarcha_otra", true);
@@ -3073,15 +3075,20 @@ public final class PruebaCI {
         sin("esc_escarcha_tiro2", 15, () -> {
             if (Boolean.TRUE.equals(PI.get("escarcha_otra"))) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
         });
+        sin("esc_escarcha_tras2", 1, () -> {
+            var h = escEntidad(escHusk);
+            if (Boolean.TRUE.equals(PI.get("escarcha_otra"))) PI.put("escarcha_congela", h.getTicksFrozen());
+        });
         sin("esc_escarcha_chk", 5, () -> {
             var h = escEntidad(escHusk);
             int nieve = 0;
             var l = escJugador().serverLevel();
             for (var b : net.minecraft.core.BlockPos.betweenClosed(h.blockPosition().offset(-6, -1, -6), h.blockPosition().offset(6, 2, 6)))
                 if (l.getBlockState(b).is(net.minecraft.world.level.block.Blocks.POWDER_SNOW)) nieve++;
-            RESUMEN.add("  escopeta: escarcha → diana ardiendo " + h.isOnFire() + ", congelada " + h.getTicksFrozen() + " ticks, nieve en polvo " + nieve);
+            int congela = Math.max(h.getTicksFrozen(), PI.get("escarcha_congela") instanceof Integer n ? n : 0);
+            RESUMEN.add("  escopeta: escarcha → diana ardiendo " + h.isOnFire() + ", congelada " + congela + " ticks (ahora " + h.getTicksFrozen() + "), nieve en polvo " + nieve);
             if (h.isOnFire()) throw new IllegalStateException("la escarcha no apaga el fuego");
-            if (h.getTicksFrozen() <= 0) throw new IllegalStateException("la escarcha no congela");
+            if (congela <= 0) throw new IllegalStateException("la escarcha no congela");
             if (nieve == 0) throw new IllegalStateException("la escarcha no deja nieve en polvo");
             escServidor(sp -> {
                 for (var b : net.minecraft.core.BlockPos.betweenClosed(h.blockPosition().offset(-6, -1, -6), h.blockPosition().offset(6, 2, 6)))
