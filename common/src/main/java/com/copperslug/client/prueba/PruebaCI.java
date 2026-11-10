@@ -585,9 +585,10 @@ public final class PruebaCI {
             piApuntar(piPunto(7, 0, 0.5));
             // el brillo de Señalero se renueva cada segundo: se mira en cada tick del servidor si el husk ha brillado
             PI.remove("husk_brillo");
+            PI.remove("husk_luz");
             piVigilaBrillo = true;
         });
-        sin("pistola_bengala_ver", 4, () -> piSrv(sp -> {
+        sin("pistola_bengala_ver", 10, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var bs = l.getEntitiesOfClass(com.copperslug.armasfuego.pistola.BengalaEntity.class, new net.minecraft.world.phys.AABB(piO).inflate(40));
             int luces = 0, luzCalculada = 0;
@@ -609,7 +610,7 @@ public final class PruebaCI {
                     + ", " + luces + " bloque(s) de luz, " + com.copperslug.armasfuego.pistola.LucesTemporales.cuantas(sp.server) + " apuntadas, husk brilla: "
                     + brilla + (brilla ? "" : donde));
             PI.put("bengala_ok", !bs.isEmpty() && luces >= 1 && brilla
-                    && Math.max(luzCalculada, l.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, junto)) >= 8);
+                    && Math.max(Math.max(luzCalculada, PI.get("husk_luz") instanceof Integer i ? i : 0), l.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, junto)) >= 8);
         }));
         paso("106_bengala_noche", 10, () -> piComprobar("bengala: sube, ilumina (bloques de luz) y con Señalero el husk brilla",
                 Boolean.TRUE.equals(PI.get("bengala_ok")), String.valueOf(PI.get("bengala"))));
@@ -884,6 +885,11 @@ public final class PruebaCI {
             for (var lv : e.getServer().getAllLevels()) {
                 var h = lv.getEntity(piHusk);
                 if (h instanceof net.minecraft.world.entity.LivingEntity le && le.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING)) PI.put("husk_brillo", true);
+                // la luz más fuerte que ha llegado al husk mientras la bengala subía (con pocos fps se va de lado)
+                if (h != null) {
+                    int luz = lv.getBrightness(net.minecraft.world.level.LightLayer.BLOCK, h.blockPosition());
+                    if (luz > (PI.get("husk_luz") instanceof Integer i ? i : -1)) PI.put("husk_luz", luz);
+                }
             }
         }
         if (a2VigilaGatling && a2Gatling != null) {
