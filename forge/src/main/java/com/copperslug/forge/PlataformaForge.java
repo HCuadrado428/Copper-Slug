@@ -13,21 +13,18 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.util.BlockSnapshot;
-import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
 import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.simple.SimpleChannel;
+import net.minecraftforge.network.SimpleChannel;
 import net.minecraftforge.registries.DeferredRegister;
 
 import java.nio.file.Path;
@@ -44,8 +41,8 @@ public class PlataformaForge implements Plataforma {
     static IEventBus busMod;
     private final Map<ResourceKey<?>, DeferredRegister<?>> registros = new LinkedHashMap<>();
 
-    private static final SimpleChannel CANAL = NetworkRegistry.newSimpleChannel(new ResourceLocation(CopperSlug.MOD_ID, "main"),
-            () -> ModNetwork.PROTOCOLO, ModNetwork.PROTOCOLO::equals, ModNetwork.PROTOCOLO::equals);
+    private static final SimpleChannel CANAL = ChannelBuilder.named(ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "main"))
+            .networkProtocolVersion(1).simpleChannel();
     private int idPaquete;
 
     @Override
@@ -80,37 +77,28 @@ public class PlataformaForge implements Plataforma {
     }
 
     @Override
-    public EnchantmentCategory categoria(String nombre, Predicate<Item> filtro) {
-        return EnchantmentCategory.create(nombre, filtro::test);
-    }
-
-    @Override
-    public Attribute alcanceAtaque() {
-        return ForgeMod.ENTITY_REACH.get();
-    }
-
-    @Override
     public boolean puedeColocar(Player p, Level l, BlockPos pos) {
         return !ForgeEventFactory.onBlockPlace(p, BlockSnapshot.create(l.dimension(), l, pos), Direction.UP);
     }
 
     @Override
     public boolean esJugadorFalso(ServerPlayer p) {
-        return p instanceof FakePlayer;
+        // Forge 52 no trae FakePlayer: los de mentira son los nuestros (la prueba) o los que no tienen conexión
+        return p instanceof JugadorFalso || p.connection == null;
     }
 
     @Override
     public ServerPlayer jugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil) {
-        return net.minecraftforge.common.util.FakePlayerFactory.get(l, perfil);
+        return new JugadorFalso(l, perfil);
     }
 
     @Override
     public <T> void paqueteAlServidor(ResourceLocation id, Class<T> clase, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer,
                                       BiConsumer<T, ServerPlayer> manejar) {
         CANAL.messageBuilder(clase, idPaquete++, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(escribir).decoder(leer)
-                .consumerMainThread((T m, Supplier<NetworkEvent.Context> c) -> {
-                    ServerPlayer p = c.get().getSender();
+                .encoder((T m, net.minecraft.network.RegistryFriendlyByteBuf b) -> escribir.accept(m, b)).decoder(b -> leer.apply(b))
+                .consumerMainThread((T m, net.minecraftforge.event.network.CustomPayloadEvent.Context c) -> {
+                    ServerPlayer p = c.getSender();
                     if (p != null) manejar.accept(m, p);
                 }).add();
     }
@@ -119,18 +107,35 @@ public class PlataformaForge implements Plataforma {
     public <T> void paqueteAlCliente(ResourceLocation id, Class<T> clase, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer,
                                      Consumer<T> manejar) {
         CANAL.messageBuilder(clase, idPaquete++, NetworkDirection.PLAY_TO_CLIENT)
-                .encoder(escribir).decoder(leer)
-                .consumerMainThread((T m, Supplier<NetworkEvent.Context> c) -> manejar.accept(m)).add();
+                .encoder((T m, net.minecraft.network.RegistryFriendlyByteBuf b) -> escribir.accept(m, b)).decoder(b -> leer.apply(b))
+                .consumerMainThread((T m, net.minecraftforge.event.network.CustomPayloadEvent.Context c) -> manejar.accept(m)).add();
     }
 
     @Override
     public void enviarAlServidor(Object paquete) {
-        CANAL.sendToServer(paquete);
+        CANAL.send(paquete, PacketDistributor.SERVER.noArg());
     }
 
     @Override
     public void enviarA(ServerPlayer p, Object paquete) {
-        CANAL.send(PacketDistributor.PLAYER.with(() -> p), paquete);
+        CANAL.send(paquete, PacketDistributor.PLAYER.with(p));
+    }
+
+    /** Un jugador de mentira, sin conexión de verdad. */
+    static final class JugadorFalso extends ServerPlayer {
+        JugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil) {
+            super(l.getServer(), l, perfil, net.minecraft.server.level.ClientInformation.createDefault());
+        }
+
+        @Override
+        public boolean isSpectator() {
+            return false;
+        }
+
+        @Override
+        public boolean isCreative() {
+            return false;
+        }
     }
 
     static Optional<?> nada() {

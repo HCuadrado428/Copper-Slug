@@ -4,7 +4,6 @@ import com.copperslug.CopperSlug;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import net.fabricmc.fabric.api.client.model.BakedModelManagerHelper;
 import net.fabricmc.fabric.api.client.model.loading.v1.PreparableModelLoadingPlugin;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockModel;
@@ -45,16 +44,18 @@ public final class ModelosSeparados {
                 Par p = datos.get(id);
                 if (p != null) return modelo(id, p.base());
                 if (id.getPath().endsWith("__gui")) {
-                    Par q = datos.get(new ResourceLocation(id.getNamespace(), id.getPath().substring(0, id.getPath().length() - 5)));
+                    Par q = datos.get(ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath().substring(0, id.getPath().length() - 5)));
                     if (q != null) return modelo(id, q.gui());
                 }
                 return null;
             });
             ctx.modifyModelAfterBake().register((m, c) -> {
                 if (m == null) return null;
-                ResourceLocation id = c.id();
-                if (id instanceof ModelResourceLocation mrl && "inventory".equals(mrl.getVariant()))
-                    id = new ResourceLocation(mrl.getNamespace(), "item/" + mrl.getPath());
+                // en 1.21 el modelo del objeto llega con su id de arriba (copperslug:x#inventory)
+                ModelResourceLocation mrl = c.topLevelId();
+                ResourceLocation id = mrl != null && "inventory".equals(mrl.variant())
+                        ? ResourceLocation.fromNamespaceAndPath(mrl.id().getNamespace(), "item/" + mrl.id().getPath()) : c.resourceId();
+                if (id == null) return m;
                 Par p = datos.get(id);
                 return p == null || m instanceof Separado ? m : new Separado(m, gemelo(id), p.luzFrente());
             });
@@ -62,7 +63,7 @@ public final class ModelosSeparados {
     }
 
     private static ResourceLocation gemelo(ResourceLocation id) {
-        return new ResourceLocation(id.getNamespace(), id.getPath() + "__gui");
+        return ResourceLocation.fromNamespaceAndPath(id.getNamespace(), id.getPath() + "__gui");
     }
 
     private static BlockModel modelo(ResourceLocation id, String json) {
@@ -86,7 +87,7 @@ public final class ModelosSeparados {
                     if (o.has("gui_light")) base.add("gui_light", o.get("gui_light"));
                     JsonObject gui = o.getAsJsonObject("perspectives").getAsJsonObject("gui");
                     String p = rl.getPath();
-                    ResourceLocation id = new ResourceLocation(rl.getNamespace(), p.substring("models/".length(), p.length() - ".json".length()));
+                    ResourceLocation id = ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), p.substring("models/".length(), p.length() - ".json".length()));
                     out.put(id, new Par(base.toString(), gui.toString(), o.has("gui_light") && "front".equals(o.get("gui_light").getAsString())));
                 } catch (Exception x) {
                     CopperSlug.LOG.warn("Copper Slug: no se pudo leer el modelo {}", rl, x);
@@ -111,7 +112,7 @@ public final class ModelosSeparados {
 
         public BakedModel gui() {
             if (gui == null) {
-                BakedModel g = BakedModelManagerHelper.getModel(Minecraft.getInstance().getModelManager(), gemelo);
+                BakedModel g = ((net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager) Minecraft.getInstance().getModelManager()).getModel(gemelo);
                 gui = g != null ? g : base;
             }
             return gui;

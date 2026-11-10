@@ -48,8 +48,10 @@ public interface Plataforma {
     default void registrosListos() {}
 
 
-    /** El atributo de alcance de ataque del cargador (null si no hay). */
-    Attribute alcanceAtaque();
+    /** El atributo de alcance de ataque (en 1.21 es vanilla). */
+    default Attribute alcanceAtaque() {
+        return net.minecraft.world.entity.ai.attributes.Attributes.ENTITY_INTERACTION_RANGE.value();
+    }
 
     /** ¿Puede este jugador colocar un bloque ahí? (protecciones de los cargadores que las tienen). */
     default boolean puedeColocar(Player p, Level l, BlockPos pos) {

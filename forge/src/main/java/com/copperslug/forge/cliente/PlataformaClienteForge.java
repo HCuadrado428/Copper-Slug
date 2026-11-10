@@ -10,7 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 public class PlataformaClienteForge implements PlataformaCliente {
     @Override
     public BakedModel modelo(ResourceLocation id) {
-        return Minecraft.getInstance().getModelManager().getModel(id);
+        return Minecraft.getInstance().getModelManager().getModel(new net.minecraft.client.resources.model.ModelResourceLocation(id, "standalone"));
     }
 
     @Override

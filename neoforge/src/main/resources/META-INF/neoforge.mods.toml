@@ -12,6 +12,8 @@ logoFile="${mod_id}.png" #optional
 credits="${credits}" #optional
 authors = "${mod_author}" #optional
 description = '''${description}''' #mandatory (Supports multiline text)
+# la pose del brazo con el revólver (las constantes nuevas de enums van así en NeoForge 1.21)
+enumExtensions = "META-INF/enumextensions.json"
 [[mixins]]
 config = "${mod_id}.mixins.json"
 [[mixins]]

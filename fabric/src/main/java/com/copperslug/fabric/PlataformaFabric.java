@@ -2,7 +2,10 @@ package com.copperslug.fabric;
 
 import com.copperslug.plataforma.Plataforma;
 import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.core.Registry;
@@ -11,9 +14,6 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public class PlataformaFabric implements Plataforma {
@@ -31,11 +30,25 @@ public class PlataformaFabric implements Plataforma {
 
     private final List<Pendiente<?>> pendientes = new ArrayList<>();
 
-    /** Paquetes: cómo se escribe cada clase y por qué canal va. */
-    public record Def<T>(ResourceLocation id, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer, Consumer<T> cliente) {}
+    /** Cada paquete del código común va envuelto en un payload con su propio tipo (copperslug:<nombre>). */
+    public record Envoltorio(CustomPacketPayload.Type<Envoltorio> tipo, Object paquete) implements CustomPacketPayload {
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return tipo;
+        }
+    }
+
+    /** Paquetes: su tipo, cómo se escriben y qué hace el cliente al recibirlos. */
+    public record Def<T>(CustomPacketPayload.Type<Envoltorio> tipo, Consumer<T> cliente) {}
 
     static final Map<Class<?>, Def<?>> DEFS = new HashMap<>();
     public static final List<Def<?>> AL_CLIENTE = new ArrayList<>();
+
+    @SuppressWarnings("unchecked")
+    private static <T> StreamCodec<RegistryFriendlyByteBuf, Envoltorio> codec(CustomPacketPayload.Type<Envoltorio> tipo, BiConsumer<T, FriendlyByteBuf> escribir,
+                                                                            Function<FriendlyByteBuf, T> leer) {
+        return StreamCodec.of((buf, env) -> escribir.accept((T) env.paquete(), buf), buf -> new Envoltorio(tipo, leer.apply(buf)));
+    }
 
     @Override
     public String nombre() {
@@ -78,16 +91,6 @@ public class PlataformaFabric implements Plataforma {
     }
 
     @Override
-    public EnchantmentCategory categoria(String nombre, Predicate<Item> filtro) {
-        return CategoriasFabric.nueva(nombre, filtro);
-    }
-
-    @Override
-    public Attribute alcanceAtaque() {
-        return null;
-    }
-
-    @Override
     public boolean esJugadorFalso(ServerPlayer p) {
         return p instanceof net.fabricmc.fabric.api.entity.FakePlayer;
     }
@@ -98,46 +101,40 @@ public class PlataformaFabric implements Plataforma {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> void paqueteAlServidor(ResourceLocation id, Class<T> clase, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer,
                                       BiConsumer<T, ServerPlayer> manejar) {
-        DEFS.put(clase, new Def<>(id, escribir, leer, null));
-        ServerPlayNetworking.registerGlobalReceiver(id, (server, player, handler, buf, sender) -> {
-            T m = leer.apply(buf);
-            server.execute(() -> manejar.accept(m, player));
-        });
+        var tipo = new CustomPacketPayload.Type<Envoltorio>(id);
+        DEFS.put(clase, new Def<>(tipo, null));
+        PayloadTypeRegistry.playC2S().register(tipo, codec(tipo, escribir, leer));
+        // en 1.21 Fabric ya llama al receptor en el hilo del servidor
+        ServerPlayNetworking.registerGlobalReceiver(tipo, (env, ctx) -> manejar.accept((T) env.paquete(), ctx.player()));
     }
 
     @Override
     public <T> void paqueteAlCliente(ResourceLocation id, Class<T> clase, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer,
                                      Consumer<T> manejar) {
-        Def<T> d = new Def<>(id, escribir, leer, manejar);
+        var tipo = new CustomPacketPayload.Type<Envoltorio>(id);
+        Def<T> d = new Def<>(tipo, manejar);
         DEFS.put(clase, d);
         AL_CLIENTE.add(d);
+        PayloadTypeRegistry.playS2C().register(tipo, codec(tipo, escribir, leer));
     }
 
-    @SuppressWarnings("unchecked")
-    static <T> FriendlyByteBuf escribir(Object paquete, Def<T>[] defOut) {
-        Def<T> d = (Def<T>) DEFS.get(paquete.getClass());
+    static Envoltorio envolver(Object paquete) {
+        Def<?> d = DEFS.get(paquete.getClass());
         if (d == null) throw new IllegalArgumentException("paquete sin registrar: " + paquete.getClass());
-        FriendlyByteBuf b = PacketByteBufs.create();
-        d.escribir().accept((T) paquete, b);
-        defOut[0] = d;
-        return b;
+        return new Envoltorio(d.tipo(), paquete);
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void enviarAlServidor(Object paquete) {
-        Def[] d = new Def[1];
-        FriendlyByteBuf b = escribir(paquete, d);
-        com.copperslug.fabric.cliente.ClienteFabric.enviar(d[0].id(), b);
+        com.copperslug.fabric.cliente.ClienteFabric.enviar(envolver(paquete));
     }
 
     @Override
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public void enviarA(ServerPlayer p, Object paquete) {
-        Def[] d = new Def[1];
-        FriendlyByteBuf b = escribir(paquete, d);
-        if (ServerPlayNetworking.canSend(p, d[0].id())) ServerPlayNetworking.send(p, d[0].id(), b);
+        Envoltorio e = envolver(paquete);
+        if (ServerPlayNetworking.canSend(p, e.tipo())) ServerPlayNetworking.send(p, e);
     }
 }
