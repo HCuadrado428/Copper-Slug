@@ -3187,9 +3187,27 @@ public final class PruebaCI {
             escVigilaSalto = true;
             escCargar(null, 100, null);
             escServidor(sp -> sp.connection.teleport(sp.getX(), sp.getY(), sp.getZ(), sp.getYRot(), 89F));
+            mc.player.setXRot(89F);
+            mc.player.xRotO = 89F;
         });
         sin("esc_salto_tercera", 2, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK));
         paso("132_salto", 7, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
+        // a pocos fotogramas (con shaders) a veces el tiro sale antes de mirar abajo del todo: otro tiro si no ha lanzado
+        sin("esc_salto_otra", 10, () -> {
+            double sube = (PI.get("salto_max") instanceof Double d ? d : mc.player.getY()) - escY;
+            if (sube >= 1.5) return;
+            RESUMEN.add("  escopeta: el primer salto escopeta no ha lanzado; otro");
+            escY = mc.player.getY();
+            PI.remove("salto_max");
+            escCargar(null, 100, null);
+            escServidor(sp -> sp.connection.teleport(sp.getX(), sp.getY(), sp.getZ(), sp.getYRot(), 89F));
+            mc.player.setXRot(89F);
+            mc.player.xRotO = 89F;
+            PI.put("salto_otra", true);
+        });
+        sin("esc_salto_tiro2", 7, () -> {
+            if (PI.remove("salto_otra") != null) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
+        });
         sin("esc_salto_chk", 40, () -> {
             // lo más alto que ha llegado (con shaders, a pocos fps, a veces ya había bajado al mirarlo)
             escVigilaSalto = false;
