@@ -58,7 +58,7 @@ public final class CopperSlug {
                 () -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
                         .title(Component.translatable("itemGroup.copperslug"))
                         .icon(() -> new ItemStack(ModItems.REVOLVER.get()))
-                        .displayItems((params, out) -> Pestana.llenar(out))
+                        .displayItems((params, out) -> Pestana.llenar(out::accept))
                         .build());
         Plataforma.get().registrosListos();
         LogrosMiscelanea.registrar();
@@ -91,37 +91,37 @@ public final class CopperSlug {
     }
 
     /** Lo que sale en la pestaña del modo creativo (lo mismo y en el orden de Miscelánea). */
-    static final class Pestana {
-        static void llenar(CreativeModeTab.Output out) {
+    public static final class Pestana {
+        public static void llenar(java.util.function.Consumer<ItemStack> out) {
             for (var en : List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
                     ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO)) libro(out, en.get());
-            out.accept(ModItems.REVOLVER.get());
+            out.accept(new ItemStack(ModItems.REVOLVER.get()));
             for (var m : List.of(ModItems.REVOLVER_BALA, ModItems.REVOLVER_BENGALA, ModItems.REVOLVER_DARDO, ModItems.REVOLVER_FOGUEO,
-                    ModItems.REVOLVER_IMAN, ModItems.REVOLVER_TIEMPO)) out.accept(m.get());
-            out.accept(ModItems.ESCOPETA_PRESION.get());
-            for (var t : com.copperslug.armasfuego.escopeta.TipoCartucho.values()) out.accept(t.item());
-            out.accept(ModItems.RIFLE.get());
-            out.accept(ModItems.BALA_RIFLE.get());
-            out.accept(ModItems.BALA_TRAZADORA.get());
-            out.accept(ModItems.BALA_CUERDA.get());
-            out.accept(ModItems.CASQUILLO_RIFLE.get());
+                    ModItems.REVOLVER_IMAN, ModItems.REVOLVER_TIEMPO)) out.accept(new ItemStack(m.get()));
+            out.accept(new ItemStack(ModItems.ESCOPETA_PRESION.get()));
+            for (var t : com.copperslug.armasfuego.escopeta.TipoCartucho.values()) out.accept(new ItemStack(t.item()));
+            out.accept(new ItemStack(ModItems.RIFLE.get()));
+            out.accept(new ItemStack(ModItems.BALA_RIFLE.get()));
+            out.accept(new ItemStack(ModItems.BALA_TRAZADORA.get()));
+            out.accept(new ItemStack(ModItems.BALA_CUERDA.get()));
+            out.accept(new ItemStack(ModItems.CASQUILLO_RIFLE.get()));
             for (int c = 0; c < 16; c++) out.accept(com.copperslug.armasfuego.rifle.Pintura.bala(c));
-            out.accept(ModItems.GATLING.get());
-            out.accept(ModItems.CINTA_GATLING.get());
-            out.accept(ModItems.WINCHESTER.get());
-            out.accept(ModItems.DERRINGER.get());
-            out.accept(ModItems.BALA_DERRINGER.get());
+            out.accept(new ItemStack(ModItems.GATLING.get()));
+            out.accept(new ItemStack(ModItems.CINTA_GATLING.get()));
+            out.accept(new ItemStack(ModItems.WINCHESTER.get()));
+            out.accept(new ItemStack(ModItems.DERRINGER.get()));
+            out.accept(new ItemStack(ModItems.BALA_DERRINGER.get()));
             out.accept(com.copperslug.armasfuego.oeste.EstucheViolinItem.con(new ItemStack(ModItems.THOMPSON.get())));
-            out.accept(ModItems.THOMPSON.get());
-            out.accept(ModItems.ESTUCHE_VIOLIN.get());
-            out.accept(ModItems.CARGADOR_THOMPSON.get());
-            out.accept(ModItems.MOSQUETE.get());
-            out.accept(ModItems.BOLA_MOSQUETE.get());
-            out.accept(ModItems.CANON_MANO.get());
+            out.accept(new ItemStack(ModItems.THOMPSON.get()));
+            out.accept(new ItemStack(ModItems.ESTUCHE_VIOLIN.get()));
+            out.accept(new ItemStack(ModItems.CARGADOR_THOMPSON.get()));
+            out.accept(new ItemStack(ModItems.MOSQUETE.get()));
+            out.accept(new ItemStack(ModItems.BOLA_MOSQUETE.get()));
+            out.accept(new ItemStack(ModItems.CANON_MANO.get()));
             for (var m : List.of(ModItems.BALA_PLATA, ModItems.BALA_DINAMITA, ModItems.CARTA_MARCADA, ModItems.BALA_ORO, ModItems.TAMBOR_TRAZADOR,
                     ModItems.TAMBOR_AGUA, ModItems.CINTA_INCENDIARIA, ModItems.CINTA_PALOMITAS, ModItems.PALOMITAS, ModItems.METRALLA, ModItems.BOLA_CADENA,
                     ModItems.BOLANO_INCENDIARIO, ModItems.BOLANO_FUEGOS, ModItems.BALA_HIELO, ModItems.BALA_HUMO, ModItems.TAMBOR_TINTA,
-                    ModItems.CINTA_GUISANTES, ModItems.BOLA_ARPON, ModItems.BOLANO_SALTARIN)) out.accept(m.get());
+                    ModItems.CINTA_GUISANTES, ModItems.BOLA_ARPON, ModItems.BOLANO_SALTARIN)) out.accept(new ItemStack(m.get()));
             // los libros de los encantamientos propios de las demás armas
             var rev = List.of(ModEnchantments.REVOLVER_ABANICO.get(), ModEnchantments.REVOLVER_CARAMBOLA.get(),
                     ModEnchantments.REVOLVER_DESENFUNDE.get(), ModEnchantments.REVOLVER_SENALERO.get());
@@ -129,7 +129,7 @@ public final class CopperSlug {
                 if (MOD_ID.equals(e.getKey().location().getNamespace()) && !rev.contains(e.getValue())) libro(out, e.getValue());
         }
 
-        private static void libro(CreativeModeTab.Output out, net.minecraft.world.item.enchantment.Enchantment en) {
+        private static void libro(java.util.function.Consumer<ItemStack> out, net.minecraft.world.item.enchantment.Enchantment en) {
             out.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(en, en.getMaxLevel())));
         }
     }

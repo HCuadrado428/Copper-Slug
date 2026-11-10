@@ -105,6 +105,7 @@ public final class PruebaCI {
             if (!mal.isEmpty()) throw new IllegalStateException("texturas que no son de 16x16: " + mal);
         });
         paso("01_pestana_creativo", 30, () -> {
+            mc.getToasts().clear();
             var tab = com.copperslug.CopperSlug.PESTANA.get();
             var pantalla = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,
                     mc.player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
@@ -124,16 +125,23 @@ public final class PruebaCI {
                         com.copperslug.registry.ModItems.GATLING, com.copperslug.registry.ModItems.WINCHESTER, com.copperslug.registry.ModItems.DERRINGER,
                         com.copperslug.registry.ModItems.THOMPSON, com.copperslug.registry.ModItems.MOSQUETE, com.copperslug.registry.ModItems.CANON_MANO);
                 for (int i = 0; i < armas.size(); i++) sp.getInventory().setItem(i, new ItemStack(armas.get(i).get()));
+                // el resto: lo mismo que la pestaña del creativo (munición, libros...), sin repetir las armas
+                List<ItemStack> todo = new ArrayList<>();
+                CopperSlug.Pestana.llenar(todo::add);
                 int k = 9;
-                for (var e : net.minecraft.core.registries.BuiltInRegistries.ITEM.entrySet()) {
-                    if (k >= 36 || !CopperSlug.MOD_ID.equals(e.getKey().location().getNamespace())) continue;
-                    if (armas.stream().anyMatch(a -> a.get() == e.getValue())) continue;
-                    sp.getInventory().setItem(k++, new ItemStack(e.getValue(), e.getValue().getMaxStackSize()));
+                for (ItemStack st : todo) {
+                    if (k >= 36) break;
+                    if (armas.stream().anyMatch(a -> a.get() == st.getItem()) || st.is(net.minecraft.world.item.Items.ENCHANTED_BOOK)) continue;
+                    sp.getInventory().setItem(k++, st.copyWithCount(st.getMaxStackSize()));
                 }
                 sp.getInventory().selected = 0;
             });
         });
-        paso("02_inventario_armas", 30, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        paso("02_inventario_armas", 30, () -> {
+            mc.getToasts().clear();
+            mc.gui.getChat().clearMessages(false);
+            mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+        });
         sin("inventario_fin", 5, () -> {
             mc.setScreen(null);
             var srv = mc.getSingleplayerServer();
