@@ -97,6 +97,6 @@ public final class Tambor {
     }
 
     public static boolean encerado(ItemStack s) {
-        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(ENCERADO);
+        return com.copperslug.armasfuego.comun.Cobre.encerado(s);
     }
 }

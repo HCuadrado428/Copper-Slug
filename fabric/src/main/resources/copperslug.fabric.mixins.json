@@ -5,6 +5,7 @@
   "refmap": "copperslug.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "ExperienceOrbMixin",
     "ItemEntityMixin",
     "ItemMixin",
     "LivingEntityMixin"

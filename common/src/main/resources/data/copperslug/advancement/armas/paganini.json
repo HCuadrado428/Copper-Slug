@@ -2,7 +2,7 @@
   "parent": "copperslug:armas/violin",
   "display": {
     "icon": {
-      "id": "copperslug:estuche_violin"
+      "id": "minecraft:bow"
     },
     "title": {
       "translate": "advancements.copperslug.armas.paganini.title"

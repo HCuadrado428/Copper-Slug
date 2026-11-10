@@ -26,6 +26,10 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.nbt.CompoundTag;
@@ -227,7 +231,8 @@ public class MosqueteItem extends ArmaFuegoItem {
         int n = 0;
         for (LivingEntity v : dados) {
             if (n++ >= 3) break;
-            Balistica.herir(v, p, 9F, 0.35F, DANO, true);
+            Balistica.herir(v, p, 9F * com.copperslug.armasfuego.comun.Cobre.dano(p.getMainHandItem()),
+                    Math.min(1F, 0.35F + com.copperslug.armasfuego.comun.Cobre.perforacion(p.getMainHandItem())), DANO, true);
             v.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 60, 1), p);
             v.knockback(0.6, -dir.x, -dir.z);
         }
@@ -363,6 +368,62 @@ public class MosqueteItem extends ArmaFuegoItem {
             s.set(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS, a);
     }
 
+    // ------------------------------------------------------------------ los encantamientos de la espada calada
+
+    /**
+     * ¿Cuenta este encantamiento de la espada al atacar con la bayoneta? Todos los que actúan al golpear (Filo, Golpe,
+     * Perdición de los artrópodos, Aspecto ígneo, Empuje, Botín y los de otros mods) salvo Barrido (es una estocada).
+     * Irrompibilidad y Reparación van aparte, sobre el desgaste de la propia espada.
+     */
+    private static boolean pasa(net.minecraft.core.Holder<Enchantment> e) {
+        return !e.is(Enchantments.SWEEPING_EDGE) && !e.is(Enchantments.UNBREAKING) && !e.is(Enchantments.MENDING);
+    }
+
+    /**
+     * Copper Slug (1.21): no hay encantamientos por objeto en el código común; los del mosquete más los de la espada
+     * calada los usa {@code EnchantmentHelperMixin} (el nivel y el recorrido al golpear) en los tres cargadores.
+     */
+    public static boolean conBayoneta(ItemStack s) {
+        return s.getItem() instanceof MosqueteItem && com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(BAYONETA);
+    }
+
+    public static int nivelConBayoneta(ItemStack s, net.minecraft.core.Holder<Enchantment> e, int propio) {
+        if (!pasa(e) || !conBayoneta(s)) return propio;
+        return Math.max(propio, bayoneta(s).getEnchantments().getLevel(e));
+    }
+
+    public static net.minecraft.world.item.enchantment.ItemEnchantments encantamientosConBayoneta(ItemStack s) {
+        var m = new net.minecraft.world.item.enchantment.ItemEnchantments.Mutable(s.getEnchantments());
+        for (var x : bayoneta(s).getEnchantments().entrySet())
+            if (pasa(x.getKey())) m.upgrade(x.getKey(), x.getIntValue());
+        return m.toImmutable();
+    }
+
+    /** Brilla si la espada calada está encantada. */
+    @Override
+    public boolean isFoil(ItemStack s) {
+        return super.isFoil(s) || com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(BAYONETA) && bayoneta(s).isEnchanted();
+    }
+
+    /**
+     * Reparación de la espada calada: la experiencia que se recoge con el mosquete en la mano arregla la espada (2 de
+     * durabilidad por punto, como vanilla) antes de ir al jugador.
+     */
+    public static void reparar(com.copperslug.shim.event.entity.player.PlayerXpEvent.PickupXp e) {
+        Player p = e.getEntity();
+        ItemStack s = p.getMainHandItem();
+        if (!(s.getItem() instanceof MosqueteItem) || !com.copperslug.shim.Nbt.tiene(s) || !com.copperslug.shim.Nbt.leer(s).contains(BAYONETA)) return;
+        ItemStack b = bayoneta(s);
+        if (!b.isDamaged() || com.copperslug.shim.Enc.nivel(Enchantments.MENDING, b) <= 0) return;
+        int valor = e.getOrb().getValue();
+        int arregla = Math.min(valor * 2, b.getDamageValue());
+        if (arregla <= 0) return;
+        b.setDamageValue(b.getDamageValue() - arregla);
+        ponerBayoneta(s, b);
+        // lo gastado en arreglarla no llega al jugador (vanilla le da luego el orbe entero)
+        p.giveExperiencePoints(-Math.max(1, arregla / 2));
+    }
+
     @Override
     public boolean hurtEnemy(ItemStack s, LivingEntity v, LivingEntity a) {
         ItemStack bay = bayoneta(s);
@@ -374,7 +435,10 @@ public class MosqueteItem extends ArmaFuegoItem {
                 a.level().playSound(null, a.getX(), a.getY(), a.getZ(), net.minecraft.sounds.SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 0.8F, 1.2F);
             } else ponerBayoneta(s, bay);
         }
-        if (!v.isAlive() && a instanceof ServerPlayer p && !bay.isEmpty()) LogrosMiscelanea.dar(p, "mosquete_bayoneta");
+        if (!v.isAlive() && a instanceof ServerPlayer p && !bay.isEmpty()) {
+            LogrosMiscelanea.dar(p, "mosquete_bayoneta");
+            if (com.copperslug.shim.Enc.nivel(Enchantments.FIRE_ASPECT, bay) > 0) LogrosMiscelanea.dar(p, "bayoneta_ignea");
+        }
         return true;
     }
 
@@ -419,6 +483,15 @@ public class MosqueteItem extends ArmaFuegoItem {
         ItemStack b = bayoneta(s);
         l.add(b.isEmpty() ? Component.translatable("item.copperslug.mosquete.bayoneta_no").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("item.copperslug.mosquete.bayoneta", b.getHoverName()).withStyle(ChatFormatting.GRAY));
+        // los encantamientos de la espada calada (Barrido no cuenta: es una estocada)
+        if (!b.isEmpty()) for (var x0 : b.getEnchantments().entrySet()) {
+            var e = x0.getKey();
+            int n = x0.getIntValue();
+            boolean barrido = e.is(Enchantments.SWEEPING_EDGE);
+            MutableComponent x = Component.literal("  ").append(Enchantment.getFullname(e, n));
+            if (barrido) x = Component.literal("  ").append(Component.translatable("item.copperslug.mosquete.no_barrido", Enchantment.getFullname(e, n)));
+            l.add(x.withStyle(barrido ? ChatFormatting.DARK_GRAY : ChatFormatting.LIGHT_PURPLE));
+        }
         super.appendHoverText(s, copperslug$ctx, l, f);
         l.add(Component.translatable("item.copperslug.mosquete.ayuda_bayoneta").withStyle(ChatFormatting.DARK_GRAY));
     }

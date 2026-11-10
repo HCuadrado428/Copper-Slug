@@ -5,6 +5,7 @@
   "refmap": "copperslug.refmap.json",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "EnchantmentHelperMixin",
     "LivingEntityGolpeAccessor",
     "RiflePlayerMixin"
   ],
