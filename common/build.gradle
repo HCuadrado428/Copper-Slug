@@ -1,12 +1,12 @@
 plugins {
     id 'multiloader-common'
-    id 'net.neoforged.moddev.legacyforge'
+    id 'net.neoforged.moddev'
 }
 
-legacyForge {
-    mcpVersion = minecraft_version
-    // solo para compilar contra vanilla lo que Forge ya abre en su AT (no va en ningún jar)
-    accessTransformers = ["accesstransformer.cfg"]
+neoForge {
+    neoFormVersion = neo_form_version
+    // solo para compilar contra vanilla lo que los cargadores ya abren (no va en ningún jar)
+    accessTransformers.from(file('accesstransformer.cfg').absolutePath)
     parchment {
         minecraftVersion = parchment_minecraft
         mappingsVersion = parchment_version
