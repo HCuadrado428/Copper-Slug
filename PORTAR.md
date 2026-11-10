@@ -100,5 +100,12 @@ Hecho a mano después (ya no hay errores de compilación en ninguno de los cuatr
 - `probar-1211.yml` (en main, porque los `workflow_run` usan el archivo de main): servidores de los tres y el juego en
   los tres; en NeoForge con PruebaCI y capturas.
 
-Falta comprobar en el juego (los mixins de cliente de Fabric no los comprueba el compilador) y lo que salga en la
-prueba de NeoForge.
+- La bayoneta con los encantamientos de su espada: `mixin/EnchantmentHelperMixin` en common (nivel y los dos
+  recorridos de encantamientos), para los tres cargadores; Reparación con el `PickupXp` del shim (NeoForge y Forge, su
+  evento; Fabric, `ExperienceOrbMixin`).
+- Fabric 1.21.1: el giro de cámara sobre el eje de la vista (el «roll» del retroceso) no se aplica; lo demás del
+  retroceso sí.
+
+En el CI: NeoForge 1.21.1 pasa casi toda PruebaCI (fallaba lo del rifle porque el mundo de 1.21.1 sale junto al agua:
+ahora la zona del rifle va cerrada con cristal); Forge 1.21.1 llega al mundo; Fabric 1.21.1 petaba por un mixin de
+`GameRenderer` con la firma de 1.20.1 (arreglado).
