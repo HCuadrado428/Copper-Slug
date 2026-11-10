@@ -5,7 +5,7 @@ name: Compilar
 
 on:
   push:
-    branches: [main, '1.21.1']
+    branches: [main, main-nuevo, '1.21.1']
   workflow_dispatch:
 
 permissions:
