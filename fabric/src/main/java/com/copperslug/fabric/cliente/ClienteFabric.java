@@ -20,7 +20,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 
@@ -61,23 +60,25 @@ public class ClienteFabric implements ClientModInitializer {
             etapa(RenderLevelStageEvent.Stage.AFTER_PARTICLES, c);
         });
         WorldRenderEvents.LAST.register(c -> etapa(RenderLevelStageEvent.Stage.AFTER_LEVEL, c));
-        HudRenderCallback.EVENT.register(ClienteInicio::dibujarHud);
+        HudRenderCallback.EVENT.register((g, dt) -> ClienteInicio.dibujarHud(g, dt.getGameTimeDeltaPartialTick(false)));
         ClientPlayConnectionEvents.DISCONNECT.register((h, mc) -> Bus.post(new com.copperslug.shim.client.event.ClientPlayerNetworkEvent.LoggingOut()));
         ClientPlayConnectionEvents.JOIN.register((h, s, mc) -> Bus.post(new com.copperslug.shim.client.event.ClientPlayerNetworkEvent.LoggingIn()));
     }
 
     private static void etapa(RenderLevelStageEvent.Stage st, WorldRenderContext c) {
-        Bus.post(new RenderLevelStageEvent(st, c.worldRenderer(), c.matrixStack(), c.projectionMatrix(), 0, c.tickDelta(), c.camera()));
+        // en 1.21 el giro de la cámara va en la matriz de la vista, no en la pila
+        var ps = new com.mojang.blaze3d.vertex.PoseStack();
+        ps.mulPose(c.positionMatrix());
+        Bus.post(new RenderLevelStageEvent(st, c.worldRenderer(), ps, c.projectionMatrix(), 0, c.tickCounter().getGameTimeDeltaPartialTick(false), c.camera()));
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> void recibir(com.copperslug.fabric.PlataformaFabric.Def<T> d) {
-        ClientPlayNetworking.registerGlobalReceiver(d.id(), (mc, h, buf, sender) -> {
-            T m = d.leer().apply(buf);
-            mc.execute(() -> d.cliente().accept(m));
-        });
+        // en 1.21 Fabric ya llama al receptor en el hilo del cliente
+        ClientPlayNetworking.registerGlobalReceiver(d.tipo(), (env, ctx) -> d.cliente().accept((T) env.paquete()));
     }
 
-    public static void enviar(ResourceLocation id, FriendlyByteBuf b) {
-        ClientPlayNetworking.send(id, b);
+    public static void enviar(com.copperslug.fabric.PlataformaFabric.Envoltorio e) {
+        ClientPlayNetworking.send(e);
     }
 }

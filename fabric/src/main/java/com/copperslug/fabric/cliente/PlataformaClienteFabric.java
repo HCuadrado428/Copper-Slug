@@ -2,7 +2,6 @@ package com.copperslug.fabric.cliente;
 
 import com.copperslug.plataforma.ClienteComun;
 import com.copperslug.plataforma.PlataformaCliente;
-import net.fabricmc.fabric.api.client.model.BakedModelManagerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.resources.model.BakedModel;
@@ -12,7 +11,7 @@ public class PlataformaClienteFabric implements PlataformaCliente {
     @Override
     public BakedModel modelo(ResourceLocation id) {
         var mm = Minecraft.getInstance().getModelManager();
-        BakedModel m = BakedModelManagerHelper.getModel(mm, id);
+        BakedModel m = ((net.fabricmc.fabric.api.client.model.loading.v1.FabricBakedModelManager) mm).getModel(id);
         return m != null ? m : mm.getMissingModel();
     }
 

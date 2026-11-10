@@ -19,7 +19,6 @@ import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
@@ -62,20 +61,17 @@ public final class ClienteForge {
                 Bus.post(new com.copperslug.shim.client.event.EntityRenderersEvent.RegisterRenderers((t, p) -> registrarRender(e, t, p))));
         mod.addListener((RegisterParticleProvidersEvent e) ->
                 Bus.post(new com.copperslug.shim.client.event.RegisterParticleProvidersEvent(e::registerSpriteSet)));
-        mod.addListener((ModelEvent.RegisterAdditional e) -> Bus.post(new com.copperslug.shim.client.event.ModelEvent.RegisterAdditional(e::register)));
+        mod.addListener((ModelEvent.RegisterAdditional e) -> Bus.post(new com.copperslug.shim.client.event.ModelEvent.RegisterAdditional(
+                rl -> e.register(new net.minecraft.client.resources.model.ModelResourceLocation(rl, "standalone")))));
         mod.addListener((RegisterColorHandlersEvent.Item e) -> Bus.post(new com.copperslug.shim.client.event.RegisterColorHandlersEvent.Item(e::register)));
         mod.addListener((RegisterKeyMappingsEvent e) -> Bus.post(new com.copperslug.shim.client.event.RegisterKeyMappingsEvent(e::register)));
-        mod.addListener((RegisterGuiOverlaysEvent e) -> {
-            for (var c : com.copperslug.shim.client.event.RegisterGuiOverlaysEvent.CAPAS) {
-                if (c.encima() != null) e.registerAbove(c.encima(), c.id(), (gui, g, pt, w, h) -> c.capa().render(ForgeGui.I, g, pt, w, h));
-                else e.registerAboveAll(c.id(), (gui, g, pt, w, h) -> c.capa().render(ForgeGui.I, g, pt, w, h));
-            }
-        });
+        // el HUD: Forge 52 no tiene evento de capas, lo dibuja GuiMixin al final del HUD vanilla
 
         // ---- bus de Forge
         var f = MinecraftForge.EVENT_BUS;
         f.addListener((TickEvent.ClientTickEvent e) -> Bus.post(new com.copperslug.shim.event.TickEvent.ClientTickEvent(fase(e.phase))));
-        f.addListener((TickEvent.RenderTickEvent e) -> Bus.post(new com.copperslug.shim.event.TickEvent.RenderTickEvent(fase(e.phase), e.renderTickTime)));
+        f.addListener((TickEvent.RenderTickEvent e) -> Bus.post(new com.copperslug.shim.event.TickEvent.RenderTickEvent(fase(e.phase),
+                e.getTimer().getGameTimeDeltaPartialTick(false))));
         f.addListener((InputEvent.InteractionKeyMappingTriggered e) -> {
             int b = e.isAttack() ? 0 : e.isUseItem() ? 1 : 2;
             var s = Bus.post(new com.copperslug.shim.client.event.InputEvent.InteractionKeyMappingTriggered(b, e.getKeyMapping(), e.getHand()));
@@ -86,7 +82,10 @@ public final class ClienteForge {
         });
         f.addListener((RenderLevelStageEvent e) -> {
             var et = ETAPAS.get(e.getStage());
-            if (et != null) Bus.post(new com.copperslug.shim.client.event.RenderLevelStageEvent(et, e.getLevelRenderer(), e.getPoseStack(),
+            // en 1.21 la «pose» del evento es la matriz de la vista: se envuelve en un PoseStack
+            var ps = new PoseStack();
+            ps.mulPose(e.getPoseStack());
+            if (et != null) Bus.post(new com.copperslug.shim.client.event.RenderLevelStageEvent(et, e.getLevelRenderer(), ps,
                     e.getProjectionMatrix(), e.getRenderTick(), e.getPartialTick(), e.getCamera()));
         });
         f.addListener((ViewportEvent.ComputeCameraAngles e) -> {

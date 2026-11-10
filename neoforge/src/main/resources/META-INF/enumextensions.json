@@ -1,0 +1,13 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "COPPERSLUG_REVOLVER",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {
+        "class": "com/copperslug/neoforge/cliente/PosesNeoForge",
+        "field": "REVOLVER"
+      }
+    }
+  ]
+}
