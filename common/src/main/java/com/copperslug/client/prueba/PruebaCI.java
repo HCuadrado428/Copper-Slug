@@ -3191,7 +3191,7 @@ public final class PruebaCI {
             mc.player.xRotO = 89F;
         });
         sin("esc_salto_tercera", 2, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK));
-        paso("132_salto", 7, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
+        paso("132_salto", 12, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
         // a pocos fotogramas (con shaders) a veces el tiro sale antes de mirar abajo del todo: otro tiro si no ha lanzado
         sin("esc_salto_otra", 10, () -> {
             double sube = (PI.get("salto_max") instanceof Double d ? d : mc.player.getY()) - escY;
@@ -3205,7 +3205,7 @@ public final class PruebaCI {
             mc.player.xRotO = 89F;
             PI.put("salto_otra", true);
         });
-        sin("esc_salto_tiro2", 7, () -> {
+        sin("esc_salto_tiro2", 12, () -> {
             if (PI.remove("salto_otra") != null) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
         });
         sin("esc_salto_chk", 40, () -> {
@@ -3393,6 +3393,8 @@ public final class PruebaCI {
                 capturar("149_colgado");
             }
         }
+        // el salto escopeta: lo más alto también visto desde el cliente (a pocos fotogramas el servidor lo ve tarde)
+        if (escVigilaSalto) PI.merge("salto_max", mc.player.getY(), (x, y) -> Math.max((Double) x, (Double) y));
         if (sinToasts) mc.getToasts().clear();
         if (sinAvisos) {
             mc.getToasts().clear();
