@@ -111,16 +111,20 @@ public final class PruebaCI {
                     mc.player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
             mc.setScreen(pantalla);
             // Fabric reparte las pestañas en páginas: primero a la página de la nuestra
+            // (FabricCreativeInventoryScreen: getPageCount, getItemGroupsOnPage(int), switchToPage(int); en Forge no hay)
             try {
-                for (var m : pantalla.getClass().getMethods())
-                    if (m.getName().equals("switchToPage") && m.getParameterCount() == 1) {
-                        int pag = 0;
-                        for (var g : pantalla.getClass().getMethods())
-                            if (g.getName().equals("getPage") && g.getParameterCount() == 1) pag = (Integer) g.invoke(pantalla, tab);
-                        m.invoke(pantalla, pag);
+                var c = pantalla.getClass();
+                int paginas = (Integer) c.getMethod("getPageCount").invoke(pantalla);
+                for (int pag = 0; pag < paginas; pag++)
+                    if (((List<?>) c.getMethod("getItemGroupsOnPage", int.class).invoke(pantalla, pag)).contains(tab)) {
+                        c.getMethod("switchToPage", int.class).invoke(pantalla, pag);
+                        RESUMEN.add("  pestaña del creativo: en la página " + (pag + 1) + " de " + paginas);
+                        break;
                     }
-            } catch (Exception ignorado) {
+            } catch (NoSuchMethodException ignorado) {
                 // sin páginas (Forge)
+            } catch (Exception ex) {
+                RESUMEN.add("  pestaña del creativo: no se ha podido pasar de página (" + ex + ")");
             }
             ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
         });
@@ -160,8 +164,17 @@ public final class PruebaCI {
         paso("02_inventario_armas", 30, () -> {
             mc.getToasts().clear();
             mc.gui.getChat().clearMessages(false);
+            // lo que tiene el jugador en el servidor, también en el cliente (la captura no espera a la sincronización)
+            var sp = mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
+            int llenos = 0;
+            if (sp != null) for (int i = 0; i < 36; i++) {
+                ItemStack x = sp.getInventory().getItem(i);
+                if (!x.isEmpty()) llenos++;
+                mc.player.getInventory().setItem(i, x.copy());
+            }
             mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
-            RESUMEN.add("  inventario: 9 armas y " + PI.get("inv_cosas") + " cosas más" + (PI.get("inv_error") != null ? " · error " + PI.get("inv_error") : ""));
+            RESUMEN.add("  inventario: 9 armas y " + PI.get("inv_cosas") + " cosas más (" + llenos + " huecos llenos al sacar la captura)"
+                    + (PI.get("inv_error") != null ? " · error " + PI.get("inv_error") : ""));
         });
         sin("inventario_fin", 5, () -> {
             mc.setScreen(null);
