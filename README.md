@@ -20,7 +20,7 @@ There are no versioned releases yet: every CI build is published as a `build-N` 
 |-----------|--------|-----|
 | 1.20.1 | Forge 47.x (also NeoForge 1.20.1 47.1) | `copperslug-forge-1.20.1-1.0.0.jar` |
 | 1.20.1 | Fabric | `copperslug-fabric-1.20.1-1.0.0.jar` |
-| 1.21.1 | NeoForge, Fabric and Forge | branch `1.21.1` |
+| 1.21.1 | NeoForge, Fabric and Forge | work in progress (branch `1.21.1`) |
 
 ## Requirements
 
@@ -53,7 +53,7 @@ Todavía no hay versiones publicadas: cada compilación del CI sale como prerele
 |-----------|----------|-----|
 | 1.20.1 | Forge 47.x (vale también para NeoForge 1.20.1 47.1) | `copperslug-forge-1.20.1-1.0.0.jar` |
 | 1.20.1 | Fabric | `copperslug-fabric-1.20.1-1.0.0.jar` |
-| 1.21.1 | NeoForge, Fabric y Forge | rama `1.21.1` |
+| 1.21.1 | NeoForge, Fabric y Forge | en preparación (rama `1.21.1`) |
 
 ## Requisitos
 
