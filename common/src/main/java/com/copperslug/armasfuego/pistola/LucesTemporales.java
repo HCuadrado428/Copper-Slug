@@ -109,7 +109,7 @@ public final class LucesTemporales extends SavedData {
         LucesTemporales d = new LucesTemporales();
         for (Tag t : tag.getList("Luces", Tag.TAG_COMPOUND)) {
             CompoundTag c = (CompoundTag) t;
-            ResourceKey<Level> dim = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(c.getString("Dim")));
+            ResourceKey<Level> dim = ResourceKey.create(Registries.DIMENSION, net.minecraft.resources.ResourceLocation.parse(c.getString("Dim")));
             d.luces.computeIfAbsent(dim, k -> new HashMap<>()).put(c.getLong("Pos"), c.getLong("Hasta"));
         }
         return d;

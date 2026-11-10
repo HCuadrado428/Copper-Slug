@@ -23,7 +23,7 @@ public final class PistolaClienteMod {
     public static void setup(FMLClientSetupEvent e) {
         e.enqueueWork(() -> {
             PistolaCliente.init();
-            ItemProperties.register(ModItems.REVOLVER.get(), new ResourceLocation(CopperSlug.MOD_ID, "oxido"),
+            ItemProperties.register(ModItems.REVOLVER.get(), net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "oxido"),
                     (s, l, ent, seed) -> Tambor.oxido(s) / 4F);
         });
     }

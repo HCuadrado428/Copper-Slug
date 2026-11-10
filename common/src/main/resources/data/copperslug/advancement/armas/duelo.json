@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "id": "copperslug:revolver_bala"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.duelo.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.duelo.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "revolver_duelo": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "revolver_duelo"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}

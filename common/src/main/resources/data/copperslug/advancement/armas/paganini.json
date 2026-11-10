@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/violin",
+  "display": {
+    "icon": {
+      "id": "copperslug:estuche_violin"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.paganini.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.paganini.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "violin_paganini": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "violin_paganini"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}

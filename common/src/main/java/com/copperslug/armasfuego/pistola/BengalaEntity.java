@@ -44,8 +44,8 @@ public class BengalaEntity extends Projectile {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(SENALERO, false);
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder b) {
+        b.define(SENALERO, false);
     }
 
     public void preparar(boolean senalero) {

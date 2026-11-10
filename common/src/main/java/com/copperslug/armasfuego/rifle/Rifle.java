@@ -66,23 +66,23 @@ public final class Rifle {
     // ------------------------------------------------------------------ estado del arma
 
     public static String recamara(ItemStack s) {
-        return s.hasTag() ? s.getTag().getString(RECAMARA) : "";
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getString(RECAMARA) : "";
     }
 
     public static boolean gastada(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean(GASTADA);
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(GASTADA);
     }
 
     public static int cerrojo(ItemStack s) {
-        return s.hasTag() ? s.getTag().getInt(CERROJO) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getInt(CERROJO) : 0;
     }
 
     public static int oxido(ItemStack s) {
-        return s.hasTag() ? Mth.clamp(s.getTag().getInt(OXIDO), 0, 3) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? Mth.clamp(com.copperslug.shim.Nbt.leer(s).getInt(OXIDO), 0, 3) : 0;
     }
 
     public static boolean encerado(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean(ENCERADO);
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(ENCERADO);
     }
 
     /** ¿Hay un cartucho listo para disparar? */
@@ -105,7 +105,7 @@ public final class Rifle {
 
     public static Item item(String id) {
         if (id == null || id.isEmpty()) return null;
-        Item i = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id));
+        Item i = ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.parse(id));
         return i == null || tipo(i) < 0 ? null : i;
     }
 
@@ -125,7 +125,7 @@ public final class Rifle {
     /** Empieza el ciclo del cerrojo (si no está ya en marcha). */
     public static void accionarCerrojo(ServerPlayer p, ItemStack s) {
         if (cerrojo(s) > 0) return;
-        s.getOrCreateTag().putInt(CERROJO, CERROJO_TICKS);
+        com.copperslug.shim.Nbt.tag(s).putInt(CERROJO, CERROJO_TICKS);
         ServerLevel l = p.serverLevel();
         l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.CROSSBOW_LOADING_START, SoundSource.PLAYERS, 0.9F, 1.6F);
         l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.IRON_TRAPDOOR_OPEN, SoundSource.PLAYERS, 0.5F, 1.9F);
@@ -136,14 +136,14 @@ public final class Rifle {
         int t = cerrojo(s);
         if (t <= 0) return;
         t--;
-        s.getOrCreateTag().putInt(CERROJO, t);
+        com.copperslug.shim.Nbt.tag(s).putInt(CERROJO, t);
         if (t == T_EXPULSA) expulsar(p, s);
         if (t == T_CARGA) cargar(p, s);
     }
 
     /** Saca lo que haya en la recámara: el casquillo vacío sale volando; un cartucho sin disparar vuelve al inventario. */
     private static void expulsar(ServerPlayer p, ItemStack s) {
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         Item vivo = gastada(s) ? null : item(recamara(s));
         boolean casquillo = gastada(s);
         t.putString(RECAMARA, "");
@@ -175,13 +175,13 @@ public final class Rifle {
         Item cargado = null;
         if (!m.isEmpty()) {
             cargado = m.getItem();
-            if (cargado == ModItems.BALA_PINTURA.get()) s.getOrCreateTag().putInt(RECAMARA_COLOR, Pintura.color(m));
+            if (cargado == ModItems.BALA_PINTURA.get()) com.copperslug.shim.Nbt.tag(s).putInt(RECAMARA_COLOR, Pintura.color(m));
             if (!p.getAbilities().instabuild) m.shrink(1);
         } else if (p.getAbilities().instabuild) {
             cargado = ModItems.BALA_RIFLE.get();
         }
         if (cargado != null) {
-            s.getOrCreateTag().putString(RECAMARA, ForgeRegistries.ITEMS.getKey(cargado).toString());
+            com.copperslug.shim.Nbt.tag(s).putString(RECAMARA, ForgeRegistries.ITEMS.getKey(cargado).toString());
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.CROSSBOW_LOADING_END, SoundSource.PLAYERS, 0.9F, 1.5F);
         }
         l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.IRON_DOOR_CLOSE, SoundSource.PLAYERS, 0.45F, 2.0F);
@@ -200,7 +200,7 @@ public final class Rifle {
             return;
         }
         Item municion = item(recamara(s));
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         int ox = oxido(s);
         // el cobre oxidado falla a veces: el cartucho no sale y hay que sacarlo con el cerrojo
         if (p.getRandom().nextFloat() < ox * 0.04F + com.copperslug.armasfuego.comun.EquilibrioArmas.encasquilladoBase()) {
@@ -256,7 +256,7 @@ public final class Rifle {
         t.putInt("Disparos", t.getInt("Disparos") + 1);
         // el cobre se oxida poco a poco con el uso (salvo encerado)
         if (!encerado(s) && ox < 3 && p.getRandom().nextInt(30) == 0) t.putInt(OXIDO, ox + 1);
-        s.hurtAndBreak(1, p, x -> x.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+        s.hurtAndBreak(1, p, InteractionHand.MAIN_HAND);
         APUNTE.remove(p.getUUID());
     }
 

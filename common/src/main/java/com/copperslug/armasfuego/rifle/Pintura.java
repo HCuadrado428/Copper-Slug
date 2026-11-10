@@ -27,12 +27,12 @@ public final class Pintura {
 
     public static ItemStack bala(int color) {
         ItemStack s = new ItemStack(ModItems.BALA_PINTURA.get());
-        s.getOrCreateTag().putInt(COLOR, color);
+        com.copperslug.shim.Nbt.tag(s).putInt(COLOR, color);
         return s;
     }
 
     public static int color(ItemStack s) {
-        return s.hasTag() ? Math.max(0, Math.min(15, s.getTag().getInt(COLOR))) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? Math.max(0, Math.min(15, com.copperslug.shim.Nbt.leer(s).getInt(COLOR))) : 0;
     }
 
     public static int rgb(int color) {
@@ -62,7 +62,7 @@ public final class Pintura {
             break;
         }
         if (nuevo == null || nuevo.equals(p)) return null;
-        Block b = BuiltInRegistries.BLOCK.get(new ResourceLocation("minecraft", nuevo));
+        Block b = BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", nuevo));
         if (b == Blocks.AIR) return null;
         return b.withPropertiesOf(st);
     }

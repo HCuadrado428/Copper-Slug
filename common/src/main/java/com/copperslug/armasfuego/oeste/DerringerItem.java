@@ -124,7 +124,7 @@ public class DerringerItem extends ArmaFuegoItem {
         if (nivel(com.copperslug.registry.ModEnchantments.DERRINGER_PRESTIDIGITADOR, d) > 0 && balas(d) < 2 && d.getItem() instanceof DerringerItem di) {
             ItemStack m = di.elegir(p, d);
             if (!m.isEmpty() || p.getAbilities().instabuild) {
-                if (balas(d) == 0) d.getOrCreateTag().putString(TIPO, com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(m.isEmpty() ? di.municionNormal() : di.tipoDe(m)).toString());
+                if (balas(d) == 0) com.copperslug.shim.Nbt.tag(d).putString(TIPO, com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(m.isEmpty() ? di.municionNormal() : di.tipoDe(m)).toString());
                 if (!p.getAbilities().instabuild) m.shrink(1);
                 ponerBalas(d, balas(d) + 1);
             }

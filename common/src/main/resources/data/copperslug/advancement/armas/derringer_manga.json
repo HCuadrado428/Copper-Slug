@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/derringer",
+  "display": {
+    "icon": {
+      "id": "copperslug:derringer"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.derringer_manga.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.derringer_manga.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "derringer_manga": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "derringer_manga"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}

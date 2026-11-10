@@ -39,14 +39,14 @@ public final class ModNetwork {
     }
 
     private static <T> void alServidor(String n, Class<T> c, BiConsumer<T, FriendlyByteBuf> enc, Function<FriendlyByteBuf, T> dec, Manejador<T> h) {
-        Plataforma.get().paqueteAlServidor(new ResourceLocation(CopperSlug.MOD_ID, n), c, enc, dec, (m, p) -> {
+        Plataforma.get().paqueteAlServidor(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, n), c, enc, dec, (m, p) -> {
             NetworkEvent.Context ctx = new NetworkEvent.Context(p);
             h.handle(m, () -> ctx);
         });
     }
 
     private static <T> void alCliente(String n, Class<T> c, BiConsumer<T, FriendlyByteBuf> enc, Function<FriendlyByteBuf, T> dec, Manejador<T> h) {
-        Plataforma.get().paqueteAlCliente(new ResourceLocation(CopperSlug.MOD_ID, n), c, enc, dec, m -> {
+        Plataforma.get().paqueteAlCliente(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, n), c, enc, dec, m -> {
             NetworkEvent.Context ctx = new NetworkEvent.Context(null);
             h.handle(m, () -> ctx);
         });

@@ -30,7 +30,7 @@ import com.copperslug.shim.fml.common.Mod;
 public final class PistolaCliente {
     private PistolaCliente() {}
 
-    private static final ResourceLocation TEX = new ResourceLocation(CopperSlug.MOD_ID, "textures/gui/revolver_tambor.png");
+    private static final ResourceLocation TEX = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "textures/gui/revolver_tambor.png");
 
     public static final HumanoidModel.ArmPose POSE = com.copperslug.plataforma.ClienteComun.poseBrazo("COPPERSLUG_REVOLVER", false, (model, entity, arm) -> {
         ModelPart b = arm == HumanoidArm.RIGHT ? model.rightArm : model.leftArm;

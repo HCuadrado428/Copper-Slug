@@ -31,7 +31,7 @@ public class GatlingRenderer extends EntityRenderer<GatlingEntity> {
     private static final float PIV_Y = 17.25F / 16F, PIV_Z = 8F / 16F, MAN_Y = 17.25F / 16F, MAN_Z = 12.5F / 16F;
 
     private static ResourceLocation rl(String n) {
-        return new ResourceLocation(CopperSlug.MOD_ID, "item/armas3d/gatling_" + n);
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "item/armas3d/gatling_" + n);
     }
 
     public GatlingRenderer(EntityRendererProvider.Context c) {

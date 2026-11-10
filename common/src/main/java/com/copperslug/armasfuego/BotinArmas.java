@@ -99,7 +99,7 @@ public class BotinArmas {
         switch (a) {
             case REVOLVER -> {
                 arma = new ItemStack(ModItems.REVOLVER.get());
-                if (oxido > 0) arma.getOrCreateTag().putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, oxido);
+                if (oxido > 0) com.copperslug.shim.Nbt.tag(arma).putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, oxido);
                 l.add(new ItemStack(ModItems.REVOLVER_BALA.get(), 3 + r.nextInt(6)));
                 if (r.nextFloat() < 0.35F) {
                     var raras = List.of(ModItems.REVOLVER_BENGALA, ModItems.REVOLVER_DARDO, ModItems.REVOLVER_FOGUEO, ModItems.REVOLVER_IMAN, ModItems.REVOLVER_TIEMPO);
@@ -148,7 +148,7 @@ public class BotinArmas {
             }
             default -> {
                 arma = new ItemStack(ModItems.RIFLE.get());
-                if (oxido > 0) arma.getOrCreateTag().putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, oxido);
+                if (oxido > 0) com.copperslug.shim.Nbt.tag(arma).putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, oxido);
                 l.add(new ItemStack(ModItems.BALA_RIFLE.get(), 4 + r.nextInt(7)));
                 if (r.nextFloat() < 0.25F) l.add(new ItemStack(ModItems.BALA_TRAZADORA.get(), 2 + r.nextInt(3)));
                 if (r.nextFloat() < 0.2F) l.add(new ItemStack(ModItems.BALA_CUERDA.get(), 1 + r.nextInt(2)));

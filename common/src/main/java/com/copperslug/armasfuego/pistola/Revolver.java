@@ -62,7 +62,7 @@ public final class Revolver {
             PERFORANTE = clave("pistola_perforante"), RULETA = clave("pistola_ruleta");
 
     private static ResourceKey<DamageType> clave(String n) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CopperSlug.MOD_ID, n));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, n));
     }
 
     /** Parte del daño de la bala que se salta la armadura (equilibrio de armaduras: pistola 15 %). */
@@ -102,7 +102,7 @@ public final class Revolver {
         int pos = Tambor.pos(s);
         Carga c = Tambor.en(s, pos);
         Tambor.avanzar(s);
-        s.getOrCreateTag().remove(Tambor.GIRADO);
+        com.copperslug.shim.Nbt.tag(s).remove(Tambor.GIRADO);
         boolean sien = !abanico && p.getXRot() >= 80F;   // mirando al suelo del todo: te apuntas a la sien (ruleta rusa)
         Vec3 boca = boca(p);
         if (c == Carga.VACIA) {
@@ -125,7 +125,7 @@ public final class Revolver {
             return true;
         }
         Tambor.poner(s, pos, Carga.VACIA);
-        s.getOrCreateTag().putInt(GASTADAS, Math.min(Tambor.N, s.getOrCreateTag().getInt(GASTADAS) + 1));
+        com.copperslug.shim.Nbt.tag(s).putInt(GASTADAS, Math.min(Tambor.N, com.copperslug.shim.Nbt.tag(s).getInt(GASTADAS) + 1));
         oxidar(p, s);
 
         boolean critico = false;
@@ -418,7 +418,7 @@ public final class Revolver {
 
     private static void oxidar(ServerPlayer p, ItemStack s) {
         if (Tambor.encerado(s) || Tambor.oxido(s) >= 3) return;
-        var t = s.getOrCreateTag();
+        var t = com.copperslug.shim.Nbt.tag(s);
         int u = t.getInt(Tambor.USOS) + 1;
         if (u >= USOS_POR_OXIDO) {
             t.putInt(Tambor.OXIDO, Tambor.oxido(s) + 1);
@@ -432,7 +432,7 @@ public final class Revolver {
     /** Panal: encera (ya no se oxida). */
     public static boolean encerar(ServerPlayer p, ItemStack s, ItemStack panal) {
         if (Tambor.encerado(s)) return false;
-        s.getOrCreateTag().putBoolean(Tambor.ENCERADO, true);
+        com.copperslug.shim.Nbt.tag(s).putBoolean(Tambor.ENCERADO, true);
         if (!p.getAbilities().instabuild) panal.shrink(1);
         ServerLevel l = p.serverLevel();
         l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.HONEYCOMB_WAX_ON, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -446,18 +446,18 @@ public final class Revolver {
         ServerLevel l = p.serverLevel();
         Vec3 b = boca(p);
         if (Tambor.encerado(s)) {
-            s.getOrCreateTag().remove(Tambor.ENCERADO);
+            com.copperslug.shim.Nbt.tag(s).remove(Tambor.ENCERADO);
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.AXE_WAX_OFF, SoundSource.PLAYERS, 1.0F, 1.0F);
             l.sendParticles(ParticleTypes.WAX_OFF, b.x, b.y, b.z, 8, 0.2, 0.2, 0.2, 0.5);
         } else if (Tambor.oxido(s) > 0) {
-            s.getOrCreateTag().putInt(Tambor.OXIDO, Tambor.oxido(s) - 1);
-            s.getOrCreateTag().putInt(Tambor.USOS, 0);
+            com.copperslug.shim.Nbt.tag(s).putInt(Tambor.OXIDO, Tambor.oxido(s) - 1);
+            com.copperslug.shim.Nbt.tag(s).putInt(Tambor.USOS, 0);
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.AXE_SCRAPE, SoundSource.PLAYERS, 1.0F, 1.0F);
             l.sendParticles(ParticleTypes.SCRAPE, b.x, b.y, b.z, 8, 0.2, 0.2, 0.2, 0.5);
         } else {
             return false;
         }
-        if (manoHacha != null) hacha.hurtAndBreak(1, p, x -> x.broadcastBreakEvent(manoHacha));
+        if (manoHacha != null) hacha.hurtAndBreak(1, p, manoHacha);
         else if (hacha.isDamageableItem() && !p.getAbilities().instabuild && hacha.hurt(1, p.getRandom(), p)) hacha.shrink(1);
         return true;
     }
@@ -484,11 +484,11 @@ public final class Revolver {
         }
         Tambor.poner(s, hueco, c);
         if (!p.getAbilities().instabuild) municion.shrink(1);
-        s.getOrCreateTag().putLong(CARGA_T, l.getGameTime());
+        com.copperslug.shim.Nbt.tag(s).putLong(CARGA_T, l.getGameTime());
         // se abre el tambor y caen los casquillos gastados
-        int gastadas = s.getOrCreateTag().getInt(GASTADAS);
+        int gastadas = com.copperslug.shim.Nbt.tag(s).getInt(GASTADAS);
         for (int i = 0; i < gastadas; i++) com.copperslug.armasfuego.comun.ArmaFuegoItem.casquillo(l, p, boca(p).add(0, -0.1, 0));
-        s.getOrCreateTag().remove(GASTADAS);
+        com.copperslug.shim.Nbt.tag(s).remove(GASTADAS);
         l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.REVOLVER_CARGAR.get(), SoundSource.PLAYERS, 0.7F, 0.95F + p.getRandom().nextFloat() * 0.1F);
         return true;
     }
@@ -500,7 +500,7 @@ public final class Revolver {
         if (ahora - Tambor.giroT(s) < Tambor.GIRO_TICKS + 4) return;
         ABANICO.remove(p.getUUID());
         Tambor.ponerPos(s, p.getRandom().nextInt(Tambor.N));
-        var t = s.getOrCreateTag();
+        var t = com.copperslug.shim.Nbt.tag(s);
         t.putBoolean(Tambor.GIRADO, true);
         t.putLong(Tambor.GIRO_T, ahora);
         l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.REVOLVER_RULETA.get(), SoundSource.PLAYERS, 1.0F, 1.0F);

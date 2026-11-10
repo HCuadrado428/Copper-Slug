@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/gatling",
+  "display": {
+    "icon": {
+      "id": "minecraft:magma_block"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.gatling_calor.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.gatling_calor.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gatling_calor": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "gatling_calor"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/encasquillado",
+  "display": {
+    "icon": {
+      "id": "minecraft:iron_nugget"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.atasco.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.atasco.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "armafuego_atasco": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "armafuego_atasco"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 5
+  }
+}

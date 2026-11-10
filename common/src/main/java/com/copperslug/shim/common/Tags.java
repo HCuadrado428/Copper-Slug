@@ -16,7 +16,7 @@ public final class Tags {
     private Tags() {}
 
     private static ResourceLocation rl(String n) {
-        return new ResourceLocation(CopperSlug.MOD_ID, n);
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, n);
     }
 
     public static final class Blocks {

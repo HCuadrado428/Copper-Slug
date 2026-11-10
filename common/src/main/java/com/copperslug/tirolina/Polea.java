@@ -42,11 +42,11 @@ public class Polea extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(A, BlockPos.ZERO);
-        entityData.define(B, BlockPos.ZERO);
-        entityData.define(T, 0F);
-        entityData.define(V, 0F);
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder b) {
+        b.define(A, BlockPos.ZERO);
+        b.define(B, BlockPos.ZERO);
+        b.define(T, 0F);
+        b.define(V, 0F);
     }
 
     public Vec3 a() {

@@ -27,7 +27,7 @@ public final class DeferredRegister<T> {
     }
 
     public <I extends T> RegistryObject<I> register(String nombre, Supplier<? extends I> fabrica) {
-        ResourceLocation id = new ResourceLocation(modid, nombre);
+        ResourceLocation id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(modid, nombre);
         @SuppressWarnings("unchecked")
         Supplier<I> s = (Supplier<I>) (Supplier<?>) Plataforma.get().registrar(clave, id, fabrica);
         return new RegistryObject<>(id, s);

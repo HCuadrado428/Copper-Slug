@@ -20,7 +20,7 @@ import org.joml.Matrix4f;
  * fijo en pantalla, para que se vea en el cielo desde lejos como una bengala de verdad.
  */
 public class BengalaRenderer extends EntityRenderer<BengalaEntity> {
-    private static final ResourceLocation TEX = new ResourceLocation(CopperSlug.MOD_ID, "textures/entity/revolver_bengala.png");
+    private static final ResourceLocation TEX = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "textures/entity/revolver_bengala.png");
 
     public BengalaRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);

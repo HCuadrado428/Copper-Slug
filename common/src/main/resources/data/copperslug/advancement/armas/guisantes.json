@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/gatling",
+  "display": {
+    "icon": {
+      "id": "copperslug:cinta_guisantes"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.guisantes.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.guisantes.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gatling_guisantes": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "gatling_guisantes"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 15
+  }
+}

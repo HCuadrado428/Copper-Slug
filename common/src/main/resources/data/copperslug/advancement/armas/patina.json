@@ -1,0 +1,93 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "id": "minecraft:oxidized_copper"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.patina.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.patina.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "gatling": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "copperslug:gatling"
+          }
+        ]
+      }
+    },
+    "winchester": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "copperslug:winchester"
+          }
+        ]
+      }
+    },
+    "derringer": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "copperslug:derringer"
+          }
+        ]
+      }
+    },
+    "thompson": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "copperslug:thompson"
+          }
+        ]
+      }
+    },
+    "mosquete": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "copperslug:mosquete"
+          }
+        ]
+      }
+    },
+    "canon_mano": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "copperslug:canon_mano"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "gatling",
+      "winchester",
+      "derringer",
+      "thompson",
+      "mosquete",
+      "canon_mano"
+    ]
+  ],
+  "rewards": {
+    "experience": 10
+  }
+}

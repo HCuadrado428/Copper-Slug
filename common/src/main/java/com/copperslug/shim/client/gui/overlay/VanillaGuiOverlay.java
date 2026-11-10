@@ -8,7 +8,7 @@ public enum VanillaGuiOverlay {
     private final ResourceLocation id;
 
     VanillaGuiOverlay(String n) {
-        id = new ResourceLocation("minecraft", n);
+        id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", n);
     }
 
     public ResourceLocation id() {

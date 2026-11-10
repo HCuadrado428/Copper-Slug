@@ -84,8 +84,8 @@ public class GatlingItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag f) {
-        int balas = s.hasTag() ? s.getTag().getInt(BALAS) : 0;
-        float calor = s.hasTag() ? s.getTag().getFloat(CALOR) : 0;
+        int balas = com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getInt(BALAS) : 0;
+        float calor = com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getFloat(CALOR) : 0;
         l.add(Component.translatable("item.copperslug.gatling.balas", balas, EquilibrioArmas.gatlingCinta()).withStyle(ChatFormatting.GOLD));
         l.add(com.copperslug.armasfuego.comun.Cobre.estado(s));
         if (calor > 1) l.add(Component.translatable("item.copperslug.gatling.calor", Math.round(calor)).withStyle(ChatFormatting.RED));

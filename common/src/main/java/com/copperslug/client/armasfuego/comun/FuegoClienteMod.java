@@ -36,7 +36,7 @@ public final class FuegoClienteMod {
     private FuegoClienteMod() {}
 
     private static ResourceLocation rl(String n) {
-        return new ResourceLocation(CopperSlug.MOD_ID, n);
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, n);
     }
 
     private static Level nivel(ClientLevel l, LivingEntity e) {
@@ -82,8 +82,8 @@ public final class FuegoClienteMod {
             // revólver: el tambor abierto un momento al meter cada bala
             ItemProperties.register(ModItems.REVOLVER.get(), rl("abierto"), (s, l, en, seed) -> {
                 Level lv = nivel(l, en);
-                if (lv == null || !s.hasTag()) return 0F;
-                long t = lv.getGameTime() - s.getTag().getLong(com.copperslug.armasfuego.pistola.Revolver.CARGA_T);
+                if (lv == null || !com.copperslug.shim.Nbt.tiene(s)) return 0F;
+                long t = lv.getGameTime() - com.copperslug.shim.Nbt.leer(s).getLong(com.copperslug.armasfuego.pistola.Revolver.CARGA_T);
                 return t >= 0 && t < 12 ? 1F : 0F;
             });
         });

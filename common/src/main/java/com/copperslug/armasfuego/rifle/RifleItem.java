@@ -99,7 +99,7 @@ public class RifleItem extends Item {
     @Override
     public boolean overrideOtherStackedOnMe(ItemStack s, ItemStack otro, Slot slot, ClickAction accion, Player p, SlotAccess acceso) {
         if (accion != ClickAction.SECONDARY || otro.isEmpty()) return false;
-        var t = s.getOrCreateTag();
+        var t = com.copperslug.shim.Nbt.tag(s);
         if (otro.is(Items.HONEYCOMB)) {
             if (Rifle.encerado(s)) return false;
             t.putBoolean(Rifle.ENCERADO, true);

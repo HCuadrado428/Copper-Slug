@@ -30,7 +30,7 @@ public final class Presion {
     public static final float ZONA_AMARILLA = 0.5F, ZONA_ROJA = 0.8F;
 
     private static CompoundTag tag(ItemStack s) {
-        return s.getTag();
+        return com.copperslug.shim.Nbt.leer(s);
     }
 
     public static float presion(ItemStack s) {
@@ -39,7 +39,7 @@ public final class Presion {
     }
 
     public static void ponerPresion(ItemStack s, float p) {
-        s.getOrCreateTag().putFloat(PRESION, Math.max(0, p));
+        com.copperslug.shim.Nbt.tag(s).putFloat(PRESION, Math.max(0, p));
     }
 
     public static float tope(ItemStack s) {
@@ -53,11 +53,11 @@ public final class Presion {
 
     public static int nivel(ItemStack s, Encantamiento e) {
         return switch (e) {
-            case COMPRESOR -> EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ESCOPETA_COMPRESOR.get(), s);
-            case VALVULA -> EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ESCOPETA_VALVULA.get(), s);
-            case DOBLE_CAMARA -> EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ESCOPETA_DOBLE_CAMARA.get(), s);
-            case FUELLE -> EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ESCOPETA_FUELLE.get(), s);
-            case RECICLAJE -> EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.ESCOPETA_RECICLAJE.get(), s);
+            case COMPRESOR -> com.copperslug.shim.Enc.nivel(ModEnchantments.ESCOPETA_COMPRESOR, s);
+            case VALVULA -> com.copperslug.shim.Enc.nivel(ModEnchantments.ESCOPETA_VALVULA, s);
+            case DOBLE_CAMARA -> com.copperslug.shim.Enc.nivel(ModEnchantments.ESCOPETA_DOBLE_CAMARA, s);
+            case FUELLE -> com.copperslug.shim.Enc.nivel(ModEnchantments.ESCOPETA_FUELLE, s);
+            case RECICLAJE -> com.copperslug.shim.Enc.nivel(ModEnchantments.ESCOPETA_RECICLAJE, s);
         };
     }
 
@@ -90,7 +90,7 @@ public final class Presion {
     }
 
     public static void ponerTolva(ItemStack s, TipoCartucho tipo, int n) {
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         if (tipo == null || n <= 0) {
             t.remove(TOLVA);
             t.remove(TOLVA_N);
@@ -109,7 +109,7 @@ public final class Presion {
     }
 
     public static void ponerOxido(ItemStack s, int o) {
-        s.getOrCreateTag().putInt(OXIDO, Math.max(0, Math.min(3, o)));
+        com.copperslug.shim.Nbt.tag(s).putInt(OXIDO, Math.max(0, Math.min(3, o)));
     }
 
     public static boolean encerada(ItemStack s) {

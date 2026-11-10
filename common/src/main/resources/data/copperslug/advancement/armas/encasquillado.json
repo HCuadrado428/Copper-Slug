@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/sedante",
+  "display": {
+    "icon": {
+      "id": "copperslug:revolver"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.encasquillado.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.encasquillado.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "revolver_encasquillado": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "revolver_encasquillado"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 5
+  }
+}

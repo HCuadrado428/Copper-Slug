@@ -92,15 +92,15 @@ public class GatlingEntity extends Entity {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(GIRANDO, false);
-        entityData.define(CALOR, 0F);
-        entityData.define(BALAS, 0);
-        entityData.define(ATASCO, 0);
-        entityData.define(RECARGA, 0);
-        entityData.define(OXIDO, 0);
-        entityData.define(APUNTA_Y, 0F);
-        entityData.define(APUNTA_X, 0F);
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder b) {
+        b.define(GIRANDO, false);
+        b.define(CALOR, 0F);
+        b.define(BALAS, 0);
+        b.define(ATASCO, 0);
+        b.define(RECARGA, 0);
+        b.define(OXIDO, 0);
+        b.define(APUNTA_Y, 0F);
+        b.define(APUNTA_X, 0F);
     }
 
     public boolean girando() { return entityData.get(GIRANDO); }
@@ -171,7 +171,7 @@ public class GatlingEntity extends Entity {
     /** Pone el arma (el objeto) que se ha plantado: guarda su desgaste, nombre y estado. */
     public void desde(ItemStack s) {
         arma = s.copyWithCount(1);
-        CompoundTag t = s.getTag();
+        CompoundTag t = com.copperslug.shim.Nbt.leer(s);
         if (t != null) {
             entityData.set(CALOR, t.getFloat(GatlingItem.CALOR));
             entityData.set(BALAS, t.getInt(GatlingItem.BALAS));
@@ -183,9 +183,9 @@ public class GatlingEntity extends Entity {
     /** El objeto con el estado de ahora (para recogerla). */
     public ItemStack comoObjeto() {
         ItemStack s = arma.isEmpty() ? new ItemStack(ModItems.GATLING.get()) : arma.copy();
-        s.getOrCreateTag().putFloat(GatlingItem.CALOR, calor());
-        s.getOrCreateTag().putInt(GatlingItem.BALAS, balas());
-        s.getOrCreateTag().putString(GatlingItem.CINTA, cinta);
+        com.copperslug.shim.Nbt.tag(s).putFloat(GatlingItem.CALOR, calor());
+        com.copperslug.shim.Nbt.tag(s).putInt(GatlingItem.BALAS, balas());
+        com.copperslug.shim.Nbt.tag(s).putString(GatlingItem.CINTA, cinta);
         return s;
     }
 

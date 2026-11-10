@@ -44,7 +44,7 @@ public final class Balistica {
     public static final ResourceKey<DamageType> PERFORANTE = clave("armafuego_perforante");
 
     public static ResourceKey<DamageType> clave(String n) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CopperSlug.MOD_ID, n));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, n));
     }
 
     public static DamageSource fuente(Entity v, ResourceKey<DamageType> tipo, @Nullable Entity directo, @Nullable Entity tirador) {

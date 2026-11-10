@@ -34,7 +34,7 @@ import com.copperslug.shim.fml.event.lifecycle.FMLClientSetupEvent;
 public final class EscopetaCliente {
     private EscopetaCliente() {}
 
-    private static final ResourceLocation MANOMETRO = new ResourceLocation(CopperSlug.MOD_ID, "textures/gui/escopeta_manometro.png");
+    private static final ResourceLocation MANOMETRO = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "textures/gui/escopeta_manometro.png");
     private static float agujaVista;
     private static long ultimoDisparo = -100;
 
@@ -47,11 +47,11 @@ public final class EscopetaCliente {
         public static void setup(FMLClientSetupEvent e) {
             e.enqueueWork(() -> {
                 var item = com.copperslug.registry.ModItems.ESCOPETA_PRESION.get();
-                ItemProperties.register(item, new ResourceLocation(CopperSlug.MOD_ID, "escopeta_aguja"),
+                ItemProperties.register(item, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "escopeta_aguja"),
                         (s, l, ent, seed) -> Presion.agujaModelo(s) / 4F);
-                ItemProperties.register(item, new ResourceLocation(CopperSlug.MOD_ID, "escopeta_oxido"),
+                ItemProperties.register(item, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "escopeta_oxido"),
                         (s, l, ent, seed) -> Presion.oxido(s) / 3F);
-                ItemProperties.register(item, new ResourceLocation(CopperSlug.MOD_ID, "escopeta_reventada"),
+                ItemProperties.register(item, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "escopeta_reventada"),
                         (s, l, ent, seed) -> Presion.reventada(s, nivel(l, ent)) > 0 ? 1F : 0F);
             });
         }

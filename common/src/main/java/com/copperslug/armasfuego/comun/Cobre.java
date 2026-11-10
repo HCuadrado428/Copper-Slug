@@ -31,15 +31,15 @@ public final class Cobre {
     public static final double[] DISPERSION = {0, 0.006, 0.014, 0.026};
 
     public static int oxido(ItemStack s) {
-        return s.hasTag() ? Mth.clamp(s.getTag().getInt(OXIDO), 0, 3) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? Mth.clamp(com.copperslug.shim.Nbt.leer(s).getInt(OXIDO), 0, 3) : 0;
     }
 
     public static void ponerOxido(ItemStack s, int o) {
-        s.getOrCreateTag().putInt(OXIDO, Mth.clamp(o, 0, 3));
+        com.copperslug.shim.Nbt.tag(s).putInt(OXIDO, Mth.clamp(o, 0, 3));
     }
 
     public static boolean encerado(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean(ENCERADO);
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(ENCERADO);
     }
 
     /**
@@ -48,7 +48,7 @@ public final class Cobre {
      */
     public static boolean desgastar(ItemStack s, int cada, boolean mojado) {
         if (encerado(s) || oxido(s) >= 3) return false;
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         int u = t.getInt(USOS) + (mojado ? 3 : 1);
         if (u >= cada) {
             t.putInt(OXIDO, oxido(s) + 1);
@@ -75,7 +75,7 @@ public final class Cobre {
     /** Panal: encera. Devuelve si ha hecho algo. Los sonidos y chispas, en {@code donde} (null = sin partículas). */
     public static boolean encerar(Player p, ItemStack s, ItemStack panal, Vec3 donde) {
         if (encerado(s)) return false;
-        s.getOrCreateTag().putBoolean(ENCERADO, true);
+        com.copperslug.shim.Nbt.tag(s).putBoolean(ENCERADO, true);
         if (!p.getAbilities().instabuild) panal.shrink(1);
         efecto(p, donde, true);
         return true;
@@ -84,12 +84,12 @@ public final class Cobre {
     /** Hacha: quita la cera o, si no tiene, un paso de óxido (como los bloques de cobre). */
     public static boolean rascar(Player p, ItemStack s, ItemStack hacha, Vec3 donde) {
         if (encerado(s)) {
-            s.getOrCreateTag().remove(ENCERADO);
+            com.copperslug.shim.Nbt.tag(s).remove(ENCERADO);
             sonido(p, donde, SoundEvents.AXE_WAX_OFF);
             if (donde != null && p.level() instanceof ServerLevel l) l.sendParticles(ParticleTypes.WAX_OFF, donde.x, donde.y, donde.z, 8, 0.2, 0.2, 0.2, 0.5);
         } else if (oxido(s) > 0) {
-            s.getOrCreateTag().putInt(OXIDO, oxido(s) - 1);
-            s.getOrCreateTag().putInt(USOS, 0);
+            com.copperslug.shim.Nbt.tag(s).putInt(OXIDO, oxido(s) - 1);
+            com.copperslug.shim.Nbt.tag(s).putInt(USOS, 0);
             sonido(p, donde, SoundEvents.AXE_SCRAPE);
             if (donde != null && p.level() instanceof ServerLevel l) l.sendParticles(ParticleTypes.SCRAPE, donde.x, donde.y, donde.z, 8, 0.2, 0.2, 0.2, 0.5);
         } else return false;

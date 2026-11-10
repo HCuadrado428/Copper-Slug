@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cuerda",
+  "display": {
+    "icon": {
+      "id": "copperslug:rifle"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.francotirador.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.francotirador.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "rifle_francotirador": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "rifle_francotirador"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 30
+  }
+}
