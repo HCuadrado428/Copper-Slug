@@ -3,8 +3,21 @@
   "minVersion": "0.8",
   "package": "com.copperslug.fabric.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [],
-  "client": [],
+  "mixins": [
+    "EnchantmentHelperMixin",
+    "EnchantmentMixin",
+    "ItemEntityMixin",
+    "ItemMixin",
+    "LivingEntityMixin"
+  ],
+  "client": [
+    "CameraAccessor",
+    "GameRendererMixin",
+    "HumanoidModelMixin",
+    "ItemInHandRendererMixin",
+    "MinecraftMixin",
+    "PlayerRendererMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

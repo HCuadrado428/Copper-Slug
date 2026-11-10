@@ -340,7 +340,7 @@ public final class DisparoPresion {
                     sl.playSound(null, pos, SoundEvents.FLINTANDSTEEL_USE, SoundSource.BLOCKS, 0.8F, 1.2F);
                     sl.gameEvent(p, GameEvent.BLOCK_CHANGE, pos);
                 } else if (st.getBlock() instanceof TntBlock) {
-                    st.onCaughtFire(sl, pos, bh.getDirection(), p);
+                    TntBlock.explode(sl, pos);   // Copper Slug: onCaughtFire es de Forge
                     sl.removeBlock(pos, false);
                 }
             }

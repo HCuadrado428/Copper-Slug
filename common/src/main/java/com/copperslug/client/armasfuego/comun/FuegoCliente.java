@@ -358,10 +358,9 @@ public final class FuegoCliente {
 
     // ------------------------------------------------------------------ Derringer: la manga
 
-    /** La tecla de la manga (Opciones → Controles → Miscelánea; K por defecto). */
+    /** La tecla de la manga (Opciones → Controles → Copper Slug; K por defecto). */
     public static final net.minecraft.client.KeyMapping MANGA = new net.minecraft.client.KeyMapping("key.copperslug.derringer_manga",
-            com.copperslug.shim.client.settings.KeyConflictContext.IN_GAME, com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM,
-            org.lwjgl.glfw.GLFW.GLFW_KEY_K, com.copperslug.client.combate.LlaveCliente.CATEGORIA);
+            com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, org.lwjgl.glfw.GLFW.GLFW_KEY_K, "key.categories.copperslug");
 
     private static void mangaTick(Minecraft mc, LocalPlayer p) {
         while (MANGA.consumeClick()) if (p != null && mc.screen == null) sacarDeLaManga();

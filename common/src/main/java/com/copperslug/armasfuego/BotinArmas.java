@@ -1,28 +1,17 @@
 package com.copperslug.armasfuego;
 
-import com.google.common.base.Suppliers;
 import com.copperslug.ConfigServidor;
 import com.copperslug.CopperSlug;
 import com.copperslug.registry.ModItems;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
-import com.copperslug.shim.common.loot.IGlobalLootModifier;
-import com.copperslug.shim.common.loot.LootModifier;
-import com.copperslug.shim.eventbus.api.IEventBus;
-import com.copperslug.shim.registries.DeferredRegister;
 import com.copperslug.shim.registries.ForgeRegistries;
-import com.copperslug.shim.registries.RegistryObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Supplier;
 
 /**
  * Las armas de fuego no se fabrican: se encuentran explorando. Un Global Loot Modifier (data/copperslug/loot_modifiers/
@@ -35,22 +24,10 @@ import java.util.function.Supplier;
  * </ul>
  * Salen con algo de munición, a veces algo oxidadas y a veces con uno de sus encantamientos propios.
  */
-public class BotinArmas extends LootModifier {
-    public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> SERIALIZERS =
-            DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, CopperSlug.MOD_ID);
-
-    public static final Supplier<Codec<BotinArmas>> CODEC = Suppliers.memoize(
-            () -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, BotinArmas::new)));
-
-    public static final RegistryObject<Codec<BotinArmas>> TIPO = SERIALIZERS.register("armas_fuego", CODEC);
-
-    public static void registrar(IEventBus bus) {
-        SERIALIZERS.register(bus);
-    }
-
-    public BotinArmas(LootItemCondition[] condiciones) {
-        super(condiciones);
-    }
+public class BotinArmas {
+    // Copper Slug: el modificador de botín es de cada cargador (Forge: Global Loot Modifier en el módulo forge;
+    // Fabric: LootTableEvents); aquí queda lo común: qué arma sale dónde, con qué probabilidad y con qué.
+    public static void registrar(com.copperslug.shim.eventbus.api.IEventBus bus) {}
 
     public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON}
 
@@ -103,12 +80,11 @@ public class BotinArmas extends LootModifier {
         return 0;
     }
 
-    @Override
-    protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> botin, LootContext ctx) {
-        ResourceLocation id = ctx.getQueriedLootTableId();
+    /** Lo que se añade al abrir un cofre de la tabla {@code id} (casi siempre nada). */
+    public static List<ItemStack> aplicar(ResourceLocation id, RandomSource r) {
+        ObjectArrayList<ItemStack> botin = new ObjectArrayList<>();
         Arma a = arma(id);
         if (a == null) return botin;
-        RandomSource r = ctx.getRandom();
         if (r.nextDouble() >= probabilidad(id)) return botin;
         botin.addAll(generar(a, r));
         return botin;
@@ -201,10 +177,5 @@ public class BotinArmas extends LootModifier {
                 arma.enchant(e, 1 + r.nextInt(e.getMaxLevel()));
             }
         }
-    }
-
-    @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
-        return CODEC.get();
     }
 }
