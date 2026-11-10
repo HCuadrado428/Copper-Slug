@@ -15,6 +15,7 @@
     "GameRendererMixin",
     "HumanoidModelMixin",
     "ItemInHandRendererMixin",
+    "ItemRendererMixin",
     "MinecraftMixin",
     "PlayerRendererMixin"
   ],

@@ -47,6 +47,7 @@ public class ClienteFabric implements ClientModInitializer {
         List<ResourceLocation> modelos = new ArrayList<>();
         Bus.post(new com.copperslug.shim.client.event.ModelEvent.RegisterAdditional(modelos::add));
         ModelLoadingPlugin.register(ctx -> ctx.addModels(modelos));
+        ModelosSeparados.registrar();
         Bus.post(new com.copperslug.shim.client.event.RegisterColorHandlersEvent.Item((c, items) -> ColorProviderRegistry.ITEM.register(c, items)));
         Bus.post(new com.copperslug.shim.fml.event.lifecycle.FMLClientSetupEvent());
 

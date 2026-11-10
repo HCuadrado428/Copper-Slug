@@ -51,6 +51,10 @@ ITEMS_EXTRA = {'REVOLVER_BALA', 'REVOLVER_BENGALA', 'REVOLVER_DARDO', 'REVOLVER_
 ENCANT_EXTRA = {'REVOLVER', 'RIFLE', 'ESCOPETA_PRESION', 'GATLING', 'WINCHESTER', 'DERRINGER', 'THOMPSON', 'MOSQUETE', 'CANON'}
 
 
+JEI_INFO = ['revolver_botin', 'escopeta_botin', 'rifle_botin', 'gatling_botin', 'winchester_botin', 'derringer_botin', 'thompson_botin',
+            'mosquete_botin', 'canon_botin', 'gatling_utilidad', 'winchester_deposito', 'derringer_manga', 'estuche_violin',
+            'mosquete_bayoneta', 'canon_bloques']
+
 FORGE_SIN_OVERRIDE = ['shouldCauseReequipAnimation', 'shouldCauseBlockBreakReset', 'canContinueUsing', 'onEntitySwing',
                       'shouldRiderSit', 'getAttributeModifiers', 'canApplyAtEnchantingTable', 'isBookEnchantable',
                       'onLeftClickEntity', 'getAddEntityPacket_no']
@@ -403,6 +407,8 @@ def main(src, dst):
     texto_portado_orig = todo_java + ''.join(open(os.path.join(d_src, t), encoding='utf-8').read() for t in datos)
     prefijos = set(re.findall(r'"((?:[a-z_]+\.)+miscelanea\.[a-z0-9_.]*)"', texto_portado_orig))
     prefijos |= set(re.findall(r'"(miscelanea\.[a-z0-9_.]+)"', texto_portado_orig))
+    # las páginas de JEI de las armas (el plugin se escribe aparte: compat/jei/CopperSlugJei.java)
+    prefijos |= {'jei.miscelanea.info.' + x for x in JEI_INFO}
     for idioma in ['es_es', 'en_us']:
         lj = json.load(open(os.path.join(a_src, 'lang', idioma + '.json'), encoding='utf-8'))
         out = {}

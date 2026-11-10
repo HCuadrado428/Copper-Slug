@@ -93,6 +93,11 @@ public class PlataformaFabric implements Plataforma {
     }
 
     @Override
+    public ServerPlayer jugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil) {
+        return net.fabricmc.fabric.api.entity.FakePlayer.get(l, perfil);
+    }
+
+    @Override
     public <T> void paqueteAlServidor(ResourceLocation id, Class<T> clase, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer,
                                       BiConsumer<T, ServerPlayer> manejar) {
         DEFS.put(clase, new Def<>(id, escribir, leer, null));

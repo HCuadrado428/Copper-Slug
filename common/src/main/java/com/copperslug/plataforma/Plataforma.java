@@ -61,6 +61,9 @@ public interface Plataforma {
 
     boolean esJugadorFalso(ServerPlayer p);
 
+    /** Un jugador de mentira (para la prueba del CI: el duelo). */
+    ServerPlayer jugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil);
+
     // ---------------------------------------------------------------- red
     /** Un canal por paquete; id: copperslug:<nombre>. */
     <T> void paqueteAlServidor(ResourceLocation id, Class<T> clase, java.util.function.BiConsumer<T, FriendlyByteBuf> escribir,

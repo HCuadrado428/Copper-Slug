@@ -23,6 +23,7 @@ public final class ClienteInicio {
                 throw new RuntimeException(e);
             }
         }
+        if (com.copperslug.client.prueba.PruebaCI.ACTIVA) Bus.suscribir(com.copperslug.client.prueba.PruebaCI.class);
         Bus.post(new RegisterGuiOverlaysEvent());
     }
 
