@@ -21,6 +21,18 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
+      - name: Texturas de 16x16
+        run: |
+          # objetos y bloques: 16x16 (las animadas, 16x(16·n)); 1 píxel = 1/16 de bloque
+          python3 - <<'PY'
+          import struct, glob, sys
+          mal = []
+          for p in glob.glob('common/src/main/resources/assets/*/textures/item/**/*.png', recursive=True) + glob.glob('common/src/main/resources/assets/*/textures/block/**/*.png', recursive=True):
+              w, h = struct.unpack('>II', open(p, 'rb').read(24)[16:24])
+              if w != 16 or h % 16: mal.append(f'{p} {w}x{h}')
+          print('\n'.join(mal) or 'todas de 16x16')
+          sys.exit(1 if mal else 0)
+          PY
       - name: Compilar
         run: |
           chmod +x gradlew
@@ -31,9 +43,10 @@ jobs:
       - name: Recoger los jars
         run: |
           mkdir -p jars
-          for d in */build/libs; do
-            for j in "$d"/*.jar; do
-              case "$j" in *-sources.jar|*-javadoc.jar|*-dev*.jar|*/common/*) ;; *) cp "$j" jars/ ;; esac
+          for d in forge neoforge fabric; do
+            for j in $d/build/libs/*.jar; do
+              [ -f "$j" ] || continue
+              case "$j" in *-sources.jar|*-javadoc.jar|*-dev*.jar) ;; *) cp "$j" jars/ ;; esac
             done
           done
           ls -la jars

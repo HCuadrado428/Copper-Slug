@@ -324,12 +324,14 @@ def main(src, dst):
     for lit in literales:
         for t in todos:
             sin = t.rsplit('.', 1)[0]
-            candidatos = [sin, sin.split('/', 1)[1] if '/' in sin else sin]
+            candidatos = [sin, sin.split('/', 1)[1] if '/' in sin else sin, t]
             if any(c == lit or (lit.endswith('_') and c.startswith(lit) and len(lit) > 6) for c in candidatos):
                 if t.startswith('models/'):
                     modelo(sin[len('models/'):])
                 elif t.startswith('textures/'):
                     copiar.add(t)
+                    if os.path.exists(os.path.join(a_src, t + '.mcmeta')):
+                        copiar.add(t + '.mcmeta')
     for i in ids_ent:
         for t in todos:
             if t.startswith('textures/entity/') and os.path.basename(t).startswith(i):
