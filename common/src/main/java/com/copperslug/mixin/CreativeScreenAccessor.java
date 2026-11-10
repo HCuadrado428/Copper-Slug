@@ -3,6 +3,7 @@ package com.copperslug.mixin;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.world.item.CreativeModeTab;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 /** Para la prueba del CI: abrir el inventario creativo en la pestaña de Copper Slug. */
@@ -10,4 +11,9 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface CreativeScreenAccessor {
     @Invoker("selectTab")
     void copperslug$elegir(CreativeModeTab tab);
+
+    @Accessor("selectedTab")
+    static CreativeModeTab copperslug$elegida() {
+        throw new AssertionError();
+    }
 }

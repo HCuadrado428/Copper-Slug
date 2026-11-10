@@ -110,7 +110,23 @@ public final class PruebaCI {
             var pantalla = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,
                     mc.player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
             mc.setScreen(pantalla);
+            // Fabric reparte las pestañas en páginas y no deja elegir una de otra página: se pasa de página
+            // (fabric_nextPage, de su mixin) hasta que la nuestra queda elegida; en Forge sale a la primera
             ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
+            int pag = 1;
+            try {
+                var siguiente = pantalla.getClass().getMethod("fabric_nextPage");
+                while (com.copperslug.mixin.CreativeScreenAccessor.copperslug$elegida() != tab && pag < 10) {
+                    siguiente.invoke(pantalla);
+                    pag++;
+                    ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
+                }
+            } catch (NoSuchMethodException ignorado) {
+                // sin páginas (Forge)
+            } catch (Exception ex) {
+                RESUMEN.add("  pestaña del creativo: no se ha podido pasar de página (" + ex + ")");
+            }
+            RESUMEN.add("  pestaña del creativo: " + (com.copperslug.mixin.CreativeScreenAccessor.copperslug$elegida() == tab ? "elegida, en la página " + pag : "NO ELEGIDA"));
         });
         sin("inventario_poner", 10, () -> {
             mc.setScreen(null);
@@ -126,26 +142,48 @@ public final class PruebaCI {
                         com.copperslug.registry.ModItems.THOMPSON, com.copperslug.registry.ModItems.MOSQUETE, com.copperslug.registry.ModItems.CANON_MANO);
                 for (int i = 0; i < armas.size(); i++) sp.getInventory().setItem(i, new ItemStack(armas.get(i).get()));
                 // el resto: lo mismo que la pestaña del creativo (munición, libros...), sin repetir las armas
-                List<ItemStack> todo = new ArrayList<>();
-                CopperSlug.Pestana.llenar(todo::add);
                 int k = 9;
-                for (ItemStack st : todo) {
-                    if (k >= 36) break;
-                    if (armas.stream().anyMatch(a -> a.get() == st.getItem()) || st.is(net.minecraft.world.item.Items.ENCHANTED_BOOK)) continue;
-                    sp.getInventory().setItem(k++, st.copyWithCount(st.getMaxStackSize()));
+                try {
+                    List<ItemStack> todo = new ArrayList<>();
+                    CopperSlug.Pestana.llenar(todo::add);
+                    for (ItemStack st : todo) {
+                        if (k >= 36) break;
+                        if (st.is(net.minecraft.world.item.Items.ENCHANTED_BOOK) || armas.stream().anyMatch(x -> x.get() == st.getItem())) continue;
+                        ItemStack c = st.copy();
+                        c.setCount(Math.max(1, Math.min(c.getMaxStackSize(), 16)));
+                        sp.getInventory().setItem(k++, c);
+                    }
+                } catch (Throwable t) {
+                    PI.put("inv_error", t.toString());
+                    CopperSlug.LOG.warn("[PruebaCI] inventario", t);
                 }
+                PI.put("inv_cosas", k - 9);
                 sp.getInventory().selected = 0;
             });
         });
         paso("02_inventario_armas", 30, () -> {
             mc.getToasts().clear();
             mc.gui.getChat().clearMessages(false);
+            // lo que tiene el jugador en el servidor, también en el cliente (la captura no espera a la sincronización)
+            var sp = mc.getSingleplayerServer().getPlayerList().getPlayer(mc.player.getUUID());
+            int llenos = 0;
+            if (sp != null) for (int i = 0; i < 36; i++) {
+                ItemStack x = sp.getInventory().getItem(i);
+                if (!x.isEmpty()) llenos++;
+                mc.player.getInventory().setItem(i, x.copy());
+            }
             mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+            RESUMEN.add("  inventario: 9 armas y " + PI.get("inv_cosas") + " cosas más (" + llenos + " huecos llenos al sacar la captura)"
+                    + (PI.get("inv_error") != null ? " · error " + PI.get("inv_error") : ""));
         });
         sin("inventario_fin", 5, () -> {
             mc.setScreen(null);
             var srv = mc.getSingleplayerServer();
-            srv.execute(() -> srv.getPlayerList().getPlayers().forEach(p -> p.setGameMode(GameType.CREATIVE)));
+            // la munición de la captura fuera: las pruebas de después cuentan con el inventario vacío
+            srv.execute(() -> srv.getPlayerList().getPlayers().forEach(p -> {
+                for (int i = 9; i < 36; i++) p.getInventory().setItem(i, ItemStack.EMPTY);
+                p.setGameMode(GameType.CREATIVE);
+            }));
         });
     }
 
