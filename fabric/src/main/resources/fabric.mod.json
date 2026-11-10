@@ -10,6 +10,7 @@
   "entrypoints": {
     "main": ["com.copperslug.fabric.CopperSlugFabric"]
   },
+  "accessWidener": "copperslug.accesswidener",
   "mixins": ["copperslug.mixins.json", "copperslug.fabric.mixins.json"],
   "depends": {
     "fabricloader": ">=0.14.21",

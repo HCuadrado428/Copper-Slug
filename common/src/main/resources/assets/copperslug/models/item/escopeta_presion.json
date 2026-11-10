@@ -1,0 +1,203 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/escopeta_presion_0"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/escopeta_3d",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_0",
+   "esfera": "copperslug:item/armas3d/esfera_0"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/escopeta_presion_0"
+   }
+  }
+ },
+ "overrides": [
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.0,
+    "copperslug:escopeta_aguja": 0.25
+   },
+   "model": "copperslug:item/escopeta_presion_1"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.0,
+    "copperslug:escopeta_aguja": 0.5
+   },
+   "model": "copperslug:item/escopeta_presion_2"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.0,
+    "copperslug:escopeta_aguja": 0.75
+   },
+   "model": "copperslug:item/escopeta_presion_3"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.0,
+    "copperslug:escopeta_aguja": 1.0
+   },
+   "model": "copperslug:item/escopeta_presion_4"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.0,
+    "copperslug:escopeta_reventada": 1
+   },
+   "model": "copperslug:item/escopeta_presion_reventada"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_0"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333,
+    "copperslug:escopeta_aguja": 0.0
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_0"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333,
+    "copperslug:escopeta_aguja": 0.25
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_1"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333,
+    "copperslug:escopeta_aguja": 0.5
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_2"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333,
+    "copperslug:escopeta_aguja": 0.75
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_3"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333,
+    "copperslug:escopeta_aguja": 1.0
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_4"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.333,
+    "copperslug:escopeta_reventada": 1
+   },
+   "model": "copperslug:item/escopeta_presion_expuesta_reventada"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_0"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667,
+    "copperslug:escopeta_aguja": 0.0
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_0"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667,
+    "copperslug:escopeta_aguja": 0.25
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_1"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667,
+    "copperslug:escopeta_aguja": 0.5
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_2"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667,
+    "copperslug:escopeta_aguja": 0.75
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_3"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667,
+    "copperslug:escopeta_aguja": 1.0
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_4"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 0.667,
+    "copperslug:escopeta_reventada": 1
+   },
+   "model": "copperslug:item/escopeta_presion_erosionada_reventada"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_0"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0,
+    "copperslug:escopeta_aguja": 0.0
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_0"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0,
+    "copperslug:escopeta_aguja": 0.25
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_1"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0,
+    "copperslug:escopeta_aguja": 0.5
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_2"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0,
+    "copperslug:escopeta_aguja": 0.75
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_3"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0,
+    "copperslug:escopeta_aguja": 1.0
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_4"
+  },
+  {
+   "predicate": {
+    "copperslug:escopeta_oxido": 1.0,
+    "copperslug:escopeta_reventada": 1
+   },
+   "model": "copperslug:item/escopeta_presion_oxidada_reventada"
+  }
+ ]
+}

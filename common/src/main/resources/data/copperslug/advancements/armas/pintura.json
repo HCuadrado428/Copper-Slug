@@ -1,0 +1,30 @@
+{
+  "parent": "copperslug:armas/cuerda",
+  "display": {
+    "icon": {
+      "item": "copperslug:bala_pintura",
+      "nbt": "{Color:11}"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.pintura.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.pintura.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "rifle_pintura": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "rifle_pintura"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

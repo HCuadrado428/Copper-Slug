@@ -1,0 +1,843 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/mosquete"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/mosquete_3d_sin",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_0",
+   "bayoneta": "copperslug:item/armas3d/g_acero"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/mosquete"
+   }
+  }
+ },
+ "overrides": [
+  {
+   "predicate": {
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_bay1"
+  },
+  {
+   "predicate": {
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_bay2"
+  },
+  {
+   "predicate": {
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_bay3"
+  },
+  {
+   "predicate": {
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_bay4"
+  },
+  {
+   "predicate": {
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_bay5"
+  },
+  {
+   "predicate": {
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_bay6"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233
+   },
+   "model": "copperslug:item/mosquete_1_sin"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_1_bay1"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_1_bay2"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_1_bay3"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_1_bay4"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_1_bay5"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_1_bay6"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567
+   },
+   "model": "copperslug:item/mosquete_2_sin"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_2_bay1"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_2_bay2"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_2_bay3"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_2_bay4"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_2_bay5"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_2_bay6"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99
+   },
+   "model": "copperslug:item/mosquete_3_sin"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_3_bay1"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_3_bay2"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_3_bay3"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_3_bay4"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_3_bay5"
+  },
+  {
+   "predicate": {
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_3_bay6"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/mosquete_sin_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_bay1_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_bay2_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_bay3_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_bay4_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_bay5_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_bay6_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233
+   },
+   "model": "copperslug:item/mosquete_1_sin_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_1_bay1_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_1_bay2_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_1_bay3_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_1_bay4_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_1_bay5_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_1_bay6_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567
+   },
+   "model": "copperslug:item/mosquete_2_sin_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_2_bay1_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_2_bay2_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_2_bay3_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_2_bay4_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_2_bay5_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_2_bay6_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99
+   },
+   "model": "copperslug:item/mosquete_3_sin_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_3_bay1_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_3_bay2_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_3_bay3_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_3_bay4_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_3_bay5_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_3_bay6_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/mosquete_sin_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_bay1_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_bay2_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_bay3_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_bay4_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_bay5_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_bay6_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233
+   },
+   "model": "copperslug:item/mosquete_1_sin_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_1_bay1_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_1_bay2_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_1_bay3_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_1_bay4_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_1_bay5_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_1_bay6_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567
+   },
+   "model": "copperslug:item/mosquete_2_sin_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_2_bay1_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_2_bay2_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_2_bay3_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_2_bay4_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_2_bay5_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_2_bay6_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99
+   },
+   "model": "copperslug:item/mosquete_3_sin_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_3_bay1_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_3_bay2_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_3_bay3_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_3_bay4_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_3_bay5_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_3_bay6_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/mosquete_sin_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_bay1_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_bay2_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_bay3_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_bay4_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_bay5_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_bay6_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233
+   },
+   "model": "copperslug:item/mosquete_1_sin_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_1_bay1_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_1_bay2_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_1_bay3_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_1_bay4_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_1_bay5_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.3233,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_1_bay6_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567
+   },
+   "model": "copperslug:item/mosquete_2_sin_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_2_bay1_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_2_bay2_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_2_bay3_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_2_bay4_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_2_bay5_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.6567,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_2_bay6_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99
+   },
+   "model": "copperslug:item/mosquete_3_sin_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.09
+   },
+   "model": "copperslug:item/mosquete_3_bay1_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.19
+   },
+   "model": "copperslug:item/mosquete_3_bay2_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.29
+   },
+   "model": "copperslug:item/mosquete_3_bay3_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.39
+   },
+   "model": "copperslug:item/mosquete_3_bay4_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.49
+   },
+   "model": "copperslug:item/mosquete_3_bay5_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:baqueta": 0.99,
+    "copperslug:bayoneta": 0.59
+   },
+   "model": "copperslug:item/mosquete_3_bay6_ox3"
+  }
+ ]
+}

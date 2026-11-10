@@ -5,9 +5,8 @@ plugins {
 
 legacyForge {
     mcpVersion = minecraft_version
-    if (file("src/main/resources/META-INF/accesstransformer.cfg").exists()) {
-        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
-    }
+    // solo para compilar contra vanilla lo que Forge ya abre en su AT (no va en ningún jar)
+    accessTransformers = ["accesstransformer.cfg"]
     parchment {
         minecraftVersion = parchment_minecraft
         mappingsVersion = parchment_version

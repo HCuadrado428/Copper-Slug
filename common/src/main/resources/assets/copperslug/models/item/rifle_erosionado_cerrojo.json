@@ -1,0 +1,21 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/rifle_erosionado_cerrojo"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/rifle_3d_cerrojo",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_2"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/rifle_erosionado_cerrojo"
+   }
+  }
+ }
+}

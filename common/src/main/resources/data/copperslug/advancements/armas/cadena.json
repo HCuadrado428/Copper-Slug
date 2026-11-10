@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/mosquete",
+  "display": {
+    "icon": {
+      "item": "copperslug:bola_cadena"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.cadena.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.cadena.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "mosquete_cadena": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "mosquete_cadena"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 15
+  }
+}

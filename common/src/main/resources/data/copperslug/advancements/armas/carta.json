@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/derringer",
+  "display": {
+    "icon": {
+      "item": "copperslug:carta_marcada"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.carta.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.carta.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "derringer_carta": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "derringer_carta"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

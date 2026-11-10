@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "item": "copperslug:revolver"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.ruleta.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.ruleta.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "revolver_ruleta": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "revolver_ruleta"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

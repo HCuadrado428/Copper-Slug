@@ -1,0 +1,7 @@
+{
+ "parent": "minecraft:item/generated",
+ "textures": {
+  "layer0": "copperslug:item/bala_pintura",
+  "layer1": "copperslug:item/bala_pintura_punta"
+ }
+}

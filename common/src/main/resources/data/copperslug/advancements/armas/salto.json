@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "item": "copperslug:escopeta_presion"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.salto.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.salto.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "escopeta_salto": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "escopeta_salto"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}
