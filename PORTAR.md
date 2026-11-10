@@ -82,21 +82,23 @@ Ya está:
     y en el código se leen con `shim/Enc`;
   - las carpetas y el formato de las recetas y los logros.
 
-Falta, en common (93 errores al compilar):
-- `LogroTrigger`: el criterio con codec, y registrarlo con `Registries.TRIGGER_TYPE`.
-- `Tirolinas` y `LucesTemporales`: `SavedData.Factory` y `save(tag, provider)`.
-- `MosqueteBayonetaRecipe` (`CraftingInput`) y su serializador.
-- Los atributos de la bayoneta del mosquete: componente `ATTRIBUTE_MODIFIERS` en el objeto.
-- Los `VertexConsumer` de tres renderers (`addVertex`/`setColor`/`setUv`…).
-- La pestaña del creativo: los libros con `Holder` de los encantamientos.
-- El plugin de JEI (`ShapelessRecipe` y `RecipeHolder`).
-- PruebaCI: lo de los encantamientos con `Holder`, `getLootData`, `getRecipeFor` con `CraftingInput` y los logros con
-  `AdvancementHolder`.
+Hecho a mano después (ya no hay errores de compilación en ninguno de los cuatro):
+- common: el criterio de los logros con códec (registrado en `Registries.TRIGGER_TYPE`), `SavedData.Factory` (lo hace
+  ya el conversor), la receta del mosquete con `CraftingInput`, los vértices nuevos, los libros de la pestaña con
+  `Holder`, JEI con `RecipeHolder` y PruebaCI (una clase `V` con lo que cambia de API).
+- La bayoneta del mosquete: los atributos ya no se piden por objeto; `MosqueteItem.atributos` los calcula y se ponen
+  en el componente `ATTRIBUTE_MODIFIERS` al calar o quitar la espada y en cada tick del inventario. El alcance es el
+  atributo vanilla `entity_interaction_range`, en los tres cargadores.
+- NeoForge: la plataforma entera (`neoforge/`). La red envuelve cada paquete en un `CustomPacketPayload` con su tipo;
+  la pose del revólver va por `enumextensions.json`; el cargador `forge:separate_transforms` se registra como alias del
+  de NeoForge, así los modelos no cambian.
+- Forge 52: red con `ChannelBuilder`, GLM con `MapCodec`. No tiene evento de capas del HUD ni `FakePlayer`: el HUD lo
+  dibuja `GuiMixin` al final del HUD vanilla y el jugador de mentira es uno propio.
+- Fabric: red con `PayloadTypeRegistry`, botín con `LootTableEvents` v3 y códec, modelos con `FabricBakedModelManager`.
+  Ya no hay categorías de encantamiento (los encantamientos son datos), así que fuera sus mixins.
+- AT de NeoForge y de Forge y AW de Fabric con lo mismo que el AT de common.
+- `probar-1211.yml` (en main, porque los `workflow_run` usan el archivo de main): servidores de los tres y el juego en
+  los tres; en NeoForge con PruebaCI y capturas.
 
-Falta en los cargadores:
-- NeoForge: la plataforma (eventos de `net.neoforged`, ticks Pre/Post, red con `CustomPacketPayload`, GLM con
-  `MapCodec`, `RegisterClientExtensionsEvent`).
-- Fabric: la red con payloads, `LootTableEvents` nuevo y el AW de 1.21.1.
-- Forge 52: la plataforma.
-- En los tres: los modelos `separate_transforms`, que en NeoForge son `neoforge:separate_transforms`.
-- La prueba en el juego de 1.21.1 en `probar.yml`.
+Falta comprobar en el juego (los mixins de cliente de Fabric no los comprueba el compilador) y lo que salga en la
+prueba de NeoForge.
