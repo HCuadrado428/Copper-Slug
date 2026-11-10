@@ -449,6 +449,7 @@
   "advancements.copperslug.armas.castillo_arena.description": "Fire a falling block from the hand cannon and have it land where it hits.",
   "advancements.copperslug.armas.rebote.title": "Angry Birds",
   "advancements.copperslug.armas.rebote.description": "Make a bouncy cannonball bounce three times. The green pigs tremble.",
+  "msg.copperslug.armafuego.sin_balas": "You have no ammo left to reload",
   "itemGroup.copperslug": "Copper Slug",
   "key.categories.copperslug": "Copper Slug",
   "advancements.copperslug.raiz.title": "Copper Slug",
