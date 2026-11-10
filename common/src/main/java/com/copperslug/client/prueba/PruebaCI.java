@@ -2912,6 +2912,40 @@ public final class PruebaCI {
                 PI.put("yq_logro", a2Logro(sp, "armas/yunque") && a2Logro(sp, "armas/castillo_arena"));
             });
         });
+        // el cañón a veces se encasquilla o revienta (va con suerte): si no ha salido nada, otro tiro
+        sin("a2u_yunque_otra", 6, () -> {
+            boolean nada = !(PI.get("yq_bloques") instanceof Integer n && n >= 1) && a2F("yq0") - a2F("yq1") <= 5;
+            PI.put("yq_otra", nada);
+            if (!nada) return;
+            RESUMEN.add("  armas2: el cañón no ha soltado el yunque (encasquillado o reventado); otro tiro");
+            ItemStack c = new ItemStack(com.copperslug.registry.ModItems.CANON_MANO.get());
+            com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(c, 1);
+            c.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:anvil");
+            a2Mano(c);
+            a2Vida("yq0");
+            a2Apuntar(a2Punto(8, 0, 1.3));
+        });
+        sin("a2u_yunque_mecha2", 2, () -> {
+            if (Boolean.TRUE.equals(PI.get("yq_otra"))) piDisparar();
+        });
+        sin("a2u_yunque_vuela2", 50, () -> {
+            if (Boolean.TRUE.equals(PI.get("yq_otra"))) a2Apuntar(a2Punto(8, 0, 1.3));
+        });
+        sin("a2u_yunque_ver2", 2, () -> {
+            if (!Boolean.TRUE.equals(PI.get("yq_otra"))) return;
+            a2Vida("yq1");
+            piSrv(sp -> {
+                int yunques = 0;
+                var l = sp.serverLevel();
+                for (var b : net.minecraft.core.BlockPos.betweenClosed(a2O.offset(-12, -1, -12), a2O.offset(12, 6, 12)))
+                    if (l.getBlockState(b).getBlock() instanceof net.minecraft.world.level.block.AnvilBlock) {
+                        yunques++;
+                        l.setBlock(b, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 3);
+                    }
+                PI.put("yq_bloques", yunques);
+                PI.put("yq_logro", a2Logro(sp, "armas/yunque") && a2Logro(sp, "armas/castillo_arena"));
+            });
+        });
         sin("a2u_yunque_ok", 2, () -> a2Comprobar("el cañón dispara un yunque: daño de yunque y se queda donde da", a2F("yq0") - a2F("yq1") > 5 && PI.get("yq_bloques") instanceof Integer n && n >= 1
                 && Boolean.TRUE.equals(PI.get("yq_logro")), "el husk pierde " + (a2F("yq0") - a2F("yq1")) + ", yunques colocados " + PI.get("yq_bloques") + ", logros " + PI.get("yq_logro")));
         // sin poder construir (modo aventura): la arena no se coloca, cae como objeto
