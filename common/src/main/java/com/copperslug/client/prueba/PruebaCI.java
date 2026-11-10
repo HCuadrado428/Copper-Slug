@@ -187,6 +187,34 @@ public final class PruebaCI {
         });
     }
 
+    /**
+     * El mundo del CI sale con semilla al azar (montañas, mesetas, agua…), y las pruebas cuentan con espacio llano: un
+     * cuadrado de 81×81 bloques alrededor, llano y despejado 30 bloques hacia arriba, con un muro de cristal alrededor
+     * para que no entre el agua.
+     */
+    private static void allanar(ServerPlayer sp) {
+        var l = sp.serverLevel();
+        var o = sp.blockPosition();
+        int r = 40, alto = 30;
+        var aire = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
+        var hierba = net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState();
+        var tierra = net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState();
+        var cristal = net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState();
+        var m = new net.minecraft.core.BlockPos.MutableBlockPos();
+        for (int x = -r - 1; x <= r + 1; x++)
+            for (int z = -r - 1; z <= r + 1; z++) {
+                boolean borde = Math.abs(x) > r || Math.abs(z) > r;
+                for (int y = -4; y <= alto; y++) {
+                    m.set(o.getX() + x, o.getY() + y, o.getZ() + z);
+                    var st = y < -1 ? tierra : y == -1 ? hierba : borde ? cristal : aire;
+                    if (l.getBlockState(m) != st) l.setBlock(m, st, 2 | 16);
+                }
+            }
+        l.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, new net.minecraft.world.phys.AABB(o).inflate(r, alto, r),
+                e -> !(e instanceof net.minecraft.world.entity.player.Player)).forEach(net.minecraft.world.entity.Entity::discard);
+        sp.connection.teleport(o.getX() + 0.5, o.getY(), o.getZ() + 0.5, sp.getYRot(), sp.getXRot());
+    }
+
     private static void preparar() {
         Minecraft mc = Minecraft.getInstance();
         sin("preparar", 40, () -> {
@@ -200,6 +228,7 @@ public final class PruebaCI {
                 sp.getInventory().selected = 0;
                 sp.serverLevel().setDayTime(6000);
                 sp.serverLevel().setWeatherParameters(6000, 0, false, false);
+                allanar(sp);
             });
         });
         paso("00_mundo", 10, () -> {
@@ -588,7 +617,7 @@ public final class PruebaCI {
             PI.remove("husk_luz");
             piVigilaBrillo = true;
         });
-        sin("pistola_bengala_ver", 4, () -> piSrv(sp -> {
+        sin("pistola_bengala_ver", 10, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var bs = l.getEntitiesOfClass(com.copperslug.armasfuego.pistola.BengalaEntity.class, new net.minecraft.world.phys.AABB(piO).inflate(40));
             int luces = 0, luzCalculada = 0;
