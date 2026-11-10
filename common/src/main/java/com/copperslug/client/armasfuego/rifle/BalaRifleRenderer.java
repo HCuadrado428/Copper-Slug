@@ -56,7 +56,7 @@ public class BalaRifleRenderer extends EntityRenderer<BalaRifle> {
     }
 
     private static void v(VertexConsumer vc, Matrix4f m, Vec3 p, int r, int g, int b, float a) {
-        vc.vertex(m, (float) p.x, (float) p.y, (float) p.z).color(r, g, b, (int) (a * 255)).endVertex();
+        vc.addVertex(m, (float) p.x, (float) p.y, (float) p.z).setColor(r, g, b, (int) (a * 255));
     }
 
     @Override

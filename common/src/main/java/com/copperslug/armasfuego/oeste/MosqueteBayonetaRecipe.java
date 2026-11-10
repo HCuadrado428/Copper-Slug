@@ -3,9 +3,8 @@ package com.copperslug.armasfuego.oeste;
 import com.copperslug.registry.ModItems;
 import com.copperslug.registry.ModRecipes;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -17,14 +16,14 @@ import net.minecraft.world.level.Level;
  * llevaba una, la vieja se queda en la mesa); el mosquete solo = se quita la bayoneta (la espada se queda en la mesa).
  */
 public class MosqueteBayonetaRecipe extends CustomRecipe {
-    public MosqueteBayonetaRecipe(ResourceLocation id, CraftingBookCategory c) {
-        super(id, c);
+    public MosqueteBayonetaRecipe(CraftingBookCategory c) {
+        super(c);
     }
 
     /** [índice del mosquete, índice de la espada (-1 si no hay)] o null si no vale. */
-    private static int[] buscar(CraftingContainer inv) {
+    private static int[] buscar(CraftingInput inv) {
         int m = -1, e = -1;
-        for (int i = 0; i < inv.getContainerSize(); i++) {
+        for (int i = 0; i < inv.size(); i++) {
             ItemStack s = inv.getItem(i);
             if (s.isEmpty()) continue;
             if (s.is(ModItems.MOSQUETE.get()) && m < 0) m = i;
@@ -37,12 +36,12 @@ public class MosqueteBayonetaRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, Level l) {
+    public boolean matches(CraftingInput inv, Level l) {
         return buscar(inv) != null;
     }
 
     @Override
-    public ItemStack assemble(CraftingContainer inv, RegistryAccess r) {
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider r) {
         int[] k = buscar(inv);
         if (k == null) return ItemStack.EMPTY;
         ItemStack out = inv.getItem(k[0]).copyWithCount(1);
@@ -52,7 +51,7 @@ public class MosqueteBayonetaRecipe extends CustomRecipe {
 
     /** La espada que se quita (o la vieja, al cambiarla) se queda en el hueco del mosquete. */
     @Override
-    public NonNullList<ItemStack> getRemainingItems(CraftingContainer inv) {
+    public NonNullList<ItemStack> getRemainingItems(CraftingInput inv) {
         NonNullList<ItemStack> r = super.getRemainingItems(inv);
         int[] k = buscar(inv);
         if (k != null) {

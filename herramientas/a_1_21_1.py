@@ -199,6 +199,10 @@ def firmas(t):
     t = re.sub(r'ItemStack\.of\(', 'ItemStack.parseOptional(com.copperslug.shim.Enc.registros(), ', t)
     t = cambiar_metodo(t, 'save', lambda x, a: x + '.saveOptional(com.copperslug.shim.Enc.registros())'
                        if len(a) == 1 and re.match(r'new (?:net\.minecraft\.nbt\.)?CompoundTag\(\)$', a[0]) else None)
+    # SavedData: el guardado recibe los registros y se crea con una Factory
+    t = re.sub(r'public CompoundTag save\(CompoundTag (\w+)\)', r'public CompoundTag save(CompoundTag \1, net.minecraft.core.HolderLookup.Provider copperslug$reg)', t)
+    t = re.sub(r'\.computeIfAbsent\((\w+)::(\w+), (\w+)::new, ',
+               r'.computeIfAbsent(new net.minecraft.world.level.saveddata.SavedData.Factory<>(\3::new, (copperslug$t, copperslug$r) -> \1.\2(copperslug$t), null), ', t)
     return t
 
 

@@ -227,9 +227,9 @@ public final class PruebaCI {
                 List<String> faltan = new ArrayList<>();
                 int n = 0;
                 for (var a : srv.getAdvancements().getAllAdvancements())
-                    if (a.getId().getNamespace().equals(CopperSlug.MOD_ID)) n++;
+                    if (a.id().getNamespace().equals(CopperSlug.MOD_ID)) n++;
                 for (String id : LOGROS)
-                    if (srv.getAdvancements().getAdvancement(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, id)) == null) faltan.add(id);
+                    if (srv.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, id)) == null) faltan.add(id);
                 logrosFaltan = faltan;
                 logrosCargados = n;
             });
@@ -273,7 +273,7 @@ public final class PruebaCI {
                 if (sp == null) return;
                 List<String> hechos = new ArrayList<>();
                 for (String l : LOGROS) {
-                    var a = srv.getAdvancements().getAdvancement(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, l));
+                    var a = srv.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, l));
                     if (a != null && sp.getAdvancements().getOrStartProgress(a).isDone()) hechos.add(l);
                 }
                 logrosHechos = hechos;
@@ -290,7 +290,7 @@ public final class PruebaCI {
         });
         paso("96_logros_pantalla", 30, () -> {
             var ca = mc.player.connection.getAdvancements();
-            var raiz = ca.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "raiz"));
+            var raiz = ca.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "raiz"));
             if (raiz == null) throw new IllegalStateException("el cliente no tiene la pestaña de Copper Slug");
             mc.getToasts().clear();
             mc.gui.getChat().clearMessages(false);
@@ -370,7 +370,7 @@ public final class PruebaCI {
     private static ItemStack piRevolver(int oxido, Object... encs) {
         ItemStack r = new ItemStack(com.copperslug.registry.ModItems.REVOLVER.get());
         for (int i = 0; i + 1 < encs.length; i += 2)
-            r.enchant(((net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment>) encs[i]).get(), (Integer) encs[i + 1]);
+            com.copperslug.shim.Enc.poner(r, (net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment>) encs[i], (Integer) encs[i + 1]);
         if (oxido > 0) com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, oxido);
         return r;
     }
@@ -707,13 +707,13 @@ public final class PruebaCI {
             java.util.Set<String> vistos = new java.util.TreeSet<>();
             var rnd = net.minecraft.util.RandomSource.create(428);
             for (int i = 0; i < 200; i++)
-                for (var e : net.minecraft.world.item.enchantment.EnchantmentHelper.selectEnchantment(rnd, rev, 5 + rnd.nextInt(26), false))
-                    vistos.add(com.copperslug.shim.registries.ForgeRegistries.ENCHANTMENTS.getKey(e.enchantment).getPath() + " " + e.level);
+                for (var e : net.minecraft.world.item.enchantment.EnchantmentHelper.selectEnchantment(rnd, rev, 5 + rnd.nextInt(26), V.mesa()))
+                    vistos.add(V.id(e.enchantment).getPath() + " " + e.level);
             boolean soloSuyos = vistos.stream().allMatch(x -> x.startsWith("revolver_"));
             var ab = com.copperslug.registry.ModEnchantments.REVOLVER_ABANICO;
             var de = com.copperslug.registry.ModEnchantments.REVOLVER_DESENFUNDE;
-            boolean incompatibles = !ab.isCompatibleWith(de) && !de.isCompatibleWith(ab);
-            boolean espada = com.copperslug.registry.ModEnchantments.REVOLVER_CARAMBOLA.canEnchant(new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
+            boolean incompatibles = !net.minecraft.world.item.enchantment.Enchantment.areCompatible(V.h(ab), V.h(de));
+            boolean espada = V.vale(com.copperslug.registry.ModEnchantments.REVOLVER_CARAMBOLA, new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
             piComprobar("mesa de encantar: solo los suyos, Abanico y Desenfunde incompatibles, no valen para una espada",
                     soloSuyos && vistos.size() >= 4 && incompatibles && !espada, vistos + ", incompatibles " + incompatibles + ", espada " + espada);
             piSrv(sp -> {
@@ -1143,7 +1143,7 @@ public final class PruebaCI {
             // que se guarda con el mundo: lo guardado y vuelto a cargar tiene las mismas tirolinas
             rifleSrv(sp -> {
                 var d = com.copperslug.armasfuego.rifle.Tirolinas.de(sp.serverLevel());
-                var t = d.saveOptional(com.copperslug.shim.Enc.registros());
+                var t = d.save(new net.minecraft.nbt.CompoundTag(), com.copperslug.shim.Enc.registros());
                 var otra = com.copperslug.armasfuego.rifle.Tirolinas.cargar(t);
                 // (sin mirar isDirty: si justo se ha autoguardado el mundo ya no está «sucio» y fallaba sin motivo)
                 if (otra.lineas().size() != d.lineas().size() || !otra.lineas().get(0).b().equals(d.lineas().get(0).b()))
@@ -1219,14 +1219,14 @@ public final class PruebaCI {
                 boolean c = item.overrideOtherStackedOnMe(r, hacha, null, der, sp, null) && com.copperslug.armasfuego.rifle.Rifle.oxido(r) == 1;
                 com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, 2);
                 // encantamientos: en la mesa (nivel 30) y solo para el rifle
-                var mesa = net.minecraft.world.item.enchantment.EnchantmentHelper.getAvailableEnchantmentResults(30, new ItemStack(item), false);
+                var mesa = net.minecraft.world.item.enchantment.EnchantmentHelper.getAvailableEnchantmentResults(30, new ItemStack(item), V.mesa());
                 java.util.Set<String> nuestros = new java.util.TreeSet<>();
                 for (var ei : mesa) {
-                    var k = com.copperslug.shim.registries.ForgeRegistries.ENCHANTMENTS.getKey(ei.enchantment);
+                    var k = V.id(ei.enchantment);
                     if (k != null && k.getNamespace().equals(CopperSlug.MOD_ID)) nuestros.add(k.getPath());
                 }
-                boolean soloRifle = !com.copperslug.registry.ModEnchantments.ATRAVESAR.canEnchant(new ItemStack(net.minecraft.world.item.Items.BOW))
-                        && com.copperslug.registry.ModEnchantments.ATRAVESAR.canEnchant(new ItemStack(item));
+                boolean soloRifle = !V.vale(com.copperslug.registry.ModEnchantments.ATRAVESAR, new ItemStack(net.minecraft.world.item.Items.BOW))
+                        && V.vale(com.copperslug.registry.ModEnchantments.ATRAVESAR, new ItemStack(item));
                 RESUMEN.add("  rifle: encerar " + a + ", desencerar " + b + ", rascar " + c + " · en la mesa: " + nuestros + " · solo para el rifle " + soloRifle);
                 if (!a || !b || !c) rifleFallo = "encerar/rascar el cobre no ha ido bien";
                 else if (nuestros.size() < 4 || !soloRifle) rifleFallo = "los encantamientos del rifle no salen bien en la mesa";
@@ -1336,7 +1336,7 @@ public final class PruebaCI {
             long semilla = 0x4D15CL;
             for (String[] t : tablas) {
                 var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", t[0]);
-                var tabla = srv.getLootData().getLootTable(id);
+                var tabla = V.tabla(srv, id);
                 if (tabla == net.minecraft.world.level.storage.loot.LootTable.EMPTY) {
                     mal.append("no existe la tabla ").append(t[0]).append("; ");
                     continue;
@@ -1372,14 +1372,14 @@ public final class PruebaCI {
             for (var r : srv.getRecipeManager().getRecipes()) {
                 ItemStack res;
                 try {
-                    res = r.getResultItem(srv.registryAccess());
+                    res = r.value().getResultItem(srv.registryAccess());
                 } catch (Throwable t) {
                     continue;   // recetas especiales de otros mods que no tienen un resultado fijo
                 }
                 if (res == null || res.isEmpty()) continue;
                 var k = com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(res.getItem());
                 if (k == null || !k.getNamespace().equals(CopperSlug.MOD_ID)) continue;
-                if (armas.contains(k.getPath())) mal.append("receta ").append(r.getId()).append("; ");
+                if (armas.contains(k.getPath())) mal.append("receta ").append(r.id()).append("; ");
                 if (k.getPath().startsWith("revolver_") || k.getPath().startsWith("bala_") || k.getPath().startsWith("escopeta_cartucho_") || k.getPath().equals("casquillo_rifle")) recMunicion++;
             }
             sb.append("recetas de munición ").append(recMunicion);
@@ -1580,7 +1580,7 @@ public final class PruebaCI {
     }
 
     private static boolean a2Logro(ServerPlayer sp, String id) {
-        var a = sp.server.getAdvancements().getAdvancement(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, id));
+        var a = sp.server.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, id));
         return a != null && sp.getAdvancements().getOrStartProgress(a).isDone();
     }
 
@@ -1800,7 +1800,7 @@ public final class PruebaCI {
                 var c = net.minecraft.world.entity.EntityType.HORSE.create(l);
                 c.moveTo(sp.getX(), sp.getY(), sp.getZ(), sp.getYRot(), 0);
                 c.setTamed(true);
-                c.equipSaddle(null);
+                c.equipSaddle(new ItemStack(net.minecraft.world.item.Items.SADDLE), null);
                 c.setNoAi(true);
                 l.addFreshEntity(c);
                 a2Caballo = c.getUUID();
@@ -2006,7 +2006,7 @@ public final class PruebaCI {
             for (var r : sp.server.getRecipeManager().getRecipes()) {
                 ItemStack res;
                 try {
-                    res = r.getResultItem(sp.server.registryAccess());
+                    res = r.value().getResultItem(sp.server.registryAccess());
                 } catch (Throwable t) {
                     continue;
                 }
@@ -2032,7 +2032,7 @@ public final class PruebaCI {
             long semilla = 0x1873L;
             for (String[] t : tablas) {
                 var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", t[0]);
-                var tabla = sp.server.getLootData().getLootTable(id);
+                var tabla = V.tabla(sp.server, id);
                 int n = 0, total = 200;
                 for (int i = 0; i < total; i++) {
                     var params = new net.minecraft.world.level.storage.loot.LootParams.Builder(sp.serverLevel()).create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.EMPTY);
@@ -2125,7 +2125,7 @@ public final class PruebaCI {
         sin("a2c_encantamientos", 2, () -> {
             StringBuilder mal = new StringBuilder();
             int n = 0;
-            for (var e : com.copperslug.shim.registries.ForgeRegistries.ENCHANTMENTS.getEntries()) {
+            for (var e : com.copperslug.shim.Enc.registros().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).entrySet()) {
                 var k = e.getKey().location();
                 if (!k.getNamespace().equals(CopperSlug.MOD_ID)) continue;
                 String arma = null;
@@ -2301,7 +2301,7 @@ public final class PruebaCI {
                     com.copperslug.registry.ModItems.CANON_MANO, com.copperslug.registry.ModItems.CINTA_GATLING, com.copperslug.registry.ModItems.BALA_DERRINGER,
                     com.copperslug.registry.ModItems.CARGADOR_THOMPSON, com.copperslug.registry.ModItems.BOLA_MOSQUETE, com.copperslug.registry.ModItems.REVOLVER_TIEMPO))
             {
-                inv.setItem(k < 13 ? k : k + 1, new ItemStack(it.get(), it.get().getMaxStackSize() > 1 ? 8 : 1));
+                inv.setItem(k < 13 ? k : k + 1, new ItemStack(it.get(), it.get().getDefaultMaxStackSize() > 1 ? 8 : 1));
                 k++;
             }
             for (int c = 0; c < 6; c++) {
@@ -2696,15 +2696,15 @@ public final class PruebaCI {
             var mesa = new net.minecraft.world.inventory.TransientCraftingContainer(sp.inventoryMenu, 3, 3);
             mesa.setItem(0, sin.copy());
             mesa.setItem(4, new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
-            var rec = l.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, mesa, l);
-            ItemStack con = rec.map(r -> r.assemble(mesa, l.registryAccess())).orElse(ItemStack.EMPTY);
+            var rec = l.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, mesa.asCraftInput(), l);
+            ItemStack con = rec.map(r -> r.value().assemble(mesa.asCraftInput(), l.registryAccess())).orElse(ItemStack.EMPTY);
             if (com.copperslug.armasfuego.oeste.MosqueteItem.material(con) != 5) mal.append("la mesa no cala la de diamante; ");
             // mesa: el mosquete solo, se quita (y la espada se queda en la mesa)
             var mesa2 = new net.minecraft.world.inventory.TransientCraftingContainer(sp.inventoryMenu, 3, 3);
             mesa2.setItem(2, con.copy());
-            var rec2 = l.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, mesa2, l);
-            ItemStack fuera = rec2.map(r -> r.assemble(mesa2, l.registryAccess())).orElse(ItemStack.EMPTY);
-            ItemStack queda = rec2.map(r -> r.getRemainingItems(mesa2).get(2)).orElse(ItemStack.EMPTY);
+            var rec2 = l.getRecipeManager().getRecipeFor(net.minecraft.world.item.crafting.RecipeType.CRAFTING, mesa2.asCraftInput(), l);
+            ItemStack fuera = rec2.map(r -> r.value().assemble(mesa2.asCraftInput(), l.registryAccess())).orElse(ItemStack.EMPTY);
+            ItemStack queda = rec2.map(r -> r.value().getRemainingItems(mesa2.asCraftInput()).get(0)).orElse(ItemStack.EMPTY);
             if (!fuera.is(com.copperslug.registry.ModItems.MOSQUETE.get()) || com.copperslug.armasfuego.oeste.MosqueteItem.tieneBayoneta(fuera) || !queda.is(net.minecraft.world.item.Items.DIAMOND_SWORD))
                 mal.append("la mesa no quita la bayoneta (").append(fuera).append(", queda ").append(queda).append("); ");
             // inventario, como un saco: la de netherita encima; con la mano vacía, fuera
@@ -2724,8 +2724,8 @@ public final class PruebaCI {
             ItemStack madera = sin.copy();
             com.copperslug.armasfuego.oeste.MosqueteItem.ponerBayoneta(madera, new ItemStack(net.minecraft.world.item.Items.WOODEN_SWORD));
             double dM = 0, dD = 0;
-            for (var mod : madera.getAttributeModifiers(net.minecraft.world.entity.EquipmentSlot.MAINHAND).get(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)) dM += mod.getAmount();
-            for (var mod : con.getAttributeModifiers(net.minecraft.world.entity.EquipmentSlot.MAINHAND).get(net.minecraft.world.entity.ai.attributes.Attributes.ATTACK_DAMAGE)) dD += mod.getAmount();
+            dM = com.copperslug.armasfuego.oeste.MosqueteItem.danoEspada(madera);
+            dD = com.copperslug.armasfuego.oeste.MosqueteItem.danoEspada(con);
             if (!(dD > dM + 2)) mal.append("el daño no va con la espada (madera ").append(dM).append(", diamante ").append(dD).append("); ");
             PI.put("bay", mal.toString());
             PI.put("bay_txt", "madera " + dM + ", diamante " + dD + ", netherita (espada) " + dN);
@@ -3291,16 +3291,16 @@ public final class PruebaCI {
                     com.copperslug.registry.ModEnchantments.ESCOPETA_DOBLE_CAMARA, com.copperslug.registry.ModEnchantments.ESCOPETA_FUELLE,
                     com.copperslug.registry.ModEnchantments.ESCOPETA_RECICLAJE);
             for (var en : todos) {
-                if (!en.canEnchant(g)) throw new IllegalStateException(en.getDescriptionId() + " no vale para la escopeta");
-                if (en.canEnchant(esp)) throw new IllegalStateException(en.getDescriptionId() + " vale para una espada");
+                if (!V.vale(en, g)) throw new IllegalStateException(en.location() + " no vale para la escopeta");
+                if (V.vale(en, esp)) throw new IllegalStateException(en.location() + " vale para una espada");
             }
-            var mesa = net.minecraft.world.item.enchantment.EnchantmentHelper.getAvailableEnchantmentResults(30, g, false);
+            var mesa = net.minecraft.world.item.enchantment.EnchantmentHelper.getAvailableEnchantmentResults(30, g, V.mesa());
             int salen = 0;
-            for (var en : todos) if (mesa.stream().anyMatch(i -> i.enchantment == en)) salen++;
+            for (var en : todos) if (mesa.stream().anyMatch(i -> i.enchantment.is(en))) salen++;
             RESUMEN.add("  escopeta: en la mesa a nivel 30 pueden salir " + salen + " de 5 encantamientos propios (" + mesa.size() + " en total)");
             if (salen < 5) throw new IllegalStateException("no salen todos los encantamientos propios en la mesa");
-            if (todos.get(0).isCompatibleWith(todos.get(1))) throw new IllegalStateException("Compresor y Válvula de seguridad son compatibles");
-            g.enchant(todos.get(0), 2);
+            if (net.minecraft.world.item.enchantment.Enchantment.areCompatible(V.h(todos.get(0)), V.h(todos.get(1)))) throw new IllegalStateException("Compresor y Válvula de seguridad son compatibles");
+            com.copperslug.shim.Enc.poner(g, todos.get(0), 2);
             if (Math.abs(com.copperslug.armasfuego.escopeta.Presion.tope(g) - 120) > 0.01) throw new IllegalStateException("Compresor II no sube el tope a 120");
             // recetas
             var rm = escJugador().serverLevel().getRecipeManager();
@@ -3436,5 +3436,31 @@ public final class PruebaCI {
         }
         CopperSlug.LOG.info("[PruebaCI] terminada: {}", String.join(" | ", RESUMEN));
         Minecraft.getInstance().player.tickCount = 200;
+    }
+
+    /** Copper Slug (1.21): lo que cambia de API en la prueba (encantamientos como datos, tablas de botín por clave). */
+    private static final class V {
+        static net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> h(net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> k) {
+            return com.copperslug.shim.Enc.holder(k);
+        }
+
+        static boolean vale(net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> k, ItemStack s) {
+            var x = h(k);
+            return x != null && x.value().canEnchant(s);
+        }
+
+        static net.minecraft.resources.ResourceLocation id(net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> x) {
+            return x.unwrapKey().map(net.minecraft.resources.ResourceKey::location).orElse(net.minecraft.resources.ResourceLocation.withDefaultNamespace("?"));
+        }
+
+        /** Los encantamientos que pueden salir en la mesa. */
+        static java.util.stream.Stream<net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment>> mesa() {
+            return com.copperslug.shim.Enc.registros().registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT)
+                    .getTag(net.minecraft.tags.EnchantmentTags.IN_ENCHANTING_TABLE).stream().flatMap(t -> t.stream());
+        }
+
+        static net.minecraft.world.level.storage.loot.LootTable tabla(net.minecraft.server.MinecraftServer srv, net.minecraft.resources.ResourceLocation id) {
+            return srv.reloadableRegistries().getLootTable(net.minecraft.resources.ResourceKey.create(net.minecraft.core.registries.Registries.LOOT_TABLE, id));
+        }
     }
 }

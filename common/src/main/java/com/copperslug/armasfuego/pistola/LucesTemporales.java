@@ -32,7 +32,7 @@ public final class LucesTemporales extends SavedData {
     private final Map<ResourceKey<Level>, Map<Long, Long>> luces = new HashMap<>();
 
     private static LucesTemporales de(MinecraftServer srv) {
-        return srv.overworld().getDataStorage().computeIfAbsent(LucesTemporales::cargar, LucesTemporales::new, NOMBRE);
+        return srv.overworld().getDataStorage().computeIfAbsent(new net.minecraft.world.level.saveddata.SavedData.Factory<>(LucesTemporales::new, (copperslug$t, copperslug$r) -> LucesTemporales.cargar(copperslug$t), null), NOMBRE);
     }
 
     private static long ahora(MinecraftServer srv) {
@@ -91,7 +91,7 @@ public final class LucesTemporales extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag tag) {
+    public CompoundTag save(CompoundTag tag, net.minecraft.core.HolderLookup.Provider copperslug$reg) {
         ListTag lista = new ListTag();
         for (var e : luces.entrySet())
             for (var x : e.getValue().entrySet()) {
