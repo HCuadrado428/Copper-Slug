@@ -182,6 +182,35 @@ def filtrar_registro(ruta, texto):
 SONIDOS_USADOS = set()
 
 
+def suscriptores(ficheros):
+    """Suscriptores.java: las clases con @Mod.EventBusSubscriber (las de cliente aparte, solo se cargan en el cliente)."""
+    comun, cliente = [], []
+    for p in sorted(ficheros):
+        t = open(p, encoding='utf-8').read()
+        pkg = re.search(r'^package ([\w.]+);', t, re.M).group(1)
+        lineas = t.split('\n')
+        externa = None
+        for i, l in enumerate(lineas):
+            m = re.match(r'\s*public (?:static )?(?:final )?(?:abstract )?class (\w+)', l)
+            if m and externa is None:
+                externa = m.group(1)
+            if '@Mod.EventBusSubscriber' in l:
+                for l2 in lineas[i + 1:i + 4]:
+                    m2 = re.match(r'(\s*)public (?:static )?(?:final )?class (\w+)', l2)
+                    if m2:
+                        nombre = m2.group(2)
+                        anid = len(m2.group(1)) > 0
+                        q = pkg + '.' + (externa + '$' + nombre if anid and externa and externa != nombre else nombre)
+                        (cliente if 'Dist.CLIENT' in l else comun).append(q)
+                        break
+    s = 'package com.copperslug;\n\n'
+    s += '/** Generado por herramientas/portar.py: las clases con @Mod.EventBusSubscriber del código portado. */\n'
+    s += 'public final class Suscriptores {\n    private Suscriptores() {}\n\n'
+    s += '    public static final String[] COMUN = {\n' + ''.join('            "' + c + '",\n' for c in comun) + '    };\n\n'
+    s += '    public static final String[] CLIENTE = {\n' + ''.join('            "' + c + '",\n' for c in cliente) + '    };\n}\n'
+    return s
+
+
 def main(src, dst):
     os.makedirs(dst, exist_ok=True)
     java_out = os.path.join(dst, 'common/src/main/java/com/copperslug/')
@@ -213,6 +242,7 @@ def main(src, dst):
             todo_java += t
             escribir(rel, transformar_java(t))
 
+    escribir('Suscriptores.java', suscriptores(list(escritos)))
     for m in re.finditer(r'ModSounds\.([A-Z0-9_]+)', todo_java):
         SONIDOS_USADOS.add(m.group(1))
     for rel in REGISTROS:
@@ -393,6 +423,10 @@ def main(src, dst):
                         break
             if ok:
                 out[transformar_texto(k)] = v
+        # lo propio de Copper Slug (pestaña, raíz de los logros...): herramientas/lang_extra
+        extra = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'lang_extra', idioma + '.json')
+        if os.path.exists(extra):
+            out.update(json.load(open(extra, encoding='utf-8')))
         os.makedirs(os.path.join(a_dst, 'lang'), exist_ok=True)
         json.dump(out, open(os.path.join(a_dst, 'lang', idioma + '.json'), 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
 

@@ -4,14 +4,27 @@
   "version": "${version}",
   "name": "${mod_name}",
   "description": "${description}",
-  "authors": ["${mod_author}"],
+  "authors": [
+    "${mod_author}"
+  ],
   "license": "${license}",
   "environment": "*",
   "entrypoints": {
-    "main": ["com.copperslug.fabric.CopperSlugFabric"]
+    "main": [
+      "com.copperslug.fabric.CopperSlugFabric"
+    ],
+    "client": [
+      "com.copperslug.fabric.cliente.ClienteFabric"
+    ],
+    "jei_mod_plugin": [
+      "com.copperslug.compat.jei.CopperSlugJei"
+    ]
   },
   "accessWidener": "copperslug.accesswidener",
-  "mixins": ["copperslug.mixins.json", "copperslug.fabric.mixins.json"],
+  "mixins": [
+    "copperslug.mixins.json",
+    "copperslug.fabric.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.14.21",
     "fabric-api": "*",
