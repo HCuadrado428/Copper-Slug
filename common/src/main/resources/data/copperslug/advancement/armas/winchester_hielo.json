@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/winchester",
+  "display": {
+    "icon": {
+      "id": "copperslug:bala_hielo"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.winchester_hielo.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.winchester_hielo.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "winchester_hielo": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "winchester_hielo"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

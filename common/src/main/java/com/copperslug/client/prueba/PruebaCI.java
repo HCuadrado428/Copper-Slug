@@ -105,6 +105,7 @@ public final class PruebaCI {
             if (!mal.isEmpty()) throw new IllegalStateException("texturas que no son de 16x16: " + mal);
         });
         paso("01_pestana_creativo", 30, () -> {
+            mc.getToasts().clear();
             var tab = com.copperslug.CopperSlug.PESTANA.get();
             var pantalla = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,
                     mc.player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
@@ -124,16 +125,23 @@ public final class PruebaCI {
                         com.copperslug.registry.ModItems.GATLING, com.copperslug.registry.ModItems.WINCHESTER, com.copperslug.registry.ModItems.DERRINGER,
                         com.copperslug.registry.ModItems.THOMPSON, com.copperslug.registry.ModItems.MOSQUETE, com.copperslug.registry.ModItems.CANON_MANO);
                 for (int i = 0; i < armas.size(); i++) sp.getInventory().setItem(i, new ItemStack(armas.get(i).get()));
+                // el resto: lo mismo que la pestaña del creativo (munición, libros...), sin repetir las armas
+                List<ItemStack> todo = new ArrayList<>();
+                CopperSlug.Pestana.llenar(todo::add);
                 int k = 9;
-                for (var e : net.minecraft.core.registries.BuiltInRegistries.ITEM.entrySet()) {
-                    if (k >= 36 || !CopperSlug.MOD_ID.equals(e.getKey().location().getNamespace())) continue;
-                    if (armas.stream().anyMatch(a -> a.get() == e.getValue())) continue;
-                    sp.getInventory().setItem(k++, new ItemStack(e.getValue(), e.getValue().getMaxStackSize()));
+                for (ItemStack st : todo) {
+                    if (k >= 36) break;
+                    if (armas.stream().anyMatch(a -> a.get() == st.getItem()) || st.is(net.minecraft.world.item.Items.ENCHANTED_BOOK)) continue;
+                    sp.getInventory().setItem(k++, st.copyWithCount(st.getMaxStackSize()));
                 }
                 sp.getInventory().selected = 0;
             });
         });
-        paso("02_inventario_armas", 30, () -> mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player)));
+        paso("02_inventario_armas", 30, () -> {
+            mc.getToasts().clear();
+            mc.gui.getChat().clearMessages(false);
+            mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+        });
         sin("inventario_fin", 5, () -> {
             mc.setScreen(null);
             var srv = mc.getSingleplayerServer();
@@ -221,7 +229,7 @@ public final class PruebaCI {
                 for (var a : srv.getAdvancements().getAllAdvancements())
                     if (a.getId().getNamespace().equals(CopperSlug.MOD_ID)) n++;
                 for (String id : LOGROS)
-                    if (srv.getAdvancements().getAdvancement(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, id)) == null) faltan.add(id);
+                    if (srv.getAdvancements().getAdvancement(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, id)) == null) faltan.add(id);
                 logrosFaltan = faltan;
                 logrosCargados = n;
             });
@@ -265,7 +273,7 @@ public final class PruebaCI {
                 if (sp == null) return;
                 List<String> hechos = new ArrayList<>();
                 for (String l : LOGROS) {
-                    var a = srv.getAdvancements().getAdvancement(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, l));
+                    var a = srv.getAdvancements().getAdvancement(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, l));
                     if (a != null && sp.getAdvancements().getOrStartProgress(a).isDone()) hechos.add(l);
                 }
                 logrosHechos = hechos;
@@ -282,7 +290,7 @@ public final class PruebaCI {
         });
         paso("96_logros_pantalla", 30, () -> {
             var ca = mc.player.connection.getAdvancements();
-            var raiz = ca.getAdvancements().get(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, "raiz"));
+            var raiz = ca.getAdvancements().get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "raiz"));
             if (raiz == null) throw new IllegalStateException("el cliente no tiene la pestaña de Copper Slug");
             mc.getToasts().clear();
             mc.gui.getChat().clearMessages(false);
@@ -363,7 +371,7 @@ public final class PruebaCI {
         ItemStack r = new ItemStack(com.copperslug.registry.ModItems.REVOLVER.get());
         for (int i = 0; i + 1 < encs.length; i += 2)
             r.enchant(((com.copperslug.shim.registries.RegistryObject<net.minecraft.world.item.enchantment.Enchantment>) encs[i]).get(), (Integer) encs[i + 1]);
-        if (oxido > 0) r.getOrCreateTag().putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, oxido);
+        if (oxido > 0) com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, oxido);
         return r;
     }
 
@@ -477,7 +485,7 @@ public final class PruebaCI {
             piSrv(sp -> {
                 ItemStack s = sp.getMainHandItem();
                 com.copperslug.armasfuego.pistola.Tambor.ponerPos(s, 0);
-                s.getOrCreateTag().remove(com.copperslug.armasfuego.pistola.Tambor.GIRADO);
+                com.copperslug.shim.Nbt.tag(s).remove(com.copperslug.armasfuego.pistola.Tambor.GIRADO);
                 sp.getInventory().offhand.set(0, ItemStack.EMPTY);
             });
         });
@@ -663,7 +671,7 @@ public final class PruebaCI {
             piSrv(sp -> {
                 sp.removeAllEffects();
                 for (int i = 1; i <= 3; i++) sp.getInventory().setItem(i, piRevolver(i));
-                sp.getMainHandItem().getOrCreateTag().putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, 3);
+                com.copperslug.shim.Nbt.tag(sp.getMainHandItem()).putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, 3);
                 sp.getServer().overworld().setDayTime(6000);
             });
             piApuntar(piPunto(8, 2, 1.0));
@@ -989,7 +997,7 @@ public final class PruebaCI {
         sin("rifle_cargado", 25, () -> {});
         paso("142_mira", 50, () -> {
             if (!com.copperslug.armasfuego.rifle.Rifle.lista(mc.player.getMainHandItem()))
-                throw new IllegalStateException("el cerrojo no ha metido la bala: " + mc.player.getMainHandItem().getTag());
+                throw new IllegalStateException("el cerrojo no ha metido la bala: " + com.copperslug.shim.Nbt.leer(mc.player.getMainHandItem()));
             var z = rifleEnte(rifleZ1);
             rifleApuntar(new Vec3(z.getX(), z.getEyeY(), z.getZ()));
             rifleUsar(true);
@@ -1073,7 +1081,7 @@ public final class PruebaCI {
         // Silenciador: el sensor de sculk no se entera
         sin("rifle_silenciador", 60, () -> {
             mc.setScreen(null);
-            rifleSrv(sp -> sp.getMainHandItem().enchant(com.copperslug.registry.ModEnchantments.SILENCIADOR.get(), 1));
+            rifleSrv(sp -> com.copperslug.shim.Enc.poner(sp.getMainHandItem(), com.copperslug.registry.ModEnchantments.SILENCIADOR, 1));
             rifleClic();
         });
         sin("rifle_silencio_apunta", 45, () -> {
@@ -1201,7 +1209,7 @@ public final class PruebaCI {
             rifleSrv(sp -> {
                 sp.getInventory().selected = 0;
                 ItemStack r = sp.getInventory().getItem(0);
-                r.getOrCreateTag().putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, 2);
+                com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, 2);
                 var item = r.getItem();
                 ItemStack panal = new ItemStack(net.minecraft.world.item.Items.HONEYCOMB, 2);
                 ItemStack hacha = new ItemStack(net.minecraft.world.item.Items.IRON_AXE);
@@ -1209,7 +1217,7 @@ public final class PruebaCI {
                 boolean a = item.overrideOtherStackedOnMe(r, panal, null, der, sp, null) && com.copperslug.armasfuego.rifle.Rifle.encerado(r) && panal.getCount() == 1;
                 boolean b = item.overrideOtherStackedOnMe(r, hacha, null, der, sp, null) && !com.copperslug.armasfuego.rifle.Rifle.encerado(r);
                 boolean c = item.overrideOtherStackedOnMe(r, hacha, null, der, sp, null) && com.copperslug.armasfuego.rifle.Rifle.oxido(r) == 1;
-                r.getOrCreateTag().putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, 2);
+                com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, 2);
                 // encantamientos: en la mesa (nivel 30) y solo para el rifle
                 var mesa = net.minecraft.world.item.enchantment.EnchantmentHelper.getAvailableEnchantmentResults(30, new ItemStack(item), false);
                 java.util.Set<String> nuestros = new java.util.TreeSet<>();
@@ -1295,7 +1303,7 @@ public final class PruebaCI {
                     k = sig.applyAsInt(k);
                     inv.setItem(k++, e);
                     ItemStack r = new ItemStack(com.copperslug.registry.ModItems.RIFLE.get());
-                    r.getOrCreateTag().putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, o2);
+                    com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.rifle.Rifle.OXIDO, o2);
                     k = sig.applyAsInt(k);
                     inv.setItem(k++, r);
                 }
@@ -1327,7 +1335,7 @@ public final class PruebaCI {
             int total = 300;
             long semilla = 0x4D15CL;
             for (String[] t : tablas) {
-                var id = new net.minecraft.resources.ResourceLocation("minecraft", t[0]);
+                var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", t[0]);
                 var tabla = srv.getLootData().getLootTable(id);
                 if (tabla == net.minecraft.world.level.storage.loot.LootTable.EMPTY) {
                     mal.append("no existe la tabla ").append(t[0]).append("; ");
@@ -1346,7 +1354,7 @@ public final class PruebaCI {
                             n++;
                             salio = true;
                             if (it.isEnchanted()) enc++;
-                            if (it.hasTag() && it.getTag().getInt("Oxido") > 0) ox++;
+                            if (com.copperslug.shim.Nbt.tiene(it) && com.copperslug.shim.Nbt.leer(it).getInt("Oxido") > 0) ox++;
                         } else if (salio) mun++;
                     }
                 }
@@ -1460,10 +1468,10 @@ public final class PruebaCI {
             rifleSrv(sp -> {
                 ItemStack e = sp.getInventory().getItem(1);
                 com.copperslug.armasfuego.escopeta.Presion.ponerPresion(e, 0F);
-                e.getOrCreateTag().putLong(com.copperslug.armasfuego.escopeta.Presion.REVENTADA, sp.level().getGameTime() + 300);
+                com.copperslug.shim.Nbt.tag(e).putLong(com.copperslug.armasfuego.escopeta.Presion.REVENTADA, sp.level().getGameTime() + 300);
             });
         });
-        sin("armas3d_escopeta_arreglar", 3, () -> rifleSrv(sp -> sp.getInventory().getItem(1).getOrCreateTag().remove(com.copperslug.armasfuego.escopeta.Presion.REVENTADA)));
+        sin("armas3d_escopeta_arreglar", 3, () -> rifleSrv(sp -> com.copperslug.shim.Nbt.tag(sp.getInventory().getItem(1)).remove(com.copperslug.armasfuego.escopeta.Presion.REVENTADA)));
         paso("180_inventario_armas", 20, () -> {
             mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
             mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
@@ -1572,7 +1580,7 @@ public final class PruebaCI {
     }
 
     private static boolean a2Logro(ServerPlayer sp, String id) {
-        var a = sp.server.getAdvancements().getAdvancement(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, id));
+        var a = sp.server.getAdvancements().getAdvancement(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, id));
         return a != null && sp.getAdvancements().getOrStartProgress(a).isDone();
     }
 
@@ -1652,7 +1660,7 @@ public final class PruebaCI {
             Vec3 q = a2Punto(1.3, 0, 0);
             g.moveTo(q.x, q.y, q.z, a2Mira.toYRot(), 0);
             ItemStack it = new ItemStack(com.copperslug.registry.ModItems.GATLING.get());
-            it.getOrCreateTag().putInt(com.copperslug.armasfuego.gatling.GatlingItem.BALAS, com.copperslug.armasfuego.comun.EquilibrioArmas.gatlingCinta());
+            com.copperslug.shim.Nbt.tag(it).putInt(com.copperslug.armasfuego.gatling.GatlingItem.BALAS, com.copperslug.armasfuego.comun.EquilibrioArmas.gatlingCinta());
             g.desde(it);
             l.addFreshEntity(g);
             a2Gatling = g.getUUID();
@@ -1771,7 +1779,7 @@ public final class PruebaCI {
             piSrv(sp -> PI.put("w_balas2", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
         sin("a2_winchester_rec_ok", 2, () -> a2Comprobar("la Winchester se recarga bala a bala", PI.get("w_balas2") instanceof Integer b && b >= 7, "balas " + PI.get("w_balas2")));
-        sin("a2_atasco_poner", 4, () -> piSrv(sp -> sp.getMainHandItem().getOrCreateTag().putBoolean(com.copperslug.armasfuego.comun.ArmaFuegoItem.ATASCO, true)));
+        sin("a2_atasco_poner", 4, () -> piSrv(sp -> com.copperslug.shim.Nbt.tag(sp.getMainHandItem()).putBoolean(com.copperslug.armasfuego.comun.ArmaFuegoItem.ATASCO, true)));
         sin("a2_atasco_clic", 6, piTiro());
         paso("216_winchester_atascada", 2, () -> mc.options.keyShift.setDown(true));
         sin("a2_atasco_quitar", 2, () -> rifleUsar(true));
@@ -1893,7 +1901,7 @@ public final class PruebaCI {
             piSrv(sp -> PI.put("m_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
         sin("a2_mosquete_ok", 2, () -> a2Comprobar("el mosquete dispara tras la chispa (o falla en la cazoleta, que también vale)",
-                Integer.valueOf(0).equals(PI.get("m_balas")) || Boolean.TRUE.equals(mc.player.getMainHandItem().getTag() != null && mc.player.getMainHandItem().getTag().getBoolean("Atasco")),
+                Integer.valueOf(0).equals(PI.get("m_balas")) || Boolean.TRUE.equals(com.copperslug.shim.Nbt.leer(mc.player.getMainHandItem()) != null && com.copperslug.shim.Nbt.leer(mc.player.getMainHandItem()).getBoolean("Atasco")),
                 "vida " + a2F("m0") + " → " + a2F("m1") + ", balas " + PI.get("m_balas")));
         sin("a2_mosquete_agachar", 4, () -> mc.options.keyShift.setDown(true));
         sin("a2_mosquete_recargar", 2, () -> rifleUsar(true));
@@ -1964,8 +1972,8 @@ public final class PruebaCI {
         // pintura: el rifle con una bala de pintura azul en la recámara, a la pared de lana
         sin("a2_pintura", 8, () -> {
             ItemStack r = new ItemStack(com.copperslug.registry.ModItems.RIFLE.get());
-            r.getOrCreateTag().putString(com.copperslug.armasfuego.rifle.Rifle.RECAMARA, "copperslug:bala_pintura");
-            r.getOrCreateTag().putInt(com.copperslug.armasfuego.rifle.Rifle.RECAMARA_COLOR, 11);
+            com.copperslug.shim.Nbt.tag(r).putString(com.copperslug.armasfuego.rifle.Rifle.RECAMARA, "copperslug:bala_pintura");
+            com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.rifle.Rifle.RECAMARA_COLOR, 11);
             a2Mano(r);
             piApuntar(a2Punto(8, -6, 1.5));
         });
@@ -2023,7 +2031,7 @@ public final class PruebaCI {
                     {"chests/woodland_mansion", "estuche_violin"}, {"chests/stronghold_corridor", "mosquete"}, {"chests/bastion_other", "canon_mano"}};
             long semilla = 0x1873L;
             for (String[] t : tablas) {
-                var id = new net.minecraft.resources.ResourceLocation("minecraft", t[0]);
+                var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("minecraft", t[0]);
                 var tabla = sp.server.getLootData().getLootTable(id);
                 int n = 0, total = 200;
                 for (int i = 0; i < total; i++) {
@@ -2125,7 +2133,7 @@ public final class PruebaCI {
                     if (k.getPath().startsWith(a.equals("canon_mano") ? "canon_" : a + "_")) arma = a;
                 if (arma == null) continue;
                 n++;
-                var it = com.copperslug.shim.registries.ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, arma));
+                var it = com.copperslug.shim.registries.ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, arma));
                 if (!e.getValue().canEnchant(new ItemStack(it))) mal.append(k.getPath()).append(" no vale para ").append(arma).append("; ");
                 if (e.getValue().canEnchant(new ItemStack(net.minecraft.world.item.Items.IRON_SWORD))) mal.append(k.getPath()).append(" vale para una espada; ");
             }
@@ -2174,7 +2182,7 @@ public final class PruebaCI {
             paso((263 + i * 2) + "_" + n + "_erosionada_3p", 14, () -> {
                 ItemStack st = new ItemStack(it.get());
                 com.copperslug.armasfuego.comun.Cobre.ponerOxido(st, 2);
-                if (st.getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem) st.getOrCreateTag().putLong(com.copperslug.armasfuego.comun.ArmaFuegoItem.DISPARO_T, mc.level.getGameTime() + 400);
+                if (st.getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem) com.copperslug.shim.Nbt.tag(st).putLong(com.copperslug.armasfuego.comun.ArmaFuegoItem.DISPARO_T, mc.level.getGameTime() + 400);
                 a2Mano(st);
                 a2Vista(2.4, 0.6, 0.3);
             });
@@ -2213,7 +2221,7 @@ public final class PruebaCI {
         // munición especial: plata (x2 al husk, que es no muerto), carta marcada (brilla), agua (apaga) y bolaño de feria
         sin("a2c_plata", 8, () -> {
             ItemStack w = a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 3);
-            w.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:bala_plata");
+            com.copperslug.shim.Nbt.tag(w).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:bala_plata");
             a2Mano(w);
             piApuntar(a2Punto(8, 0, 1.2));
             a2Vida("p0");
@@ -2224,7 +2232,7 @@ public final class PruebaCI {
                 "vida " + a2F("p0") + " → " + a2F("p1")));
         sin("a2c_carta", 8, () -> {
             ItemStack d = a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2);
-            d.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:carta_marcada");
+            com.copperslug.shim.Nbt.tag(d).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:carta_marcada");
             a2Mano(d);
             piApuntar(a2Punto(8, 0, 1.2));
         });
@@ -2236,7 +2244,7 @@ public final class PruebaCI {
         sin("a2c_carta_ok", 2, () -> a2Comprobar("la carta marcada hace brillar al que la recibe", Boolean.TRUE.equals(PI.get("carta")), String.valueOf(PI.get("carta"))));
         sin("a2c_agua", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);
-            t.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:tambor_agua");
+            com.copperslug.shim.Nbt.tag(t).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:tambor_agua");
             a2Mano(t);
             piApuntar(a2Punto(8, 0, 1.2));
             piSrv(sp -> {
@@ -2256,7 +2264,7 @@ public final class PruebaCI {
         sin("a2c_agua_ok", 2, () -> a2Comprobar("el tambor de agua apaga al que arde", Boolean.TRUE.equals(PI.get("agua")), String.valueOf(PI.get("agua"))));
         sin("a2c_feria", 8, () -> {
             ItemStack c = a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1);
-            c.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:bolano_fuegos");
+            com.copperslug.shim.Nbt.tag(c).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:bolano_fuegos");
             a2Mano(c);
             piApuntar(a2Punto(8, 0, 1.6));
         });
@@ -2400,7 +2408,7 @@ public final class PruebaCI {
                 Vec3 q = a2Punto(1.5, -2, 0);
                 g.moveTo(q.x, q.y, q.z, a2Mira.toYRot(), 0);
                 ItemStack it = new ItemStack(com.copperslug.registry.ModItems.GATLING.get());
-                it.enchant(com.copperslug.registry.ModEnchantments.GATLING_TORRETA.get(), 1);
+                com.copperslug.shim.Enc.poner(it, com.copperslug.registry.ModEnchantments.GATLING_TORRETA, 1);
                 g.desde(it);
                 g.ponerDueno(sp);
                 g.apuntar(a2Mira.toYRot(), 0);
@@ -2465,8 +2473,8 @@ public final class PruebaCI {
             l.addFreshEntity(c);
             a2Vehiculo = c.getUUID();
             ItemStack gi = new ItemStack(com.copperslug.registry.ModItems.GATLING.get());
-            gi.getOrCreateTag().putInt(com.copperslug.armasfuego.gatling.GatlingItem.BALAS, 40);
-            gi.getOrCreateTag().putString(com.copperslug.armasfuego.gatling.GatlingItem.CINTA, "copperslug:cinta_gatling");
+            com.copperslug.shim.Nbt.tag(gi).putInt(com.copperslug.armasfuego.gatling.GatlingItem.BALAS, 40);
+            com.copperslug.shim.Nbt.tag(gi).putString(com.copperslug.armasfuego.gatling.GatlingItem.CINTA, "copperslug:cinta_gatling");
             var g = com.copperslug.armasfuego.comun.ArmasFuegoEventos.montar(sp, gi, c);
             a2Gat2 = g.getUUID();
         }));
@@ -2512,8 +2520,8 @@ public final class PruebaCI {
             l.addFreshEntity(b);
             a2Vehiculo = b.getUUID();
             ItemStack gi = new ItemStack(com.copperslug.registry.ModItems.GATLING.get());
-            gi.getOrCreateTag().putInt(com.copperslug.armasfuego.gatling.GatlingItem.BALAS, 40);
-            gi.getOrCreateTag().putString(com.copperslug.armasfuego.gatling.GatlingItem.CINTA, "copperslug:cinta_gatling");
+            com.copperslug.shim.Nbt.tag(gi).putInt(com.copperslug.armasfuego.gatling.GatlingItem.BALAS, 40);
+            com.copperslug.shim.Nbt.tag(gi).putString(com.copperslug.armasfuego.gatling.GatlingItem.CINTA, "copperslug:cinta_gatling");
             var g = com.copperslug.armasfuego.comun.ArmasFuegoEventos.montar(sp, gi, b);
             a2Gat2 = g.getUUID();
         }));
@@ -2777,7 +2785,7 @@ public final class PruebaCI {
         sin("a2u_arco", 6, () -> {
             ItemStack c = new ItemStack(com.copperslug.registry.ModItems.CANON_MANO.get());
             com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(c, 1);
-            c.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:anvil");
+            com.copperslug.shim.Nbt.tag(c).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:anvil");
             a2Mano(c);
             PI.remove("arco_pos");
             a2CongelaYunque = true;
@@ -2811,7 +2819,7 @@ public final class PruebaCI {
         sin("a2u_yunque", 6, () -> {
             ItemStack c = new ItemStack(com.copperslug.registry.ModItems.CANON_MANO.get());
             com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(c, 1);
-            c.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:anvil");
+            com.copperslug.shim.Nbt.tag(c).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:anvil");
             a2Mano(c);
             a2Vida("yq0");
             a2Apuntar(a2Punto(8, 0, 1.3));
@@ -2845,7 +2853,7 @@ public final class PruebaCI {
             });
             ItemStack c = new ItemStack(com.copperslug.registry.ModItems.CANON_MANO.get());
             com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(c, 1);
-            c.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:sand");
+            com.copperslug.shim.Nbt.tag(c).putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "minecraft:sand");
             a2Mano(c);
             a2Apuntar(a2Punto(6, -3, 0));
             piSrv(sp -> PI.put("arena0", a2Arena(sp)));
@@ -2919,7 +2927,7 @@ public final class PruebaCI {
             ItemStack s = sp.getMainHandItem();
             com.copperslug.armasfuego.escopeta.Presion.ponerTolva(s, t, t == null ? 0 : 16);
             com.copperslug.armasfuego.escopeta.Presion.ponerPresion(s, presion);
-            s.getOrCreateTag().remove(com.copperslug.armasfuego.escopeta.Presion.DISPAROS);
+            com.copperslug.shim.Nbt.tag(s).remove(com.copperslug.armasfuego.escopeta.Presion.DISPAROS);
             if (a != null) escApuntar(sp, a);
             if (escEntidad(escHusk) instanceof net.minecraft.world.entity.LivingEntity h) escVida = h.getHealth();
         });
@@ -3234,8 +3242,8 @@ public final class PruebaCI {
         // ---- válvula de seguridad: en el tope suelta el aire en vez de reventar
         sin("esc_valvula", 5, () -> escServidor(sp -> {
             ItemStack s = new ItemStack(com.copperslug.registry.ModItems.ESCOPETA_PRESION.get());
-            s.enchant(com.copperslug.registry.ModEnchantments.ESCOPETA_VALVULA.get(), 1);
-            s.enchant(com.copperslug.registry.ModEnchantments.ESCOPETA_DOBLE_CAMARA.get(), 1);
+            com.copperslug.shim.Enc.poner(s, com.copperslug.registry.ModEnchantments.ESCOPETA_VALVULA, 1);
+            com.copperslug.shim.Enc.poner(s, com.copperslug.registry.ModEnchantments.ESCOPETA_DOBLE_CAMARA, 1);
             com.copperslug.armasfuego.escopeta.Presion.ponerPresion(s, 95);
             sp.getInventory().setItem(0, s);
             // el enfriamiento de la reventada es del objeto (de todas las escopetas de presión): fuera para seguir
@@ -3292,10 +3300,10 @@ public final class PruebaCI {
             int recetas = 0;
             for (String r : new String[]{"escopeta_cartucho_grava", "escopeta_cartucho_incendiario", "escopeta_cartucho_escarcha",
                     "escopeta_cartucho_miel", "escopeta_cartucho_sal", "escopeta_cartucho_semillas", "escopeta_cartucho_confeti"})
-                if (rm.byKey(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, r)).isPresent()) recetas++;
+                if (rm.byKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, r)).isPresent()) recetas++;
             if (recetas != 7) throw new IllegalStateException("faltan recetas de los cartuchos (" + recetas + "/7)");
             // la escopeta ya no se fabrica: sale en los barcos hundidos
-            if (rm.byKey(new net.minecraft.resources.ResourceLocation(CopperSlug.MOD_ID, "escopeta_presion")).isPresent())
+            if (rm.byKey(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "escopeta_presion")).isPresent())
                 throw new IllegalStateException("la escopeta todavía tiene receta");
             // tolva, panal y hacha (clic derecho en el inventario)
             var p = escJugador();

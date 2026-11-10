@@ -86,8 +86,8 @@ public class BalaRifle extends Projectile {
     }
 
     @Override
-    protected void defineSynchedData() {
-        entityData.define(TIPO, (byte) 0);
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder b) {
+        b.define(TIPO, (byte) 0);
     }
 
     public void ponerColor(int c) {

@@ -110,7 +110,7 @@ public class CanonManoItem extends ArmaFuegoItem {
     }
 
     public static long mecha(ItemStack s) {
-        return s.hasTag() && s.getTag().contains(MECHA) ? s.getTag().getLong(MECHA) : -1;
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(MECHA) ? com.copperslug.shim.Nbt.leer(s).getLong(MECHA) : -1;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class CanonManoItem extends ArmaFuegoItem {
             intentar(level, p, s);
             return InteractionResultHolder.fail(s);
         }
-        s.getOrCreateTag().putLong(MECHA, level.getGameTime() + mechaTicks(s));
+        com.copperslug.shim.Nbt.tag(s).putLong(MECHA, level.getGameTime() + mechaTicks(s));
         if (!level.isClientSide)
             level.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FLINTANDSTEEL_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
         p.getCooldowns().addCooldown(this, enfriamiento(p, s));
@@ -142,7 +142,7 @@ public class CanonManoItem extends ArmaFuegoItem {
             if (ahora % 10 == 0) level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.CANON_MECHA.get(), SoundSource.PLAYERS, 0.7F, 1.0F);
         }
         if (ahora < m) return;
-        s.getTag().remove(MECHA);
+        com.copperslug.shim.Nbt.leer(s).remove(MECHA);
         if (!enMano) {
             // la mecha se ha apagado en el bolsillo
             if (!level.isClientSide) level.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 0.5F, 1.4F);
@@ -178,7 +178,7 @@ public class CanonManoItem extends ArmaFuegoItem {
         Vec3 atras = p.getViewVector(1F).scale(-0.9).add(0, 0.3, 0);
         p.setDeltaMovement(p.getDeltaMovement().add(atras));
         p.connection.send(new ClientboundSetEntityMotionPacket(p));
-        s.hurtAndBreak(60, p, x -> x.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        s.hurtAndBreak(60, p, EquipmentSlot.MAINHAND);
         LogrosMiscelanea.dar(p, "canon_revienta");
     }
 

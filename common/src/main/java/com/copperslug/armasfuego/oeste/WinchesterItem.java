@@ -104,10 +104,10 @@ public class WinchesterItem extends ArmaFuegoItem {
     /** El depósito con {@code n} balas (si el NBT tiene menos, las que faltan son normales: las de antes del depósito). */
     private static List<Item> deposito(ItemStack s, int n) {
         List<Item> l = new ArrayList<>();
-        if (s.hasTag() && s.getTag().contains(DEPOSITO)) {
-            ListTag t = s.getTag().getList(DEPOSITO, Tag.TAG_STRING);
+        if (com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(DEPOSITO)) {
+            ListTag t = com.copperslug.shim.Nbt.leer(s).getList(DEPOSITO, Tag.TAG_STRING);
             for (int i = 0; i < t.size(); i++) {
-                Item it = ForgeRegistries.ITEMS.getValue(new ResourceLocation(t.getString(i)));
+                Item it = ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.parse(t.getString(i)));
                 if (it != null && it != Items.AIR) l.add(it);
             }
         }
@@ -122,9 +122,9 @@ public class WinchesterItem extends ArmaFuegoItem {
     public static void ponerDeposito(ItemStack s, List<Item> l) {
         ListTag t = new ListTag();
         for (Item it : l) t.add(StringTag.valueOf(ForgeRegistries.ITEMS.getKey(it).toString()));
-        s.getOrCreateTag().put(DEPOSITO, t);
+        com.copperslug.shim.Nbt.tag(s).put(DEPOSITO, t);
         ponerBalas(s, l.size());
-        if (!l.isEmpty()) s.getOrCreateTag().putString(TIPO, ForgeRegistries.ITEMS.getKey(l.get(l.size() - 1)).toString());
+        if (!l.isEmpty()) com.copperslug.shim.Nbt.tag(s).putString(TIPO, ForgeRegistries.ITEMS.getKey(l.get(l.size() - 1)).toString());
     }
 
     /** Mete una bala en el depósito (por la portilla). */

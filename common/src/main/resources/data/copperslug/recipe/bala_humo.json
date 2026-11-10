@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "copperslug:bala_derringer"
+    },
+    {
+      "item": "copperslug:bala_derringer"
+    },
+    {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "minecraft:bone_meal"
+    }
+  ],
+  "result": {
+    "id": "copperslug:bala_humo",
+    "count": 2
+  }
+}

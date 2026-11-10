@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  */
 @JeiPlugin
 public class CopperSlugJei implements IModPlugin {
-    private static final ResourceLocation ID = new ResourceLocation(CopperSlug.MOD_ID, "jei");
+    private static final ResourceLocation ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "jei");
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -56,7 +56,7 @@ public class CopperSlugJei implements IModPlugin {
             com.copperslug.armasfuego.oeste.MosqueteItem.ponerBayoneta(sin, ItemStack.EMPTY);
             ItemStack con = new ItemStack(ModItems.MOSQUETE.get());
             com.copperslug.armasfuego.oeste.MosqueteItem.ponerBayoneta(con, new ItemStack(e));
-            var id = new ResourceLocation(CopperSlug.MOD_ID, "jei/mosquete_bayoneta_" + BuiltInRegistries.ITEM.getKey(e).getPath());
+            var id = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "jei/mosquete_bayoneta_" + BuiltInRegistries.ITEM.getKey(e).getPath());
             bay.add(new net.minecraft.world.item.crafting.ShapelessRecipe(id, "mosquete_bayoneta", net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, con,
                     net.minecraft.core.NonNullList.of(net.minecraft.world.item.crafting.Ingredient.EMPTY,
                             net.minecraft.world.item.crafting.Ingredient.of(sin), net.minecraft.world.item.crafting.Ingredient.of(e))));
@@ -65,7 +65,7 @@ public class CopperSlugJei implements IModPlugin {
         com.copperslug.armasfuego.oeste.MosqueteItem.ponerBayoneta(con, new ItemStack(Items.DIAMOND_SWORD));
         ItemStack sin = new ItemStack(ModItems.MOSQUETE.get());
         com.copperslug.armasfuego.oeste.MosqueteItem.ponerBayoneta(sin, ItemStack.EMPTY);
-        bay.add(new net.minecraft.world.item.crafting.ShapelessRecipe(new ResourceLocation(CopperSlug.MOD_ID, "jei/mosquete_quitar_bayoneta"), "mosquete_bayoneta",
+        bay.add(new net.minecraft.world.item.crafting.ShapelessRecipe(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "jei/mosquete_quitar_bayoneta"), "mosquete_bayoneta",
                 net.minecraft.world.item.crafting.CraftingBookCategory.EQUIPMENT, sin,
                 net.minecraft.core.NonNullList.of(net.minecraft.world.item.crafting.Ingredient.EMPTY, net.minecraft.world.item.crafting.Ingredient.of(con))));
         r.addRecipes(mezz.jei.api.constants.RecipeTypes.CRAFTING, bay);

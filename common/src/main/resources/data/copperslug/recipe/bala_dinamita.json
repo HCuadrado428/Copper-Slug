@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "copperslug:revolver_bala"
+    },
+    {
+      "item": "copperslug:revolver_bala"
+    },
+    {
+      "item": "minecraft:gunpowder"
+    },
+    {
+      "item": "minecraft:paper"
+    }
+  ],
+  "result": {
+    "id": "copperslug:bala_dinamita",
+    "count": 2
+  }
+}

@@ -21,3 +21,6 @@ build
 # other
 eclipse
 run
+
+# python
+__pycache__

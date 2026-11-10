@@ -22,9 +22,9 @@ public final class DanoEscopeta {
     public static final float PERFORA = 0.25F;
 
     public static final ResourceKey<DamageType> PERDIGON =
-            ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CopperSlug.MOD_ID, "escopeta_presion"));
+            ResourceKey.create(Registries.DAMAGE_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "escopeta_presion"));
     public static final ResourceKey<DamageType> REVENTON =
-            ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CopperSlug.MOD_ID, "escopeta_presion_reventon"));
+            ResourceKey.create(Registries.DAMAGE_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "escopeta_presion_reventon"));
 
     public static DamageSource fuente(Entity v, ResourceKey<DamageType> tipo, Entity causa) {
         return new DamageSource(v.level().registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(tipo), null, causa);

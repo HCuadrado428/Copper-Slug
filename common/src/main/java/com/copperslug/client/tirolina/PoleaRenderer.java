@@ -17,7 +17,7 @@ import net.minecraft.world.phys.Vec3;
 
 /** La polea: ruedas sobre el cable, alineada con su pendiente; las ruedas giran según la velocidad. */
 public class PoleaRenderer extends EntityRenderer<Polea> {
-    public static final ResourceLocation MODELO = new ResourceLocation(CopperSlug.MOD_ID, "block/polea");
+    public static final ResourceLocation MODELO = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "block/polea");
 
     public PoleaRenderer(EntityRendererProvider.Context c) {
         super(c);

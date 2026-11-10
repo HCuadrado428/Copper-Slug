@@ -46,7 +46,7 @@ import java.util.List;
 public final class TirolinasCliente {
     private TirolinasCliente() {}
 
-    private static final ResourceLocation TEX = new ResourceLocation(CopperSlug.MOD_ID, "textures/entity/cuerda_rifle.png");
+    private static final ResourceLocation TEX = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "textures/entity/cuerda_rifle.png");
     public static final List<TirolinasPacket.Linea> LINEAS = new ArrayList<>();
     private static final ItemStack GANCHO = new ItemStack(Items.TRIPWIRE_HOOK);
     private static int esperaSalto;

@@ -25,7 +25,7 @@ public final class Tambor {
 
     public static int[] recamaras(ItemStack s) {
         int[] r = new int[N];
-        CompoundTag t = s.getTag();
+        CompoundTag t = com.copperslug.shim.Nbt.leer(s);
         if (t != null && t.contains(TAMBOR)) {
             int[] g = t.getIntArray(TAMBOR);
             System.arraycopy(g, 0, r, 0, Math.min(N, g.length));
@@ -40,15 +40,15 @@ public final class Tambor {
     public static void poner(ItemStack s, int i, Carga c) {
         int[] r = recamaras(s);
         r[Math.floorMod(i, N)] = c.ordinal();
-        s.getOrCreateTag().putIntArray(TAMBOR, r);
+        com.copperslug.shim.Nbt.tag(s).putIntArray(TAMBOR, r);
     }
 
     public static int pos(ItemStack s) {
-        return s.hasTag() ? Math.floorMod(s.getTag().getInt(POS), N) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? Math.floorMod(com.copperslug.shim.Nbt.leer(s).getInt(POS), N) : 0;
     }
 
     public static void ponerPos(ItemStack s, int p) {
-        s.getOrCreateTag().putInt(POS, Math.floorMod(p, N));
+        com.copperslug.shim.Nbt.tag(s).putInt(POS, Math.floorMod(p, N));
     }
 
     public static Carga siguiente(ItemStack s) {
@@ -85,18 +85,18 @@ public final class Tambor {
     }
 
     public static boolean girado(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean(GIRADO);
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(GIRADO);
     }
 
     public static long giroT(ItemStack s) {
-        return s.hasTag() ? s.getTag().getLong(GIRO_T) : -1000;
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getLong(GIRO_T) : -1000;
     }
 
     public static int oxido(ItemStack s) {
-        return s.hasTag() ? Math.max(0, Math.min(3, s.getTag().getInt(OXIDO))) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? Math.max(0, Math.min(3, com.copperslug.shim.Nbt.leer(s).getInt(OXIDO))) : 0;
     }
 
     public static boolean encerado(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean(ENCERADO);
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(ENCERADO);
     }
 }

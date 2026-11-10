@@ -40,12 +40,12 @@ public class EstucheViolinItem extends Item {
     }
 
     public static ItemStack dentro(ItemStack s) {
-        return s.hasTag() && s.getTag().contains(ARMA) ? ItemStack.of(s.getTag().getCompound(ARMA)) : ItemStack.EMPTY;
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(ARMA) ? ItemStack.of(com.copperslug.shim.Nbt.leer(s).getCompound(ARMA)) : ItemStack.EMPTY;
     }
 
     public static void guardar(ItemStack estuche, ItemStack arma) {
-        if (arma.isEmpty()) estuche.removeTagKey(ARMA);
-        else estuche.getOrCreateTag().put(ARMA, arma.save(new net.minecraft.nbt.CompoundTag()));
+        if (arma.isEmpty()) com.copperslug.shim.Nbt.quitar(estuche, ARMA);
+        else com.copperslug.shim.Nbt.tag(estuche).put(ARMA, arma.save(new net.minecraft.nbt.CompoundTag()));
     }
 
     /** Un estuche con una Thompson dentro (para el botín). */
@@ -86,7 +86,7 @@ public class EstucheViolinItem extends Item {
         tocadas++;
         ultimaNota = n;
         // Paganini del Oeste: ocho notas distintas seguidas (sin parar más de 3 s) y afinado
-        var t = s.getOrCreateTag();
+        var t = com.copperslug.shim.Nbt.tag(s);
         long ahora = l.getGameTime();
         int mask = ahora - t.getLong(NOTA_T) > 60 ? 0 : t.getInt(NOTAS);
         mask |= 1 << n;

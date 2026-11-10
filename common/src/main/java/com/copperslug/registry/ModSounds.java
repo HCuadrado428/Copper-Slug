@@ -49,7 +49,7 @@ public final class ModSounds {
     public static final RegistryObject<SoundEvent> PINTURA_SPLAT = register("pintura_splat");
     private static RegistryObject<SoundEvent> register(String name) {
         return SOUNDS.register(name,
-                () -> SoundEvent.createVariableRangeEvent(new ResourceLocation(CopperSlug.MOD_ID, name)));
+                () -> SoundEvent.createVariableRangeEvent(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, name)));
     }
 
     private ModSounds() {}

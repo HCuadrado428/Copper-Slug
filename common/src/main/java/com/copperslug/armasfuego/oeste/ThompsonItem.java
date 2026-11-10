@@ -99,7 +99,7 @@ public class ThompsonItem extends ArmaFuegoItem {
 
     @Override
     protected InteractionResultHolder<ItemStack> apretarGatillo(Level level, Player p, ItemStack s) {
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         t.putInt(MODO, MODO_RAFAGA);
         t.putInt(RAFAGA, 0);
         p.startUsingItem(net.minecraft.world.InteractionHand.MAIN_HAND);
@@ -110,7 +110,7 @@ public class ThompsonItem extends ArmaFuegoItem {
     protected void rafaga(Level level, Player p, ItemStack s, int t) {
         int cad = EquilibrioArmas.thompsonCadencia();
         // Gatillo fácil: un 25 % más de balas por nivel (se van acumulando los ticks)
-        CompoundTag tg = s.getOrCreateTag();
+        CompoundTag tg = com.copperslug.shim.Nbt.tag(s);
         float acum = (t == 0 ? cad : tg.getFloat("Acum")) + 1 + 0.25F * nivel(com.copperslug.registry.ModEnchantments.THOMPSON_GATILLO, s);
         if (acum < cad + 1) {
             tg.putFloat("Acum", acum);
@@ -127,14 +127,14 @@ public class ThompsonItem extends ArmaFuegoItem {
     }
 
     public static int rafagaN(ItemStack s) {
-        return s.hasTag() ? s.getTag().getInt(RAFAGA) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getInt(RAFAGA) : 0;
     }
 
     @Override
     protected void disparar(ServerPlayer p, ItemStack s) {
         ServerLevel l = p.serverLevel();
         int n = rafagaN(s) + 1;
-        s.getOrCreateTag().putInt(RAFAGA, n);
+        com.copperslug.shim.Nbt.tag(s).putInt(RAFAGA, n);
         double disp = Math.min(0.09, 0.02 + 0.004 * n * compensador(s));
         double alcance = EquilibrioArmas.thompsonAlcance();
         Item tipo = tipoActual(s);

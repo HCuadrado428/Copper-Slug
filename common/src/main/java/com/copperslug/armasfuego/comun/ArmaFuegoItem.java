@@ -119,8 +119,8 @@ public abstract class ArmaFuegoItem extends Item {
     }
 
     public static Item tipo(ItemStack s) {
-        if (!s.hasTag() || !s.getTag().contains(TIPO)) return null;
-        return com.copperslug.shim.registries.ForgeRegistries.ITEMS.getValue(new net.minecraft.resources.ResourceLocation(s.getTag().getString(TIPO)));
+        if (!com.copperslug.shim.Nbt.tiene(s) || !com.copperslug.shim.Nbt.leer(s).contains(TIPO)) return null;
+        return com.copperslug.shim.registries.ForgeRegistries.ITEMS.getValue(net.minecraft.resources.ResourceLocation.parse(com.copperslug.shim.Nbt.leer(s).getString(TIPO)));
     }
 
     /**
@@ -168,7 +168,7 @@ public abstract class ArmaFuegoItem extends Item {
         if (m.isEmpty()) return 0;
         Item t = tipoDe(m);
         if (t != tipoActual(s) && cambiaEntera()) ponerBalas(s, 0);   // el tambor o la cinta viejos se quitan
-        s.getOrCreateTag().putString(TIPO, com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(t).toString());
+        com.copperslug.shim.Nbt.tag(s).putString(TIPO, com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(t).toString());
         for (int k = 0; k < polvora(); k++) buscar(p, x -> x.is(net.minecraft.world.item.Items.GUNPOWDER)).shrink(1);
         if (!llenaDeGolpe()) {
             m.shrink(1);
@@ -207,23 +207,23 @@ public abstract class ArmaFuegoItem extends Item {
     // ------------------------------------------------------------------ estado
 
     public static int balas(ItemStack s) {
-        return s.hasTag() ? s.getTag().getInt(BALAS) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getInt(BALAS) : 0;
     }
 
     public static void ponerBalas(ItemStack s, int n) {
-        s.getOrCreateTag().putInt(BALAS, Math.max(0, n));
+        com.copperslug.shim.Nbt.tag(s).putInt(BALAS, Math.max(0, n));
     }
 
     public static boolean atascada(ItemStack s) {
-        return s.hasTag() && s.getTag().getBoolean(ATASCO);
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(ATASCO);
     }
 
     public static int modo(ItemStack s) {
-        return s.hasTag() ? s.getTag().getInt(MODO) : 0;
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getInt(MODO) : 0;
     }
 
     public static long disparoT(ItemStack s) {
-        return s.hasTag() ? s.getTag().getLong(DISPARO_T) : -1000;
+        return com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getLong(DISPARO_T) : -1000;
     }
 
     /** Ticks desde el último disparo (para las animaciones). */
@@ -241,7 +241,7 @@ public abstract class ArmaFuegoItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player p, InteractionHand hand) {
         ItemStack s = p.getItemInHand(hand);
         if (hand != InteractionHand.MAIN_HAND) return InteractionResultHolder.pass(s);
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         if (p.isShiftKeyDown()) {
             // agachado con un panal o un hacha en la otra mano: encerar o rascar el cobre (como el revólver)
             ItemStack otra = p.getOffhandItem();
@@ -302,7 +302,7 @@ public abstract class ArmaFuegoItem extends Item {
         }
         if (level.isClientSide) {
             // la hora del disparo también en el cliente: la palanca y el culatazo empiezan sin esperar al servidor
-            s.getOrCreateTag().putLong(DISPARO_T, level.getGameTime());
+            com.copperslug.shim.Nbt.tag(s).putLong(DISPARO_T, level.getGameTime());
             com.copperslug.client.armasfuego.comun.FuegoCliente.disparoLocal(this, s);
             return true;
         }
@@ -312,16 +312,16 @@ public abstract class ArmaFuegoItem extends Item {
             return true;
         }
         if (!p.getAbilities().instabuild) ponerBalas(s, balas(s) - 1);
-        s.getOrCreateTag().putLong(DISPARO_T, level.getGameTime());
+        com.copperslug.shim.Nbt.tag(s).putLong(DISPARO_T, level.getGameTime());
         disparar(sp, s);
         if (Cobre.desgastar(s, usosPorFase(), p.isInWaterOrRain())) Cobre.avisar(sp, s);
-        if (s.isDamageableItem()) s.hurtAndBreak(1, p, x -> x.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        if (s.isDamageableItem()) s.hurtAndBreak(1, p, EquipmentSlot.MAINHAND);
         return true;
     }
 
     /** Se encasquilla: la bala no sale (y no se gasta) hasta desatascarla. */
     protected void atascar(ServerPlayer p, ItemStack s) {
-        s.getOrCreateTag().putBoolean(ATASCO, true);
+        com.copperslug.shim.Nbt.tag(s).putBoolean(ATASCO, true);
         ServerLevel l = p.serverLevel();
         l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.ARMAFUEGO_ATASCO.get(), SoundSource.PLAYERS, 0.9F, 0.9F + p.getRandom().nextFloat() * 0.2F);
         Vec3 b = boca(p, 0.8, 0.3, 0.22);
@@ -340,7 +340,7 @@ public abstract class ArmaFuegoItem extends Item {
                 int paso = ticksRecarga(s);
                 if (t > 0 && t % paso == 0) {
                     if (llena(s) && !cambiaTipo(p, s) || !p.getAbilities().instabuild && !tieneMunicion(p, s)) {
-                        s.getOrCreateTag().putLong(FIN_CARGA, level.getGameTime());
+                        com.copperslug.shim.Nbt.tag(s).putLong(FIN_CARGA, level.getGameTime());
                         p.stopUsingItem();
                         return;
                     }
@@ -349,14 +349,14 @@ public abstract class ArmaFuegoItem extends Item {
                     level.playSound(null, p.getX(), p.getY(), p.getZ(), sonidoRecarga(), SoundSource.PLAYERS, 0.8F, 0.95F + p.getRandom().nextFloat() * 0.1F);
                     alRecargar((ServerPlayer) p, s);
                     if (!recargaPorBala() || llena(s) || !p.getAbilities().instabuild && !tieneMunicion(p, s)) {
-                        s.getOrCreateTag().putLong(FIN_CARGA, level.getGameTime());
+                        com.copperslug.shim.Nbt.tag(s).putLong(FIN_CARGA, level.getGameTime());
                         p.stopUsingItem();
                     }
                 }
             }
             case MODO_DESATASCO -> {
                 if (level.isClientSide || t != T_DESATASCO) return;
-                s.getOrCreateTag().remove(ATASCO);
+                com.copperslug.shim.Nbt.tag(s).remove(ATASCO);
                 level.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.REVOLVER_AMARTILLAR.get(), SoundSource.PLAYERS, 0.8F, 0.8F);
                 p.stopUsingItem();
             }
@@ -367,10 +367,10 @@ public abstract class ArmaFuegoItem extends Item {
 
     /** Un paso de recarga en creativo (sin gastar nada): devuelve las balas que mete. */
     protected int cargaCreativa(ServerPlayer p, ItemStack s) {
-        if (!s.getOrCreateTag().contains(TIPO)) {
+        if (!com.copperslug.shim.Nbt.tag(s).contains(TIPO)) {
             ItemStack m = elegir(p, s);
             Item ti = m.isEmpty() ? municionNormal() : tipoDe(m);
-            s.getOrCreateTag().putString(TIPO, com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(ti).toString());
+            com.copperslug.shim.Nbt.tag(s).putString(TIPO, com.copperslug.shim.registries.ForgeRegistries.ITEMS.getKey(ti).toString());
         }
         return recargaPorBala() ? 1 : capacidad(s);
     }
@@ -386,7 +386,7 @@ public abstract class ArmaFuegoItem extends Item {
 
     @Override
     public void releaseUsing(ItemStack s, Level level, LivingEntity e, int quedan) {
-        if (s.hasTag()) s.getTag().putInt(MODO, MODO_NADA);
+        if (com.copperslug.shim.Nbt.tiene(s)) com.copperslug.shim.Nbt.leer(s).putInt(MODO, MODO_NADA);
     }
 
     @Override

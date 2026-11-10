@@ -154,7 +154,7 @@ public class Tirolinas extends SavedData {
         de(l).quitar(l, x, null);
         ItemStack bala = new ItemStack(ModItems.BALA_CUERDA.get());
         if (!p.getInventory().add(bala)) p.drop(bala, false);
-        p.getItemInHand(mano).hurtAndBreak(1, p, q -> q.broadcastBreakEvent(mano));
+        p.getItemInHand(mano).hurtAndBreak(1, p, mano);
         l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.SHEEP_SHEAR, SoundSource.PLAYERS, 1.0F, 1.2F);
         enviar(l);
     }

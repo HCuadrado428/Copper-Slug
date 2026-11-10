@@ -197,8 +197,8 @@ public class RevolverItem extends Item {
             public boolean applyForgeHandTransform(com.mojang.blaze3d.vertex.PoseStack ps, net.minecraft.client.player.LocalPlayer pl,
                                                    net.minecraft.world.entity.HumanoidArm brazo, ItemStack st, float pt, float equip, float swing) {
                 // al meter una bala: el revólver se ladea con el tambor abierto (recarga animada)
-                if (st.hasTag()) {
-                    float t = pl.level().getGameTime() - st.getTag().getLong(Revolver.CARGA_T) + pt;
+                if (com.copperslug.shim.Nbt.tiene(st)) {
+                    float t = pl.level().getGameTime() - com.copperslug.shim.Nbt.leer(st).getLong(Revolver.CARGA_T) + pt;
                     if (t >= 0 && t < 12) {
                         float k = net.minecraft.util.Mth.sin(t / 12F * net.minecraft.util.Mth.PI);
                         int i = brazo == net.minecraft.world.entity.HumanoidArm.RIGHT ? 1 : -1;

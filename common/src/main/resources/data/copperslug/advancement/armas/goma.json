@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/granjero",
+  "display": {
+    "icon": {
+      "id": "copperslug:escopeta_cartucho_goma"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.goma.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.goma.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "escopeta_goma": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "escopeta_goma"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

@@ -23,9 +23,9 @@ public final class RifleDano {
     private RifleDano() {}
 
     public static final ResourceKey<DamageType> DISPARO =
-            ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CopperSlug.MOD_ID, "rifle_disparo"));
+            ResourceKey.create(Registries.DAMAGE_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "rifle_disparo"));
     public static final ResourceKey<DamageType> PERFORANTE =
-            ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(CopperSlug.MOD_ID, "rifle_perforante"));
+            ResourceKey.create(Registries.DAMAGE_TYPE, net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "rifle_perforante"));
     /** Parte del daño que se salta la armadura. */
     public static final float PERFORA = 0.5F;
 

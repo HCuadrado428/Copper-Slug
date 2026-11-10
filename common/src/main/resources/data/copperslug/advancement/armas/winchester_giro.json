@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/winchester",
+  "display": {
+    "icon": {
+      "id": "minecraft:saddle"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.winchester_giro.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.winchester_giro.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "winchester_giro": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "winchester_giro"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}

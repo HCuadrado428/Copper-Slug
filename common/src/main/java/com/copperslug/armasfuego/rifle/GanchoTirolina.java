@@ -49,11 +49,11 @@ public class GanchoTirolina extends Polea {
     }
 
     @Override
-    protected void defineSynchedData() {
-        super.defineSynchedData();
-        entityData.define(T, 0F);
-        entityData.define(V, 0F);
-        entityData.define(DIR, new Vector3f(1, 0, 0));
+    protected void defineSynchedData(net.minecraft.network.syncher.SynchedEntityData.Builder b) {
+        super.defineSynchedData(b);
+        b.define(T, 0F);
+        b.define(V, 0F);
+        b.define(DIR, new Vector3f(1, 0, 0));
     }
 
     @Override

@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/duelo",
+  "display": {
+    "icon": {
+      "id": "minecraft:egg"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.gallina.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.gallina.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "revolver_gallina": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "revolver_gallina"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 5
+  }
+}

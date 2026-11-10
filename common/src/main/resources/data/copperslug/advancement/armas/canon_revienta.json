@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/canon",
+  "display": {
+    "icon": {
+      "id": "minecraft:fire_charge"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.canon_revienta.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.canon_revienta.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "canon_revienta": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "canon_revienta"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

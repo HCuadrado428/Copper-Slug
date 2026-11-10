@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "id": "copperslug:derringer"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.derringer.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.derringer.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "derringer_tahur": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "derringer_tahur"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 15
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "display": {
+    "icon": {
+      "id": "copperslug:revolver"
+    },
+    "title": {
+      "translate": "advancements.copperslug.raiz.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.raiz.description"
+    },
+    "frame": "task",
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false,
+    "background": "minecraft:textures/block/cut_copper.png"
+  },
+  "criteria": {
+    "entrar": {
+      "trigger": "minecraft:tick"
+    }
+  }
+}

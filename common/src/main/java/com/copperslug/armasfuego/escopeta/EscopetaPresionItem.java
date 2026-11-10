@@ -83,7 +83,7 @@ public class EscopetaPresionItem extends Item {
 
     @Override
     public void inventoryTick(ItemStack s, Level level, Entity e, int slot, boolean sel) {
-        if (level.isClientSide || !(e instanceof ServerPlayer p) || !s.hasTag()) return;
+        if (level.isClientSide || !(e instanceof ServerPlayer p) || !com.copperslug.shim.Nbt.tiene(s)) return;
         // humo tras reventar
         if (sel && Presion.reventada(s, level) > 0 && level.getGameTime() % 3 == 0) {
             var mira = p.getViewVector(1.0F);
@@ -100,7 +100,7 @@ public class EscopetaPresionItem extends Item {
             int cada = 40 / (1 + Presion.oxido(s));
             if (level.getGameTime() % cada == 0) {
                 Presion.ponerPresion(s, pr < 1 ? 0 : pr - 1);
-                if (Presion.presion(s) < Presion.MINIMA) s.getOrCreateTag().remove(Presion.DISPAROS);
+                if (Presion.presion(s) < Presion.MINIMA) com.copperslug.shim.Nbt.tag(s).remove(Presion.DISPAROS);
             }
         }
     }
@@ -172,14 +172,14 @@ public class EscopetaPresionItem extends Item {
         }
         if (otro.is(Items.HONEYCOMB)) {
             if (Presion.encerada(s)) return false;
-            s.getOrCreateTag().putBoolean(Presion.ENCERADA, true);
+            com.copperslug.shim.Nbt.tag(s).putBoolean(Presion.ENCERADA, true);
             otro.shrink(1);
             p.playSound(SoundEvents.HONEYCOMB_WAX_ON, 1.0F, 1.0F);
             return true;
         }
         if (otro.getItem() instanceof AxeItem) {
             if (Presion.encerada(s)) {
-                s.getOrCreateTag().remove(Presion.ENCERADA);
+                com.copperslug.shim.Nbt.tag(s).remove(Presion.ENCERADA);
                 p.playSound(SoundEvents.AXE_WAX_OFF, 1.0F, 1.0F);
             } else if (Presion.oxido(s) > 0) {
                 Presion.ponerOxido(s, Presion.oxido(s) - 1);

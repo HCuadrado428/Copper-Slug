@@ -184,6 +184,7 @@ def filtrar_registro(ruta, texto):
 
 
 SONIDOS_USADOS = set()
+DANOS = set()
 
 
 def suscriptores(ficheros):
@@ -299,6 +300,19 @@ def main(src, dst):
             j = json.load(open(os.path.join(a_src, p), encoding='utf-8'))
         except Exception:
             return
+        sub(j)
+        # forge:separate_transforms: la base y las perspectivas son modelos dentro del modelo
+        if isinstance(j.get('base'), dict):
+            sub(j['base'])
+        for v in (j.get('perspectives') or {}).values():
+            if isinstance(v, dict):
+                sub(v)
+        for o in j.get('overrides') or []:
+            r = ref_a_ruta(o.get('model', ''), '', '')
+            if r:
+                modelo(r.lstrip('/'))
+
+    def sub(j):
         if 'parent' in j:
             r = ref_a_ruta(j['parent'], '', '')
             if r is not None:
@@ -309,10 +323,6 @@ def main(src, dst):
                 copiar.add(r)
                 if os.path.exists(os.path.join(a_src, r + '.mcmeta')):
                     copiar.add(r + '.mcmeta')
-        for o in j.get('overrides') or []:
-            r = ref_a_ruta(o.get('model', ''), '', '')
-            if r:
-                modelo(r.lstrip('/'))
 
     for i in ids_items:
         modelo('item/' + i)
@@ -396,8 +406,21 @@ def main(src, dst):
         tipo = re.search(r'"type"\s*:\s*"miscelanea:mosquete_bayoneta"', t)
         if (res and res.group(1) in ids_items) or tipo:
             datos.append('recipes/' + f)
-    for d in ['damage_type']:
-        pass  # las armas de fuego no usan los tipos de daño de DanoArma (solo su marca "extra")
+    # tipos de daño que nombra el código de las armas, y sus etiquetas vanilla (bypasses_armor, is_projectile...)
+    danos = set()
+    for f in sorted(os.listdir(os.path.join(d_src, 'damage_type'))):
+        if f[:-5] in literales:
+            danos.add(f[:-5])
+            datos.append('damage_type/' + f)
+    tags_dano = os.path.join(src, R, 'data/minecraft/tags/damage_type')
+    for f in sorted(os.listdir(tags_dano)):
+        j = json.load(open(os.path.join(tags_dano, f), encoding='utf-8'))
+        vals = [v for v in j.get('values', []) if isinstance(v, str) and v.startswith('miscelanea:') and v.split(':')[1] in danos]
+        if vals:
+            o = os.path.join(dst, 'common/src/main/resources/data/minecraft/tags/damage_type', f)
+            os.makedirs(os.path.dirname(o), exist_ok=True)
+            json.dump({'replace': False, 'values': [transformar_texto(v) for v in vals]}, open(o, 'w', encoding='utf-8'), indent=2)
+    DANOS.update(danos)
     for t in datos:
         o = os.path.join(d_src, t)
         dd = os.path.join(d_dst, t)
@@ -424,6 +447,7 @@ def main(src, dst):
                 if tipo == 'entity' and ident in ids_ent: ok = True
                 if tipo == 'effect' and ident in ids_efe: ok = True
                 if tipo == 'subtitles' and '.'.join(partes[2:]) in ids_snd: ok = True
+            if len(partes) >= 4 and partes[0] == 'death' and partes[1] == 'attack' and partes[2] == 'miscelanea' and partes[3] in DANOS: ok = True
             if not ok:
                 for p in prefijos:
                     if k == p or (p.endswith('.') and k.startswith(p)) or k.startswith(p + '.'):

@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "copperslug:revolver_bala"
+    },
+    {
+      "item": "copperslug:revolver_bala"
+    },
+    {
+      "item": "copperslug:revolver_bala"
+    },
+    {
+      "item": "copperslug:revolver_bala"
+    },
+    {
+      "item": "minecraft:ice"
+    }
+  ],
+  "result": {
+    "id": "copperslug:bala_hielo",
+    "count": 4
+  }
+}

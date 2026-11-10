@@ -17,7 +17,7 @@ import net.minecraft.util.GsonHelper;
  * "conditions": {"accion": "foto"}}}.
  */
 public class LogroTrigger extends SimpleCriterionTrigger<LogroTrigger.Instancia> {
-    public static final ResourceLocation ID = new ResourceLocation(CopperSlug.MOD_ID, "accion");
+    public static final ResourceLocation ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "accion");
 
     @Override
     public ResourceLocation getId() {

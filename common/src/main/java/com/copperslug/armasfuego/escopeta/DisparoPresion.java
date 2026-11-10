@@ -79,7 +79,7 @@ public final class DisparoPresion {
         // en la zona roja la aguja tiembla: cada bombeo es una lotería
         float mas = roja ? 4 + r.nextFloat() * 8 : 7 + r.nextFloat() * 3;
         pr += mas;
-        s.getOrCreateTag().remove(Presion.DISPAROS);
+        com.copperslug.shim.Nbt.tag(s).remove(Presion.DISPAROS);
         sl.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.HORSE_BREATHE, SoundSource.PLAYERS, 0.55F, 1.25F + Math.min(pr / tope, 1) * 0.5F);
         sl.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.PISTON_CONTRACT, SoundSource.PLAYERS, 0.12F, 1.9F);
         p.causeFoodExhaustion(0.03F);
@@ -116,10 +116,10 @@ public final class DisparoPresion {
         p.setDeltaMovement(p.getDeltaMovement().add(atras));
         p.connection.send(new ClientboundSetEntityMotionPacket(p));
         Presion.ponerPresion(s, 0);
-        s.getOrCreateTag().remove(Presion.DISPAROS);
-        s.getOrCreateTag().putLong(Presion.REVENTADA, sl.getGameTime() + Presion.HUMEO);
+        com.copperslug.shim.Nbt.tag(s).remove(Presion.DISPAROS);
+        com.copperslug.shim.Nbt.tag(s).putLong(Presion.REVENTADA, sl.getGameTime() + Presion.HUMEO);
         p.getCooldowns().addCooldown(s.getItem(), Presion.HUMEO);
-        s.hurtAndBreak(15, p, x -> x.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        s.hurtAndBreak(15, p, EquipmentSlot.MAINHAND);
     }
 
     // ================================================================ disparar
@@ -156,11 +156,11 @@ public final class DisparoPresion {
         int hechos = Presion.disparosHechos(s) + 1;
         if (hechos >= Presion.disparosPorBombeada(s)) {
             Presion.ponerPresion(s, 0);
-            s.getOrCreateTag().remove(Presion.DISPAROS);
-        } else s.getOrCreateTag().putInt(Presion.DISPAROS, hechos);
+            com.copperslug.shim.Nbt.tag(s).remove(Presion.DISPAROS);
+        } else com.copperslug.shim.Nbt.tag(s).putInt(Presion.DISPAROS, hechos);
         // el cobre se oxida con el uso (antes si se usa mojado)
         if (!Presion.encerada(s) && ox < 3 && r.nextFloat() < (p.isInWaterOrRain() ? 1 / 15F : 1 / 45F)) Presion.ponerOxido(s, ox + 1);
-        s.hurtAndBreak(1, p, x -> x.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        s.hurtAndBreak(1, p, EquipmentSlot.MAINHAND);
         p.getCooldowns().addCooldown(s.getItem(), t == null ? 6 : 10);
     }
 

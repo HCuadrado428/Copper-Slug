@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/derringer",
+  "display": {
+    "icon": {
+      "id": "copperslug:bala_oro"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.oro.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.oro.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "derringer_oro": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "derringer_oro"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}

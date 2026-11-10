@@ -138,13 +138,13 @@ public class MosqueteItem extends ArmaFuegoItem {
 
     @Override
     protected InteractionResultHolder<ItemStack> apretarGatillo(Level level, Player p, ItemStack s) {
-        if (p.getCooldowns().isOnCooldown(this) || s.hasTag() && s.getTag().contains(CHISPA)) return InteractionResultHolder.fail(s);
+        if (p.getCooldowns().isOnCooldown(this) || com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(CHISPA)) return InteractionResultHolder.fail(s);
         if (balas(s) <= 0 || atascada(s)) {
             intentar(level, p, s);   // clic
             return InteractionResultHolder.fail(s);
         }
         // el pedernal pica: la cazoleta se enciende y el tiro sale RETARDO ticks después
-        s.getOrCreateTag().putLong(CHISPA, level.getGameTime() + retardo(s));
+        com.copperslug.shim.Nbt.tag(s).putLong(CHISPA, level.getGameTime() + retardo(s));
         if (!level.isClientSide) {
             ServerLevel l = (ServerLevel) level;
             Vec3 c = boca(p, 0.45, 0.3, 0.2);
@@ -159,9 +159,9 @@ public class MosqueteItem extends ArmaFuegoItem {
     @Override
     public void inventoryTick(ItemStack s, Level level, Entity e, int slot, boolean sel) {
         super.inventoryTick(s, level, e, slot, sel);
-        if (!(e instanceof Player p) || !s.hasTag() || !s.getTag().contains(CHISPA)) return;
-        if (level.getGameTime() < s.getTag().getLong(CHISPA)) return;
-        s.getTag().remove(CHISPA);
+        if (!(e instanceof Player p) || !com.copperslug.shim.Nbt.tiene(s) || !com.copperslug.shim.Nbt.leer(s).contains(CHISPA)) return;
+        if (level.getGameTime() < com.copperslug.shim.Nbt.leer(s).getLong(CHISPA)) return;
+        com.copperslug.shim.Nbt.leer(s).remove(CHISPA);
         if (!sel || p.getMainHandItem() != s) return;   // si se ha guardado, la cazoleta se apaga sola
         if (!level.isClientSide && mojada(p) && nivel(com.copperslug.registry.ModEnchantments.MOSQUETE_POLVORA_SECA, s) == 0) {
             ponerBalas(s, 0);
@@ -288,18 +288,18 @@ public class MosqueteItem extends ArmaFuegoItem {
     }
 
     public static boolean tieneBayoneta(ItemStack s) {
-        return !(s.hasTag() && s.getTag().getBoolean(SIN_BAYONETA));
+        return !(com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(SIN_BAYONETA));
     }
 
     /** La espada calada (la de hierro si es un mosquete de los de antes), o vacío si no lleva. */
     public static ItemStack bayoneta(ItemStack s) {
         if (!tieneBayoneta(s)) return ItemStack.EMPTY;
-        if (s.hasTag() && s.getTag().contains(BAYONETA)) return ItemStack.of(s.getTag().getCompound(BAYONETA));
+        if (com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(BAYONETA)) return ItemStack.of(com.copperslug.shim.Nbt.leer(s).getCompound(BAYONETA));
         return new ItemStack(Items.IRON_SWORD);
     }
 
     public static void ponerBayoneta(ItemStack s, ItemStack espada) {
-        CompoundTag t = s.getOrCreateTag();
+        CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         if (espada.isEmpty()) {
             t.remove(BAYONETA);
             t.putBoolean(SIN_BAYONETA, true);
@@ -314,8 +314,8 @@ public class MosqueteItem extends ArmaFuegoItem {
         if (!tieneBayoneta(s)) return 0;
         // se mira cada fotograma (el modelo en la mano): solo el id, sin rehacer el objeto entero
         net.minecraft.world.item.Item it = Items.IRON_SWORD;
-        if (s.hasTag() && s.getTag().contains(BAYONETA)) {
-            var rl = net.minecraft.resources.ResourceLocation.tryParse(s.getTag().getCompound(BAYONETA).getString("id"));
+        if (com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(BAYONETA)) {
+            var rl = net.minecraft.resources.ResourceLocation.tryParse(com.copperslug.shim.Nbt.leer(s).getCompound(BAYONETA).getString("id"));
             if (rl != null) it = net.minecraft.core.registries.BuiltInRegistries.ITEM.get(rl);
         }
         if (it instanceof SwordItem sw) {
@@ -360,7 +360,7 @@ public class MosqueteItem extends ArmaFuegoItem {
     @Override
     public boolean hurtEnemy(ItemStack s, LivingEntity v, LivingEntity a) {
         ItemStack bay = bayoneta(s);
-        if (bay.isEmpty()) s.hurtAndBreak(1, a, x -> x.broadcastBreakEvent(EquipmentSlot.MAINHAND));
+        if (bay.isEmpty()) s.hurtAndBreak(1, a, EquipmentSlot.MAINHAND);
         else if (bay.isDamageableItem() && !(a instanceof Player pl && pl.getAbilities().instabuild)) {
             // se gasta la espada calada; si se rompe, el mosquete se queda sin bayoneta
             if (bay.hurt(1, a.getRandom(), a instanceof ServerPlayer sp ? sp : null)) {
