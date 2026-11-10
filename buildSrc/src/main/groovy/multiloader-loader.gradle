@@ -1,0 +1,42 @@
+plugins {
+    id 'multiloader-common'
+}
+
+configurations {
+    commonJava{
+        canBeResolved = true
+    }
+    commonResources{
+        canBeResolved = true
+    }
+}
+
+dependencies {
+    compileOnly(project(':common')) {
+        capabilities {
+            requireCapability "$group:$mod_id"
+        }
+    }
+    commonJava project(path: ':common', configuration: 'commonJava')
+    commonResources project(path: ':common', configuration: 'commonResources')
+}
+
+tasks.named('compileJava', JavaCompile) {
+    dependsOn(configurations.commonJava)
+    source(configurations.commonJava)
+}
+
+processResources {
+    dependsOn(configurations.commonResources)
+    from(configurations.commonResources)
+}
+
+// Minecraft no pasa de es_mx (ni de las otras variantes del español) a es_es sino al inglés: llevan el texto en castellano
+processResources {
+    ['es_mx', 'es_ar', 'es_cl', 'es_ec', 'es_uy', 'es_ve'].each { v ->
+        from(project(':common').file('src/main/resources/assets/copperslug/lang/es_es.json')) {
+            into 'assets/copperslug/lang'
+            rename { "${v}.json" }
+        }
+    }
+}
