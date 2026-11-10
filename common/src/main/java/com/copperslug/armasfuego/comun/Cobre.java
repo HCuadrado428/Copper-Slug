@@ -93,7 +93,7 @@ public final class Cobre {
             sonido(p, donde, SoundEvents.AXE_SCRAPE);
             if (donde != null && p.level() instanceof ServerLevel l) l.sendParticles(ParticleTypes.SCRAPE, donde.x, donde.y, donde.z, 8, 0.2, 0.2, 0.2, 0.5);
         } else return false;
-        if (!p.level().isClientSide && hacha.isDamageableItem() && !p.getAbilities().instabuild && hacha.hurt(1, p.getRandom(), p instanceof ServerPlayer sp ? sp : null))
+        if (!p.level().isClientSide && hacha.isDamageableItem() && !p.getAbilities().instabuild && com.copperslug.shim.Durab.danar(hacha, 1, p.getRandom(), p instanceof ServerPlayer sp ? sp : null))
             hacha.shrink(1);
         return true;
     }

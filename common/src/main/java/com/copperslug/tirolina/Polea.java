@@ -190,7 +190,7 @@ public class Polea extends Entity {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+    public Packet<ClientGamePacketListener> getAddEntityPacket(net.minecraft.server.level.ServerEntity copperslug$se) {
+        return NetworkHooks.getEntitySpawningPacket(this, copperslug$se);
     }
 }

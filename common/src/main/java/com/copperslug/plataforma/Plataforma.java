@@ -9,7 +9,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraft.world.level.Level;
 
 import java.nio.file.Path;
@@ -48,8 +47,6 @@ public interface Plataforma {
     /** Cierra los registros pendientes (Fabric registra aquí todo lo que se pidió en los static de los registros). */
     default void registrosListos() {}
 
-    /** Una categoría de encantamiento nueva (Forge: una constante nueva del enum; Fabric, ver CategoriasFabric). */
-    EnchantmentCategory categoria(String nombre, Predicate<Item> filtro);
 
     /** El atributo de alcance de ataque del cargador (null si no hay). */
     Attribute alcanceAtaque();
@@ -60,6 +57,11 @@ public interface Plataforma {
     }
 
     boolean esJugadorFalso(ServerPlayer p);
+
+    /** Los registros del nivel del cliente (null en el servidor o sin mundo). */
+    default net.minecraft.core.RegistryAccess registrosCliente() {
+        return esCliente() ? com.copperslug.plataforma.ClienteComun.registros() : null;
+    }
 
     /** Un jugador de mentira (para la prueba del CI: el duelo). */
     ServerPlayer jugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil);

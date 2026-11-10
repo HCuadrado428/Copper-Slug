@@ -34,7 +34,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -236,7 +235,7 @@ public class WinchesterItem extends ArmaFuegoItem {
             LivingEntity v = t.entidad();
             if (tipo == ModItems.BALA_PLATA.get()) {
                 // plata: otro tanto contra los no muertos (con el brillo de la plata)
-                if (v != null && v.getMobType() == MobType.UNDEAD) {
+                if (v != null && v.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD)) {
                     Balistica.herir(v, p, dano, 0.2F, DANO, true);
                     l.sendParticles(ParticleTypes.END_ROD, t.pos().x, t.pos().y, t.pos().z, 10, 0.2, 0.3, 0.2, 0.05);
                     if (!v.isAlive()) LogrosMiscelanea.dar(p, "winchester_plata");

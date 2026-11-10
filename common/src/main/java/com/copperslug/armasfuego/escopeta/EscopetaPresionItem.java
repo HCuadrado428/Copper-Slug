@@ -59,7 +59,7 @@ public class EscopetaPresionItem extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack s) {
+    public int getUseDuration(ItemStack s, net.minecraft.world.entity.LivingEntity copperslug$quien) {
         return 72000;
     }
 
@@ -71,7 +71,7 @@ public class EscopetaPresionItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity e, ItemStack s, int quedan) {
         if (!(e instanceof Player p) || level.isClientSide) return;
-        int t = getUseDuration(s) - quedan;
+        int t = getUseDuration(s, null) - quedan;
         if (p.isShiftKeyDown()) DisparoPresion.aspirar((ServerPlayer) p, s, t);
         else if (t % RITMO == RITMO / 2) DisparoPresion.bombear((ServerPlayer) p, s);
     }
@@ -185,7 +185,7 @@ public class EscopetaPresionItem extends Item {
                 Presion.ponerOxido(s, Presion.oxido(s) - 1);
                 p.playSound(SoundEvents.AXE_SCRAPE, 1.0F, 1.0F);
             } else return false;
-            otro.hurtAndBreak(1, p, x -> {});
+            otro.hurtAndBreak(1, p, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
             return true;
         }
         return false;
@@ -209,7 +209,8 @@ public class EscopetaPresionItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag f) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> l, TooltipFlag f) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         int pr = Math.round(Presion.presion(s)), tope = Math.round(Presion.tope(s));
         ChatFormatting zc = switch (Presion.zona(s)) {
             case 1 -> ChatFormatting.GREEN;

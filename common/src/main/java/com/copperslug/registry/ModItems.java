@@ -32,7 +32,7 @@ public final class ModItems {
             () -> new com.copperslug.armasfuego.rifle.MunicionRifleItem("item.copperslug.bala_cuerda.ayuda", new Item.Properties().stacksTo(16)));
     public static final RegistryObject<Item> CASQUILLO_RIFLE = ITEMS.register("casquillo_rifle", () -> new Item(new Item.Properties()));
     public static final RegistryObject<Item> PALOMITAS = ITEMS.register("palomitas",
-            () -> new Item(new Item.Properties().stacksTo(16).food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(6).saturationMod(0.5F).build())));
+            () -> new Item(new Item.Properties().stacksTo(16).food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(6).saturationModifier(0.5F).build())));
     // ---- Escopeta de presión
     public static final RegistryObject<Item> ESCOPETA_PRESION = ITEMS.register("escopeta_presion",
             () -> new com.copperslug.armasfuego.escopeta.EscopetaPresionItem(new Item.Properties().durability(350).rarity(Rarity.UNCOMMON)));

@@ -100,7 +100,7 @@ public class MosqueteItem extends ArmaFuegoItem {
     public void onUseTick(Level level, LivingEntity e, ItemStack s, int quedan) {
         super.onUseTick(level, e, s, quedan);
         // cada paso suena: la pólvora al entrar, la bola al tercio y la baqueta a los dos tercios
-        int t = getUseDuration(s) - quedan;
+        int t = getUseDuration(s, null) - quedan;
         int r = ticksRecarga(s);
         if (!level.isClientSide && modo(s) == MODO_RECARGA) {
             if (t == r / 3) level.playSound(null, e.getX(), e.getY(), e.getZ(), net.minecraft.sounds.SoundEvents.STONE_HIT, SoundSource.PLAYERS, 0.6F, 1.6F);
@@ -294,7 +294,7 @@ public class MosqueteItem extends ArmaFuegoItem {
     /** La espada calada (la de hierro si es un mosquete de los de antes), o vacío si no lleva. */
     public static ItemStack bayoneta(ItemStack s) {
         if (!tieneBayoneta(s)) return ItemStack.EMPTY;
-        if (com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(BAYONETA)) return ItemStack.of(com.copperslug.shim.Nbt.leer(s).getCompound(BAYONETA));
+        if (com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(BAYONETA)) return ItemStack.parseOptional(com.copperslug.shim.Enc.registros(), com.copperslug.shim.Nbt.leer(s).getCompound(BAYONETA));
         return new ItemStack(Items.IRON_SWORD);
     }
 
@@ -304,7 +304,7 @@ public class MosqueteItem extends ArmaFuegoItem {
             t.remove(BAYONETA);
             t.putBoolean(SIN_BAYONETA, true);
         } else {
-            t.put(BAYONETA, espada.copyWithCount(1).save(new CompoundTag()));
+            t.put(BAYONETA, espada.copyWithCount(1).saveOptional(com.copperslug.shim.Enc.registros()));
             t.remove(SIN_BAYONETA);
         }
     }
@@ -363,7 +363,7 @@ public class MosqueteItem extends ArmaFuegoItem {
         if (bay.isEmpty()) s.hurtAndBreak(1, a, EquipmentSlot.MAINHAND);
         else if (bay.isDamageableItem() && !(a instanceof Player pl && pl.getAbilities().instabuild)) {
             // se gasta la espada calada; si se rompe, el mosquete se queda sin bayoneta
-            if (bay.hurt(1, a.getRandom(), a instanceof ServerPlayer sp ? sp : null)) {
+            if (com.copperslug.shim.Durab.danar(bay, 1, a.getRandom(), a instanceof ServerPlayer sp ? sp : null)) {
                 ponerBayoneta(s, ItemStack.EMPTY);
                 a.level().playSound(null, a.getX(), a.getY(), a.getZ(), net.minecraft.sounds.SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 0.8F, 1.2F);
             } else ponerBayoneta(s, bay);
@@ -376,7 +376,7 @@ public class MosqueteItem extends ArmaFuegoItem {
     public static ItemStack calar(Player p, ItemStack s, ItemStack espada) {
         ItemStack vieja = tieneBayoneta(s) ? bayoneta(s) : ItemStack.EMPTY;
         ponerBayoneta(s, espada);
-        p.playSound(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON, 0.8F, 1.3F);
+        p.playSound(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON.value(), 0.8F, 1.3F);
         if (p instanceof ServerPlayer sp && material(s) == 6) LogrosMiscelanea.dar(sp, "mosquete_netherita");
         return vieja;
     }
@@ -394,7 +394,7 @@ public class MosqueteItem extends ArmaFuegoItem {
             if (otro.isEmpty() && tieneBayoneta(s)) {
                 cursor.set(bayoneta(s));
                 ponerBayoneta(s, ItemStack.EMPTY);
-                p.playSound(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON, 0.8F, 0.9F);
+                p.playSound(net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_IRON.value(), 0.8F, 0.9F);
                 return true;
             }
         }
@@ -408,11 +408,12 @@ public class MosqueteItem extends ArmaFuegoItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @javax.annotation.Nullable Level level, java.util.List<Component> l, net.minecraft.world.item.TooltipFlag f) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, java.util.List<Component> l, net.minecraft.world.item.TooltipFlag f) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         ItemStack b = bayoneta(s);
         l.add(b.isEmpty() ? Component.translatable("item.copperslug.mosquete.bayoneta_no").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("item.copperslug.mosquete.bayoneta", b.getHoverName()).withStyle(ChatFormatting.GRAY));
-        super.appendHoverText(s, level, l, f);
+        super.appendHoverText(s, copperslug$ctx, l, f);
         l.add(Component.translatable("item.copperslug.mosquete.ayuda_bayoneta").withStyle(ChatFormatting.DARK_GRAY));
     }
 

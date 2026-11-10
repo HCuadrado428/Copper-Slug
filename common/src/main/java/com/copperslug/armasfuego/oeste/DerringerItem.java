@@ -132,7 +132,7 @@ public class DerringerItem extends ArmaFuegoItem {
         p.getCooldowns().removeCooldown(d.getItem());
         inv.setChanged();
         p.containerMenu.broadcastChanges();
-        p.serverLevel().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_LEATHER, SoundSource.PLAYERS, 0.8F, 1.7F);
+        p.serverLevel().playSound(null, p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.8F, 1.7F);
         p.serverLevel().playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.DERRINGER_ABRIR.get(), SoundSource.PLAYERS, 0.5F, 1.6F);
         return true;
     }

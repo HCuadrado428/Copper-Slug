@@ -37,7 +37,7 @@ public final class RifleHud {
         else rec = bala.getDescription();
         g.drawCenteredString(f, rec, cx, y + 11, Rifle.lista(s) ? 0xFFF2C24B : 0xFFB0B0B0);
         // respiración contenida: barrita que se llena con la mira quieta
-        if (Rifle.nivel(s, ModEnchantments.RESPIRACION.get()) > 0) {
+        if (Rifle.nivel(s, ModEnchantments.RESPIRACION) > 0) {
             int bw = 50, bx = cx - bw / 2, by = y + 24;
             float k = Math.min(1F, RifleCliente.quietos / (float) Rifle.FIRME_TICKS);
             g.fill(bx - 1, by - 1, bx + bw + 1, by + 3, 0x90000000);

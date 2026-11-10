@@ -123,8 +123,8 @@ public final class CopperSlug {
                     ModItems.BOLANO_INCENDIARIO, ModItems.BOLANO_FUEGOS, ModItems.BALA_HIELO, ModItems.BALA_HUMO, ModItems.TAMBOR_TINTA,
                     ModItems.CINTA_GUISANTES, ModItems.BOLA_ARPON, ModItems.BOLANO_SALTARIN)) out.accept(new ItemStack(m.get()));
             // los libros de los encantamientos propios de las demás armas
-            var rev = List.of(ModEnchantments.REVOLVER_ABANICO.get(), ModEnchantments.REVOLVER_CARAMBOLA.get(),
-                    ModEnchantments.REVOLVER_DESENFUNDE.get(), ModEnchantments.REVOLVER_SENALERO.get());
+            var rev = List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
+                    ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO);
             for (var e : net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.entrySet())
                 if (MOD_ID.equals(e.getKey().location().getNamespace()) && !rev.contains(e.getValue())) libro(out, e.getValue());
         }

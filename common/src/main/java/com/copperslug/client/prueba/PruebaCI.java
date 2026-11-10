@@ -370,7 +370,7 @@ public final class PruebaCI {
     private static ItemStack piRevolver(int oxido, Object... encs) {
         ItemStack r = new ItemStack(com.copperslug.registry.ModItems.REVOLVER.get());
         for (int i = 0; i + 1 < encs.length; i += 2)
-            r.enchant(((com.copperslug.shim.registries.RegistryObject<net.minecraft.world.item.enchantment.Enchantment>) encs[i]).get(), (Integer) encs[i + 1]);
+            r.enchant(((net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment>) encs[i]).get(), (Integer) encs[i + 1]);
         if (oxido > 0) com.copperslug.shim.Nbt.tag(r).putInt(com.copperslug.armasfuego.pistola.Tambor.OXIDO, oxido);
         return r;
     }
@@ -710,10 +710,10 @@ public final class PruebaCI {
                 for (var e : net.minecraft.world.item.enchantment.EnchantmentHelper.selectEnchantment(rnd, rev, 5 + rnd.nextInt(26), false))
                     vistos.add(com.copperslug.shim.registries.ForgeRegistries.ENCHANTMENTS.getKey(e.enchantment).getPath() + " " + e.level);
             boolean soloSuyos = vistos.stream().allMatch(x -> x.startsWith("revolver_"));
-            var ab = com.copperslug.registry.ModEnchantments.REVOLVER_ABANICO.get();
-            var de = com.copperslug.registry.ModEnchantments.REVOLVER_DESENFUNDE.get();
+            var ab = com.copperslug.registry.ModEnchantments.REVOLVER_ABANICO;
+            var de = com.copperslug.registry.ModEnchantments.REVOLVER_DESENFUNDE;
             boolean incompatibles = !ab.isCompatibleWith(de) && !de.isCompatibleWith(ab);
-            boolean espada = com.copperslug.registry.ModEnchantments.REVOLVER_CARAMBOLA.get().canEnchant(new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
+            boolean espada = com.copperslug.registry.ModEnchantments.REVOLVER_CARAMBOLA.canEnchant(new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD));
             piComprobar("mesa de encantar: solo los suyos, Abanico y Desenfunde incompatibles, no valen para una espada",
                     soloSuyos && vistos.size() >= 4 && incompatibles && !espada, vistos + ", incompatibles " + incompatibles + ", espada " + espada);
             piSrv(sp -> {
@@ -870,7 +870,7 @@ public final class PruebaCI {
         }
         if (escVigilaMiel && escHusk != null) {
             for (var lv : e.getServer().getAllLevels())
-                if (lv.getEntity(escHusk) instanceof net.minecraft.world.entity.LivingEntity le && le.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.get()))
+                if (lv.getEntity(escHusk) instanceof net.minecraft.world.entity.LivingEntity le && le.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.holder()))
                     PI.put("miel_visto", true);
         }
         for (Object[] t : listos) {
@@ -1143,7 +1143,7 @@ public final class PruebaCI {
             // que se guarda con el mundo: lo guardado y vuelto a cargar tiene las mismas tirolinas
             rifleSrv(sp -> {
                 var d = com.copperslug.armasfuego.rifle.Tirolinas.de(sp.serverLevel());
-                var t = d.save(new net.minecraft.nbt.CompoundTag());
+                var t = d.saveOptional(com.copperslug.shim.Enc.registros());
                 var otra = com.copperslug.armasfuego.rifle.Tirolinas.cargar(t);
                 // (sin mirar isDirty: si justo se ha autoguardado el mundo ya no está «sucio» y fallaba sin motivo)
                 if (otra.lineas().size() != d.lineas().size() || !otra.lineas().get(0).b().equals(d.lineas().get(0).b()))
@@ -1225,8 +1225,8 @@ public final class PruebaCI {
                     var k = com.copperslug.shim.registries.ForgeRegistries.ENCHANTMENTS.getKey(ei.enchantment);
                     if (k != null && k.getNamespace().equals(CopperSlug.MOD_ID)) nuestros.add(k.getPath());
                 }
-                boolean soloRifle = !com.copperslug.registry.ModEnchantments.ATRAVESAR.get().canEnchant(new ItemStack(net.minecraft.world.item.Items.BOW))
-                        && com.copperslug.registry.ModEnchantments.ATRAVESAR.get().canEnchant(new ItemStack(item));
+                boolean soloRifle = !com.copperslug.registry.ModEnchantments.ATRAVESAR.canEnchant(new ItemStack(net.minecraft.world.item.Items.BOW))
+                        && com.copperslug.registry.ModEnchantments.ATRAVESAR.canEnchant(new ItemStack(item));
                 RESUMEN.add("  rifle: encerar " + a + ", desencerar " + b + ", rascar " + c + " · en la mesa: " + nuestros + " · solo para el rifle " + soloRifle);
                 if (!a || !b || !c) rifleFallo = "encerar/rascar el cobre no ha ido bien";
                 else if (nuestros.size() < 4 || !soloRifle) rifleFallo = "los encantamientos del rifle no salen bien en la mesa";
@@ -2249,7 +2249,7 @@ public final class PruebaCI {
             piApuntar(a2Punto(8, 0, 1.2));
             piSrv(sp -> {
                 var h = a2Ente(sp, a2Husk);
-                if (h != null) h.setSecondsOnFire(30);
+                if (h != null) h.igniteForSeconds(30);
             });
         });
         sin("a2c_agua_rafaga", 2, () -> rifleUsar(true));
@@ -3064,6 +3064,8 @@ public final class PruebaCI {
         // si los perdigones no han dado a la diana (se reparten al azar; con mala suerte ardía aún), otro tiro
         sin("esc_escarcha_otra", 5, () -> {
             var h = escEntidad(escHusk);
+            // lo congelado se va pasando: con shaders (pocos fotogramas) el paso siguiente llega muchos ticks después
+            PI.put("escarcha_congela", h.getTicksFrozen());
             if (h.isOnFire() || h.getTicksFrozen() <= 0) {
                 RESUMEN.add("  escopeta: el primer tiro de escarcha no ha dado bien; otro");
                 PI.put("escarcha_otra", true);
@@ -3073,15 +3075,20 @@ public final class PruebaCI {
         sin("esc_escarcha_tiro2", 15, () -> {
             if (Boolean.TRUE.equals(PI.get("escarcha_otra"))) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
         });
+        sin("esc_escarcha_tras2", 1, () -> {
+            var h = escEntidad(escHusk);
+            if (Boolean.TRUE.equals(PI.get("escarcha_otra"))) PI.put("escarcha_congela", h.getTicksFrozen());
+        });
         sin("esc_escarcha_chk", 5, () -> {
             var h = escEntidad(escHusk);
             int nieve = 0;
             var l = escJugador().serverLevel();
             for (var b : net.minecraft.core.BlockPos.betweenClosed(h.blockPosition().offset(-6, -1, -6), h.blockPosition().offset(6, 2, 6)))
                 if (l.getBlockState(b).is(net.minecraft.world.level.block.Blocks.POWDER_SNOW)) nieve++;
-            RESUMEN.add("  escopeta: escarcha → diana ardiendo " + h.isOnFire() + ", congelada " + h.getTicksFrozen() + " ticks, nieve en polvo " + nieve);
+            int congela = Math.max(h.getTicksFrozen(), PI.get("escarcha_congela") instanceof Integer n ? n : 0);
+            RESUMEN.add("  escopeta: escarcha → diana ardiendo " + h.isOnFire() + ", congelada " + congela + " ticks (ahora " + h.getTicksFrozen() + "), nieve en polvo " + nieve);
             if (h.isOnFire()) throw new IllegalStateException("la escarcha no apaga el fuego");
-            if (h.getTicksFrozen() <= 0) throw new IllegalStateException("la escarcha no congela");
+            if (congela <= 0) throw new IllegalStateException("la escarcha no congela");
             if (nieve == 0) throw new IllegalStateException("la escarcha no deja nieve en polvo");
             escServidor(sp -> {
                 for (var b : net.minecraft.core.BlockPos.betweenClosed(h.blockPosition().offset(-6, -1, -6), h.blockPosition().offset(6, 2, 6)))
@@ -3101,7 +3108,7 @@ public final class PruebaCI {
         // si ningún perdigón de miel ha dado (se reparten al azar), otro tiro
         sin("esc_miel_otra", 5, () -> {
             var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
-            if (!h.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.get()) && !PI.containsKey("miel_visto")) {
+            if (!h.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.holder()) && !PI.containsKey("miel_visto")) {
                 RESUMEN.add("  escopeta: el primer tiro de miel no ha pringado; otro");
                 PI.put("miel_otra", true);
                 escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.MIEL, 100, escHuskPos());
@@ -3113,7 +3120,7 @@ public final class PruebaCI {
         sin("esc_miel_chk", 5, () -> {
             var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
             escVigilaMiel = false;
-            if (!h.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.get()) && !PI.containsKey("miel_visto")) throw new IllegalStateException("la miel no pringa");
+            if (!h.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.holder()) && !PI.containsKey("miel_visto")) throw new IllegalStateException("la miel no pringa");
             escServidor(sp -> h.setHealth(h.getMaxHealth()));
         });
         // ---- sal: sin daño
@@ -3280,9 +3287,9 @@ public final class PruebaCI {
         sin("esc_encantamientos", 5, () -> {
             var g = new ItemStack(com.copperslug.registry.ModItems.ESCOPETA_PRESION.get());
             var esp = new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD);
-            var todos = java.util.List.of(com.copperslug.registry.ModEnchantments.ESCOPETA_COMPRESOR.get(), com.copperslug.registry.ModEnchantments.ESCOPETA_VALVULA.get(),
-                    com.copperslug.registry.ModEnchantments.ESCOPETA_DOBLE_CAMARA.get(), com.copperslug.registry.ModEnchantments.ESCOPETA_FUELLE.get(),
-                    com.copperslug.registry.ModEnchantments.ESCOPETA_RECICLAJE.get());
+            var todos = java.util.List.of(com.copperslug.registry.ModEnchantments.ESCOPETA_COMPRESOR, com.copperslug.registry.ModEnchantments.ESCOPETA_VALVULA,
+                    com.copperslug.registry.ModEnchantments.ESCOPETA_DOBLE_CAMARA, com.copperslug.registry.ModEnchantments.ESCOPETA_FUELLE,
+                    com.copperslug.registry.ModEnchantments.ESCOPETA_RECICLAJE);
             for (var en : todos) {
                 if (!en.canEnchant(g)) throw new IllegalStateException(en.getDescriptionId() + " no vale para la escopeta");
                 if (en.canEnchant(esp)) throw new IllegalStateException(en.getDescriptionId() + " vale para una espada");

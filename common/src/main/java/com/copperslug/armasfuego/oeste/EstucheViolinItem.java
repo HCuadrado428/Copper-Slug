@@ -40,12 +40,12 @@ public class EstucheViolinItem extends Item {
     }
 
     public static ItemStack dentro(ItemStack s) {
-        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(ARMA) ? ItemStack.of(com.copperslug.shim.Nbt.leer(s).getCompound(ARMA)) : ItemStack.EMPTY;
+        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).contains(ARMA) ? ItemStack.parseOptional(com.copperslug.shim.Enc.registros(), com.copperslug.shim.Nbt.leer(s).getCompound(ARMA)) : ItemStack.EMPTY;
     }
 
     public static void guardar(ItemStack estuche, ItemStack arma) {
         if (arma.isEmpty()) com.copperslug.shim.Nbt.quitar(estuche, ARMA);
-        else com.copperslug.shim.Nbt.tag(estuche).put(ARMA, arma.save(new net.minecraft.nbt.CompoundTag()));
+        else com.copperslug.shim.Nbt.tag(estuche).put(ARMA, arma.saveOptional(com.copperslug.shim.Enc.registros()));
     }
 
     /** Un estuche con una Thompson dentro (para el botín). */
@@ -168,7 +168,8 @@ public class EstucheViolinItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag f) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> l, TooltipFlag f) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         ItemStack arma = dentro(s);
         l.add(arma.isEmpty() ? Component.translatable("item.copperslug.estuche_violin.vacio").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("item.copperslug.estuche_violin.lleva").withStyle(ChatFormatting.GOLD));

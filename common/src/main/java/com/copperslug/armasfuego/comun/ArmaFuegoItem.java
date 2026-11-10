@@ -183,8 +183,8 @@ public abstract class ArmaFuegoItem extends Item {
         return n;
     }
 
-    public static int nivel(com.copperslug.shim.registries.RegistryObject<net.minecraft.world.item.enchantment.Enchantment> e, ItemStack s) {
-        return net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(e.get(), s);
+    public static int nivel(net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> e, ItemStack s) {
+        return com.copperslug.shim.Enc.nivel(e, s);
     }
 
     /** El disparo de verdad (ya comprobado que hay bala, no está atascada ni en espera). */
@@ -333,7 +333,7 @@ public abstract class ArmaFuegoItem extends Item {
     @Override
     public void onUseTick(Level level, LivingEntity e, ItemStack s, int quedan) {
         if (!(e instanceof Player p)) return;
-        int t = getUseDuration(s) - quedan;
+        int t = getUseDuration(s, null) - quedan;
         switch (modo(s)) {
             case MODO_RECARGA -> {
                 if (level.isClientSide) return;
@@ -390,7 +390,7 @@ public abstract class ArmaFuegoItem extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack s) {
+    public int getUseDuration(ItemStack s, net.minecraft.world.entity.LivingEntity copperslug$quien) {
         return 72000;
     }
 
@@ -542,7 +542,8 @@ public abstract class ArmaFuegoItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag f) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> l, TooltipFlag f) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         l.add(Component.translatable("msg.copperslug.armafuego.balas", balas(s), capacidad(s), iconoMunicion(s).getHoverName()).withStyle(ChatFormatting.GOLD));
         l.add(Cobre.estado(s));
         if (atascada(s)) l.add(Component.translatable("msg.copperslug.armafuego.atascada").withStyle(ChatFormatting.RED));

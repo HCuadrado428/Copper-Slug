@@ -90,8 +90,8 @@ public final class Rifle {
         return cerrojo(s) == 0 && !recamara(s).isEmpty() && !gastada(s);
     }
 
-    public static int nivel(ItemStack s, Enchantment e) {
-        return EnchantmentHelper.getItemEnchantmentLevel(e, s);
+    public static int nivel(ItemStack s, net.minecraft.resources.ResourceKey<Enchantment> e) {
+        return com.copperslug.shim.Enc.nivel(e, s);
     }
 
     /** Tipo de munición del cartucho (BALA, TRAZADORA, CUERDA) o -1. */
@@ -211,7 +211,7 @@ public final class Rifle {
         t.putBoolean(GASTADA, true);
         int tipo = municion == null ? BALA : tipo(municion);
         boolean apunta = p.isUsingItem() && p.getUseItem() == s;
-        int resp = nivel(s, ModEnchantments.RESPIRACION.get());
+        int resp = nivel(s, ModEnchantments.RESPIRACION);
         boolean contenida = apunta && firme && resp > 0;
         // dispersión (grados): a ojo mucha; con la mira poca; quieta nada. El óxido la sube.
         double disp = (apunta ? (firme ? 0.0 : 0.35) : 4.0) + ox * 0.4;
@@ -226,9 +226,9 @@ public final class Rifle {
         float dano = com.copperslug.armasfuego.comun.EquilibrioArmas.rifleDano();
         // respiración contenida: x1,1 + 0,05 por nivel (antes 1,15 + 0,1: con la cabeza mataba de un tiro)
         if (contenida) dano *= 1.1F + 0.05F * resp;
-        int atravesar = nivel(s, ModEnchantments.ATRAVESAR.get());
-        int tirolinero = nivel(s, ModEnchantments.TIROLINERO.get());
-        boolean silencio = nivel(s, ModEnchantments.SILENCIADOR.get()) > 0;
+        int atravesar = nivel(s, ModEnchantments.ATRAVESAR);
+        int tirolinero = nivel(s, ModEnchantments.TIROLINERO);
+        boolean silencio = nivel(s, ModEnchantments.SILENCIADOR) > 0;
         // la cuerda se ata a los pies del tirador, por encima de su cabeza (se agarra saltando)
         Vec3 inicio = new Vec3(p.getX(), p.getY() + 2.9, p.getZ());
         b.preparar(tipo, dano, atravesar > 0 ? atravesar + 1 : 0, atravesar > 0, contenida, tirolinero, silencio, inicio,
@@ -256,7 +256,7 @@ public final class Rifle {
         t.putInt("Disparos", t.getInt("Disparos") + 1);
         // el cobre se oxida poco a poco con el uso (salvo encerado)
         if (!encerado(s) && ox < 3 && p.getRandom().nextInt(30) == 0) t.putInt(OXIDO, ox + 1);
-        s.hurtAndBreak(1, p, InteractionHand.MAIN_HAND);
+        s.hurtAndBreak(1, p, net.minecraft.world.entity.LivingEntity.getSlotForHand(InteractionHand.MAIN_HAND));
         APUNTE.remove(p.getUUID());
     }
 
@@ -270,7 +270,7 @@ public final class Rifle {
 
     /** Cada tick con la mira puesta (servidor): Ojo de halcón marca lo que se mira un rato. */
     public static void apuntando(ServerPlayer p, ItemStack s) {
-        int halcon = nivel(s, ModEnchantments.OJO_HALCON.get());
+        int halcon = nivel(s, ModEnchantments.OJO_HALCON);
         if (halcon <= 0 || p.tickCount % 5 != 0) return;
         Apunte a = APUNTE.computeIfAbsent(p.getUUID(), k -> new Apunte());
         Entity e = mirado(p, 160);

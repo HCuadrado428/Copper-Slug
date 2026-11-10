@@ -54,7 +54,7 @@ public class BolaCanonEntity extends ThrowableItemProjectile {
     }
 
     @Override
-    protected float getGravity() {
+    protected double getDefaultGravity() {
         return 0.035F;
     }
 
@@ -128,7 +128,7 @@ public class BolaCanonEntity extends ThrowableItemProjectile {
         }
         if (r.getEntity() instanceof LivingEntity v && level() instanceof ServerLevel) {
             Balistica.herir(v, getOwner(), EquilibrioArmas.canonDano() * (fuegos() ? 0.35F : 1F), 0.3F, CanonManoItem.DANO, false);
-            if (incendiario()) v.setSecondsOnFire(6);
+            if (incendiario()) v.igniteForSeconds(6);
         }
     }
 
@@ -166,7 +166,7 @@ public class BolaCanonEntity extends ThrowableItemProjectile {
             if (d > 2.5) continue;
             float k = (float) (1 - d / 2.5);
             Balistica.herir(v, getOwner(), alrededor * k, 0.0F, CanonManoItem.DANO, false);
-            if (incendiario()) v.setSecondsOnFire(4);
+            if (incendiario()) v.igniteForSeconds(4);
             Vec3 emp = v.position().subtract(q).normalize().scale(0.6 * k);
             v.push(emp.x, 0.25 * k, emp.z);
             v.hurtMarked = true;

@@ -70,7 +70,7 @@ public class BengalaEntity extends Projectile {
         if (!l.isClientSide && vida < 30) {
             HitResult hr = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
             if (hr instanceof EntityHitResult eh && eh.getEntity() instanceof LivingEntity le) {
-                le.setSecondsOnFire(4);
+                le.igniteForSeconds(4);
                 le.hurt(damageSources().onFire(), 2F);
                 v = v.scale(0.1);
             }

@@ -169,12 +169,14 @@ public class BotinArmas {
     /** A veces, uno de sus encantamientos propios (los del mod que valgan para esa arma). */
     private static void encantar(ItemStack arma, RandomSource r) {
         if (r.nextDouble() < ConfigServidor.botinEncantada()) {
-            List<Enchantment> suyos = new ArrayList<>();
-            for (var e : ForgeRegistries.ENCHANTMENTS.getEntries())
-                if (CopperSlug.MOD_ID.equals(e.getKey().location().getNamespace()) && e.getValue().canEnchant(arma)) suyos.add(e.getValue());
+            var reg = com.copperslug.shim.Enc.registros();
+            if (reg == null) return;
+            List<net.minecraft.core.Holder<Enchantment>> suyos = new ArrayList<>();
+            for (var e : reg.registryOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).holders().toList())
+                if (CopperSlug.MOD_ID.equals(e.key().location().getNamespace()) && e.value().canEnchant(arma)) suyos.add(e);
             if (!suyos.isEmpty()) {
-                Enchantment e = suyos.get(r.nextInt(suyos.size()));
-                arma.enchant(e, 1 + r.nextInt(e.getMaxLevel()));
+                var e = suyos.get(r.nextInt(suyos.size()));
+                arma.enchant(e, 1 + r.nextInt(e.value().getMaxLevel()));
             }
         }
     }

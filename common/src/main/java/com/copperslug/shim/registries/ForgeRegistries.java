@@ -43,7 +43,6 @@ public final class ForgeRegistries {
     }
 
     public static final R<Item> ITEMS = new R<>(Registries.ITEM, BuiltInRegistries.ITEM);
-    public static final R<Enchantment> ENCHANTMENTS = new R<>(Registries.ENCHANTMENT, BuiltInRegistries.ENCHANTMENT);
     public static final R<MobEffect> MOB_EFFECTS = new R<>(Registries.MOB_EFFECT, BuiltInRegistries.MOB_EFFECT);
     public static final R<SoundEvent> SOUND_EVENTS = new R<>(Registries.SOUND_EVENT, BuiltInRegistries.SOUND_EVENT);
     public static final R<EntityType<?>> ENTITY_TYPES = new R<>(Registries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE);
