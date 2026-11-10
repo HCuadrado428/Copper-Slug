@@ -68,3 +68,35 @@ En la rama `1.21.1` se añade `--rama-mc 1.21.1`. Así se aplican antes los camb
 - Fabric 1.20.1 no tiene atributo de alcance: la bayoneta del mosquete no llega más lejos (en Forge y NeoForge sí).
 - Las texturas de la polea, las palomitas y la bengala se han redibujado a 16×16. Todo lo de objetos y bloques es
   16×16 (lo comprueban el CI y la prueba en el juego).
+
+## Rama 1.21.1: estado (en curso)
+
+Ya está:
+- La compilación: NeoForge y common con ModDevGradle, Forge con ForgeGradle 6 y Fabric con Loom.
+- El volcado del classpath.
+- `herramientas/a_1_21_1.py` convierte el código de main:
+  - `ResourceLocation` y las firmas nuevas (tooltips, `getUseDuration`, `hurtAndBreak`, `defineSynchedData`,
+    `getAddEntityPacket`);
+  - el NBT de los objetos, a `shim/Nbt` (sobre `custom_data`, con una etiqueta viva);
+  - los encantamientos: pasan a datos (`data/copperslug/enchantment` y sus etiquetas, generados desde ModEnchantments),
+    y en el código se leen con `shim/Enc`;
+  - las carpetas y el formato de las recetas y los logros.
+
+Falta, en common (93 errores al compilar):
+- `LogroTrigger`: el criterio con codec, y registrarlo con `Registries.TRIGGER_TYPE`.
+- `Tirolinas` y `LucesTemporales`: `SavedData.Factory` y `save(tag, provider)`.
+- `MosqueteBayonetaRecipe` (`CraftingInput`) y su serializador.
+- Los atributos de la bayoneta del mosquete: componente `ATTRIBUTE_MODIFIERS` en el objeto.
+- Los `VertexConsumer` de tres renderers (`addVertex`/`setColor`/`setUv`…).
+- La pestaña del creativo: los libros con `Holder` de los encantamientos.
+- El plugin de JEI (`ShapelessRecipe` y `RecipeHolder`).
+- PruebaCI: lo de los encantamientos con `Holder`, `getLootData`, `getRecipeFor` con `CraftingInput` y los logros con
+  `AdvancementHolder`.
+
+Falta en los cargadores:
+- NeoForge: la plataforma (eventos de `net.neoforged`, ticks Pre/Post, red con `CustomPacketPayload`, GLM con
+  `MapCodec`, `RegisterClientExtensionsEvent`).
+- Fabric: la red con payloads, `LootTableEvents` nuevo y el AW de 1.21.1.
+- Forge 52: la plataforma.
+- En los tres: los modelos `separate_transforms`, que en NeoForge son `neoforge:separate_transforms`.
+- La prueba en el juego de 1.21.1 en `probar.yml`.
