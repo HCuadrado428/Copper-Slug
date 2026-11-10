@@ -23,7 +23,7 @@ env:
   MC: "1.20.1"
   FORGE: "47.3.0"
   NEOFORGE: "47.1.106"
-  FABRIC_LOADER: "0.16.9"
+  FABRIC_LOADER: "0.16.14"
 
 jobs:
   preparar:

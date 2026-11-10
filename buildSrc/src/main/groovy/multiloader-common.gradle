@@ -114,6 +114,9 @@ tasks.withType(JavaCompile).configureEach {
 
 // Para compilar en local sin Gradle: copia el classpath de compilación (lo usa el workflow "Volcar classpath")
 tasks.register('volcarClasspath', Copy) {
-    from configurations.compileClasspath
+    // sin los otros proyectos (common): así no hace falta compilar nada para volcarlo
+    from configurations.compileClasspath.incoming.artifactView {
+        componentFilter { !(it instanceof org.gradle.api.artifacts.component.ProjectComponentIdentifier) }
+    }.files
     into layout.buildDirectory.dir('cp')
 }
