@@ -950,7 +950,14 @@ public final class PruebaCI {
                 rifleMira = mira;
                 var aire = net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
                 var suelo = net.minecraft.world.level.block.Blocks.SMOOTH_STONE.defaultBlockState();
-                for (var b : net.minecraft.core.BlockPos.betweenClosed(o.relative(lado, -7).relative(mira, -3).below(), o.relative(lado, 7).relative(mira, 30).above(12)))
+                // con paredes de cristal alrededor: si el mundo sale junto al agua (en 1.21.1 pasa), que no entre
+                var c1 = o.relative(lado, -7).relative(mira, -3).below();
+                var c2 = o.relative(lado, 7).relative(mira, 30).above(12);
+                var cristal = net.minecraft.world.level.block.Blocks.GLASS.defaultBlockState();
+                int x0 = Math.min(c1.getX(), c2.getX()), x1 = Math.max(c1.getX(), c2.getX()), z0 = Math.min(c1.getZ(), c2.getZ()), z1 = Math.max(c1.getZ(), c2.getZ());
+                for (var b : net.minecraft.core.BlockPos.betweenClosed(c1.offset(0, 0, 0).relative(lado, -1).relative(mira, -1), c2.relative(lado, 1).relative(mira, 1).above()))
+                    if (b.getX() < x0 || b.getX() > x1 || b.getZ() < z0 || b.getZ() > z1 || b.getY() > c2.getY()) l.setBlock(b, b.getY() < o.getY() ? suelo : cristal, 2);
+                for (var b : net.minecraft.core.BlockPos.betweenClosed(c1, c2))
                     l.setBlock(b, b.getY() < o.getY() ? suelo : aire, 2);
                 l.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, new net.minecraft.world.phys.AABB(o).inflate(40),
                         e -> !(e instanceof net.minecraft.world.entity.player.Player)).forEach(net.minecraft.world.entity.Entity::discard);
@@ -3657,7 +3664,7 @@ public final class PruebaCI {
         }
 
         static net.minecraft.resources.ResourceLocation id(net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> x) {
-            return x.unwrapKey().map(net.minecraft.resources.ResourceKey::location).orElse(net.minecraft.resources.ResourceLocation.withDefaultNamespace("?"));
+            return x.unwrapKey().map(net.minecraft.resources.ResourceKey::location).orElse(net.minecraft.resources.ResourceLocation.withDefaultNamespace("sin_clave"));
         }
 
         /** Los encantamientos que pueden salir en la mesa. */
