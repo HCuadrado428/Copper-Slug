@@ -110,6 +110,18 @@ public final class PruebaCI {
             var pantalla = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,
                     mc.player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
             mc.setScreen(pantalla);
+            // Fabric reparte las pestañas en páginas: primero a la página de la nuestra
+            try {
+                for (var m : pantalla.getClass().getMethods())
+                    if (m.getName().equals("switchToPage") && m.getParameterCount() == 1) {
+                        int pag = 0;
+                        for (var g : pantalla.getClass().getMethods())
+                            if (g.getName().equals("getPage") && g.getParameterCount() == 1) pag = (Integer) g.invoke(pantalla, tab);
+                        m.invoke(pantalla, pag);
+                    }
+            } catch (Exception ignorado) {
+                // sin páginas (Forge)
+            }
             ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
         });
         sin("inventario_poner", 10, () -> {
@@ -126,14 +138,22 @@ public final class PruebaCI {
                         com.copperslug.registry.ModItems.THOMPSON, com.copperslug.registry.ModItems.MOSQUETE, com.copperslug.registry.ModItems.CANON_MANO);
                 for (int i = 0; i < armas.size(); i++) sp.getInventory().setItem(i, new ItemStack(armas.get(i).get()));
                 // el resto: lo mismo que la pestaña del creativo (munición, libros...), sin repetir las armas
-                List<ItemStack> todo = new ArrayList<>();
-                CopperSlug.Pestana.llenar(todo::add);
                 int k = 9;
-                for (ItemStack st : todo) {
-                    if (k >= 36) break;
-                    if (armas.stream().anyMatch(a -> a.get() == st.getItem()) || st.is(net.minecraft.world.item.Items.ENCHANTED_BOOK)) continue;
-                    sp.getInventory().setItem(k++, st.copyWithCount(st.getMaxStackSize()));
+                try {
+                    List<ItemStack> todo = new ArrayList<>();
+                    CopperSlug.Pestana.llenar(todo::add);
+                    for (ItemStack st : todo) {
+                        if (k >= 36) break;
+                        if (st.is(net.minecraft.world.item.Items.ENCHANTED_BOOK) || armas.stream().anyMatch(x -> x.get() == st.getItem())) continue;
+                        ItemStack c = st.copy();
+                        c.setCount(Math.max(1, Math.min(c.getMaxStackSize(), 16)));
+                        sp.getInventory().setItem(k++, c);
+                    }
+                } catch (Throwable t) {
+                    PI.put("inv_error", t.toString());
+                    CopperSlug.LOG.warn("[PruebaCI] inventario", t);
                 }
+                PI.put("inv_cosas", k - 9);
                 sp.getInventory().selected = 0;
             });
         });
@@ -141,6 +161,7 @@ public final class PruebaCI {
             mc.getToasts().clear();
             mc.gui.getChat().clearMessages(false);
             mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
+            RESUMEN.add("  inventario: 9 armas y " + PI.get("inv_cosas") + " cosas más" + (PI.get("inv_error") != null ? " · error " + PI.get("inv_error") : ""));
         });
         sin("inventario_fin", 5, () -> {
             mc.setScreen(null);
@@ -932,6 +953,16 @@ public final class PruebaCI {
      * con la mira a la galería del móvil, sensor de sculk con y sin Silenciador, bala de cuerda (tirolina: colgarse
      * saltando, bajar y cortarla con tijeras), óxido del cobre (encerar y rascar) y encantamientos en la mesa.
      */
+    /** El jugador justo debajo de la cuerda (solo se mueve en horizontal), para saltar y agarrarse. */
+    private static void rifleBajoCuerda() {
+        Minecraft mc = Minecraft.getInstance();
+        if (com.copperslug.client.armasfuego.rifle.TirolinasCliente.LINEAS.isEmpty()) return;
+        var x = com.copperslug.client.armasfuego.rifle.TirolinasCliente.LINEAS.get(0);
+        Vec3 ojo = mc.player.getEyePosition();
+        Vec3 q = com.copperslug.armasfuego.rifle.Cuerda.punto(x.a(), x.b(), com.copperslug.armasfuego.rifle.Cuerda.cercano(x.a(), x.b(), ojo));
+        rifleSrv(sp -> sp.connection.teleport(q.x, sp.getY(), q.z, sp.getYRot(), sp.getXRot()));
+    }
+
     private static void rifle() {
         Minecraft mc = Minecraft.getInstance();
         sin("rifle_poner", 40, () -> {
@@ -1152,6 +1183,7 @@ public final class PruebaCI {
         });
         // saltar debajo de la cuerda: se agarra. La bajada dura unos 2 s y con shaders cada paso tarda varios segundos
         // (4 fotogramas a 2-4 fps), así que se vigila en cada tick si va colgado y la captura se saca en cuanto lo está
+        sin("rifle_bajo", 6, PruebaCI::rifleBajoCuerda);
         sin("rifle_salta", 12, () -> {
             rifleComprobar();
             rifleColgadoVisto = false;
@@ -1167,6 +1199,7 @@ public final class PruebaCI {
         sin("rifle_salta2", 12, () -> {
             if (!rifleColgadoVisto && !(mc.player.getVehicle() instanceof com.copperslug.armasfuego.rifle.GanchoTirolina)) {
                 RESUMEN.add("  rifle: el primer salto no ha cogido la cuerda; se salta otra vez");
+                rifleBajoCuerda();
                 rifleSalto = true;
             }
         });
