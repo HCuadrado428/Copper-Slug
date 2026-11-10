@@ -20,7 +20,8 @@ public class MunicionRifleItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level l, List<Component> lista, TooltipFlag f) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> lista, TooltipFlag f) {
+        net.minecraft.world.level.Level l = com.copperslug.shim.Mundo.cliente();
         lista.add(Component.translatable(ayuda).withStyle(ChatFormatting.GRAY));
     }
 }

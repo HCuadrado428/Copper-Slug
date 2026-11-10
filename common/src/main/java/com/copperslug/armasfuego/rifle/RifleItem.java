@@ -58,7 +58,7 @@ public class RifleItem extends Item {
     }
 
     @Override
-    public int getUseDuration(ItemStack s) {
+    public int getUseDuration(ItemStack s, net.minecraft.world.entity.LivingEntity copperslug$quien) {
         return 72000;
     }
 
@@ -117,7 +117,7 @@ public class RifleItem extends Item {
             } else {
                 return false;
             }
-            if (!p.level().isClientSide) otro.hurtAndBreak(1, p, q -> {});
+            if (!p.level().isClientSide) otro.hurtAndBreak(1, p, net.minecraft.world.entity.EquipmentSlot.MAINHAND);
             return true;
         }
         return false;
@@ -128,7 +128,8 @@ public class RifleItem extends Item {
     private static final String[] COBRE = {"normal", "expuesto", "erosionado", "oxidado"};
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> lista, TooltipFlag flag) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> lista, TooltipFlag flag) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         String rec = Rifle.recamara(s);
         Item bala = Rifle.item(rec);
         Component recamara = Rifle.gastada(s) ? Component.translatable("item.copperslug.rifle.casquillo")

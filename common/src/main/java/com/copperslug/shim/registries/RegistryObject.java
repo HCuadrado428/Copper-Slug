@@ -21,6 +21,18 @@ public final class RegistryObject<T> implements Supplier<T> {
         return t;
     }
 
+    private net.minecraft.core.Holder<T> holder;
+
+    /** En 1.21 muchas cosas (efectos, sonidos...) van como Holder. */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public net.minecraft.core.Holder<T> holder() {
+        if (holder != null) return holder;
+        for (var r : net.minecraft.core.registries.BuiltInRegistries.REGISTRY) {
+            if (r.containsKey(id) && r.get(id) == get()) return holder = ((net.minecraft.core.Registry) r).wrapAsHolder(get());
+        }
+        throw new IllegalStateException("Copper Slug: no encuentro el registro de " + id);
+    }
+
     public ResourceLocation getId() {
         return id;
     }

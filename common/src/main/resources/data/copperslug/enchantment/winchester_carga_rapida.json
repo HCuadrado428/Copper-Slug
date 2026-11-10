@@ -1,0 +1,20 @@
+{
+  "description": {
+    "translate": "enchantment.copperslug.winchester_carga_rapida"
+  },
+  "supported_items": "#copperslug:enchantable/winchester",
+  "weight": 10,
+  "max_level": 2,
+  "min_cost": {
+    "base": 5,
+    "per_level_above_first": 10
+  },
+  "max_cost": {
+    "base": 35,
+    "per_level_above_first": 10
+  },
+  "anvil_cost": 1,
+  "slots": [
+    "mainhand"
+  ]
+}

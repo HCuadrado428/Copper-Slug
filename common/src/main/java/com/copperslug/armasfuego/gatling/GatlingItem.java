@@ -83,7 +83,8 @@ public class GatlingItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag f) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> l, TooltipFlag f) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         int balas = com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getInt(BALAS) : 0;
         float calor = com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getFloat(CALOR) : 0;
         l.add(Component.translatable("item.copperslug.gatling.balas", balas, EquilibrioArmas.gatlingCinta()).withStyle(ChatFormatting.GOLD));

@@ -129,8 +129,8 @@ def encantamientos(t):
     t = re.sub(r'(?:net\.minecraft\.world\.item\.enchantment\.)?EnchantmentHelper\.getItemEnchantmentLevel\(\s*((?:com\.copperslug\.registry\.)?ModEnchantments\.[A-Z_]+)\.get\(\)\s*,',
                r'com.copperslug.shim.Enc.nivel(\1,', t)
     # s.enchant(ModEnchantments.X.get(), n) -> Enc.poner(s, ModEnchantments.X, n)
-    t = cambiar_metodo(t, 'enchant', lambda x, a: ('com.copperslug.shim.Enc.poner(' + x + ', ' + a[0][:-len('.get()')] + ', ' + a[1] + ')')
-                       if len(a) == 2 and re.match(r'(?:com\.copperslug\.registry\.)?ModEnchantments\.[A-Z_]+\.get\(\)$', a[0]) else None)
+    t = cambiar_metodo(t, 'enchant', lambda x, a: ('com.copperslug.shim.Enc.poner(' + x + ', ' + a[0] + ', ' + a[1] + ')')
+                       if len(a) == 2 and re.match(r'(?:com\.copperslug\.registry\.)?ModEnchantments\.[A-Z_]+$', a[0]) else None)
     return t
 
 
@@ -158,11 +158,53 @@ def entidades(t):
 
 def durabilidad(t):
     # s.hurtAndBreak(n, e, x -> x.broadcastBreakEvent(SLOT)) -> s.hurtAndBreak(n, e, SLOT)
-    t = re.sub(r'\.hurtAndBreak\(([^,]+),\s*([^,]+),\s*\w+\s*->\s*\w+\.broadcastBreakEvent\(([^)]+)\)\)', r'.hurtAndBreak(\1, \2, \3)', t)
+    def roto(m):
+        ranura = m.group(3)
+        if 'EquipmentSlot' not in ranura:
+            ranura = 'net.minecraft.world.entity.LivingEntity.getSlotForHand(' + ranura + ')'
+        return '.hurtAndBreak(' + m.group(1) + ', ' + m.group(2) + ', ' + ranura + ')'
+    t = re.sub(r'\.hurtAndBreak\(([^,]+),\s*([^,]+),\s*\(?\w+\)?\s*->\s*\w+\.broadcastBreakEvent\(([^)]+)\)\)', roto, t)
+    return t
+
+
+def firmas(t):
+    # appendHoverText(ItemStack, Level, List, TooltipFlag) -> (ItemStack, Item.TooltipContext, ...); el Level se saca del cliente
+    def tooltip(m):
+        stack, lvl, resto = m.group(1), m.group(2), m.group(3)
+        return ('public void appendHoverText(ItemStack ' + stack + ', net.minecraft.world.item.Item.TooltipContext copperslug$ctx, ' + resto + ') {\n'
+                '        net.minecraft.world.level.Level ' + lvl + ' = com.copperslug.shim.Mundo.cliente();')
+    t = re.sub(r'public void appendHoverText\(ItemStack (\w+),\s*(?:@Nullable\s+|@javax\.annotation\.Nullable\s+)?(?:net\.minecraft\.world\.level\.)?Level (\w+),\s*([^)]*)\)\s*\{', tooltip, t)
+    t = re.sub(r'public int getUseDuration\(ItemStack (\w+)\)', r'public int getUseDuration(ItemStack \1, net.minecraft.world.entity.LivingEntity copperslug$quien)', t)
+    t = re.sub(r'\.getUseDuration\((\w+)\)', r'.getUseDuration(\1, null)', t)
+    t = t.replace('.setSecondsOnFire(', '.igniteForSeconds(')
+    # efectos: en 1.21 van como Holder
+    t = re.sub(r'(ModEffects\.[A-Z_]+)\.get\(\)', r'\1.holder()', t)
+    # el paquete de aparecer: en 1.21 recibe la ServerEntity
+    t = re.sub(r'getAddEntityPacket\(\)\s*\{(\s*)return NetworkHooks\.getEntitySpawningPacket\(this\);',
+               r'getAddEntityPacket(net.minecraft.server.level.ServerEntity copperslug$se) {\1return NetworkHooks.getEntitySpawningPacket(this, copperslug$se);', t)
+    # ItemStack.hurt(n, azar, jugador) -> Durab.danar(...)
+    t = cambiar_metodo(t, 'hurt', lambda x, a: 'com.copperslug.shim.Durab.danar(' + x + ', ' + ', '.join(a) + ')' if len(a) == 3 else None)
+    # hurtAndBreak con la mano o con una lambda vacía
+    t = re.sub(r'\.hurtAndBreak\(([^,()]+), ([^,()]+), (InteractionHand\.\w+|mano\w*|hand|h)\)', r'.hurtAndBreak(\1, \2, net.minecraft.world.entity.LivingEntity.getSlotForHand(\3))', t)
+    t = re.sub(r'\.hurtAndBreak\(([^,()]+), ([^,()]+), \w+ -> \{\}\)', r'.hurtAndBreak(\1, \2, net.minecraft.world.entity.EquipmentSlot.MAINHAND)', t)
+    # getUseDuration(s) sin quien
+    t = re.sub(r'(?<![\w.])getUseDuration\((\w+)\)', r'getUseDuration(\1, null)', t)
+    t = re.sub(r'super\.appendHoverText\((\w+), \w+, (\w+), (\w+)\)', r'super.appendHoverText(\1, copperslug$ctx, \2, \3)', t)
+    t = re.sub(r'(SoundEvents\.ARMOR_EQUIP_[A-Z_]+)(?![A-Z_]|\.value)', r'\1.value()', t)
+    t = re.sub(r'(\w+)\.getMobType\(\) == MobType\.UNDEAD', r'\1.getType().is(net.minecraft.tags.EntityTypeTags.UNDEAD)', t)
+    t = t.replace('import net.minecraft.world.entity.MobType;\n', '')
+    t = t.replace('protected float getGravity()', 'protected double getDefaultGravity()')
+    t = t.replace('.saturationMod(', '.saturationModifier(')
+    # ItemStack <-> NBT con los registros del mundo
+    t = re.sub(r'ItemStack\.of\(', 'ItemStack.parseOptional(com.copperslug.shim.Enc.registros(), ', t)
+    t = cambiar_metodo(t, 'save', lambda x, a: x + '.saveOptional(com.copperslug.shim.Enc.registros())'
+                       if len(a) == 1 and re.match(r'new (?:net\.minecraft\.nbt\.)?CompoundTag\(\)$', a[0]) else None)
     return t
 
 
 def java(t):
+    t = firmas(t)
+    t = usos_encantamientos(t)
     t = resource_location(t)
     t = nbt(t)
     t = encantamientos(t)
@@ -170,6 +212,98 @@ def java(t):
     t = durabilidad(t)
     return t
 
+
+
+# ---------------------------------------------------------------- encantamientos: en 1.21 son datos
+PESO = {'COMMON': 10, 'UNCOMMON': 5, 'RARE': 2, 'VERY_RARE': 1}
+YUNQUE = {'COMMON': 1, 'UNCOMMON': 2, 'RARE': 4, 'VERY_RARE': 8}
+
+
+def encantamientos_a_datos(base):
+    """
+    Lee ModEnchantments.java (el de 1.20.1) y deja: los JSON de data/copperslug/enchantment, las etiquetas de los
+    objetos que valen para cada uno (tags/item/enchantable/...) y las de la mesa, y ModEnchantments con las claves.
+    """
+    jdir = os.path.join(base, 'java/com/copperslug')
+    p = os.path.join(jdir, 'registry/ModEnchantments.java')
+    t = open(p, encoding='utf-8').read()
+    if 'ResourceKey<Enchantment>' in t:
+        return
+    items = open(os.path.join(jdir, 'registry/ModItems.java'), encoding='utf-8').read()
+    clase_a_item = {}
+    for m in re.finditer(r'ITEMS\.register\("([a-z0-9_]+)",\s*\(\)\s*->\s*new ([\w.]+)\(', items):
+        clase_a_item[m.group(2).split('.')[-1]] = m.group(1)
+    cats = {}
+    for m in re.finditer(r'EnchantmentCategory (\w+)\s*=\s*[\w.]*create\("\w+",\s*item -> item instanceof ([\w.]+)\)', t):
+        cats[m.group(1)] = clase_a_item[m.group(2).split('.')[-1]]
+    res = os.path.join(base, 'resources/data')
+    ench = []
+    for m in re.finditer(r'RegistryObject<Enchantment> (\w+)\s*=\s*ENCHANTMENTS\.register\("([a-z0-9_]+)",\s*\(\)\s*->\s*new ([\w.]+)\((.*?)\)\);', t, re.S):
+        nombre, ident, clase, args = m.group(1), m.group(2), m.group(3).split('.')[-1], [a.strip() for a in m.group(4).split(',')]
+        incompat = None
+        if clase == 'EncantamientoRevolver':        # (rareza, max, base, porNivel, incompatible)
+            rar, mx, b, pn, cat = args[0], args[1], args[2], args[3], 'REVOLVER'
+            incompat = None if args[4] == 'null' else args[4].split('.')[-1]
+        elif clase == 'RifleEncantamiento':         # (rareza, max, base, paso, categoría)
+            rar, mx, b, pn, cat = args[0], args[1], args[2], args[3], args[4].split('.')[-1]
+        elif clase == 'EncantamientoEscopeta':      # (cual, rareza, max, base, paso)
+            rar, mx, b, pn, cat = args[1], args[2], args[3], args[4], 'ESCOPETA_PRESION'
+            cual = args[0].split('.')[-1]
+            incompat = {'COMPRESOR': 'ESCOPETA_VALVULA', 'VALVULA': 'ESCOPETA_COMPRESOR'}.get(cual)
+        else:                                       # EncantamientoFuego(rareza, categoría, max, base, porNivel[, incompatible])
+            rar, cat, mx, b, pn = args[0], args[1].split('.')[-1], args[2], args[3], args[4]
+            if len(args) > 5 and args[5] != 'null':
+                incompat = args[5].split('.')[-1]
+        ench.append((nombre, ident, rar.split('.')[-1], int(mx), int(b), int(pn), cat, incompat))
+    ids = {n: i for n, i, *_ in ench}
+    for nombre, ident, rar, mx, b, pn, cat, incompat in ench:
+        j = {
+            'description': {'translate': 'enchantment.copperslug.' + ident},
+            'supported_items': '#copperslug:enchantable/' + cats[cat],
+            'weight': PESO[rar],
+            'max_level': mx,
+            'min_cost': {'base': b, 'per_level_above_first': pn},
+            'max_cost': {'base': b + 30, 'per_level_above_first': pn},
+            'anvil_cost': YUNQUE[rar],
+            'slots': ['mainhand'],
+        }
+        if incompat:
+            j['exclusive_set'] = 'copperslug:' + ids[incompat]
+        o = os.path.join(res, 'copperslug/enchantment', ident + '.json')
+        os.makedirs(os.path.dirname(o), exist_ok=True)
+        json.dump(j, open(o, 'w', encoding='utf-8'), indent=2, ensure_ascii=False)
+    for cat, item in cats.items():
+        o = os.path.join(res, 'copperslug/tags/item/enchantable', item + '.json')
+        os.makedirs(os.path.dirname(o), exist_ok=True)
+        json.dump({'replace': False, 'values': ['copperslug:' + item]}, open(o, 'w'), indent=2)
+    for tag in ['in_enchanting_table', 'tradeable', 'on_random_loot', 'non_treasure']:
+        o = os.path.join(res, 'minecraft/tags/enchantment', tag + '.json')
+        os.makedirs(os.path.dirname(o), exist_ok=True)
+        json.dump({'replace': False, 'values': ['copperslug:' + i for _, i, *_ in ench]}, open(o, 'w'), indent=2)
+    # el registro: solo las claves
+    j = ['package com.copperslug.registry;', '', 'import com.copperslug.CopperSlug;', 'import net.minecraft.core.registries.Registries;',
+         'import net.minecraft.resources.ResourceKey;', 'import net.minecraft.resources.ResourceLocation;',
+         'import net.minecraft.world.item.enchantment.Enchantment;', '',
+         '/**', ' * Los encantamientos de las armas. En 1.21 son datos (data/copperslug/enchantment, generados por', ' * herramientas/a_1_21_1.py desde el ModEnchantments de 1.20.1); aquí solo quedan sus claves.', ' */',
+         'public final class ModEnchantments {', '    private ModEnchantments() {}', '']
+    for nombre, ident, *_ in ench:
+        j.append('    public static final ResourceKey<Enchantment> ' + nombre + ' = ResourceKey.create(Registries.ENCHANTMENT, '
+                 'ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "' + ident + '"));')
+    j.append('}')
+    open(p, 'w', encoding='utf-8').write('\n'.join(j) + '\n')
+    for c in ['comun/EncantamientoFuego.java', 'pistola/EncantamientoRevolver.java', 'rifle/RifleEncantamiento.java', 'escopeta/EncantamientoEscopeta.java']:
+        f = os.path.join(jdir, 'armasfuego', c)
+        if os.path.exists(f):
+            os.remove(f)
+
+
+def usos_encantamientos(t):
+    t = re.sub(r'((?:com\.copperslug\.registry\.)?ModEnchantments\.[A-Z][A-Z0-9_]+)\.get\(\)', r'\1', t)
+    t = t.replace('EncantamientoRevolver.nivel(', 'com.copperslug.shim.Enc.nivel(')
+    t = t.replace('com.copperslug.shim.registries.RegistryObject<net.minecraft.world.item.enchantment.Enchantment>',
+                  'net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment>')
+    t = re.sub(r'(?:net\.minecraft\.world\.item\.enchantment\.)?EnchantmentHelper\.getItemEnchantmentLevel\(', 'com.copperslug.shim.Enc.nivel(', t)
+    return t
 
 # ---------------------------------------------------------------- datos
 CARPETAS = {'recipes': 'recipe', 'advancements': 'advancement', 'loot_tables': 'loot_table', 'loot_modifiers': 'loot_modifiers'}
@@ -217,6 +351,22 @@ def logro(j):
     return j
 
 
+def mover(a, b):
+    """Mueve la carpeta a a b (fusionando si b ya existe)."""
+    if not os.path.isdir(b):
+        os.makedirs(os.path.dirname(b), exist_ok=True)
+        os.rename(a, b)
+        return
+    for r, _, fs in os.walk(a):
+        for x in fs:
+            o = os.path.join(r, x)
+            n = os.path.join(b, os.path.relpath(o, a))
+            os.makedirs(os.path.dirname(n), exist_ok=True)
+            os.replace(o, n)
+    import shutil
+    shutil.rmtree(a)
+
+
 def datos(raiz):
     d = os.path.join(raiz, 'data')
     if not os.path.isdir(d):
@@ -225,14 +375,13 @@ def datos(raiz):
         for viejo, nuevo in CARPETAS.items():
             a, b = os.path.join(d, ns, viejo), os.path.join(d, ns, nuevo)
             if os.path.isdir(a) and a != b:
-                os.makedirs(os.path.dirname(b), exist_ok=True)
-                os.rename(a, b)
+                mover(a, b)
         tg = os.path.join(d, ns, 'tags')
         if os.path.isdir(tg):
             for viejo, nuevo in TAGS.items():
                 a, b = os.path.join(tg, viejo), os.path.join(tg, nuevo)
                 if os.path.isdir(a) and a != b:
-                    os.rename(a, b)
+                    mover(a, b)
         for sub, f in [('recipe', receta), ('advancement', logro)]:
             base = os.path.join(d, ns, sub)
             for r, _, fs in os.walk(base):
@@ -245,6 +394,7 @@ def datos(raiz):
 
 def convertir(carpeta):
     base = os.path.join(carpeta, 'common/src/main')
+    encantamientos_a_datos(base)
     for r, _, fs in os.walk(os.path.join(base, 'java')):
         for x in fs:
             if x.endswith('.java'):

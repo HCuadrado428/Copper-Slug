@@ -1,0 +1,21 @@
+{
+  "description": {
+    "translate": "enchantment.copperslug.revolver_desenfunde"
+  },
+  "supported_items": "#copperslug:enchantable/revolver",
+  "weight": 5,
+  "max_level": 1,
+  "min_cost": {
+    "base": 15,
+    "per_level_above_first": 0
+  },
+  "max_cost": {
+    "base": 45,
+    "per_level_above_first": 0
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "mainhand"
+  ],
+  "exclusive_set": "copperslug:revolver_abanico"
+}

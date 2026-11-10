@@ -123,7 +123,7 @@ public class GatlingEntity extends Entity {
         entityData.set(APUNTA_X, Mth.clamp(x, ARRIBA, ABAJO));
     }
 
-    private int nivel(com.copperslug.shim.registries.RegistryObject<net.minecraft.world.item.enchantment.Enchantment> e) {
+    private int nivel(net.minecraft.resources.ResourceKey<net.minecraft.world.item.enchantment.Enchantment> e) {
         return arma.isEmpty() ? 0 : ArmaFuegoItem.nivel(e, arma);
     }
 
@@ -300,7 +300,7 @@ public class GatlingEntity extends Entity {
             Vec3 b = boca(1.0F);
             l.sendParticles(ParticleTypes.LARGE_SMOKE, b.x, b.y, b.z, 12, 0.3, 0.2, 0.3, 0.03);
             if (p != null) {
-                p.setSecondsOnFire(3);
+                p.igniteForSeconds(3);
                 p.displayClientMessage(Component.translatable("msg.copperslug.gatling.al_rojo").withStyle(ChatFormatting.RED), true);
                 if (p instanceof ServerPlayer sp) LogrosMiscelanea.dar(sp, "gatling_calor");
             }
@@ -473,7 +473,7 @@ public class GatlingEntity extends Entity {
                 // la cinta de guisantes (la Gatling Pea de Plantas contra zombis): poco daño y mucho empujón... salvo a los zombis
                 if (guisantes) d *= zombi ? 2.5F : 0.5F;
                 Balistica.herir(v, quien, d, 0.1F, DANO, true);
-                if (fuego) v.setSecondsOnFire(3);
+                if (fuego) v.igniteForSeconds(3);
                 if (guisantes) {
                     Vec3 m0 = mira();
                     v.push(m0.x * 0.25, 0.05, m0.z * 0.25);
@@ -504,7 +504,7 @@ public class GatlingEntity extends Entity {
             if (p instanceof ServerPlayer sp) com.copperslug.armasfuego.comun.Cobre.avisar(sp, arma);
         }
         // desgaste del arma (si se rompe, se acabó)
-        if (!arma.isEmpty() && arma.isDamageableItem() && !creativo && arma.hurt(1, random, p instanceof ServerPlayer sp ? sp : null)) {
+        if (!arma.isEmpty() && arma.isDamageableItem() && !creativo && com.copperslug.shim.Durab.danar(arma, 1, random, p instanceof ServerPlayer sp ? sp : null)) {
             playSound(SoundEvents.ITEM_BREAK, 1.0F, 0.6F);
             ejectPassengers();
             discard();
@@ -575,7 +575,7 @@ public class GatlingEntity extends Entity {
         if (!p.getAbilities().instabuild || !p.getInventory().contains(s)) {
             if (!p.getInventory().add(s)) spawnAtLocation(s);
         }
-        playSound(SoundEvents.ARMOR_EQUIP_IRON, 1.0F, 0.8F);
+        playSound(SoundEvents.ARMOR_EQUIP_IRON.value(), 1.0F, 0.8F);
         discard();
     }
 
@@ -668,7 +668,7 @@ public class GatlingEntity extends Entity {
     protected void readAdditionalSaveData(CompoundTag t) {
         entityData.set(CALOR, t.getFloat("Calor"));
         entityData.set(BALAS, t.getInt("Balas"));
-        if (t.contains("Arma")) arma = ItemStack.of(t.getCompound("Arma"));
+        if (t.contains("Arma")) arma = ItemStack.parseOptional(com.copperslug.shim.Enc.registros(), t.getCompound("Arma"));
         cinta = t.getString("Cinta");
         entityData.set(OXIDO, com.copperslug.armasfuego.comun.Cobre.oxido(arma));
         if (t.hasUUID("Dueno")) dueno = t.getUUID("Dueno");
@@ -679,7 +679,7 @@ public class GatlingEntity extends Entity {
     protected void addAdditionalSaveData(CompoundTag t) {
         t.putFloat("Calor", calor());
         t.putInt("Balas", balas());
-        if (!arma.isEmpty()) t.put("Arma", arma.save(new CompoundTag()));
+        if (!arma.isEmpty()) t.put("Arma", arma.saveOptional(com.copperslug.shim.Enc.registros()));
         t.putString("Cinta", cinta);
         if (dueno != null) t.putUUID("Dueno", dueno);
         t.putFloat("ApuntaY", apuntaY());
@@ -692,7 +692,7 @@ public class GatlingEntity extends Entity {
     }
 
     @Override
-    public Packet<ClientGamePacketListener> getAddEntityPacket() {
-        return NetworkHooks.getEntitySpawningPacket(this);
+    public Packet<ClientGamePacketListener> getAddEntityPacket(net.minecraft.server.level.ServerEntity copperslug$se) {
+        return NetworkHooks.getEntitySpawningPacket(this, copperslug$se);
     }
 }

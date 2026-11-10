@@ -295,7 +295,7 @@ public final class DisparoPresion {
         if (entra) v.knockback(Math.min(1.2, 0.2 + dano / 12.0), -mira.x, -mira.z);
         int segundos = 60 + (int) (60 * Math.min(fuerza, 1.3F));
         switch (t) {
-            case INCENDIARIO -> v.setSecondsOnFire(3 + (int) (4 * Math.min(fuerza, 1.3F)));
+            case INCENDIARIO -> v.igniteForSeconds(3 + (int) (4 * Math.min(fuerza, 1.3F)));
             case ESCARCHA -> {
                 v.clearFire();
                 v.setTicksFrozen(Math.min(v.getTicksRequiredToFreeze() + 120, v.getTicksFrozen() + 60 + 15 * n));
@@ -303,7 +303,7 @@ public final class DisparoPresion {
             }
             case MIEL -> {
                 v.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, segundos, 3), p);
-                v.addEffect(new MobEffectInstance(ModEffects.PRINGADO.get(), segundos), p);
+                v.addEffect(new MobEffectInstance(ModEffects.PRINGADO.holder(), segundos), p);
             }
             case SAL -> {
                 // escuece: el respingo y el quejido, pero sin daño (salvo a los slimes, que la sal les sienta fatal)

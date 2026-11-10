@@ -23,7 +23,7 @@ public final class EscopetaEventos {
     @SubscribeEvent
     public static void salto(LivingEvent.LivingJumpEvent e) {
         var v = e.getEntity();
-        if (!v.hasEffect(ModEffects.PRINGADO.get())) return;
+        if (!v.hasEffect(ModEffects.PRINGADO.holder())) return;
         var m = v.getDeltaMovement();
         v.setDeltaMovement(m.x * 0.3, Math.min(m.y, 0.0), m.z * 0.3);
     }

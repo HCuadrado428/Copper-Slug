@@ -36,12 +36,12 @@ public final class Pintura {
     }
 
     public static int rgb(int color) {
-        float[] c = DyeColor.byId(color).getTextureDiffuseColors();
+        float[] c = rgbF(DyeColor.byId(color).getTextureDiffuseColor());
         return 0xFF000000 | (int) (c[0] * 255) << 16 | (int) (c[1] * 255) << 8 | (int) (c[2] * 255);
     }
 
     public static DustParticleOptions polvo(int color) {
-        float[] c = DyeColor.byId(color).getTextureDiffuseColors();
+        float[] c = rgbF(DyeColor.byId(color).getTextureDiffuseColor());
         return new DustParticleOptions(new Vector3f(c[0], c[1], c[2]), 1.6F);
     }
 
@@ -80,5 +80,10 @@ public final class Pintura {
         }
         l.sendParticles(polvo(color), donde.x, donde.y, donde.z, 24, 0.5, 0.5, 0.5, 0);
         return n;
+    }
+
+    /** El color de un tinte (en 1.21, un entero ARGB) como en 1.20: tres flotantes de 0 a 1. */
+    private static float[] rgbF(int c) {
+        return new float[]{(c >> 16 & 255) / 255F, (c >> 8 & 255) / 255F, (c & 255) / 255F};
     }
 }

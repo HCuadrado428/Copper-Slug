@@ -62,7 +62,7 @@ public class RevolverItem extends Item {
                 if (!level.isClientSide) Revolver.rascar((ServerPlayer) p, s, otra, InteractionHand.OFF_HAND);
                 return InteractionResultHolder.sidedSuccess(s, level.isClientSide);
             }
-            if (EncantamientoRevolver.nivel(ModEnchantments.REVOLVER_ABANICO, s) > 0 && Tambor.cargadas(s) > 0) {
+            if (com.copperslug.shim.Enc.nivel(ModEnchantments.REVOLVER_ABANICO, s) > 0 && Tambor.cargadas(s) > 0) {
                 if (!level.isClientSide) Revolver.empezarAbanico((ServerPlayer) p, s);
                 p.getCooldowns().addCooldown(this, 16);
                 return InteractionResultHolder.consume(s);
@@ -168,7 +168,8 @@ public class RevolverItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag flag) {
+    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> l, TooltipFlag flag) {
+        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
         MutableComponent t = Component.translatable("pistola.copperslug.tambor").withStyle(ChatFormatting.GRAY);
         int pos = Tambor.pos(s);
         boolean girado = Tambor.girado(s);

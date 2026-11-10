@@ -9,7 +9,7 @@ import net.minecraft.world.entity.Entity;
 public final class NetworkHooks {
     private NetworkHooks() {}
 
-    public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity e) {
-        return new ClientboundAddEntityPacket(e);
+    public static Packet<ClientGamePacketListener> getEntitySpawningPacket(Entity e, net.minecraft.server.level.ServerEntity se) {
+        return new ClientboundAddEntityPacket(e, se);
     }
 }

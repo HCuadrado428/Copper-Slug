@@ -1,0 +1,20 @@
+{
+  "description": {
+    "translate": "enchantment.copperslug.mosquete_pedernal"
+  },
+  "supported_items": "#copperslug:enchantable/mosquete",
+  "weight": 5,
+  "max_level": 2,
+  "min_cost": {
+    "base": 8,
+    "per_level_above_first": 12
+  },
+  "max_cost": {
+    "base": 38,
+    "per_level_above_first": 12
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "mainhand"
+  ]
+}

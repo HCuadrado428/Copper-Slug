@@ -15,6 +15,15 @@ public final class ClienteComun {
         void aplicar(HumanoidModel<?> modelo, LivingEntity e, HumanoidArm brazo);
     }
 
+    public static net.minecraft.world.level.Level nivel() {
+        return net.minecraft.client.Minecraft.getInstance().level;
+    }
+
+    public static net.minecraft.core.RegistryAccess registros() {
+        var l = net.minecraft.client.Minecraft.getInstance().level;
+        return l == null ? null : l.registryAccess();
+    }
+
     public static BakedModel modelo(ResourceLocation id) {
         return PlataformaCliente.P.modelo(id);
     }

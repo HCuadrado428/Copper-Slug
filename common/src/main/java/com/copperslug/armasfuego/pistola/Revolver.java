@@ -132,7 +132,7 @@ public final class Revolver {
         if (!abanico) {
             Long sacado = SACADO.remove(p.getUUID());
             critico = sacado != null && ahora - sacado <= VENTANA_DESENFUNDE
-                    && EncantamientoRevolver.nivel(ModEnchantments.REVOLVER_DESENFUNDE, s) > 0;
+                    && com.copperslug.shim.Enc.nivel(ModEnchantments.REVOLVER_DESENFUNDE, s) > 0;
         }
         double disp = critico ? 0 : DISPERSION[ox] + (abanico ? 0.10 : 0);
         Vec3 mira = p.getViewVector(1.0F);
@@ -160,7 +160,7 @@ public final class Revolver {
         switch (c) {
             case BALA, DARDO, IMAN, TIEMPO -> {
                 // la bala imán se pega donde da (no rebota): con Carambola se iba rebotando lejos de lo tirado
-                int rebotes = c == Carga.IMAN ? 0 : EncantamientoRevolver.nivel(ModEnchantments.REVOLVER_CARAMBOLA, s);
+                int rebotes = c == Carga.IMAN ? 0 : com.copperslug.shim.Enc.nivel(ModEnchantments.REVOLVER_CARAMBOLA, s);
                 Impacto im = trazar(l, p, p.getEyePosition(), dir, ALCANCE, rebotes, boca);
                 impactar(l, p, c, im, critico);
             }
@@ -169,7 +169,7 @@ public final class Revolver {
                 b.setOwner(p);
                 b.setPos(boca.x, boca.y, boca.z);
                 b.setDeltaMovement(dir.scale(1.5));
-                b.preparar(EncantamientoRevolver.nivel(ModEnchantments.REVOLVER_SENALERO, s) > 0);
+                b.preparar(com.copperslug.shim.Enc.nivel(ModEnchantments.REVOLVER_SENALERO, s) > 0);
                 l.addFreshEntity(b);
             }
             case FOGUEO -> asustar(l, p);
@@ -185,7 +185,7 @@ public final class Revolver {
             case BALA -> p.hurt(new DamageSource(l.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(RULETA), p), 30F);
             case DARDO -> sedar(p);
             case BENGALA -> {
-                p.setSecondsOnFire(4);
+                p.igniteForSeconds(4);
                 p.hurt(l.damageSources().onFire(), 2F);
             }
             case IMAN -> atraer(l, p, p.position());
@@ -457,8 +457,8 @@ public final class Revolver {
         } else {
             return false;
         }
-        if (manoHacha != null) hacha.hurtAndBreak(1, p, manoHacha);
-        else if (hacha.isDamageableItem() && !p.getAbilities().instabuild && hacha.hurt(1, p.getRandom(), p)) hacha.shrink(1);
+        if (manoHacha != null) hacha.hurtAndBreak(1, p, net.minecraft.world.entity.LivingEntity.getSlotForHand(manoHacha));
+        else if (hacha.isDamageableItem() && !p.getAbilities().instabuild && com.copperslug.shim.Durab.danar(hacha, 1, p.getRandom(), p)) hacha.shrink(1);
         return true;
     }
 

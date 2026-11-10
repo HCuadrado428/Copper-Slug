@@ -1,0 +1,20 @@
+{
+  "description": {
+    "translate": "enchantment.copperslug.revolver_senalero"
+  },
+  "supported_items": "#copperslug:enchantable/revolver",
+  "weight": 5,
+  "max_level": 1,
+  "min_cost": {
+    "base": 8,
+    "per_level_above_first": 0
+  },
+  "max_cost": {
+    "base": 38,
+    "per_level_above_first": 0
+  },
+  "anvil_cost": 2,
+  "slots": [
+    "mainhand"
+  ]
+}
