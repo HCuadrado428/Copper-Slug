@@ -61,6 +61,9 @@ def main():
         rama = args[i + 1]
         del args[i:i + 2]
     repo, viejo, nuevo = args
+    # los commits por su hash (para apuntarlo en ultimo_portado.txt)
+    viejo = subprocess.check_output(['git', '-C', repo, 'rev-parse', viejo], text=True).strip()
+    nuevo = subprocess.check_output(['git', '-C', repo, 'rev-parse', nuevo], text=True).strip()
     tmp = tempfile.mkdtemp(prefix='portar_')
     sacar(repo, viejo, os.path.join(tmp, 'src_viejo'))
     sacar(repo, nuevo, os.path.join(tmp, 'src_nuevo'))

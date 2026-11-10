@@ -449,6 +449,7 @@
   "advancements.copperslug.armas.castillo_arena.description": "Dispara un bloque que cae con el cañón de mano y que se quede donde da.",
   "advancements.copperslug.armas.rebote.title": "Pájaros enfadados",
   "advancements.copperslug.armas.rebote.description": "Haz que un bolaño saltarín rebote tres veces. Los cerdos verdes tiemblan.",
+  "msg.copperslug.armafuego.sin_balas": "No te queda munición para recargar",
   "itemGroup.copperslug": "Copper Slug",
   "key.categories.copperslug": "Copper Slug",
   "advancements.copperslug.raiz.title": "Copper Slug",
