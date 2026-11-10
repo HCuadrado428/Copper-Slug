@@ -83,6 +83,27 @@ public final class PruebaCI {
      */
     private static void inventario() {
         Minecraft mc = Minecraft.getInstance();
+        // todas las texturas de objetos y bloques de Copper Slug: 16x16 (las animadas, 16x(16·n))
+        sin("texturas_16", 1, () -> {
+            List<String> mal = new ArrayList<>();
+            int n = 0;
+            for (String carpeta : List.of("textures/item", "textures/block")) {
+                var rs = mc.getResourceManager().listResources(carpeta, r -> r.getNamespace().equals(CopperSlug.MOD_ID) && r.getPath().endsWith(".png"));
+                for (var e : rs.entrySet()) {
+                    n++;
+                    try (var in = e.getValue().open()) {
+                        byte[] b = in.readNBytes(24);
+                        int w = java.nio.ByteBuffer.wrap(b, 16, 4).getInt(), h = java.nio.ByteBuffer.wrap(b, 20, 4).getInt();
+                        if (w != 16 || h % 16 != 0) mal.add(e.getKey().getPath() + " " + w + "x" + h);
+                    } catch (Exception ex) {
+                        mal.add(e.getKey().getPath() + " (" + ex + ")");
+                    }
+                }
+            }
+            RESUMEN.add("  texturas: " + n + " de objetos y bloques" + (mal.isEmpty() ? ", todas de 16x16" : " · NO SON DE 16: " + mal));
+            if (n == 0) throw new IllegalStateException("no se encuentran las texturas");
+            if (!mal.isEmpty()) throw new IllegalStateException("texturas que no son de 16x16: " + mal);
+        });
         paso("01_pestana_creativo", 30, () -> {
             var tab = com.copperslug.CopperSlug.PESTANA.get();
             var pantalla = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,
