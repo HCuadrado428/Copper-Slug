@@ -16,3 +16,10 @@
   - notitas del violín;
   - el bolaño parado sin humo;
   - iconos más claros de la Winchester, la Thompson, el mosquete y la Gatling.
+- Y la tanda de armas de Miscelánea hasta arreglos 4a83d6e5:
+  - el óxido es un intercambio: cada fase se encasquilla y dispersa más, pero pega y perfora más (lista
+    `armas_de_fuego_equilibrio.cobre` de la config);
+  - la cera se gasta: 200 disparos (1500 en la Gatling y la Thompson), con el contador en el tooltip;
+  - la bayoneta usa los encantamientos de su espada (Filo, Aspecto ígneo, Botín, Reparación…; Barrido no);
+  - el violín se toca con un arco en la otra mano: nota sostenida y pentagrama en el HUD;
+  - logros nuevos: «cera_cinco» y «bayoneta_ignea» (y cambia «paganini»).

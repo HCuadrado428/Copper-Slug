@@ -14,6 +14,7 @@ public final class ArmasFuegoEventos {
     public static void sale(PlayerEvent.PlayerLoggedOutEvent e) {
         ArmaFuegoItem.olvidar(e.getEntity().getUUID());
         com.copperslug.armasfuego.oeste.DerringerItem.olvidarManga(e.getEntity().getUUID());
+        com.copperslug.armasfuego.oeste.EstucheViolinItem.olvidar(e.getEntity().getUUID());
     }
 
     @SubscribeEvent
@@ -58,5 +59,11 @@ public final class ArmasFuegoEventos {
         l.playSound(null, v.getX(), v.getY(), v.getZ(), net.minecraft.sounds.SoundEvents.ANVIL_PLACE, net.minecraft.sounds.SoundSource.BLOCKS, 0.4F, 1.4F);
         if (!p.getAbilities().instabuild) s.shrink(1);
         return g;
+    }
+
+    /** Reparación en la espada calada del mosquete. */
+    @SubscribeEvent
+    public static void xp(com.copperslug.shim.event.entity.player.PlayerXpEvent.PickupXp e) {
+        com.copperslug.armasfuego.oeste.MosqueteItem.reparar(e);
     }
 }

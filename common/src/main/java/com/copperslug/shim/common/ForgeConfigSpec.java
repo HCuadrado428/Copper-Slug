@@ -64,6 +64,59 @@ public final class ForgeConfigSpec {
         }
     }
 
+    /** Como el de Forge: cualquier valor de la config (aquí, el de las listas). */
+    public abstract static class ConfigValue<T> extends Value<T> {
+        ConfigValue(String ruta, String[] comentario, T def) {
+            super(ruta, comentario, def);
+        }
+    }
+
+    /** Una lista (en el archivo, {@code [a, b, c]}): números si lo parecen y, si no, texto; cada uno pasa el filtro. */
+    public static final class ListValue<E> extends ConfigValue<List<? extends E>> {
+        final java.util.function.Predicate<Object> vale;
+
+        ListValue(String r, String[] c, List<? extends E> d, java.util.function.Predicate<Object> vale) {
+            super(r, c, List.copyOf(d));
+            this.vale = vale;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public void leer(String s) {
+            s = s.trim();
+            if (!s.startsWith("[") || !s.endsWith("]")) return;
+            String dentro = s.substring(1, s.length() - 1).trim();
+            List<Object> l = new ArrayList<>();
+            if (!dentro.isEmpty()) for (String x : dentro.split(",")) {
+                x = x.trim();
+                Object o;
+                try {
+                    o = Double.parseDouble(x);
+                } catch (NumberFormatException e) {
+                    o = x.replaceAll("^\"|\"$", "");
+                }
+                if (!vale.test(o)) return;
+                l.add(o);
+            }
+            valor = (List<? extends E>) List.copyOf(l);
+        }
+
+        @Override
+        public String rango() {
+            return "Lista: [a, b, ...]";
+        }
+
+        @Override
+        public String texto() {
+            StringBuilder b = new StringBuilder("[");
+            for (Object o : valor) {
+                if (b.length() > 1) b.append(", ");
+                b.append(o instanceof Number ? String.valueOf(o) : "\"" + o + "\"");
+            }
+            return b.append(']').toString();
+        }
+    }
+
     public static final class DoubleValue extends Value<Double> {
         final double min, max;
 
@@ -165,6 +218,10 @@ public final class ForgeConfigSpec {
 
         public IntValue defineInRange(String k, int d, int min, int max) {
             return poner(new IntValue(ruta(k), comentario, d, min, max));
+        }
+
+        public <E> ConfigValue<List<? extends E>> defineList(String k, List<? extends E> d, java.util.function.Predicate<Object> vale) {
+            return poner(new ListValue<E>(ruta(k), comentario, d, vale));
         }
 
         public BooleanValue define(String k, boolean d) {
