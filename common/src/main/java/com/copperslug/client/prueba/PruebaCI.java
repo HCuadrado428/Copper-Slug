@@ -166,7 +166,11 @@ public final class PruebaCI {
         sin("inventario_fin", 5, () -> {
             mc.setScreen(null);
             var srv = mc.getSingleplayerServer();
-            srv.execute(() -> srv.getPlayerList().getPlayers().forEach(p -> p.setGameMode(GameType.CREATIVE)));
+            // la munición de la captura fuera: las pruebas de después cuentan con el inventario vacío
+            srv.execute(() -> srv.getPlayerList().getPlayers().forEach(p -> {
+                for (int i = 9; i < 36; i++) p.getInventory().setItem(i, ItemStack.EMPTY);
+                p.setGameMode(GameType.CREATIVE);
+            }));
         });
     }
 
