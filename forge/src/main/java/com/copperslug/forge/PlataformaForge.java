@@ -100,6 +100,11 @@ public class PlataformaForge implements Plataforma {
     }
 
     @Override
+    public ServerPlayer jugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil) {
+        return net.minecraftforge.common.util.FakePlayerFactory.get(l, perfil);
+    }
+
+    @Override
     public <T> void paqueteAlServidor(ResourceLocation id, Class<T> clase, BiConsumer<T, FriendlyByteBuf> escribir, Function<FriendlyByteBuf, T> leer,
                                       BiConsumer<T, ServerPlayer> manejar) {
         CANAL.messageBuilder(clase, idPaquete++, NetworkDirection.PLAY_TO_SERVER)

@@ -17,6 +17,11 @@ public class PlataformaClienteFabric implements PlataformaCliente {
     }
 
     @Override
+    public BakedModel modeloPara(BakedModel m, net.minecraft.world.item.ItemDisplayContext ctx) {
+        return m instanceof ModelosSeparados.Separado s ? s.para(ctx) : m;
+    }
+
+    @Override
     public HumanoidModel.ArmPose poseBrazo(String nombre, boolean dosManos, ClienteComun.Pose pose) {
         return PosesFabric.nueva(pose);
     }

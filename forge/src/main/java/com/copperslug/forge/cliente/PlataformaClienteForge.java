@@ -14,6 +14,11 @@ public class PlataformaClienteForge implements PlataformaCliente {
     }
 
     @Override
+    public BakedModel modeloPara(BakedModel m, net.minecraft.world.item.ItemDisplayContext ctx) {
+        return m.applyTransform(ctx, new com.mojang.blaze3d.vertex.PoseStack(), false);
+    }
+
+    @Override
     public HumanoidModel.ArmPose poseBrazo(String nombre, boolean dosManos, ClienteComun.Pose pose) {
         return HumanoidModel.ArmPose.create(nombre, dosManos, pose::aplicar);
     }

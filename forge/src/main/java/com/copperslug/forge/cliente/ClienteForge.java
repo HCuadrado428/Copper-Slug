@@ -52,8 +52,11 @@ public final class ClienteForge {
 
         // ---- bus del mod
         mod.addListener((FMLClientSetupEvent e) -> {
-            e.enqueueWork(ClienteForge::extensiones);
-            Bus.post(new com.copperslug.shim.fml.event.lifecycle.FMLClientSetupEvent());
+            // en el hilo principal (ItemProperties no es seguro entre hilos)
+            e.enqueueWork(() -> {
+                extensiones();
+                Bus.post(new com.copperslug.shim.fml.event.lifecycle.FMLClientSetupEvent());
+            });
         });
         mod.addListener((EntityRenderersEvent.RegisterRenderers e) ->
                 Bus.post(new com.copperslug.shim.client.event.EntityRenderersEvent.RegisterRenderers((t, p) -> registrarRender(e, t, p))));
