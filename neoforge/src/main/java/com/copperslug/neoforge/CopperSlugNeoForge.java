@@ -43,6 +43,8 @@ public class CopperSlugNeoForge {
                 e.getEntity(), e.getFrom(), e.getTo())));
         f.addListener((PlayerEvent.PlayerRespawnEvent e) -> Bus.post(new com.copperslug.shim.event.entity.player.PlayerEvent.PlayerRespawnEvent(
                 e.getEntity(), e.isEndConquered())));
+        f.addListener((net.neoforged.neoforge.event.entity.player.PlayerXpEvent.PickupXp e) -> Bus.post(new com.copperslug.shim.event.entity.player.PlayerXpEvent.PickupXp(
+                e.getEntity(), e.getOrb())));
         f.addListener((ItemEntityPickupEvent.Post e) -> Bus.post(new com.copperslug.shim.event.entity.player.PlayerEvent.ItemPickupEvent(
                 e.getPlayer(), e.getItemEntity(), e.getOriginalStack())));
         f.addListener((PlayerInteractEvent.EntityInteract e) -> {

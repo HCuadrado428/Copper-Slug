@@ -82,7 +82,7 @@ public final class Rifle {
     }
 
     public static boolean encerado(ItemStack s) {
-        return com.copperslug.shim.Nbt.tiene(s) && com.copperslug.shim.Nbt.leer(s).getBoolean(ENCERADO);
+        return com.copperslug.armasfuego.comun.Cobre.encerado(s);
     }
 
     /** ¿Hay un cartucho listo para disparar? */
@@ -203,7 +203,7 @@ public final class Rifle {
         CompoundTag t = com.copperslug.shim.Nbt.tag(s);
         int ox = oxido(s);
         // el cobre oxidado falla a veces: el cartucho no sale y hay que sacarlo con el cerrojo
-        if (p.getRandom().nextFloat() < ox * 0.04F + com.copperslug.armasfuego.comun.EquilibrioArmas.encasquilladoBase()) {
+        if (p.getRandom().nextFloat() < com.copperslug.armasfuego.comun.Cobre.atascoDisparo(ox) * 1.4F + com.copperslug.armasfuego.comun.EquilibrioArmas.encasquilladoBase()) {
             t.putBoolean(GASTADA, true);
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.DISPENSER_FAIL, SoundSource.PLAYERS, 0.8F, 1.4F);
             return;
@@ -223,7 +223,8 @@ public final class Rifle {
         BalaRifle b = new BalaRifle(ModEntities.BALA_RIFLE.get(), l);
         b.setOwner(p);
         b.setPos(ojo.x, ojo.y - 0.08, ojo.z);
-        float dano = com.copperslug.armasfuego.comun.EquilibrioArmas.rifleDano();
+        // el cobre: el cañón gastado pega más
+        float dano = com.copperslug.armasfuego.comun.EquilibrioArmas.rifleDano() * com.copperslug.armasfuego.comun.Cobre.dano(ox);
         // respiración contenida: x1,1 + 0,05 por nivel (antes 1,15 + 0,1: con la cabeza mataba de un tiro)
         if (contenida) dano *= 1.1F + 0.05F * resp;
         int atravesar = nivel(s, ModEnchantments.ATRAVESAR);
@@ -255,7 +256,9 @@ public final class Rifle {
         }
         t.putInt("Disparos", t.getInt("Disparos") + 1);
         // el cobre se oxida poco a poco con el uso (salvo encerado)
-        if (!encerado(s) && ox < 3 && p.getRandom().nextInt(30) == 0) t.putInt(OXIDO, ox + 1);
+        // con cera se gasta un disparo de cera (y avisa cuando se acaba)
+        if (encerado(s)) com.copperslug.armasfuego.comun.Cobre.avisar(p, s, com.copperslug.armasfuego.comun.Cobre.gastar(s, 30, false));
+        else if (ox < 3 && p.getRandom().nextInt(30) == 0) t.putInt(OXIDO, ox + 1);
         s.hurtAndBreak(1, p, net.minecraft.world.entity.LivingEntity.getSlotForHand(InteractionHand.MAIN_HAND));
         APUNTE.remove(p.getUUID());
     }

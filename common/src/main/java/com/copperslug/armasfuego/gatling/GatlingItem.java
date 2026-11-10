@@ -89,6 +89,7 @@ public class GatlingItem extends Item {
         float calor = com.copperslug.shim.Nbt.tiene(s) ? com.copperslug.shim.Nbt.leer(s).getFloat(CALOR) : 0;
         l.add(Component.translatable("item.copperslug.gatling.balas", balas, EquilibrioArmas.gatlingCinta()).withStyle(ChatFormatting.GOLD));
         l.add(com.copperslug.armasfuego.comun.Cobre.estado(s));
+        com.copperslug.armasfuego.comun.Cobre.tooltip(s, l);
         if (calor > 1) l.add(Component.translatable("item.copperslug.gatling.calor", Math.round(calor)).withStyle(ChatFormatting.RED));
         for (int i = 1; i <= 3; i++) l.add(Component.translatable("item.copperslug.gatling.ayuda" + i).withStyle(ChatFormatting.GRAY));
     }

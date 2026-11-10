@@ -101,15 +101,16 @@ public class RifleItem extends Item {
         if (accion != ClickAction.SECONDARY || otro.isEmpty()) return false;
         var t = com.copperslug.shim.Nbt.tag(s);
         if (otro.is(Items.HONEYCOMB)) {
-            if (Rifle.encerado(s)) return false;
-            t.putBoolean(Rifle.ENCERADO, true);
+            int dur = com.copperslug.armasfuego.comun.Cobre.duracionCera(s);
+            if (com.copperslug.armasfuego.comun.Cobre.cera(s, dur) >= dur) return false;
+            com.copperslug.armasfuego.comun.Cobre.ponerCera(s, dur);
             if (!p.getAbilities().instabuild) otro.shrink(1);
             if (p.level().isClientSide) p.playSound(SoundEvents.HONEYCOMB_WAX_ON, 1.0F, 1.0F);
             return true;
         }
         if (otro.getItem() instanceof AxeItem) {
             if (Rifle.encerado(s)) {
-                t.putBoolean(Rifle.ENCERADO, false);
+                com.copperslug.armasfuego.comun.Cobre.ponerCera(s, 0);
                 if (p.level().isClientSide) p.playSound(SoundEvents.AXE_WAX_OFF, 1.0F, 1.0F);
             } else if (Rifle.oxido(s) > 0) {
                 t.putInt(Rifle.OXIDO, Rifle.oxido(s) - 1);
@@ -138,6 +139,7 @@ public class RifleItem extends Item {
         Component cobre = Component.translatable("item.copperslug.rifle.cobre." + COBRE[Rifle.oxido(s)]);
         lista.add(Component.translatable(Rifle.encerado(s) ? "item.copperslug.rifle.estado_encerado" : "item.copperslug.rifle.estado", cobre)
                 .withStyle(ChatFormatting.DARK_AQUA));
+        com.copperslug.armasfuego.comun.Cobre.tooltip(s, lista);
         for (int i = 1; i <= 4; i++) lista.add(Component.translatable("item.copperslug.rifle.ayuda" + i).withStyle(ChatFormatting.GRAY));
     }
 

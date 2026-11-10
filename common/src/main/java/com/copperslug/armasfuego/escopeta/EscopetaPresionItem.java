@@ -171,15 +171,16 @@ public class EscopetaPresionItem extends Item {
             return true;
         }
         if (otro.is(Items.HONEYCOMB)) {
-            if (Presion.encerada(s)) return false;
-            com.copperslug.shim.Nbt.tag(s).putBoolean(Presion.ENCERADA, true);
+            int dur = com.copperslug.armasfuego.comun.Cobre.duracionCera(s);
+            if (com.copperslug.armasfuego.comun.Cobre.cera(s, dur) >= dur) return false;
+            com.copperslug.armasfuego.comun.Cobre.ponerCera(s, dur);
             otro.shrink(1);
             p.playSound(SoundEvents.HONEYCOMB_WAX_ON, 1.0F, 1.0F);
             return true;
         }
         if (otro.getItem() instanceof AxeItem) {
             if (Presion.encerada(s)) {
-                com.copperslug.shim.Nbt.tag(s).remove(Presion.ENCERADA);
+                com.copperslug.armasfuego.comun.Cobre.ponerCera(s, 0);
                 p.playSound(SoundEvents.AXE_WAX_OFF, 1.0F, 1.0F);
             } else if (Presion.oxido(s) > 0) {
                 Presion.ponerOxido(s, Presion.oxido(s) - 1);
@@ -227,6 +228,7 @@ public class EscopetaPresionItem extends Item {
         Component estado = Component.translatable("item.copperslug.escopeta_presion.oxido." + ox[Presion.oxido(s)]);
         l.add((Presion.encerada(s) ? Component.translatable("item.copperslug.escopeta_presion.encerada", estado) : estado.copy())
                 .withStyle(ChatFormatting.DARK_AQUA));
+        com.copperslug.armasfuego.comun.Cobre.tooltip(s, l);
         l.add(Component.translatable("item.copperslug.escopeta_presion.ayuda1").withStyle(ChatFormatting.DARK_GRAY));
         l.add(Component.translatable("item.copperslug.escopeta_presion.ayuda2").withStyle(ChatFormatting.DARK_GRAY));
         l.add(Component.translatable("item.copperslug.escopeta_presion.ayuda3").withStyle(ChatFormatting.DARK_GRAY));
