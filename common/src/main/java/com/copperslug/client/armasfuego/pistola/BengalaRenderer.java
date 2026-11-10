@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 /**
@@ -40,23 +39,23 @@ public class BengalaRenderer extends EntityRenderer<BengalaEntity> {
         VertexConsumer vc = buf.getBuffer(RenderType.eyes(TEX));
         PoseStack.Pose p = ps.last();
         Matrix4f m = p.pose();
-        Matrix3f n = p.normal();
+        com.mojang.blaze3d.vertex.PoseStack.Pose n = p;
         int a = (int) (255 * b);
         quad(vc, m, n, a);
         ps.popPose();
         super.render(e, yaw, pt, ps, buf, luz);
     }
 
-    private static void quad(VertexConsumer vc, Matrix4f m, Matrix3f n, int a) {
+    private static void quad(VertexConsumer vc, Matrix4f m, com.mojang.blaze3d.vertex.PoseStack.Pose n, int a) {
         v(vc, m, n, -0.5F, -0.5F, 0, 1, a);
         v(vc, m, n, 0.5F, -0.5F, 1, 1, a);
         v(vc, m, n, 0.5F, 0.5F, 1, 0, a);
         v(vc, m, n, -0.5F, 0.5F, 0, 0, a);
     }
 
-    private static void v(VertexConsumer vc, Matrix4f m, Matrix3f n, float x, float y, float u, float w, int a) {
-        vc.vertex(m, x, y, 0).color(a, a, a, 255).uv(u, w).overlayCoords(OverlayTexture.NO_OVERLAY).uv2(0xF000F0)
-                .normal(n, 0, 1, 0).endVertex();
+    private static void v(VertexConsumer vc, Matrix4f m, com.mojang.blaze3d.vertex.PoseStack.Pose n, float x, float y, float u, float w, int a) {
+        vc.addVertex(m, x, y, 0).setColor(a, a, a, 255).setUv(u, w).setOverlay(OverlayTexture.NO_OVERLAY).setLight(0xF000F0)
+                .setNormal(n, 0, 1, 0);
     }
 
     @Override

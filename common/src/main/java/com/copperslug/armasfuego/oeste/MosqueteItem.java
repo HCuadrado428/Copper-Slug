@@ -1,7 +1,5 @@
 package com.copperslug.armasfuego.oeste;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.copperslug.armasfuego.comun.ArmaFuegoItem;
 import com.copperslug.armasfuego.comun.Balistica;
 import com.copperslug.armasfuego.comun.EquilibrioArmas;
@@ -22,7 +20,8 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -34,7 +33,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.UUID;
 
 /**
  * Mosquete de chispa con la bayoneta calada (tipo Brown Bess). Un solo tiro de mucho daño: al apretar el gatillo el
@@ -55,7 +53,7 @@ public class MosqueteItem extends ArmaFuegoItem {
     public static final int RETARDO = 5;
     /** NBT: la espada calada de bayoneta (si no hay ninguna, la de hierro de siempre) o que no lleva. */
     public static final String BAYONETA = "Bayoneta", SIN_BAYONETA = "SinBayoneta";
-    private static final UUID ALCANCE_ID = UUID.fromString("5c1b1e2a-7a2d-4f43-9d3e-6b9a2a0f4b11");
+    private static final net.minecraft.resources.ResourceLocation ALCANCE_ID = net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("copperslug", "bayoneta_alcance");
 
     public MosqueteItem(Properties p) {
         super(p);
@@ -159,6 +157,7 @@ public class MosqueteItem extends ArmaFuegoItem {
     @Override
     public void inventoryTick(ItemStack s, Level level, Entity e, int slot, boolean sel) {
         super.inventoryTick(s, level, e, slot, sel);
+        if (!level.isClientSide) ponerAtributos(s);
         if (!(e instanceof Player p) || !com.copperslug.shim.Nbt.tiene(s) || !com.copperslug.shim.Nbt.leer(s).contains(CHISPA)) return;
         if (level.getGameTime() < com.copperslug.shim.Nbt.leer(s).getLong(CHISPA)) return;
         com.copperslug.shim.Nbt.leer(s).remove(CHISPA);
@@ -307,6 +306,7 @@ public class MosqueteItem extends ArmaFuegoItem {
             t.put(BAYONETA, espada.copyWithCount(1).saveOptional(com.copperslug.shim.Enc.registros()));
             t.remove(SIN_BAYONETA);
         }
+        ponerAtributos(s);
     }
 
     /** El material de la hoja (para el modelo): 0 sin bayoneta, 1 madera, 2 piedra, 3 hierro (y las raras), 4 oro, 5 diamante, 6 netherita. */
@@ -332,29 +332,35 @@ public class MosqueteItem extends ArmaFuegoItem {
     /** El daño de la espada (lo que añade al puño). */
     public static double danoEspada(ItemStack espada) {
         double d = 0;
-        for (AttributeModifier m : espada.getAttributeModifiers(EquipmentSlot.MAINHAND).get(Attributes.ATTACK_DAMAGE))
-            if (m.getOperation() == AttributeModifier.Operation.ADDITION) d += m.getAmount();
+        for (var e : espada.getOrDefault(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS, ItemAttributeModifiers.EMPTY).modifiers())
+            if (e.attribute().is(Attributes.ATTACK_DAMAGE) && e.modifier().operation() == AttributeModifier.Operation.ADD_VALUE) d += e.modifier().amount();
         return d;
     }
 
-    
-    public Multimap<Attribute, AttributeModifier> getAttributeModifiers(EquipmentSlot slot, ItemStack s) {
-        if (slot != EquipmentSlot.MAINHAND) return super.getDefaultAttributeModifiers(slot);
-        ImmutableMultimap.Builder<Attribute, AttributeModifier> b = ImmutableMultimap.builder();
+    /**
+     * Copper Slug (1.21): los atributos ya no se piden por objeto, van en el componente del objeto; se calculan aquí y
+     * se ponen al calar o quitar la bayoneta y en cada tick del inventario (por si cambian los encantamientos o la config).
+     */
+    public static ItemAttributeModifiers atributos(ItemStack s) {
+        var b = ItemAttributeModifiers.builder();
         ItemStack bay = bayoneta(s);
         if (bay.isEmpty()) {
             // sin bayoneta: un culatazo
-            b.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Culata", 2.0, AttributeModifier.Operation.ADDITION));
-            b.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Culata", -3.0, AttributeModifier.Operation.ADDITION));
+            b.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, 2.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+            b.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, -3.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
             return b.build();
         }
         double d = danoEspada(bay) + EquilibrioArmas.mosqueteBayoneta() + 2 * nivel(com.copperslug.registry.ModEnchantments.MOSQUETE_CARGA, s);
-        b.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_UUID, "Bayoneta", d, AttributeModifier.Operation.ADDITION));
-        b.put(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_UUID, "Bayoneta", -3.0, AttributeModifier.Operation.ADDITION));
-        // Copper Slug: en Fabric 1.20.1 no hay atributo de alcance (la bayoneta no llega más lejos)
-        var alcance = com.copperslug.shim.common.ForgeMod.ENTITY_REACH.get();
-        if (alcance != null) b.put(alcance, new AttributeModifier(ALCANCE_ID, "Bayoneta", 1.5, AttributeModifier.Operation.ADDITION));
+        b.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(BASE_ATTACK_DAMAGE_ID, d, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+        b.add(Attributes.ATTACK_SPEED, new AttributeModifier(BASE_ATTACK_SPEED_ID, -3.0, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
+        b.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ALCANCE_ID, 1.5, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND);
         return b.build();
+    }
+
+    public static void ponerAtributos(ItemStack s) {
+        ItemAttributeModifiers a = atributos(s);
+        if (!a.equals(s.get(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS)))
+            s.set(net.minecraft.core.component.DataComponents.ATTRIBUTE_MODIFIERS, a);
     }
 
     @Override

@@ -60,8 +60,8 @@ public final class CopperSlug {
                         .icon(() -> new ItemStack(ModItems.REVOLVER.get()))
                         .displayItems((params, out) -> Pestana.llenar(out::accept))
                         .build());
-        Plataforma.get().registrosListos();
         LogrosMiscelanea.registrar();
+        Plataforma.get().registrosListos();
         ModNetwork.registrar();
         Bus.suscribir(CopperSlug.class);
         for (String c : Suscriptores.COMUN) {
@@ -94,7 +94,7 @@ public final class CopperSlug {
     public static final class Pestana {
         public static void llenar(java.util.function.Consumer<ItemStack> out) {
             for (var en : List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
-                    ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO)) libro(out, en.get());
+                    ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO)) libro(out, com.copperslug.shim.Enc.holder(en));
             out.accept(new ItemStack(ModItems.REVOLVER.get()));
             for (var m : List.of(ModItems.REVOLVER_BALA, ModItems.REVOLVER_BENGALA, ModItems.REVOLVER_DARDO, ModItems.REVOLVER_FOGUEO,
                     ModItems.REVOLVER_IMAN, ModItems.REVOLVER_TIEMPO)) out.accept(new ItemStack(m.get()));
@@ -125,12 +125,18 @@ public final class CopperSlug {
             // los libros de los encantamientos propios de las demás armas
             var rev = List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
                     ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO);
-            for (var e : net.minecraft.core.registries.BuiltInRegistries.ENCHANTMENT.entrySet())
-                if (MOD_ID.equals(e.getKey().location().getNamespace()) && !rev.contains(e.getValue())) libro(out, e.getValue());
+            // Copper Slug (1.21): los encantamientos son datos, se buscan en los registros del mundo
+            var regs = com.copperslug.shim.Enc.registros();
+            if (regs == null) return;
+            regs.lookupOrThrow(net.minecraft.core.registries.Registries.ENCHANTMENT).listElements()
+                    .filter(h -> MOD_ID.equals(h.key().location().getNamespace()) && !rev.contains(h.key()))
+                    .sorted(java.util.Comparator.comparing(h -> h.key().location().getPath()))
+                    .forEach(h -> libro(out, h));
         }
 
-        private static void libro(java.util.function.Consumer<ItemStack> out, net.minecraft.world.item.enchantment.Enchantment en) {
-            out.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(en, en.getMaxLevel())));
+        private static void libro(java.util.function.Consumer<ItemStack> out, net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> en) {
+            if (en == null) return;
+            out.accept(EnchantedBookItem.createForEnchantment(new EnchantmentInstance(en, en.value().getMaxLevel())));
         }
     }
 }

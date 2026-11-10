@@ -1,7 +1,6 @@
 package com.copperslug.logros;
 
 import com.copperslug.CopperSlug;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -20,16 +19,16 @@ public final class LogrosMiscelanea {
     private LogrosMiscelanea() {}
 
     @Nullable
-    private static LogroTrigger trigger;
+    private static java.util.function.Supplier<net.minecraft.advancements.CriterionTrigger<?>> registrado;
 
-    /** En el arranque (commonSetup): da de alta el criterio en CriteriaTriggers. */
+    /** Al cargar el mod (antes de cerrar los registros): da de alta el criterio en el registro de criterios. */
     public static void registrar() {
-        if (trigger == null) trigger = CriteriaTriggers.register(new LogroTrigger());
+        if (registrado == null) registrado = com.copperslug.plataforma.Plataforma.get().registrar(net.minecraft.core.registries.Registries.TRIGGER_TYPE, LogroTrigger.ID, () -> new LogroTrigger());
     }
 
     /** El jugador ha hecho {@code accion}: se cumplen los logros que la esperan. */
     public static void dar(@Nullable Entity e, String accion) {
-        if (!(e instanceof ServerPlayer p) || com.copperslug.plataforma.Plataforma.get().esJugadorFalso(p) || accion == null || trigger == null) return;
+        if (!(e instanceof ServerPlayer p) || com.copperslug.plataforma.Plataforma.get().esJugadorFalso(p) || accion == null || registrado == null) return;
         MinecraftServer s = p.server;
         if (s == null) return;
         if (!s.isSameThread()) {
@@ -38,7 +37,7 @@ public final class LogrosMiscelanea {
         }
         if (p.hasDisconnected()) return;
         try {
-            trigger.trigger(p, accion);
+            ((LogroTrigger) registrado.get()).trigger(p, accion);
         } catch (Throwable t) {
             CopperSlug.LOG.warn("[Logros] no se pudo dar '{}' a {}", accion, p.getGameProfile().getName(), t);
         }

@@ -31,7 +31,6 @@ import com.copperslug.shim.client.event.RenderLevelStageEvent;
 import com.copperslug.shim.event.TickEvent;
 import com.copperslug.shim.eventbus.api.SubscribeEvent;
 import com.copperslug.shim.fml.common.Mod;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
@@ -177,7 +176,7 @@ public final class TirolinasCliente {
     /** La cuerda de a a b: dos cintas cruzadas, un tramo cada ~1,5 bloques, con la luz de cada tramo. */
     private static void cuerda(VertexConsumer vc, PoseStack ps, ClientLevel l, Vec3 cam, Vec3 a, Vec3 b, double r) {
         Matrix4f m = ps.last().pose();
-        Matrix3f nm = ps.last().normal();
+        com.mojang.blaze3d.vertex.PoseStack.Pose nm = ps.last();
         int n = Math.max(2, Math.min(48, (int) (a.distanceTo(b) / 1.5)));
         double acum = 0;
         Vec3 prev = Cuerda.punto(a, b, 0);
@@ -197,16 +196,16 @@ public final class TirolinasCliente {
         }
     }
 
-    private static void cinta(VertexConsumer vc, Matrix4f m, Matrix3f n, Vec3 p0, Vec3 p1, Vec3 off, float v0, float v1, int luz) {
+    private static void cinta(VertexConsumer vc, Matrix4f m, com.mojang.blaze3d.vertex.PoseStack.Pose n, Vec3 p0, Vec3 p1, Vec3 off, float v0, float v1, int luz) {
         punto(vc, m, n, p0.subtract(off), 0, v0, luz);
         punto(vc, m, n, p0.add(off), 1, v0, luz);
         punto(vc, m, n, p1.add(off), 1, v1, luz);
         punto(vc, m, n, p1.subtract(off), 0, v1, luz);
     }
 
-    private static void punto(VertexConsumer vc, Matrix4f m, Matrix3f n, Vec3 p, float u, float v, int luz) {
-        vc.vertex(m, (float) p.x, (float) p.y, (float) p.z).color(255, 255, 255, 255).uv(u, v).overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(luz).normal(n, 0, 1, 0).endVertex();
+    private static void punto(VertexConsumer vc, Matrix4f m, com.mojang.blaze3d.vertex.PoseStack.Pose n, Vec3 p, float u, float v, int luz) {
+        vc.addVertex(m, (float) p.x, (float) p.y, (float) p.z).setColor(255, 255, 255, 255).setUv(u, v).setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(luz).setNormal(n, 0, 1, 0);
     }
 
     // con shaders (Oculus/Iris) esta etapa se repite al dibujar las sombras: ahí no

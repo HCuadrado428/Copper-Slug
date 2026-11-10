@@ -55,7 +55,7 @@ public class Tirolinas extends SavedData {
     private int siguiente = 1;
 
     public static Tirolinas de(ServerLevel l) {
-        return l.getDataStorage().computeIfAbsent(Tirolinas::cargar, Tirolinas::new, NOMBRE);
+        return l.getDataStorage().computeIfAbsent(new net.minecraft.world.level.saveddata.SavedData.Factory<>(Tirolinas::new, (copperslug$t, copperslug$r) -> Tirolinas.cargar(copperslug$t), null), NOMBRE);
     }
 
     public List<Linea> lineas() {
@@ -86,7 +86,7 @@ public class Tirolinas extends SavedData {
     }
 
     @Override
-    public CompoundTag save(CompoundTag t) {
+    public CompoundTag save(CompoundTag t, net.minecraft.core.HolderLookup.Provider copperslug$reg) {
         ListTag l = new ListTag();
         for (Linea x : lineas) {
             CompoundTag c = new CompoundTag();

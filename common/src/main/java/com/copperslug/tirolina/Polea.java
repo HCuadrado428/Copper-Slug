@@ -162,9 +162,10 @@ public class Polea extends Entity {
         return soltando || isRemoved();
     }
 
+    // Copper Slug (1.21): el punto donde se engancha el jinete (antes getPassengersRidingOffset, -1.7 más el -0.35 del jugador)
     @Override
-    public double getPassengersRidingOffset() {
-        return -1.7;
+    protected net.minecraft.world.phys.Vec3 getPassengerAttachmentPoint(Entity e, net.minecraft.world.entity.EntityDimensions d, float escala) {
+        return new net.minecraft.world.phys.Vec3(0, -2.05, 0);
     }
 
     @Override
