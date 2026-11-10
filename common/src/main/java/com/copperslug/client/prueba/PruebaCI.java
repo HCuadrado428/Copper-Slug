@@ -110,23 +110,23 @@ public final class PruebaCI {
             var pantalla = new net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen(mc.player,
                     mc.player.connection.enabledFeatures(), mc.options.operatorItemsTab().get());
             mc.setScreen(pantalla);
-            // Fabric reparte las pestañas en páginas: primero a la página de la nuestra
-            // (FabricCreativeInventoryScreen: getPageCount, getItemGroupsOnPage(int), switchToPage(int); en Forge no hay)
+            // Fabric reparte las pestañas en páginas y no deja elegir una de otra página: se pasa de página
+            // (fabric_nextPage, de su mixin) hasta que la nuestra queda elegida; en Forge sale a la primera
+            ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
+            int pag = 1;
             try {
-                var c = pantalla.getClass();
-                int paginas = (Integer) c.getMethod("getPageCount").invoke(pantalla);
-                for (int pag = 0; pag < paginas; pag++)
-                    if (((List<?>) c.getMethod("getItemGroupsOnPage", int.class).invoke(pantalla, pag)).contains(tab)) {
-                        c.getMethod("switchToPage", int.class).invoke(pantalla, pag);
-                        RESUMEN.add("  pestaña del creativo: en la página " + (pag + 1) + " de " + paginas);
-                        break;
-                    }
+                var siguiente = pantalla.getClass().getMethod("fabric_nextPage");
+                while (com.copperslug.mixin.CreativeScreenAccessor.copperslug$elegida() != tab && pag < 10) {
+                    siguiente.invoke(pantalla);
+                    pag++;
+                    ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
+                }
             } catch (NoSuchMethodException ignorado) {
                 // sin páginas (Forge)
             } catch (Exception ex) {
                 RESUMEN.add("  pestaña del creativo: no se ha podido pasar de página (" + ex + ")");
             }
-            ((com.copperslug.mixin.CreativeScreenAccessor) pantalla).copperslug$elegir(tab);
+            RESUMEN.add("  pestaña del creativo: " + (com.copperslug.mixin.CreativeScreenAccessor.copperslug$elegida() == tab ? "elegida, en la página " + pag : "NO ELEGIDA"));
         });
         sin("inventario_poner", 10, () -> {
             mc.setScreen(null);
