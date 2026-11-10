@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "copperslug:bola_mosquete"
+    },
+    {
+      "item": "copperslug:bola_mosquete"
+    },
+    {
+      "item": "minecraft:chain"
+    }
+  ],
+  "result": {
+    "item": "copperslug:bola_cadena",
+    "count": 2
+  }
+}

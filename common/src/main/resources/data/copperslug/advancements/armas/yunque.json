@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/canon",
+  "display": {
+    "icon": {
+      "item": "minecraft:anvil"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.yunque.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.yunque.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "canon_yunque": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "canon_yunque"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 20
+  }
+}

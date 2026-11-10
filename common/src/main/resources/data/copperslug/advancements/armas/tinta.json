@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/violin",
+  "display": {
+    "icon": {
+      "item": "copperslug:tambor_tinta"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.tinta.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.tinta.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "thompson_tinta": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "thompson_tinta"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

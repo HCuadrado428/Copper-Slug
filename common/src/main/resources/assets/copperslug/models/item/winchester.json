@@ -1,0 +1,68 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/winchester"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/winchester_3d",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_0"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/winchester"
+   }
+  }
+ },
+ "overrides": [
+  {
+   "predicate": {
+    "copperslug:palanca": 1
+   },
+   "model": "copperslug:item/winchester_palanca"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/winchester_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:palanca": 1,
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/winchester_palanca_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/winchester_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:palanca": 1,
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/winchester_palanca_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/winchester_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:palanca": 1,
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/winchester_palanca_ox3"
+  }
+ ]
+}

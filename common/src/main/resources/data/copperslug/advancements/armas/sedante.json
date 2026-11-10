@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "item": "copperslug:revolver_dardo"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.sedante.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.sedante.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "revolver_sedante": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "revolver_sedante"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

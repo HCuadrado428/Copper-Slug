@@ -1,0 +1,18 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/estuche_violin"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/estuche_violin_3d"
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/estuche_violin"
+   }
+  }
+ }
+}

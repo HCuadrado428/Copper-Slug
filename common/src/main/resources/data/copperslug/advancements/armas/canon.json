@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/cofre",
+  "display": {
+    "icon": {
+      "item": "copperslug:canon_mano"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.canon.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.canon.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "canon_disparo": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "canon_disparo"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

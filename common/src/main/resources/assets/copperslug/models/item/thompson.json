@@ -1,0 +1,68 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/thompson"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/thompson_3d",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_0"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/thompson"
+   }
+  }
+ },
+ "overrides": [
+  {
+   "predicate": {
+    "copperslug:sin_tambor": 1
+   },
+   "model": "copperslug:item/thompson_sin_tambor"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/thompson_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:sin_tambor": 1,
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/thompson_sin_tambor_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/thompson_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:sin_tambor": 1,
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/thompson_sin_tambor_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/thompson_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:sin_tambor": 1,
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/thompson_sin_tambor_ox3"
+  }
+ ]
+}

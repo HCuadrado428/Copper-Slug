@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/canon",
+  "display": {
+    "icon": {
+      "item": "copperslug:bolano_saltarin"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.rebote.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.rebote.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "canon_rebote": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "canon_rebote"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

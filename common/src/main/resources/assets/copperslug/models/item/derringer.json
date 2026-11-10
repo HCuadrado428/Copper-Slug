@@ -1,0 +1,126 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/derringer"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/derringer_3d_oculta",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_0"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/derringer"
+   }
+  }
+ },
+ "overrides": [
+  {
+   "predicate": {
+    "copperslug:visible": 1
+   },
+   "model": "copperslug:item/derringer_visible"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1
+   },
+   "model": "copperslug:item/derringer_abierta"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:visible": 1
+   },
+   "model": "copperslug:item/derringer_abierta_visible"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/derringer_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:visible": 1,
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/derringer_visible_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/derringer_abierta_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:visible": 1,
+    "copperslug:oxido": 0.25
+   },
+   "model": "copperslug:item/derringer_abierta_visible_ox1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/derringer_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:visible": 1,
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/derringer_visible_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/derringer_abierta_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:visible": 1,
+    "copperslug:oxido": 0.5
+   },
+   "model": "copperslug:item/derringer_abierta_visible_ox2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/derringer_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:visible": 1,
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/derringer_visible_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/derringer_abierta_ox3"
+  },
+  {
+   "predicate": {
+    "copperslug:abierta": 1,
+    "copperslug:visible": 1,
+    "copperslug:oxido": 0.75
+   },
+   "model": "copperslug:item/derringer_abierta_visible_ox3"
+  }
+ ]
+}
