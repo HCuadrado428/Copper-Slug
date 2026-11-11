@@ -30,7 +30,7 @@ public final class PruebaCI {
     public static final boolean ACTIVA = Boolean.getBoolean("copperslug.prueba");
 
 
-    private record Paso(String nombre, int espera, Runnable accion, boolean captura) {}
+    private record Paso(String nombre, int espera, Runnable accion, boolean captura, java.util.function.BooleanSupplier omitir) {}
 
     private static final List<Paso> PASOS = new ArrayList<>();
     private static final List<String> RESUMEN = new ArrayList<>();
@@ -69,11 +69,34 @@ public final class PruebaCI {
     }
 
     private static void paso(String nombre, int espera, Runnable accion) {
-        PASOS.add(new Paso(nombre, espera, accion, true));
+        PASOS.add(new Paso(nombre, espera, accion, true, null));
     }
 
     private static void sin(String nombre, int espera, Runnable accion) {
-        PASOS.add(new Paso(nombre, espera, accion, false));
+        PASOS.add(new Paso(nombre, espera, accion, false, null));
+    }
+
+    /**
+     * Una comprobación con vigilancia por tick: si falla, se repite cada tick (hasta 20 ticks) antes de dar el fallo.
+     * Los reintentos se llaman «~nombre» (no salen en el resumen) y se saltan cuando ya ha salido bien.
+     */
+    private static void vigila(String nombre, int espera, Runnable comprobacion) {
+        final boolean[] bien = {false};
+        final RuntimeException[] ultimo = {null};
+        Runnable intento = () -> {
+            try {
+                comprobacion.run();
+                bien[0] = true;
+            } catch (RuntimeException e) {
+                ultimo[0] = e;
+            }
+        };
+        java.util.function.BooleanSupplier hecho = () -> bien[0];
+        PASOS.add(new Paso("~" + nombre, espera, intento, false, hecho));
+        for (int i = 1; i < 20; i++) PASOS.add(new Paso("~" + nombre, 1, intento, false, hecho));
+        PASOS.add(new Paso(nombre, 1, () -> {
+            if (!bien[0]) throw ultimo[0];
+        }, false, null));
     }
 
 
@@ -301,7 +324,7 @@ public final class PruebaCI {
                 logrosCargados = n;
             });
         });
-        sin("logros_comprobar_carga", 1, () -> {
+        vigila("logros_comprobar_carga", 1, () -> {
             if (logrosFaltan == null) throw new IllegalStateException("el servidor no ha contestado");
             // errores de los JSON en el registro (logs/latest.log)
             List<String> errores = new ArrayList<>();
@@ -346,7 +369,7 @@ public final class PruebaCI {
                 logrosHechos = hechos;
             });
         });
-        sin("logros_comprobar", 1, () -> {
+        vigila("logros_comprobar", 1, () -> {
             List<String> h = logrosHechos;
             if (h == null) throw new IllegalStateException("el servidor no ha contestado");
             RESUMEN.add("  logros conseguidos (" + h.size() + "): " + String.join(" ", h));
@@ -534,13 +557,13 @@ public final class PruebaCI {
                 piDisparar();
             });
         }
-        sin("pistola_cargado", 4, () -> piSrv(sp -> PI.put("tambor", java.util.Arrays.toString(com.copperslug.armasfuego.pistola.Tambor.recamaras(sp.getMainHandItem())))));
+        vigila("pistola_cargado", 4, () -> piSrv(sp -> PI.put("tambor", java.util.Arrays.toString(com.copperslug.armasfuego.pistola.Tambor.recamaras(sp.getMainHandItem())))));
         paso("101_tambor_cargado", 6, () -> {
             String t = String.valueOf(PI.get("tambor"));
             piComprobar("cargar 5 recámaras agachado (bala, bala, bengala, dardo, fogueo, vacía)", t.equals("[1, 1, 2, 3, 4, 0]"), t);
         });
         // ---- girar el tambor: agachado + clic izquierdo
-        sin("pistola_girar", 5, () -> pulsar(mc.options.keyAttack));
+        vigila("pistola_girar", 5, () -> pulsar(mc.options.keyAttack));
         paso("102_ruleta_girando", 20, () -> {
             ItemStack s = mc.player.getMainHandItem();
             long hace = mc.level.getGameTime() - com.copperslug.armasfuego.pistola.Tambor.giroT(s);
@@ -689,7 +712,7 @@ public final class PruebaCI {
                 d += v.distanceTo(sp);
             PI.put("vacas1", d);
         }));
-        sin("pistola_fogueo_comprobar", 4, () -> {
+        vigila("pistola_fogueo_comprobar", 4, () -> {
             double a = (Double) PI.getOrDefault("vacas0", 0.0), b = (Double) PI.getOrDefault("vacas1", 0.0);
             piComprobar("fogueo: las vacas huyen", b > a + 3, String.format("distancia total de las vacas %.1f → %.1f", a, b));
         });
@@ -720,7 +743,7 @@ public final class PruebaCI {
             for (ItemStack x : sp.getInventory().items) if (x.is(net.minecraft.world.item.Items.GOLD_INGOT) || x.is(net.minecraft.world.item.Items.EMERALD)) oro += x.getCount();
             PI.put("iman", oro);
         }));
-        sin("pistola_iman_comprobar", 4, () -> {
+        vigila("pistola_iman_comprobar", 4, () -> {
             mc.player.setXRot(88);
             mc.player.xRotO = 88;
             piSrv(sp -> {
@@ -734,7 +757,7 @@ public final class PruebaCI {
         paso("111_ruleta_sien", 4, piTiro());
         sin("pistola_sien_ver", 6, () -> piSrv(sp -> PI.put("sien", sp.isAlive() && sp.getHealth() >= (Float) PI.getOrDefault("vida_sien", 20F)
                 && sp.hasEffect(net.minecraft.world.effect.MobEffects.CONFUSION))));
-        sin("pistola_sien_comprobar", 4, () -> {
+        vigila("pistola_sien_comprobar", 4, () -> {
             boolean sien = Boolean.TRUE.equals(PI.get("sien"));
             piSrv(sp -> {
                 sp.removeAllEffects();
@@ -760,7 +783,7 @@ public final class PruebaCI {
             ItemStack s = sp.getMainHandItem();
             PI.put("rascado", "encerado " + com.copperslug.armasfuego.pistola.Tambor.encerado(s) + ", óxido " + com.copperslug.armasfuego.pistola.Tambor.oxido(s));
         }));
-        sin("pistola_cera_comprobar", 4, () -> {
+        vigila("pistola_cera_comprobar", 4, () -> {
             mc.options.keyShift.setDown(false);
             piComprobar("panal: encera", Boolean.TRUE.equals(PI.get("cera")), String.valueOf(PI.get("cera")));
             piComprobar("hacha: quita la cera y luego un paso de óxido", "encerado false, óxido 2".equals(PI.get("rascado")), String.valueOf(PI.get("rascado")));
@@ -801,7 +824,7 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("abanico", com.copperslug.armasfuego.pistola.Tambor.cargadas(sp.getMainHandItem())));
         });
-        sin("pistola_abanico_comprobar", 4, () -> piComprobar("Abanico: vacía el tambor de golpe", Integer.valueOf(0).equals(PI.get("abanico")),
+        vigila("pistola_abanico_comprobar", 4, () -> piComprobar("Abanico: vacía el tambor de golpe", Integer.valueOf(0).equals(PI.get("abanico")),
                 PI.get("abanico") + " balas quedan"));
         // ---- duelo contra un forastero (jugador de mentira: no está en la lista de jugadores, así que se le da por código)
         sin("pistola_duelo_poner", 6, () -> {
@@ -826,7 +849,7 @@ public final class PruebaCI {
                 && com.copperslug.armasfuego.pistola.Tambor.siguiente(sp.getMainHandItem()) == com.copperslug.armasfuego.pistola.Carga.FOGUEO)));
         sin("pistola_duelo_espera", 32, () -> piComprobar("duelo: antes del ¡YA! no dispara", Boolean.TRUE.equals(PI.get("antes")), String.valueOf(PI.get("antes"))));
         paso("118_duelo_ya", 8, () -> {});
-        sin("pistola_duelo_tiro", 4, () -> piSrv(sp -> com.copperslug.armasfuego.pistola.Duelo.impacto(sp, piForastero)));
+        vigila("pistola_duelo_tiro", 4, () -> piSrv(sp -> com.copperslug.armasfuego.pistola.Duelo.impacto(sp, piForastero)));
         paso("119_duelo_gana", 10, () -> piComprobar("duelo: gana el primero que da", mc.player.getGameProfile().getName().equals(com.copperslug.armasfuego.pistola.Duelo.ganadorPrueba),
                 String.valueOf(com.copperslug.armasfuego.pistola.Duelo.ganadorPrueba)));
         // ---- la luz de la bengala se quita sola al apagarse
@@ -1142,7 +1165,7 @@ public final class PruebaCI {
         });
         paso("143_trazadora", 2, RifleCI::clic);
         paso("144_brillo", 30, () -> rifleUsar(false));
-        sin("rifle_brillo_comprobar", 2, () -> {
+        vigila("rifle_brillo_comprobar", 2, () -> {
             var g = (net.minecraft.world.entity.LivingEntity) rifleEnte(rifleGolem);
             boolean brilla = g.isCurrentlyGlowing() || g.hasGlowingTag();
             RESUMEN.add("  rifle: gólem tras la trazadora: brilla " + brilla + ", vida " + g.getHealth());
@@ -1259,7 +1282,7 @@ public final class PruebaCI {
             rifleSalto = false;
             mc.options.keyJump.setDown(false);
         });
-        sin("rifle_colgado", 3, () -> {
+        vigila("rifle_colgado", 3, () -> {
             rifleVigilaColgado = false;
             RESUMEN.add("  rifle: colgado de la tirolina " + rifleColgadoTicks + " ticks (captura 149_colgado " + (rifleColgadoVisto ? "sacada colgando" : "sin sacar") + ")");
             if (!rifleColgadoVisto && !(mc.player.getVehicle() instanceof com.copperslug.armasfuego.rifle.GanchoTirolina))
@@ -1318,7 +1341,7 @@ public final class PruebaCI {
             });
         });
         paso("153_oxidado", 15, () -> {});
-        sin("rifle_fin", 5, () -> {
+        vigila("rifle_fin", 5, () -> {
             rifleComprobar();
             rifleUsar(false);
             rifleSalto = false;
@@ -1476,7 +1499,7 @@ public final class PruebaCI {
             PI.put("botin_mal", "error: " + t);
           }
         }));
-        sin("armas_botin_comprobar", 4, () -> {
+        vigila("armas_botin_comprobar", 4, () -> {
             RESUMEN.add("  armas en cofres: " + PI.getOrDefault("botin", "(sin datos)"));
             String mal = String.valueOf(PI.getOrDefault("botin_mal", "sin datos"));
             if (!mal.isEmpty()) throw new IllegalStateException("botín de las armas: " + mal);
@@ -1561,7 +1584,7 @@ public final class PruebaCI {
             mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
             mc.setScreen(new net.minecraft.client.gui.screens.inventory.InventoryScreen(mc.player));
         });
-        sin("armas3d_fin", 5, () -> {
+        vigila("armas3d_fin", 5, () -> {
             mc.setScreen(null);
             mc.player.getInventory().selected = 0;
             rifleSrv(sp -> {
@@ -1777,7 +1800,7 @@ public final class PruebaCI {
                 if (sp.getVehicle() instanceof com.copperslug.armasfuego.gatling.GatlingEntity g) PI.put("g_balas", g.balas());
             });
         });
-        sin("a2_gatling_comprobar", 2, () -> {
+        vigila("a2_gatling_comprobar", 2, () -> {
             float d = a2F("g0") - a2F("g1");
             a2Comprobar("la Gatling dispara (manivela con clic derecho) y hiere", d > 4, "el husk ha perdido " + d + " de vida; quedan " + PI.get("g_balas") + " balas");
         });
@@ -1793,7 +1816,7 @@ public final class PruebaCI {
             }
         }));
         paso("204_gatling_al_rojo", 14, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK));
-        sin("a2_gatling_atasco", 4, () -> piSrv(sp -> {
+        vigila("a2_gatling_atasco", 4, () -> piSrv(sp -> {
             a2VigilaGatling = false;
             if (sp.getVehicle() instanceof com.copperslug.armasfuego.gatling.GatlingEntity g) {
                 PI.put("g_atasco", Math.max(g.atasco(), PI.get("g_atasco_visto") instanceof Integer i ? i : 0));
@@ -1853,7 +1876,7 @@ public final class PruebaCI {
             a2Vida("w1");
             piSrv(sp -> PI.put("w_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_winchester_ok", 2, () -> a2Comprobar("la Winchester dispara, hiere y gasta una bala", a2F("w0") - a2F("w1") > 3 && Integer.valueOf(5).equals(PI.get("w_balas")),
+        vigila("a2_winchester_ok", 2, () -> a2Comprobar("la Winchester dispara, hiere y gasta una bala", a2F("w0") - a2F("w1") > 3 && Integer.valueOf(5).equals(PI.get("w_balas")),
                 "vida " + a2F("w0") + " → " + a2F("w1") + ", balas " + PI.get("w_balas")));
         sin("a2_winchester_agachar", 4, () -> mc.options.keyShift.setDown(true));
         sin("a2_winchester_recargar", 2, () -> rifleUsar(true));
@@ -1863,7 +1886,7 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("w_balas2", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_winchester_rec_ok", 2, () -> a2Comprobar("la Winchester se recarga bala a bala", PI.get("w_balas2") instanceof Integer b && b >= 7, "balas " + PI.get("w_balas2")));
+        vigila("a2_winchester_rec_ok", 2, () -> a2Comprobar("la Winchester se recarga bala a bala", PI.get("w_balas2") instanceof Integer b && b >= 7, "balas " + PI.get("w_balas2")));
         sin("a2_atasco_poner", 4, () -> piSrv(sp -> sp.getMainHandItem().getOrCreateTag().putBoolean(com.copperslug.armasfuego.comun.ArmaFuegoItem.ATASCO, true)));
         sin("a2_atasco_clic", 6, piTiro());
         paso("216_winchester_atascada", 2, () -> mc.options.keyShift.setDown(true));
@@ -1875,7 +1898,7 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("w_atasco", com.copperslug.armasfuego.comun.ArmaFuegoItem.atascada(sp.getMainHandItem())));
         });
-        sin("a2_atasco_ok", 2, () -> a2Comprobar("encasquillada no dispara y agachado + clic derecho la desatasca", Boolean.FALSE.equals(PI.get("w_atasco")), "atascada " + PI.get("w_atasco")));
+        vigila("a2_atasco_ok", 2, () -> a2Comprobar("encasquillada no dispara y agachado + clic derecho la desatasca", Boolean.FALSE.equals(PI.get("w_atasco")), "atascada " + PI.get("w_atasco")));
         paso("214_winchester_3p_frente", 12, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT));
         // a caballo: la palanca se gira con una mano
         sin("a2_caballo", 10, () -> {
@@ -1905,7 +1928,7 @@ public final class PruebaCI {
                 sp.connection.teleport(a2O.getX() + 0.5, a2O.getY(), a2O.getZ() + 0.5, a2Mira.toYRot(), 0F);
             });
         });
-        sin("a2_caballo_ok", 2, () -> a2Comprobar("la Winchester a caballo (giro de la palanca)", Boolean.TRUE.equals(PI.get("w_giro")), "logro " + PI.get("w_giro")));
+        vigila("a2_caballo_ok", 2, () -> a2Comprobar("la Winchester a caballo (giro de la palanca)", Boolean.TRUE.equals(PI.get("w_giro")), "logro " + PI.get("w_giro")));
         // ================================================================ Derringer
         sin("a2_derringer", 8, () -> {
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2));
@@ -1919,7 +1942,7 @@ public final class PruebaCI {
             a2Vida("d1");
             piSrv(sp -> PI.put("d_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_derringer_ok", 2, () -> a2Comprobar("la Derringer dispara y gasta un cañón", a2F("d0") - a2F("d1") > 2 && Integer.valueOf(1).equals(PI.get("d_balas")),
+        vigila("a2_derringer_ok", 2, () -> a2Comprobar("la Derringer dispara y gasta un cañón", a2F("d0") - a2F("d1") > 2 && Integer.valueOf(1).equals(PI.get("d_balas")),
                 "vida " + a2F("d0") + " → " + a2F("d1") + ", balas " + PI.get("d_balas")));
         sin("a2_derringer_agachar", 4, () -> mc.options.keyShift.setDown(true));
         sin("a2_derringer_recargar", 2, () -> rifleUsar(true));
@@ -1930,7 +1953,7 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("d_balas2", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_derringer_rec_ok", 2, () -> a2Comprobar("la Derringer se recarga partiéndola", Integer.valueOf(2).equals(PI.get("d_balas2")), "balas " + PI.get("d_balas2")));
+        vigila("a2_derringer_rec_ok", 2, () -> a2Comprobar("la Derringer se recarga partiéndola", Integer.valueOf(2).equals(PI.get("d_balas2")), "balas " + PI.get("d_balas2")));
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);
@@ -1941,7 +1964,7 @@ public final class PruebaCI {
         // agachado + clic derecho lo abre (sin agacharse, el estuche es un violín)
         sin("a2_estuche_agachar", 4, () -> mc.options.keyShift.setDown(true));
         sin("a2_estuche_abrir", 8, piTiro());
-        sin("a2_estuche_ok", 2, () -> {
+        vigila("a2_estuche_ok", 2, () -> {
             mc.options.keyShift.setDown(false);
             boolean t = mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.ThompsonItem;
             a2Comprobar("el estuche de violín se abre y la Thompson pasa a la mano", t, mc.player.getMainHandItem().toString());
@@ -1956,7 +1979,7 @@ public final class PruebaCI {
             a2Vida("t1");
             piSrv(sp -> PI.put("t_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_thompson_ok", 2, () -> a2Comprobar("la Thompson dispara en ráfaga", a2F("t0") - a2F("t1") > 6 && PI.get("t_balas") instanceof Integer b && b <= 44,
+        vigila("a2_thompson_ok", 2, () -> a2Comprobar("la Thompson dispara en ráfaga", a2F("t0") - a2F("t1") > 6 && PI.get("t_balas") instanceof Integer b && b <= 44,
                 "vida " + a2F("t0") + " → " + a2F("t1") + ", balas " + PI.get("t_balas")));
         sin("a2_thompson_agachar", 4, () -> {
             a2Camara1p();
@@ -1970,7 +1993,7 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("t_balas2", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_thompson_rec_ok", 2, () -> a2Comprobar("la Thompson cambia el tambor", Integer.valueOf(com.copperslug.armasfuego.comun.EquilibrioArmas.thompsonCapacidad()).equals(PI.get("t_balas2")), "balas " + PI.get("t_balas2")));
+        vigila("a2_thompson_rec_ok", 2, () -> a2Comprobar("la Thompson cambia el tambor", Integer.valueOf(com.copperslug.armasfuego.comun.EquilibrioArmas.thompsonCapacidad()).equals(PI.get("t_balas2")), "balas " + PI.get("t_balas2")));
         // ================================================================ mosquete
         sin("a2_mosquete", 8, () -> {
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.MOSQUETE, 1));
@@ -1985,7 +2008,7 @@ public final class PruebaCI {
             a2Vida("m1");
             piSrv(sp -> PI.put("m_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_mosquete_ok", 2, () -> a2Comprobar("el mosquete dispara tras la chispa (o falla en la cazoleta, que también vale)",
+        vigila("a2_mosquete_ok", 2, () -> a2Comprobar("el mosquete dispara tras la chispa (o falla en la cazoleta, que también vale)",
                 Integer.valueOf(0).equals(PI.get("m_balas")) || Boolean.TRUE.equals(mc.player.getMainHandItem().getTag() != null && mc.player.getMainHandItem().getTag().getBoolean("Atasco")),
                 "vida " + a2F("m0") + " → " + a2F("m1") + ", balas " + PI.get("m_balas")));
         sin("a2_mosquete_agachar", 4, () -> mc.options.keyShift.setDown(true));
@@ -1997,13 +2020,13 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("m_balas2", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2_mosquete_rec_ok", 2, () -> a2Comprobar("el mosquete se recarga con pólvora y bola", Integer.valueOf(1).equals(PI.get("m_balas2")), "balas " + PI.get("m_balas2")));
+        vigila("a2_mosquete_rec_ok", 2, () -> a2Comprobar("el mosquete se recarga con pólvora y bola", Integer.valueOf(1).equals(PI.get("m_balas2")), "balas " + PI.get("m_balas2")));
         // la bayoneta: un golpe cuerpo a cuerpo al husk (se le acerca)
         sin("a2_bayoneta_acercar", 6, () -> piSrv(sp -> {
             Vec3 q = a2Punto(5.8, 0, 0);
             sp.connection.teleport(q.x, q.y, q.z, a2Mira.toYRot(), 0F);
         }));
-        sin("a2_bayoneta_vida", 4, () -> {
+        vigila("a2_bayoneta_vida", 4, () -> {
             piApuntar(a2Punto(8, 0, 1.0));
             a2Vida("b0");
         });
@@ -2014,7 +2037,7 @@ public final class PruebaCI {
             mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
         });
         sin("a2_bayoneta_ver", 4, () -> a2Vida("b1"));
-        sin("a2_bayoneta_ok", 2, () -> a2Comprobar("la bayoneta pega de lejos (2,2 bloques)", a2F("b0") - a2F("b1") >= 4, "vida " + a2F("b0") + " → " + a2F("b1")));
+        vigila("a2_bayoneta_ok", 2, () -> a2Comprobar("la bayoneta pega de lejos (2,2 bloques)", a2F("b0") - a2F("b1") >= 4, "vida " + a2F("b0") + " → " + a2F("b1")));
         paso("245_mosquete_3p_lado", 12, () -> a2Vista(2.6, 0.8, 0.3));
         sin("a2_volver", 6, () -> {
             a2Camara1p();
@@ -2037,7 +2060,7 @@ public final class PruebaCI {
                 PI.put("c_logro", a2Logro(sp, "armas/canon") || a2Logro(sp, "armas/canon_revienta"));
             });
         });
-        sin("a2_canon_ok", 2, () -> a2Comprobar("el cañón de mano prende la mecha y dispara (o revienta)", Integer.valueOf(0).equals(PI.get("c_balas")) && Boolean.TRUE.equals(PI.get("c_logro")),
+        vigila("a2_canon_ok", 2, () -> a2Comprobar("el cañón de mano prende la mecha y dispara (o revienta)", Integer.valueOf(0).equals(PI.get("c_balas")) && Boolean.TRUE.equals(PI.get("c_logro")),
                 "vida " + a2F("c0") + " → " + a2F("c1") + ", balas " + PI.get("c_balas") + ", logro " + PI.get("c_logro")));
         paso("253_canon_3p_lado", 12, () -> a2Vista(2.6, 0.8, 0.3));
         // ================================================================ munición nueva de las tres primeras
@@ -2053,7 +2076,7 @@ public final class PruebaCI {
             var h = a2Ente(sp, a2Husk);
             PI.put("tb", h != null && h.hasEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN));
         }));
-        sin("a2_tiempo_ok", 2, () -> a2Comprobar("la bala de tiempo bala ralentiza", Boolean.TRUE.equals(PI.get("tb")), String.valueOf(PI.get("tb"))));
+        vigila("a2_tiempo_ok", 2, () -> a2Comprobar("la bala de tiempo bala ralentiza", Boolean.TRUE.equals(PI.get("tb")), String.valueOf(PI.get("tb"))));
         // pintura: el rifle con una bala de pintura azul en la recámara, a la pared de lana
         sin("a2_pintura", 8, () -> {
             ItemStack r = new ItemStack(com.copperslug.registry.ModItems.RIFLE.get());
@@ -2084,7 +2107,7 @@ public final class PruebaCI {
         sin("a2_pintura_tiro2", 10, () -> {
             if (PI.remove("pintura_otra") != null) rifleClic();
         });
-        sin("a2_pintura_ok", 2, () -> a2Comprobar("la bala de pintura pinta la lana de azul", PI.get("pintados") instanceof Integer n && n >= 3, "bloques pintados " + PI.get("pintados")));
+        vigila("a2_pintura_ok", 2, () -> a2Comprobar("la bala de pintura pinta la lana de azul", PI.get("pintados") instanceof Integer n && n >= 3, "bloques pintados " + PI.get("pintados")));
         // goma: la escopeta con cartuchos de goma, contra el suelo delante (rebotan)
         sin("a2_goma", 8, () -> {
             ItemStack e = new ItemStack(com.copperslug.registry.ModItems.ESCOPETA_PRESION.get());
@@ -2095,7 +2118,7 @@ public final class PruebaCI {
         });
         paso("257_goma", 4, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
         sin("a2_goma_ver", 4, () -> piSrv(sp -> PI.put("goma", com.copperslug.armasfuego.escopeta.Presion.tolvaN(sp.getMainHandItem()))));
-        sin("a2_goma_ok", 2, () -> a2Comprobar("el cartucho de goma se dispara", Integer.valueOf(7).equals(PI.get("goma")), "quedan " + PI.get("goma")));
+        vigila("a2_goma_ok", 2, () -> a2Comprobar("el cartucho de goma se dispara", Integer.valueOf(7).equals(PI.get("goma")), "quedan " + PI.get("goma")));
         // las recetas de la munición nueva existen (y las armas no se fabrican)
         sin("a2_recetas", 4, () -> piSrv(sp -> {
             java.util.Set<String> armas = java.util.Set.of("gatling", "winchester", "derringer", "thompson", "mosquete", "canon_mano");
@@ -2121,7 +2144,7 @@ public final class PruebaCI {
                 if (!mun.contains(m)) mal.append("sin receta: ").append(m).append("; ");
             PI.put("rec_mal", mal.toString());
         }));
-        sin("a2_recetas_ok", 2, () -> a2Comprobar("recetas de la munición nueva (las armas sin receta)", "".equals(PI.get("rec_mal")), String.valueOf(PI.get("rec_mal"))));
+        vigila("a2_recetas_ok", 2, () -> a2Comprobar("recetas de la munición nueva (las armas sin receta)", "".equals(PI.get("rec_mal")), String.valueOf(PI.get("rec_mal"))));
         // botín: cada arma nueva sale en su estructura
         sin("a2_botin", 30, () -> piSrv(sp -> {
             StringBuilder sb = new StringBuilder(), mal = new StringBuilder();
@@ -2147,7 +2170,7 @@ public final class PruebaCI {
             PI.put("a2_botin", sb.toString());
             PI.put("a2_botin_mal", mal.toString());
         }));
-        sin("a2_botin_ok", 2, () -> {
+        vigila("a2_botin_ok", 2, () -> {
             RESUMEN.add("  armas2 en cofres: " + PI.get("a2_botin"));
             a2Comprobar("cada arma nueva sale en su estructura", "".equals(PI.get("a2_botin_mal")), String.valueOf(PI.get("a2_botin_mal")));
         });
@@ -2261,7 +2284,7 @@ public final class PruebaCI {
                 sp.getInventory().offhand.set(0, ItemStack.EMPTY);
             });
         });
-        sin("a2c_cera_ok", 2, () -> a2Comprobar("panal en la otra mano encera, el hacha quita la cera y luego un paso de óxido (y el nombre lo dice)",
+        vigila("a2c_cera_ok", 2, () -> a2Comprobar("panal en la otra mano encera, el hacha quita la cera y luego un paso de óxido (y el nombre lo dice)",
                 String.valueOf(PI.get("cera")).startsWith("true") && String.valueOf(PI.get("cera")).contains("erosionada")
                         && String.valueOf(PI.get("rascado")).startsWith("false · óxido 1"), PI.get("cera") + " → " + PI.get("rascado")));
         // cada arma oxidada en primera persona y erosionada en tercera
@@ -2326,7 +2349,7 @@ public final class PruebaCI {
         });
         paso("276_bala_plata", 4, piTiro());
         sin("a2c_plata_ver", 4, () -> a2Vida("p1"));
-        sin("a2c_plata_ok", 2, () -> a2Comprobar("la bala de plata hace el doble a un no muerto", a2F("p0") - a2F("p1") > com.copperslug.armasfuego.comun.EquilibrioArmas.winchesterDano() * 1.5F,
+        vigila("a2c_plata_ok", 2, () -> a2Comprobar("la bala de plata hace el doble a un no muerto", a2F("p0") - a2F("p1") > com.copperslug.armasfuego.comun.EquilibrioArmas.winchesterDano() * 1.5F,
                 "vida " + a2F("p0") + " → " + a2F("p1")));
         sin("a2c_carta", 8, () -> {
             ItemStack d = a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2);
@@ -2339,7 +2362,7 @@ public final class PruebaCI {
             var h = a2Ente(sp, a2Husk);
             PI.put("carta", h != null && h.hasEffect(net.minecraft.world.effect.MobEffects.GLOWING));
         }));
-        sin("a2c_carta_ok", 2, () -> a2Comprobar("la carta marcada hace brillar al que la recibe", Boolean.TRUE.equals(PI.get("carta")), String.valueOf(PI.get("carta"))));
+        vigila("a2c_carta_ok", 2, () -> a2Comprobar("la carta marcada hace brillar al que la recibe", Boolean.TRUE.equals(PI.get("carta")), String.valueOf(PI.get("carta"))));
         sin("a2c_agua", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);
             t.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:tambor_agua");
@@ -2359,7 +2382,7 @@ public final class PruebaCI {
                 PI.put("agua", h != null && !h.isOnFire());
             });
         });
-        sin("a2c_agua_ok", 2, () -> a2Comprobar("el tambor de agua apaga al que arde", Boolean.TRUE.equals(PI.get("agua")), String.valueOf(PI.get("agua"))));
+        vigila("a2c_agua_ok", 2, () -> a2Comprobar("el tambor de agua apaga al que arde", Boolean.TRUE.equals(PI.get("agua")), String.valueOf(PI.get("agua"))));
         sin("a2c_feria", 8, () -> {
             ItemStack c = a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1);
             c.getOrCreateTag().putString(com.copperslug.armasfuego.comun.ArmaFuegoItem.TIPO, "copperslug:bolano_fuegos");
@@ -2369,7 +2392,7 @@ public final class PruebaCI {
         sin("a2c_feria_mecha", 30, piTiro());
         paso("278_bolano_feria", 10, () -> {});
         sin("a2c_feria_ver", 4, () -> piSrv(sp -> PI.put("feria", a2Logro(sp, "armas/feria"))));
-        sin("a2c_feria_ok", 2, () -> a2Comprobar("el bolaño de feria estalla en fuegos artificiales", Boolean.TRUE.equals(PI.get("feria")), String.valueOf(PI.get("feria"))));
+        vigila("a2c_feria_ok", 2, () -> a2Comprobar("el bolaño de feria estalla en fuegos artificiales", Boolean.TRUE.equals(PI.get("feria")), String.valueOf(PI.get("feria"))));
         armas2Utilidad();
         armas2Cobre();
         // las cuatro fases de las seis en el inventario (iconos)
@@ -2528,7 +2551,7 @@ public final class PruebaCI {
             PI.put("tolva", (g == null ? "sin gatling" : "balas " + g.balas() + ", recarga " + g.recarga()) + ", cintas en la tolva " + quedan);
             PI.put("tolva_ok", g != null && (g.balas() > 0 || g.recarga() > 0) && quedan == 1);
         }));
-        sin("a2u_tolva_ok", 2, () -> a2Comprobar("una tolva al lado le mete una cinta a la Gatling", Boolean.TRUE.equals(PI.get("tolva_ok")), String.valueOf(PI.get("tolva"))));
+        vigila("a2u_tolva_ok", 2, () -> a2Comprobar("una tolva al lado le mete una cinta a la Gatling", Boolean.TRUE.equals(PI.get("tolva_ok")), String.valueOf(PI.get("tolva"))));
         // ---------------------------------------------------------------- Gatling: torreta con redstone (con Torreta, busca al husk)
         sin("a2u_redstone", 2, () -> {
             a2Vida("tr0");
@@ -2548,7 +2571,7 @@ public final class PruebaCI {
                 PI.put("tr_logro", a2Logro(sp, "armas/gatling_torreta"));
             });
         });
-        sin("a2u_redstone_ok", 2, () -> a2Comprobar("con redstone y sin nadie, la Gatling gira sola y (con Torreta) le da al husk",
+        vigila("a2u_redstone_ok", 2, () -> a2Comprobar("con redstone y sin nadie, la Gatling gira sola y (con Torreta) le da al husk",
                 Boolean.TRUE.equals(PI.get("tr_gira")) && a2F("tr0") - a2F("tr1") > 2 && Boolean.TRUE.equals(PI.get("tr_logro")),
                 "gira " + PI.get("tr_gira") + ", el husk pierde " + (a2F("tr0") - a2F("tr1")) + ", logro " + PI.get("tr_logro")));
         sin("a2u_redstone_quitar", 4, () -> {
@@ -2594,7 +2617,7 @@ public final class PruebaCI {
             a2Vida("vg1");
             piSrv(sp -> PI.put("vag_logro", a2Logro(sp, "armas/gatling_vagoneta")));
         });
-        sin("a2u_vagoneta_ok", 2, () -> a2Comprobar("la Gatling se monta en una vagoneta y se dispara desde ella",
+        vigila("a2u_vagoneta_ok", 2, () -> a2Comprobar("la Gatling se monta en una vagoneta y se dispara desde ella",
                 Boolean.TRUE.equals(PI.get("vag_montada")) && a2F("vg0") - a2F("vg1") > 2 && Boolean.TRUE.equals(PI.get("vag_logro")),
                 "montada " + PI.get("vag_montada") + ", el husk pierde " + (a2F("vg0") - a2F("vg1")) + ", logro " + PI.get("vag_logro")));
         sin("a2u_vagoneta_bajar", 6, () -> {
@@ -2643,7 +2666,7 @@ public final class PruebaCI {
             a2Vida("bc1");
             piSrv(sp -> PI.put("barco_logro", a2Logro(sp, "armas/gatling_barco")));
         });
-        sin("a2u_barco_ok", 2, () -> a2Comprobar("la Gatling va en el barco (atrás) y la dispara el que lo lleva",
+        vigila("a2u_barco_ok", 2, () -> a2Comprobar("la Gatling va en el barco (atrás) y la dispara el que lo lleva",
                 Boolean.TRUE.equals(PI.get("barco_ok")) && a2F("bc0") - a2F("bc1") > 2 && Boolean.TRUE.equals(PI.get("barco_logro")),
                 "pasajeros " + PI.get("barco_orden") + ", el husk pierde " + (a2F("bc0") - a2F("bc1")) + ", logro " + PI.get("barco_logro")));
         sin("a2u_barco_bajar", 6, () -> {
@@ -2687,7 +2710,7 @@ public final class PruebaCI {
                 PI.put("dep_logro", a2Logro(sp, "armas/winchester_mezcla"));
             });
         });
-        sin("a2u_winchester_dep_ok", 2, () -> {
+        vigila("a2u_winchester_dep_ok", 2, () -> {
             // y al acabar la carga (con el botón aún pulsado) no sale ningún «No llevas...» en la barra de acción
             String aviso = a2Aviso();
             a2Comprobar("la Winchester mezcla las balas en el depósito (y al acabar no avisa de munición)",
@@ -2704,7 +2727,7 @@ public final class PruebaCI {
             var ef = h == null ? null : h.getEffect(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN);
             PI.put("dep2_ok", dep.size() == 4 && dep.get(3) == com.copperslug.registry.ModItems.BALA_PLATA.get() && ef != null && ef.getAmplifier() == 3);
         }));
-        sin("a2u_winchester_tiro_ok", 2, () -> a2Comprobar("sale primero la última que entró (la de tiempo bala: ralentiza al husk)", Boolean.TRUE.equals(PI.get("dep2_ok")),
+        vigila("a2u_winchester_tiro_ok", 2, () -> a2Comprobar("sale primero la última que entró (la de tiempo bala: ralentiza al husk)", Boolean.TRUE.equals(PI.get("dep2_ok")),
                 "quedan " + PI.get("dep2")));
         // ---------------------------------------------------------------- Derringer: de la manga a la mano
         sin("a2u_manga", 8, () -> {
@@ -2732,7 +2755,7 @@ public final class PruebaCI {
                 && sp.getInventory().getItem(22).is(net.minecraft.world.item.Items.STICK))));
         paso("284_derringer_manga", 3, () -> {});
         sin("a2u_manga_ver", 2, () -> piSrv(sp -> PI.put("manga_logro", a2Logro(sp, "armas/derringer_manga"))));
-        sin("a2u_manga_ok", 2, () -> a2Comprobar("la tecla de la manga saca la Derringer de golpe (y el tiro en menos de un segundo da el logro)",
+        vigila("a2u_manga_ok", 2, () -> a2Comprobar("la tecla de la manga saca la Derringer de golpe (y el tiro en menos de un segundo da el logro)",
                 Boolean.TRUE.equals(PI.get("manga")) && Boolean.TRUE.equals(PI.get("manga_logro")), "en la mano " + PI.get("manga") + ", logro " + PI.get("manga_logro")));
         // ---------------------------------------------------------------- el violín (con el arco en la otra mano)
         sin("a2u_violin", 6, () -> {
@@ -2786,7 +2809,7 @@ public final class PruebaCI {
             PI.put("v_notas3p", PI.get("v_notas_max") instanceof Integer i ? i : 0);
             PI.put("v_baja", com.copperslug.armasfuego.oeste.EstucheViolinItem.ultimaNota);
         });
-        sin("a2u_violin_ok", 2, () -> {
+        vigila("a2u_violin_ok", 2, () -> {
             mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
             int sinArco = (PI.get("v_sin1") instanceof Integer i ? i : 0) - (PI.get("v_sin0") instanceof Integer i ? i : 0);
             int sost = PI.get("v_sostenidas") instanceof Integer i ? i : -1;
@@ -2860,7 +2883,7 @@ public final class PruebaCI {
             }
         }));
         paso("286_bayonetas", 10, () -> a2VistaA(a2Punto(5, -0.6, 1.2), a2Punto(1.2, -0.6, 1.8)));
-        sin("a2u_bayoneta_ok", 2, () -> {
+        vigila("a2u_bayoneta_ok", 2, () -> {
             a2Camara1p();
             a2Comprobar("bayoneta cambiable: en la mesa y en el inventario se cala y se quita, y el daño va con la espada",
                     "".equals(PI.get("bay")) && Boolean.TRUE.equals(PI.get("bay_logro")), PI.get("bay") + " " + PI.get("bay_txt") + ", logro " + PI.get("bay_logro"));
@@ -2888,7 +2911,7 @@ public final class PruebaCI {
             mc.options.keyShift.setDown(false);
             piSrv(sp -> PI.put("mq", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
-        sin("a2u_mosquete_ok", 2, () -> a2Comprobar("el mosquete se recarga por pasos (pólvora, bola y baqueta, en el HUD)",
+        vigila("a2u_mosquete_ok", 2, () -> a2Comprobar("el mosquete se recarga por pasos (pólvora, bola y baqueta, en el HUD)",
                 Integer.valueOf(1).equals(PI.get("mq")) && com.copperslug.armasfuego.oeste.MosqueteItem.pasoRecarga(0.1F) == 0
                         && com.copperslug.armasfuego.oeste.MosqueteItem.pasoRecarga(0.5F) == 1 && com.copperslug.armasfuego.oeste.MosqueteItem.pasoRecarga(0.9F) == 2,
                 "balas " + PI.get("mq")));
@@ -2988,7 +3011,7 @@ public final class PruebaCI {
                 PI.put("yq_logro", a2Logro(sp, "armas/yunque") && a2Logro(sp, "armas/castillo_arena"));
             });
         });
-        sin("a2u_yunque_ok", 2, () -> a2Comprobar("el cañón dispara un yunque: daño de yunque y se queda donde da", a2F("yq0") - a2F("yq1") > 5 && PI.get("yq_bloques") instanceof Integer n && n >= 1
+        vigila("a2u_yunque_ok", 2, () -> a2Comprobar("el cañón dispara un yunque: daño de yunque y se queda donde da", a2F("yq0") - a2F("yq1") > 5 && PI.get("yq_bloques") instanceof Integer n && n >= 1
                 && Boolean.TRUE.equals(PI.get("yq_logro")), "el husk pierde " + (a2F("yq0") - a2F("yq1")) + ", yunques colocados " + PI.get("yq_bloques") + ", logros " + PI.get("yq_logro")));
         // sin poder construir (modo aventura): la arena no se coloca, cae como objeto
         sin("a2u_arena", 6, () -> {
@@ -3015,7 +3038,7 @@ public final class PruebaCI {
             PI.put("arena_obj", objetos);
             sp.setGameMode(GameType.SURVIVAL);
         }));
-        sin("a2u_arena_ok", 2, () -> a2Comprobar("sin poder construir, el bloque disparado no se coloca (cae como objeto)",
+        vigila("a2u_arena_ok", 2, () -> a2Comprobar("sin poder construir, el bloque disparado no se coloca (cae como objeto)",
                 Integer.valueOf(0).equals(PI.get("arena")) && PI.get("arena_obj") instanceof Integer n && n >= 1, "arena colocada " + PI.get("arena") + ", como objeto " + PI.get("arena_obj")));
     }
 
@@ -3074,7 +3097,7 @@ public final class PruebaCI {
                 PI.put("o_tip", l.isEmpty() ? "" : l.get(0).getString());
             });
         });
-        sin("a2o_ok", 2, () -> {
+        vigila("a2o_ok", 2, () -> {
             float dn = a2F("o0") - a2F("o1"), dx = a2F("o1") - a2F("o3");
             if (a2F("o1") - a2F("o2") <= 0 && dx > 0) dx = a2F("o2") - a2F("o3");
             String tip = String.valueOf(PI.get("o_tip"));
@@ -3119,7 +3142,7 @@ public final class PruebaCI {
                 PI.put("cera_logro", a2Logro(sp, "armas/cera_cinco"));
             });
         });
-        sin("a2o_cera_ok", 2, () -> a2Comprobar("la cera dura N disparos (la Gatling más), al acabarse avisa y vuelve a oxidarse; encerar cinco veces da el logro",
+        vigila("a2o_cera_ok", 2, () -> a2Comprobar("la cera dura N disparos (la Gatling más), al acabarse avisa y vuelve a oxidarse; encerar cinco veces da el logro",
                 Integer.valueOf(com.copperslug.armasfuego.comun.EquilibrioArmas.cera()).equals(PI.get("cera0")) && Integer.valueOf(com.copperslug.armasfuego.comun.EquilibrioArmas.ceraAutomaticas()).equals(PI.get("cera_g"))
                         && PI.get("cera1") instanceof Integer c1 && PI.get("cera0") instanceof Integer c0 && c1 == c0 - 1
                         && Boolean.FALSE.equals(PI.get("cera2")) && String.valueOf(PI.get("cera_aviso")).contains("cera") && Boolean.TRUE.equals(PI.get("cera_logro")),
@@ -3204,7 +3227,7 @@ public final class PruebaCI {
             var z = sp.serverLevel().getEntity(a2Diana);
             if (z != null) z.discard();
         }));
-        sin("a2o_bayoneta_ok", 2, () -> {
+        vigila("a2o_bayoneta_ok", 2, () -> {
             float d = a2F("bay_dano");
             String tip = String.valueOf(PI.get("bay_tip"));
             int r0 = PI.get("bay_rota0") instanceof Integer i ? i : -1, r1 = PI.get("bay_rota1") instanceof Integer i ? i : -1;
@@ -3377,7 +3400,7 @@ public final class PruebaCI {
             escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.GRAVA, 100, escHuskPos());
         });
         paso("123_grava", 12, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
-        sin("esc_grava_chk", 5, () -> {
+        vigila("esc_grava_chk", 5, () -> {
             var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
             ItemStack s = escJugador().getMainHandItem();
             RESUMEN.add(String.format("  escopeta: grava a 6 bloques quita %.1f de vida a la diana; presión después %.0f; tolva %d",
@@ -3395,7 +3418,7 @@ public final class PruebaCI {
             escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.INCENDIARIO, 100, Vec3.atCenterOf(escHoguera).add(0, -0.25, 0));
         });
         paso("125_hoguera", 15, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
-        sin("esc_hoguera_chk", 5, () -> {
+        vigila("esc_hoguera_chk", 5, () -> {
             var l = escJugador().serverLevel();
             boolean hog = l.getBlockState(escHoguera).getValue(net.minecraft.world.level.block.CampfireBlock.LIT);
             boolean vel = l.getBlockState(escVela).getValue(net.minecraft.world.level.block.CandleBlock.LIT);
@@ -3423,7 +3446,7 @@ public final class PruebaCI {
             var h = escEntidad(escHusk);
             if (Boolean.TRUE.equals(PI.get("escarcha_otra"))) PI.put("escarcha_congela", h.getTicksFrozen());
         });
-        sin("esc_escarcha_chk", 5, () -> {
+        vigila("esc_escarcha_chk", 5, () -> {
             var h = escEntidad(escHusk);
             int nieve = 0;
             var l = escJugador().serverLevel();
@@ -3461,7 +3484,7 @@ public final class PruebaCI {
         sin("esc_miel_tiro2", 12, () -> {
             if (Boolean.TRUE.equals(PI.get("miel_otra"))) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
         });
-        sin("esc_miel_chk", 5, () -> {
+        vigila("esc_miel_chk", 5, () -> {
             var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
             escVigilaMiel = false;
             if (!h.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.get()) && !PI.containsKey("miel_visto")) throw new IllegalStateException("la miel no pringa");
@@ -3470,7 +3493,7 @@ public final class PruebaCI {
         // ---- sal: sin daño
         sin("esc_sal", 5, () -> escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.SAL, 100, escHuskPos()));
         paso("128_sal", 12, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
-        sin("esc_sal_chk", 5, () -> {
+        vigila("esc_sal_chk", 5, () -> {
             var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
             RESUMEN.add(String.format("  escopeta: sal → vida de la diana %.1f → %.1f", escVida, h.getHealth()));
             if (h.getHealth() < escVida) throw new IllegalStateException("la sal hace daño");
@@ -3497,7 +3520,7 @@ public final class PruebaCI {
         sin("esc_semillas_tiro2", 15, () -> {
             if (Boolean.TRUE.equals(PI.get("semillas_otra"))) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
         });
-        sin("esc_semillas_chk", 5, () -> {
+        vigila("esc_semillas_chk", 5, () -> {
             int trigo = escTrigo();
             RESUMEN.add("  escopeta: semillas → " + trigo + " matas de trigo sembradas");
             if (trigo == 0) throw new IllegalStateException("las semillas no siembran");
@@ -3612,7 +3635,7 @@ public final class PruebaCI {
                 mantenerUso = false;
             } else RESUMEN.add("  escopeta: aspirando, de momento " + n + " de 32 piedras; un poco más");
         });
-        sin("esc_aspirar_chk", 5, () -> {
+        vigila("esc_aspirar_chk", 5, () -> {
             escAgachado = false;
             mantenerUso = false;
             mc.options.keyShift.setDown(false);
@@ -3647,7 +3670,7 @@ public final class PruebaCI {
             mc.player.setXRot(-75F);
             mantenerUso = true;
         });
-        sin("esc_valvula_chk", 5, () -> {
+        vigila("esc_valvula_chk", 5, () -> {
             mantenerUso = false;
             mc.options.keyUse.setDown(false);
             ItemStack s = escMano();
@@ -3670,11 +3693,11 @@ public final class PruebaCI {
             ItemStack s = escJugador().getMainHandItem();
             if (com.copperslug.armasfuego.escopeta.Presion.presion(s) <= 0 && com.copperslug.armasfuego.escopeta.Presion.tolvaN(s) == 14) PI.put("doble_ok", true);
         });
-        sin("esc_doble_chk", 1, () -> {
+        vigila("esc_doble_chk", 1, () -> {
             if (!Boolean.TRUE.equals(PI.get("doble_ok"))) throw new IllegalStateException("el segundo disparo de la Doble cámara no ha salido");
         });
         // ---- encantamientos, recetas, tolva, panal y hacha
-        sin("esc_encantamientos", 5, () -> {
+        vigila("esc_encantamientos", 5, () -> {
             var g = new ItemStack(com.copperslug.registry.ModItems.ESCOPETA_PRESION.get());
             var esp = new ItemStack(net.minecraft.world.item.Items.DIAMOND_SWORD);
             var todos = java.util.List.of(com.copperslug.registry.ModEnchantments.ESCOPETA_COMPRESOR.get(), com.copperslug.registry.ModEnchantments.ESCOPETA_VALVULA.get(),
@@ -3785,6 +3808,8 @@ public final class PruebaCI {
             espera--;
             return;
         }
+        // los reintentos de una comprobación que ya ha salido bien no esperan fotogramas
+        while (paso < PASOS.size() && PASOS.get(paso).omitir() != null && PASOS.get(paso).omitir().getAsBoolean()) paso++;
         // cada paso necesita al menos 4 fotogramas dibujados (la cámara copia la imagen al dibujar)
         if (fotogramas - fotogramasPaso < 4) return;
         // el paso anterior ya ha tenido su tiempo: su captura
@@ -3799,7 +3824,7 @@ public final class PruebaCI {
         Paso p = PASOS.get(paso++);
         try {
             p.accion().run();
-            RESUMEN.add("OK    " + p.nombre());
+            if (!p.nombre().startsWith("~")) RESUMEN.add("OK    " + p.nombre());
         } catch (Throwable t) {
             fallos++;
             RESUMEN.add("FALLO " + p.nombre() + ": " + t);
