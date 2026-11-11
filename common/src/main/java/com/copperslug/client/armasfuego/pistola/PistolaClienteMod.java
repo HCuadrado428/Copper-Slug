@@ -26,6 +26,10 @@ public final class PistolaClienteMod {
             com.copperslug.client.armasfuego.comun.Apuntado.init();
             ItemProperties.register(ModItems.REVOLVER.get(), net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "oxido"),
                     (s, l, ent, seed) -> Tambor.oxido(s) / 4F);
+            // las balas que lleva el tambor (0 a 6): el modelo 3D enseña por detrás un agujero por recámara y el
+            // culote de latón de las cargadas (herramientas/generar_tambor.py)
+            ItemProperties.register(ModItems.REVOLVER.get(), net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "cargadas"),
+                    (s, l, ent, seed) -> (float) Tambor.cargadas(s));
         });
     }
 
