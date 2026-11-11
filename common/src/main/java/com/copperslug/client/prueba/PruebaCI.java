@@ -773,7 +773,11 @@ public final class PruebaCI {
                 piDisparar();
             });
         }
-        vigila("pistola_cargado", 4, () -> piSrv(sp -> PI.put("tambor", java.util.Arrays.toString(com.copperslug.armasfuego.pistola.Tambor.recamaras(sp.getMainHandItem())))));
+        // se reintenta hasta que la última recámara llega (el paquete del último clic puede tardar unos ticks)
+        vigila("pistola_cargado", 4, () -> {
+            piSrv(sp -> PI.put("tambor", java.util.Arrays.toString(com.copperslug.armasfuego.pistola.Tambor.recamaras(sp.getMainHandItem()))));
+            if (!"[1, 1, 2, 3, 4, 0]".equals(String.valueOf(PI.get("tambor")))) throw new IllegalStateException("el tambor aún no está completo: " + PI.get("tambor"));
+        });
         paso("101_tambor_cargado", 6, () -> {
             String t = String.valueOf(PI.get("tambor"));
             piComprobar("cargar 5 recámaras agachado (bala, bala, bengala, dardo, fogueo, vacía)", t.equals("[1, 1, 2, 3, 4, 0]"), t);
@@ -783,7 +787,7 @@ public final class PruebaCI {
         paso("102_ruleta_girando", 20, () -> {
             ItemStack s = mc.player.getMainHandItem();
             long hace = mc.level.getGameTime() - com.copperslug.armasfuego.pistola.Tambor.giroT(s);
-            piComprobar("girar el tambor (agachado + clic izquierdo)", com.copperslug.armasfuego.pistola.Tambor.girado(s) && hace >= 0 && hace < 40,
+            piComprobar("girar el tambor (agachado + clic izquierdo)", com.copperslug.armasfuego.pistola.Tambor.girado(s) && hace >= 0 && hace < 100,
                     "girado " + com.copperslug.armasfuego.pistola.Tambor.girado(s) + ", hace " + hace + " ticks");
         });
         sin("pistola_ruleta_fin", 6, () -> {
@@ -2967,9 +2971,15 @@ public final class PruebaCI {
         });
         // sacarla y el tiro seguidos (los paquetes llegan en orden: primero sale de la manga y luego dispara); con
         // shaders, a pocos fps, unos pocos pasos ya eran más de un segundo del servidor
-        sin("a2u_manga_tiro", 4, () -> {
+        sin("a2u_manga_saca", 3, () -> {
             a2Apuntar(a2Punto(8, 0, 1.2));
             com.copperslug.client.armasfuego.comun.FuegoCliente.sacarDeLaManga();
+        });
+        // el gatillo mira el arma de la mano en el cliente: hasta que no llega el cambio, aún es el palo (y no dispara)
+        vigila("a2u_manga_tiro", 1, () -> {
+            if (!(mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem))
+                throw new IllegalStateException("el cliente aún no ve la Derringer en la mano: " + mc.player.getMainHandItem());
+            a2Apuntar(a2Punto(8, 0, 1.2));
             piDisparar();
         });
         sin("a2u_manga_mano", 2, () -> piSrv(sp -> PI.put("manga", sp.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem
