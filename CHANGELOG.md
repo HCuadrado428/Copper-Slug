@@ -33,6 +33,17 @@
 - Balance: revolver 10 ticks between shots (every shot counts against the invulnerability window), rifle headshot x1.5,
   Thompson 1.6 per bullet, shotgun pellet 1.5.
 - Minecraft 1.20.1: Forge (also NeoForge 1.20.1) and Fabric. Minecraft 1.21.1: NeoForge, Forge and Fabric.
+- New enchantment Steady Hand (level 2): while aiming, 20% less spread per level and less slowdown, for the guns you aim
+  with the right click. Dead Eye (Winchester) also works aiming still for 1.5 s, not only on horseback.
+- Inspect the gun in your hand with N (rebindable): it rises to the centre and turns slowly so you can look at the copper,
+  the rust and the cylinder. A soft copper click when you put the sight up, a glint on the bayonet when you draw the
+  musket, and verdigris dust when a rusted gun fires.
+- Every gun's main metal parts are copper now, so they all rust with the gun (only small details such as pins and
+  triggers stay iron). The Derringer has two stacked copper barrels, and the revolver is a proper Colt with the
+  hammer, the sight notch and a loading window: seen from behind, the cartridge bases show in each chamber (it turns
+  with the cylinder, and never gives away the next round in Russian roulette).
+- The aiming HUD no longer sits over the gun: the revolver drum is hidden while aiming, and the ammo counters and the
+  Gatling heat move to the side. The musket and Winchester stocks were lowered so they do not fill the sight picture.
 - Fabric has no reach attribute for the musket bayonet (Forge and NeoForge do). On 1.21.1 Fabric does not apply the camera
   roll of the rifle recoil (the rest of the recoil is applied).
 
@@ -75,5 +86,16 @@
 - Equilibrio: revólver a 10 ticks entre disparos (cuentan todos los tiros contra la ventana de invulnerabilidad),
   cabeza del rifle x1,5, Thompson 1,6 por bala y perdigón de la escopeta 1,5.
 - Minecraft 1.20.1: Forge (y NeoForge 1.20.1) y Fabric. Minecraft 1.21.1: NeoForge, Forge y Fabric.
+- Encantamiento nuevo, Pulso firme (nivel 2): apuntando, dispersa un 20 % menos por nivel y se anda menos lento, para las
+  armas que apuntan con el clic derecho. Dead Eye (Winchester) también vale apuntando quieto 1,5 s, no solo a caballo.
+- Inspecciona el arma de la mano con la N (se puede cambiar): sube al centro y se gira despacio para ver el cobre, el óxido
+  y el tambor. Un clic suave de cobre al poner la mira, un destello en la bayoneta al sacar el mosquete y polvo de
+  pátina verdosa cuando dispara un arma oxidada.
+- El metal principal de todas las armas es de cobre, así que todas se oxidan con el arma (solo quedan en hierro los
+  detalles pequeños, como pasadores y gatillos). La Derringer tiene dos cañones de cobre apilados, y el revólver es un
+  Colt de verdad con martillo, mira de muesca y ventana de carga: visto desde atrás, se ve el culote de cada bala en su
+  recámara (gira con el tambor y no delata la siguiente en la ruleta rusa).
+- El HUD al apuntar ya no cae sobre el arma: el tambor del revólver se oculta y los contadores de balas y el calor de la
+  Gatling se apartan a un lado. Las culatas del mosquete y de la Winchester son más bajas para que no llenen la mira.
 - Fabric no tiene el alcance de la bayoneta del mosquete (en Forge y NeoForge sí). En 1.21.1 Fabric no aplica el giro de
   cámara del retroceso del rifle (el resto del retroceso sí).
