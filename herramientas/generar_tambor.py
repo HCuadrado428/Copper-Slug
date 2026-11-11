@@ -1,18 +1,19 @@
 #!/usr/bin/env python3
-"""Genera los modelos del tambor del revólver con sus recámaras en 3D.
+"""Genera los modelos 3D del revólver (un Colt de acción simple) con las recámaras del tambor.
 
-El cubo del tambor (3x3x3 px) enseña por detrás seis agujeros (un borde de hierro y el fondo negro) y, en las
-recámaras cargadas, el culote de latón de la bala con su pistón. La pieza trasera del armazón se parte en dos tiras
-(arriba y abajo) para que la cara de atrás del tambor se vea (en primera persona apuntando y desde atrás).
+Se parte de herramientas/revolver_3d_original.json (de ahí se conservan el armazón de abajo, el guardamonte, el gatillo y
+la empuñadura) y se construye el resto: cañón y tambor octogonales (cuatro cajas, dos de ellas giradas 45°), punto de
+mira, mira de muesca con alza, martillo, eje del tambor y el hueco de carga del lado derecho del armazón, por donde se
+ven desde atrás los culotes de latón de las balas.
 
-Las recámaras salen EN SU SITIO: la de arriba es la que toca (como la muesca del HUD) y el resto, en el sentido del
-reloj visto desde atrás. La máscara de 6 bits (bit k = recámara k desde la que toca, cargada o no) la da la propiedad
-de objeto «copperslug:recamaras» (0 a 63), que elige entre:
+El tambor enseña las recámaras EN SU SITIO: la de arriba es la que toca (como la muesca del HUD) y el resto, en el
+sentido del reloj visto desde atrás. La máscara de 6 bits (bit k = recámara k desde la que toca, cargada o no) la da la
+propiedad de objeto «copperslug:recamaras» (0 a 63), que elige entre:
   armas3d/revolver_3d.json (máscara 0) y armas3d/revolver_3d_m1..m63.json (los modelos del arma),
+  armas3d/revolver_3d_abierto.json (el tambor salido a un lado, al meter una bala),
   revolver_cargado_<óxido 0..3>_<máscara 1..63>.json                       (los de cada nivel de óxido).
-El modelo del tambor abierto (recarga) no se toca. Todas las texturas siguen siendo de 16x16.
-
-Es idempotente: se puede volver a ejecutar (quita lo que generó antes). Uso: generar_tambor.py [raíz del repositorio]
+Todas las texturas siguen siendo de 16x16. Se puede ejecutar de nuevo cuando se quiera.
+Uso: generar_tambor.py [raíz del repositorio]
 """
 import copy
 import json
@@ -23,18 +24,143 @@ import sys
 RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
 M = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/models/item')
 A3D = os.path.join(M, 'armas3d')
-GEN = 'tambor_gen'
+ORIGINAL = os.path.join(RAIZ, 'herramientas/revolver_3d_original.json')
 
-# (óxido, modelo del objeto sin balas): el cobre nuevo, expuesto, erosionado y oxidado
 NIVELES = [(0, 'revolver', None), (1, 'revolver_expuesto', 0.25), (2, 'revolver_erosionado', 0.5), (3, 'revolver_oxidado', 0.75)]
 
-CENTRO = (8.0, 9.0)   # el centro de la cara trasera del tambor (x 6.5..9.5, y 7.5..10.5)
-RADIO = 0.95
-Z = 11.0              # la cara de atrás del tambor
-UV_HIERRO = [2, 2, 3.5, 3.5]
+# ---------------------------------------------------------------------------------------------- medidas
+CX = 8.0
+BARRIL = dict(cy=9.9, a=0.72, z1=1.5, z2=8.4)          # el cañón (centro, apotema, de la boca al tambor)
+TAMBOR = dict(cy=8.9, a=1.62, z1=8.4, z2=11.0)         # el tambor
+ANILLO = 1.0                                           # radio del anillo de recámaras
+Z_ATRAS = TAMBOR['z2']                                 # la cara de atrás del tambor
+UV_LATON = [4.2, 1.2, 4.8, 1.8]                        # el píxel dorado de tambor_frente_*
+UV_PISTON = [2.2, 2.2, 2.8, 2.8]                       # el gris del centro de tambor_frente_*
 UV_NEGRO = [15.0, 5.95, 15.5, 6.45]
-UV_LATON = [4.2, 1.2, 4.8, 1.8]    # el píxel dorado de tambor_frente_*
-UV_PISTON = [2.2, 2.2, 2.8, 2.8]   # el gris del centro de tambor_frente_*
+
+
+def r3(v):
+    return round(v, 3)
+
+
+def uv_caja(d, x1, y1, z1, x2, y2, z2):
+    """UV que sigue las coordenadas del mundo (igual densidad de píxel en todas las caras)."""
+    if d in ('north', 'south'):
+        return [r3(x1 % 16), r3(16 - y2), r3(x1 % 16 + (x2 - x1)), r3(16 - y1)]
+    if d in ('east', 'west'):
+        return [r3(z1), r3(16 - y2), r3(z2), r3(16 - y1)]
+    return [r3(x1 % 16), r3(z1), r3(x1 % 16 + (x2 - x1)), r3(z2)]
+
+
+def caja(x1, y1, z1, x2, y2, z2, tex='cobre', nombre='caja', rot=None, caras=None):
+    e = {'name': nombre, 'from': [r3(x1), r3(y1), r3(z1)], 'to': [r3(x2), r3(y2), r3(z2)], 'faces': {}}
+    for d in caras or ('north', 'south', 'east', 'west', 'up', 'down'):
+        e['faces'][d] = {'uv': uv_caja(d, x1, y1, z1, x2, y2, z2), 'texture': '#' + tex}
+    if rot:
+        e['rotation'] = {'origin': [r3(v) for v in rot[0]], 'axis': rot[1], 'angle': rot[2]}
+    return e
+
+
+def octogono(cy, a, z1, z2, tex, nombre, tex_lado=None, uv_lado=None):
+    """Un prisma octogonal de apotema a: dos cajas rectas y dos giradas 45° (la unión es el octógono)."""
+    s = 2 * a * math.tan(math.radians(22.5))
+    out = []
+    for i, (ang, dx, dy) in enumerate(((0, a, s / 2), (0, s / 2, a), (45, a, s / 2), (135, a, s / 2))):
+        # los extremos se desplazan una pizca para que no peleen entre sí al coincidir
+        e = caja(CX - dx, cy - dy, z1 + 0.004 * i, CX + dx, cy + dy, z2 - 0.004 * i, tex, nombre + '_%d' % i,
+                 rot=((CX, cy, 0), 'z', ang) if ang else None)
+        if tex_lado:
+            for d in ('east', 'west', 'up', 'down'):
+                e['faces'][d]['texture'] = '#' + tex_lado
+                if uv_lado:
+                    e['faces'][d]['uv'] = list(uv_lado)
+        out.append(e)
+    return out
+
+
+def recamara_pos(k):
+    ang = math.radians(60 * k)
+    return CX + ANILLO * math.sin(ang), TAMBOR['cy'] + ANILLO * math.cos(ang)
+
+
+def cara_trasera(cx, cy, z, tex, uv, tam, grosor, nombre, lado='south'):
+    return {'name': nombre, 'from': [r3(cx - tam), r3(cy - tam), r3(z)], 'to': [r3(cx + tam), r3(cy + tam), r3(z + grosor)],
+            'faces': {lado: {'uv': list(uv), 'texture': '#' + tex}}}
+
+
+def recamaras(mascara):
+    out = []
+    cy = TAMBOR['cy']
+    for k in range(6):
+        x, y = recamara_pos(k)
+        cargada = bool(mascara >> k & 1)
+        # cara de atrás: borde de hierro y agujero oscuro (o el culote de latón de la bala, que sobresale)
+        out.append(cara_trasera(x, y, Z_ATRAS, 'hierro', [2, 2, 3.5, 3.5], 0.42, 0.02, 'cil_borde_t'))
+        if cargada:
+            lat = {'uv': UV_LATON, 'texture': '#tambor'}
+            out.append({'name': 'cil_culote', 'from': [r3(x - 0.3), r3(y - 0.3), Z_ATRAS], 'to': [r3(x + 0.3), r3(y + 0.3), Z_ATRAS + 0.28],
+                        'faces': {'south': dict(lat), 'east': dict(lat), 'west': dict(lat), 'up': dict(lat), 'down': dict(lat)}})
+            out.append(cara_trasera(x, y, Z_ATRAS + 0.28, 'tambor', UV_PISTON, 0.12, 0.02, 'cil_piston'))
+        else:
+            out.append(cara_trasera(x, y, Z_ATRAS + 0.02, 'negro', UV_NEGRO, 0.3, 0.02, 'cil_agujero_t'))
+        # cara de delante: los mismos agujeros (se ven mirando al arma de frente); las cargadas, con el plomo
+        front = TAMBOR['z1']
+        out.append({'name': 'cil_borde_d', 'from': [r3(x - 0.42), r3(y - 0.42), front - 0.02], 'to': [r3(x + 0.42), r3(y + 0.42), front],
+                    'faces': {'north': {'uv': [2, 2, 3.5, 3.5], 'texture': '#hierro'}}})
+        if cargada:
+            out.append({'name': 'cil_plomo_d', 'from': [r3(x - 0.28), r3(y - 0.28), front - 0.04], 'to': [r3(x + 0.28), r3(y + 0.28), front - 0.02],
+                        'faces': {'north': {'uv': [3.4, 3.4, 3.9, 3.9], 'texture': '#hierro'}}})
+        else:
+            out.append({'name': 'cil_agujero_d', 'from': [r3(x - 0.3), r3(y - 0.3), front - 0.04], 'to': [r3(x + 0.3), r3(y + 0.3), front - 0.02],
+                        'faces': {'north': {'uv': list(UV_NEGRO), 'texture': '#negro'}}})
+    # el eje del tambor (un clavito de hierro en el centro, por los dos lados)
+    out.append(cara_trasera(CX, cy, Z_ATRAS, 'hierro', [2, 2, 3.5, 3.5], 0.3, 0.03, 'cil_eje_t'))
+    out.append({'name': 'cil_eje_d', 'from': [CX - 0.3, cy - 0.3, TAMBOR['z1'] - 0.03], 'to': [CX + 0.3, cy + 0.3, TAMBOR['z1']],
+                'faces': {'north': {'uv': [2, 2, 3.5, 3.5], 'texture': '#hierro'}}})
+    return out
+
+
+def cilindro(mascara):
+    out = octogono(TAMBOR['cy'], TAMBOR['a'], TAMBOR['z1'], TAMBOR['z2'], 'cobre', 'cil_cuerpo', tex_lado='tambor_lado', uv_lado=[6, 6, 10, 10])
+    return out + recamaras(mascara)
+
+
+def construir(mascara, abierto=False):
+    original = cargar(ORIGINAL)
+    conservar = [original['elements'][i] for i in (7, 9, 10, 11, 12, 13, 14)]
+    el = []
+    # ---- el cañón, con la boca, el punto de mira y la varilla del eyector debajo
+    el += octogono(BARRIL['cy'], BARRIL['a'], BARRIL['z1'], BARRIL['z2'], 'cobre', 'canon')
+    el.append({'name': 'boca', 'from': [CX - 0.26, BARRIL['cy'] - 0.26, BARRIL['z1'] - 0.03], 'to': [CX + 0.26, BARRIL['cy'] + 0.26, BARRIL['z1'] - 0.01],
+               'faces': {'north': {'uv': list(UV_NEGRO), 'texture': '#negro'}}})
+    el.append(caja(CX - 0.18, 10.55, 1.9, CX + 0.18, 11.15, 2.4, 'hierro', 'punto_de_mira'))
+    el.append(caja(CX + 0.35, 8.95, 2.6, CX + 0.85, 9.4, 8.4, 'hierro', 'varilla'))
+    el.append(caja(CX + 0.25, 8.85, 2.35, CX + 0.95, 9.5, 2.6, 'hierro', 'tapon_varilla'))
+    # ---- el armazón: la cinta de arriba con la muesca de la mira, y el escudo de atrás con el hueco de carga a la derecha
+    el.append(caja(6.95, 10.5, 8.4, 9.05, 11.05, 12.1, 'cobre', 'cinta'))
+    el.append(caja(6.95, 10.5, 12.1, 7.85, 11.05, 12.6, 'cobre', 'alza_izq'))
+    el.append(caja(8.15, 10.5, 12.1, 9.05, 11.05, 12.6, 'cobre', 'alza_der'))
+    el.append(caja(7.85, 10.5, 12.1, 8.15, 10.8, 12.6, 'cobre', 'muesca'))
+    el.append(caja(6.95, 7.3, 11.0, 7.7, 10.5, 12.35, 'cobre', 'escudo_izq'))
+    el.append(caja(7.7, 7.3, 11.0, 9.05, 8.0, 12.35, 'cobre', 'escudo_bajo'))
+    el.append(caja(7.5, 8.0, 11.3, 8.46, 10.5, 12.35, 'cobre', 'escudo_centro'))
+    # ---- el martillo (bajado): cuerpo y espolón inclinado hacia atrás
+    el.append(caja(7.85, 9.2, 12.35, 8.15, 10.1, 12.95, 'hierro', 'martillo'))
+    el.append(caja(7.82, 9.85, 12.8, 8.18, 10.5, 13.3, 'hierro', 'martillo_espolon', rot=((CX, 9.9, 12.85), 'x', 25)))
+    el += conservar
+    cil = cilindro(mascara)
+    if abierto:
+        # el tambor salido hacia la izquierda (con su grúa) para meter la bala
+        for e in cil:
+            e['from'][0] = r3(e['from'][0] - 3.4)
+            e['to'][0] = r3(e['to'][0] - 3.4)
+            if 'rotation' in e:
+                e['rotation']['origin'][0] = r3(e['rotation']['origin'][0] - 3.4)
+        el.append(caja(5.6, 6.9, 8.6, 7.2, 7.45, 10.6, 'cobre', 'grua'))
+    el += cil
+    m = copy.deepcopy(original)
+    m['elements'] = el
+    return m
 
 
 def cargar(ruta):
@@ -42,70 +168,16 @@ def cargar(ruta):
         return json.load(f)
 
 
-def guardar(ruta, datos):
+def guardar(ruta, datos, compacto=False):
     with open(ruta, 'w', encoding='utf-8') as f:
-        json.dump(datos, f, indent=1, ensure_ascii=False)
+        if compacto:
+            json.dump(datos, f, separators=(',', ':'), ensure_ascii=False)
+        else:
+            json.dump(datos, f, indent=1, ensure_ascii=False)
         f.write('\n')
 
 
-def recamara(k, cargada):
-    """Los elementos de la recámara k (0 arriba, en el sentido del reloj visto desde atrás)."""
-    a = math.radians(60 * k)
-    cx, cy = CENTRO[0] + RADIO * math.sin(a), CENTRO[1] + RADIO * math.cos(a)
-    cx, cy = round(cx, 3), round(cy, 3)
-    e = [{'name': GEN + '_borde', 'from': [round(cx - 0.45, 3), round(cy - 0.45, 3), Z], 'to': [round(cx + 0.45, 3), round(cy + 0.45, 3), Z + 0.02],
-          'faces': {'south': {'uv': UV_HIERRO, 'texture': '#hierro'}}}]
-    if not cargada:
-        e.append({'name': GEN + '_agujero', 'from': [round(cx - 0.35, 3), round(cy - 0.35, 3), Z + 0.02], 'to': [round(cx + 0.35, 3), round(cy + 0.35, 3), Z + 0.04],
-                  'faces': {'south': {'uv': UV_NEGRO, 'texture': '#negro'}}})
-        return e
-    lado = {'uv': UV_LATON, 'texture': '#tambor'}
-    e.append({'name': GEN + '_culote', 'from': [round(cx - 0.3, 3), round(cy - 0.3, 3), Z], 'to': [round(cx + 0.3, 3), round(cy + 0.3, 3), Z + 0.3],
-              'faces': {'south': dict(lado), 'east': dict(lado), 'west': dict(lado), 'up': dict(lado), 'down': dict(lado)}})
-    e.append({'name': GEN + '_piston', 'from': [round(cx - 0.12, 3), round(cy - 0.12, 3), Z + 0.3], 'to': [round(cx + 0.12, 3), round(cy + 0.12, 3), Z + 0.32],
-              'faces': {'south': {'uv': UV_PISTON, 'texture': '#tambor'}}})
-    return e
-
-
-def modelo(base, mascara):
-    m = copy.deepcopy(base)
-    elementos = []
-    placa = None
-    for e in m['elements']:
-        if str(e.get('name', '')).startswith(GEN):
-            continue
-        if e['from'] == [6.9, 7, 11] and e['to'] == [9.1, 11.1, 12.5]:
-            placa = e
-            continue
-        elementos.append(e)
-    if placa is None:
-        raise SystemExit('no encuentro la pieza trasera original: el modelo base tiene que ser el original (git checkout)')
-    # la pieza trasera, partida en dos tiras: la cara de atrás del tambor (y 7.5..10.5) queda a la vista
-    for nombre, y0, y1 in (('arriba', 10.5, 11.1), ('abajo', 7.0, 7.5)):
-        t = copy.deepcopy(placa)
-        t['name'] = GEN + '_placa_' + nombre
-        t['from'] = [6.9, y0, 11]
-        t['to'] = [9.1, y1, 12.5]
-        elementos.append(t)
-    for k in range(6):
-        elementos.extend(recamara(k, bool(mascara >> k & 1)))
-    m['elements'] = elementos
-    return m
-
-
 def main():
-    ruta_base = os.path.join(A3D, 'revolver_3d.json')
-    base = cargar(ruta_base)
-    # el modelo base tiene que ser el original (con la pieza trasera entera) o uno generado antes: si ya está generado,
-    # se reconstruye la pieza entera para partirla de nuevo
-    if not any(e['from'] == [6.9, 7, 11] and e['to'] == [9.1, 11.1, 12.5] for e in base['elements']):
-        arriba = next(e for e in base['elements'] if e.get('name') == GEN + '_placa_arriba')
-        entera = copy.deepcopy(arriba)
-        entera.pop('name')
-        entera['from'] = [6.9, 7, 11]
-        entera['to'] = [9.1, 11.1, 12.5]
-        base['elements'] = [e for e in base['elements'] if not str(e.get('name', '')).startswith(GEN)] + [entera]
-    # lo generado en versiones anteriores (por número de balas) se borra
     for f in os.listdir(A3D):
         if f.startswith('revolver_3d_n') or f.startswith('revolver_3d_m'):
             os.remove(os.path.join(A3D, f))
@@ -114,8 +186,8 @@ def main():
             os.remove(os.path.join(M, f))
     for mascara in range(0, 64):
         nombre = 'revolver_3d.json' if mascara == 0 else 'revolver_3d_m%d.json' % mascara
-        guardar(os.path.join(A3D, nombre), modelo(base, mascara))
-    # los modelos del objeto con n balas, uno por nivel de óxido
+        guardar(os.path.join(A3D, nombre), construir(mascara), True)
+    guardar(os.path.join(A3D, 'revolver_3d_abierto.json'), construir(0, abierto=True), True)
     for ox, nombre, _ in NIVELES:
         obj = cargar(os.path.join(M, nombre + '.json'))
         obj.pop('overrides', None)
@@ -123,7 +195,7 @@ def main():
             o = copy.deepcopy(obj)
             o['base']['parent'] = 'copperslug:item/armas3d/revolver_3d_m%d' % mascara
             guardar(os.path.join(M, 'revolver_cargado_%d_%d.json' % (ox, mascara)), o)
-    # los overrides del revólver: más abajo = más prioridad (cargadas, luego óxido, luego el tambor abierto)
+    # los overrides del revólver: más abajo = más prioridad (máscara, luego óxido, luego el tambor abierto)
     principal = cargar(os.path.join(M, 'revolver.json'))
     abiertos = [o for o in principal.get('overrides', []) if 'copperslug:abierto' in o['predicate']]
     nuevos = []
@@ -138,7 +210,8 @@ def main():
             nuevos.append({'predicate': p, 'model': 'copperslug:item/revolver_cargado_%d_%d' % (ox, mascara)})
     principal['overrides'] = nuevos + abiertos
     guardar(os.path.join(M, 'revolver.json'), principal)
-    print('modelos: revolver_3d + 63, revolver_cargado_*: 252, overrides:', len(principal['overrides']))
+    print('modelos: revolver_3d + 63 + abierto, revolver_cargado_*: 252, overrides:', len(principal['overrides']))
 
 
-main()
+if __name__ == '__main__':
+    main()
