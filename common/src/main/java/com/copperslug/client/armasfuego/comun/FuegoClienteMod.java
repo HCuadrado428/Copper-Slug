@@ -110,6 +110,7 @@ public final class FuegoClienteMod {
     public static void modelos(ModelEvent.RegisterAdditional e) {
         for (ResourceLocation r : GatlingRenderer.TODOS) e.register(r);
         for (ResourceLocation r : GatlingRenderer.CUERPOS) e.register(r);
+        for (ResourceLocation r : com.copperslug.client.armasfuego.pistola.RevolverTambor.MODELOS) e.register(r);
     }
 
     @SubscribeEvent
