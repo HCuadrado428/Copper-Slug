@@ -780,7 +780,11 @@ public final class PruebaCI {
                 piDisparar();
             });
         }
-        vigila("pistola_cargado", 4, () -> piSrv(sp -> PI.put("tambor", java.util.Arrays.toString(com.copperslug.armasfuego.pistola.Tambor.recamaras(sp.getMainHandItem())))));
+        // se reintenta hasta que la última recámara llega (el paquete del último clic puede tardar unos ticks)
+        vigila("pistola_cargado", 4, () -> {
+            piSrv(sp -> PI.put("tambor", java.util.Arrays.toString(com.copperslug.armasfuego.pistola.Tambor.recamaras(sp.getMainHandItem()))));
+            if (!"[1, 1, 2, 3, 4, 0]".equals(String.valueOf(PI.get("tambor")))) throw new IllegalStateException("el tambor aún no está completo: " + PI.get("tambor"));
+        });
         paso("101_tambor_cargado", 6, () -> {
             String t = String.valueOf(PI.get("tambor"));
             piComprobar("cargar 5 recámaras agachado (bala, bala, bengala, dardo, fogueo, vacía)", t.equals("[1, 1, 2, 3, 4, 0]"), t);
