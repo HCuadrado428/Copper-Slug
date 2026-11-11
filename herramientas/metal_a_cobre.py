@@ -44,4 +44,31 @@ def main():
     print('total', total)
 
 
+def tambor_de_cobre():
+    """El cargador de tambor de la Thompson tiene una textura gris (g_tambor): se tiñe de cobre conservando sus huecos."""
+    from PIL import Image
+    base = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/textures/item/armas3d')
+    origen, destino = os.path.join(base, 'g_tambor.png'), os.path.join(base, 'g_tambor_cobre.png')
+    im = Image.open(origen).convert('RGBA')
+    out = Image.new('RGBA', im.size)
+    oscuro, claro = (58, 30, 22), (236, 132, 96)
+    for x in range(im.width):
+        for y in range(im.height):
+            r, g, b, a = im.getpixel((x, y))
+            k = (0.299 * r + 0.587 * g + 0.114 * b) / 255
+            out.putpixel((x, y), tuple(int(oscuro[i] + (claro[i] - oscuro[i]) * k) for i in range(3)) + (a,))
+    out.save(destino)
+    n = 0
+    for ruta in sorted(glob.glob(os.path.join(A3D, 'thompson_3d*.json'))):
+        m = json.load(open(ruta, encoding='utf-8'))
+        if m['textures'].get('tambor', '').endswith('g_tambor'):
+            m['textures']['tambor'] = 'copperslug:item/armas3d/g_tambor_cobre'
+            with open(ruta, 'w', encoding='utf-8') as f:
+                json.dump(m, f, separators=(',', ':'), ensure_ascii=False)
+                f.write('\n')
+            n += 1
+    print('cargador de la Thompson en cobre:', n, 'modelos')
+
+
 main()
+tambor_de_cobre()
