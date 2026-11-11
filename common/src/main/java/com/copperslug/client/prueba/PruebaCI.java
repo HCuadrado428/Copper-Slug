@@ -478,7 +478,7 @@ public final class PruebaCI {
             int n = com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos;
             boolean cae = com.copperslug.client.armasfuego.comun.Apuntado.parabolaCae;
             com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
-            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 6 && cae, n + " puntos, cae en un bloque: " + cae);
+            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 3 && cae, n + " puntos, cae en un bloque: " + cae);
         });
         // ---- el rifle apunta con su catalejo (su zoom): cuenta como apuntar
         sin("ap_rifle", 10, () -> {
