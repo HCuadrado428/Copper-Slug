@@ -3541,6 +3541,7 @@ public final class PruebaCI {
             Vec3 m = Vec3.directionFromRotation(0, sp.getYRot());
             c.teleportTo(sp.getX() + m.x * 4, sp.getY(), sp.getZ() + m.z * 4);
             c.setDeltaMovement(Vec3.ZERO);
+            if (c instanceof net.minecraft.world.entity.Mob cerdo) cerdo.setNoAi(true);   // sin paseo: la distancia que mide la prueba es solo la del soplido
         }));
         sin("esc_soplido", 3, () -> {
             var c = escEntidad(escCerdo);
