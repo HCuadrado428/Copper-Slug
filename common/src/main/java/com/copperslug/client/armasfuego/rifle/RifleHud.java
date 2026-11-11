@@ -40,7 +40,8 @@ public final class RifleHud {
         if (Rifle.cerrojo(s) > 0) rec = Component.translatable("hud.copperslug.rifle.cerrojo");
         else if (Rifle.gastada(s) || bala == null) rec = Component.translatable("hud.copperslug.rifle.recargar");
         else rec = bala.getDescription();
-        y = texto(g, f, rec, lateral, cx, x0, ancho, y + 2, Rifle.lista(s) ? 0xFFF2C24B : 0xFFB0B0B0);
+        // lista: nada que decir (el cartucho se ve al sacarlo); si no, el aviso de por qué no dispara
+        if (!Rifle.lista(s)) y = texto(g, f, rec, lateral, cx, x0, ancho, y + 2, 0xFFB0B0B0);
         // respiración contenida: barrita que se llena con la mira quieta
         if (Rifle.nivel(s, ModEnchantments.RESPIRACION.get()) > 0) {
             int bw = 50, bx = lateral ? x0 : cx - bw / 2, by = y + 4;
