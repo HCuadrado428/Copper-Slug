@@ -10,7 +10,7 @@ import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.sounds.SoundSource;
 
-/** Las dos partículas baratas de las armas de fuego: el fogonazo y el casquillo. */
+/** Las partículas baratas de las armas de fuego: el fogonazo, el casquillo y la bala que se ve pasar. */
 public final class FuegoParticulas {
     private FuegoParticulas() {}
 
@@ -81,6 +81,44 @@ public final class FuegoParticulas {
         @Override
         public ParticleRenderType getRenderType() {
             return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+        }
+    }
+
+    /**
+     * La bala que se ve pasar: un punto de luz que recorre el tiro a 6 bloques por tick y se apaga al llegar. El
+     * vector del tiro (de la boca a donde da) viene en la velocidad.
+     */
+    public static class Trazo extends TextureSheetParticle {
+        protected Trazo(ClientLevel l, double x, double y, double z, double dx, double dy, double dz, SpriteSet s, float r, float g, float b) {
+            super(l, x, y, z);
+            double largo = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            lifetime = Math.max(1, (int) Math.ceil(largo / 6.0));
+            xd = dx / lifetime;
+            yd = dy / lifetime;
+            zd = dz / lifetime;
+            hasPhysics = false;
+            gravity = 0;
+            friction = 1F;
+            quadSize = 0.07F;
+            setColor(r, g, b);
+            pickSprite(s);
+        }
+
+        @Override
+        public int getLightColor(float pt) {
+            return 0xF000F0;
+        }
+
+        @Override
+        public ParticleRenderType getRenderType() {
+            return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        }
+    }
+
+    public record TrazoProv(SpriteSet s, float r, float g, float b) implements ParticleProvider<SimpleParticleType> {
+        @Override
+        public Particle createParticle(SimpleParticleType t, ClientLevel l, double x, double y, double z, double dx, double dy, double dz) {
+            return new Trazo(l, x, y, z, dx, dy, dz, s, r, g, b);
         }
     }
 

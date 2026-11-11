@@ -163,6 +163,17 @@ public class GatlingEntity extends Entity {
         entityData.set(CALOR, Math.max(0, Math.min(100, c)));
     }
 
+    /** El de los mandos apunta (clic derecho mantenido): dispersa menos. No se guarda ni se manda a los clientes. */
+    private boolean apunta;
+
+    public void ponerApunta(boolean a) {
+        apunta = a;
+    }
+
+    public boolean apuntando() {
+        return apunta;
+    }
+
     public void ponerGirando(boolean g) {
         entityData.set(GIRANDO, g);
         if (!g) rafaga = 0;
@@ -452,7 +463,8 @@ public class GatlingEntity extends Entity {
         if (!creativo) entityData.set(BALAS, balas() - 1);
         float c = calor();
         entityData.set(CALOR, c + EquilibrioArmas.gatlingCalor() * (1 - 0.2F * nivel(com.copperslug.registry.ModEnchantments.GATLING_REFRIGERACION)));
-        double disp = 0.025 + (c > 70 ? 0.03 : 0) + com.copperslug.armasfuego.comun.Cobre.dispersion(oxido());
+        double disp = (0.025 + (c > 70 ? 0.03 : 0) + com.copperslug.armasfuego.comun.Cobre.dispersion(oxido()))
+                * (apunta && p != null ? EquilibrioArmas.apuntarDispersion() : 1.0);
         boolean fuego = cintaEs(ModItems.CINTA_INCENDIARIA), palomitas = cintaEs(ModItems.CINTA_PALOMITAS), guisantes = cintaEs(ModItems.CINTA_GUISANTES);
         Vec3 dir = Balistica.dispersar(mira(), disp, random);
         Vec3 boca = boca(1.45F);

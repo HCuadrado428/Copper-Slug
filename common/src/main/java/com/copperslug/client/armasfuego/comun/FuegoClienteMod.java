@@ -58,7 +58,8 @@ public final class FuegoClienteMod {
                 return d >= 1 && d < pal * 0.6F ? 1F : 0F;
             });
             // Derringer: se ve en tercera persona solo justo después de disparar; abierta al recargar
-            ItemProperties.register(ModItems.DERRINGER.get(), rl("visible"), (s, l, en, seed) -> DerringerItem.visible(s, nivel(l, en)) ? 1F : 0F);
+            ItemProperties.register(ModItems.DERRINGER.get(), rl("visible"), (s, l, en, seed) ->
+                    DerringerItem.visible(s, nivel(l, en)) || en instanceof Player pl && com.copperslug.armasfuego.comun.Apuntar.apuntando(pl) ? 1F : 0F);
             ItemProperties.register(ModItems.DERRINGER.get(), rl("abierta"), (s, l, en, seed) -> recargando(en, s) ? 1F : 0F);
             // Thompson: sin tambor durante la primera parte del cambio
             ItemProperties.register(ModItems.THOMPSON.get(), rl("sin_tambor"), (s, l, en, seed) ->
@@ -93,12 +94,16 @@ public final class FuegoClienteMod {
     public static void particulas(RegisterParticleProvidersEvent e) {
         e.registerSpriteSet(ArmasFuegoRegistro.FOGONAZO.get(), FuegoParticulas.FogonazoProv::new);
         e.registerSpriteSet(ArmasFuegoRegistro.CASQUILLO.get(), FuegoParticulas.CasquilloProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.TRAZO.get(), s -> new FuegoParticulas.TrazoProv(s, 1.0F, 0.86F, 0.45F));
+        e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_FUEGO.get(), s -> new FuegoParticulas.TrazoProv(s, 1.0F, 0.45F, 0.15F));
+        e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_FRIO.get(), s -> new FuegoParticulas.TrazoProv(s, 0.7F, 0.9F, 1.0F));
+        e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_VERDE.get(), s -> new FuegoParticulas.TrazoProv(s, 0.5F, 1.0F, 0.45F));
     }
 
     @SubscribeEvent
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         e.registerEntityRenderer(ModEntities.GATLING.get(), GatlingRenderer::new);
-        e.registerEntityRenderer(ModEntities.BOLA_CANON.get(), c -> new ThrownItemRenderer<>(c, 1.2F, false));
+        e.registerEntityRenderer(ModEntities.BOLA_CANON.get(), BolaCanonRenderer::new);
     }
 
     @SubscribeEvent
@@ -120,5 +125,6 @@ public final class FuegoClienteMod {
     @SubscribeEvent
     public static void overlays(RegisterGuiOverlaysEvent e) {
         e.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "armafuego_balas", FuegoCliente::hud);
+        e.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "armafuego_mira", Apuntado::hud);
     }
 }
