@@ -10,6 +10,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.monster.Husk;
 import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +21,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Mobs con armas: algunos saqueadores salen con una Winchester en la mano (poco, y se puede apagar en la config,
+ * Mobs con armas (los saqueadores; y los husks de las estructuras que los llevan puestos): algunos saqueadores salen con una Winchester en la mano (poco, y se puede apagar en la config,
  * sección mobs_armados) y disparan de verdad con la misma balística que el jugador: seis balas, una pausa para
  * recargar, y más puntería con la dificultad. El arma se suelta con una probabilidad (por defecto, baja). Se mira
  * cada 10 ticks a los saqueadores que hay cerca de algún jugador.
@@ -46,8 +48,8 @@ public final class MobsArmados {
         if (srv.getTickCount() % 10 != 0 || !ConfigServidor.mobsArmados()) return;
         for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
             ServerLevel l = p.serverLevel();
-            for (Pillager m : l.getEntitiesOfClass(Pillager.class, p.getBoundingBox().inflate(RADIO), Pillager::isAlive)) {
-                if (!m.getTags().contains(TIRADO)) tirar(m);
+            for (Mob m : l.getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(RADIO), e -> e.isAlive() && (e instanceof Pillager || e instanceof Husk))) {
+                if (m instanceof Pillager pi && !m.getTags().contains(TIRADO)) tirar(pi);
                 if (armado(m)) disparar(l, m);
             }
         }
@@ -64,7 +66,8 @@ public final class MobsArmados {
         m.setDropChance(EquipmentSlot.MAINHAND, ConfigServidor.mobsSuelta());
     }
 
-    private static void disparar(ServerLevel l, Pillager m) {
+    private static void disparar(ServerLevel l, Mob m) {
+        boolean saqueador = m instanceof Pillager;
         LivingEntity v = m.getTarget();
         if (v == null || !v.isAlive()) return;
         double alcance = EquilibrioArmas.winchesterAlcance() * 0.5;
@@ -73,10 +76,10 @@ public final class MobsArmados {
         // el ballestero de vanilla se queda quieto; este se acerca hasta tener distancia de tiro
         m.getLookControl().setLookAt(v, 30F, 30F);
         if (!m.hasLineOfSight(v)) {
-            if (dist > 8) m.getNavigation().moveTo(v, 1.0);
+            if (saqueador && dist > 8) m.getNavigation().moveTo(v, 1.0);
             return;
         }
-        if (dist > 28) m.getNavigation().moveTo(v, 1.0); else m.getNavigation().stop();
+        if (saqueador) { if (dist > 28) m.getNavigation().moveTo(v, 1.0); else m.getNavigation().stop(); }
         Estado e = ESTADOS.computeIfAbsent(m, k -> new Estado());
         long t = l.getGameTime();
         if (t < e.proximo) return;
