@@ -369,7 +369,7 @@
   "enchantment.copperslug.winchester_repeticion": "Repeater",
   "enchantment.copperslug.winchester_repeticion.desc": "Winchester: the lever works 15% faster per level.",
   "enchantment.copperslug.winchester_dead_eye": "Dead Eye",
-  "enchantment.copperslug.winchester_dead_eye.desc": "Winchester: on horseback, shots fly straight and hit 25% harder (Red Dead style).",
+  "enchantment.copperslug.winchester_dead_eye.desc": "Winchester: on horseback, or aiming still for 1.5 s, shots fly straight and hit 25% harder (a Red Dead thing).",
   "enchantment.copperslug.winchester_carga_rapida": "Quick Load",
   "enchantment.copperslug.winchester_carga_rapida.desc": "Winchester: loads each round 25% faster per level.",
   "enchantment.copperslug.derringer_as": "Ace Up the Sleeve",
@@ -503,5 +503,7 @@
   "itemGroup.copperslug": "Copper Slug",
   "key.categories.copperslug": "Copper Slug",
   "advancements.copperslug.raiz.title": "Copper Slug",
-  "advancements.copperslug.raiz.description": "Copper revolvers, rifles and cannons: they can't be crafted, they're found in chests."
+  "advancements.copperslug.raiz.description": "Copper revolvers, rifles and cannons: they can't be crafted, they're found in chests.",
+  "enchantment.copperslug.pulso_firme": "Steady Hand",
+  "enchantment.copperslug.pulso_firme.desc": "While aiming: 20% less spread per level and less slowdown. For the guns you aim with the right click."
 }

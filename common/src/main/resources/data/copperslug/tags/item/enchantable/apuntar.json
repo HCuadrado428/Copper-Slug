@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "copperslug:revolver",
+    "copperslug:winchester",
+    "copperslug:derringer",
+    "copperslug:thompson",
+    "copperslug:mosquete",
+    "copperslug:canon_mano"
+  ]
+}

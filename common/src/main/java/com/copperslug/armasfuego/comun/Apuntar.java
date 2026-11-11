@@ -33,6 +33,10 @@ public final class Apuntar {
 
     /** Los que apuntan (servidor): se repasan cada tick por si han cambiado de objeto. */
     private static final Set<UUID> APUNTANDO = new HashSet<>();
+    /** Cuánto llevan apuntando sin moverse ni mover la mira (servidor): {giro, cabeceo, x, z, ticks}. */
+    private static final java.util.Map<UUID, float[]> QUIETO = new java.util.HashMap<>();
+    /** Ticks quieto apuntando para que cuente como «quieto» (1,5 s): Dead Eye de la Winchester. */
+    public static final int TICKS_QUIETO = 30;
 
     /** ¿Se apunta con este objeto con el modificador? (el rifle va por su catalejo; la escopeta no apunta) */
     public static boolean apuntable(ItemStack s) {
@@ -55,29 +59,62 @@ public final class Apuntar {
         if (a == null) return;
         if (a.getModifier(ID) != null) a.removeModifier(ID);
         boolean vale = si && apuntable(p.getMainHandItem()) && !p.isUsingItem() && !p.isSpectator();
-        if (vale) a.addTransientModifier(new AttributeModifier(ID, -EquilibrioArmas.apuntarLentitud(), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
+        if (vale) a.addTransientModifier(new AttributeModifier(ID, -lentitud(p), AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL));
         if (!p.level().isClientSide) {
             if (vale) APUNTANDO.add(p.getUUID());
             else APUNTANDO.remove(p.getUUID());
         }
     }
 
-    /** Por cuánto se multiplica la dispersión del que dispara (1 desde la cadera). */
+    /** El nivel de Pulso firme del arma de la mano (0 si no es de las que apuntan con el modificador). */
+    public static int pulso(Player p) {
+        ItemStack s = p.getMainHandItem();
+        return apuntable(s) ? ArmaFuegoItem.nivel(com.copperslug.registry.ModEnchantments.PULSO_FIRME, s) : 0;
+    }
+
+    /** Cuánto frena apuntar (la config; Pulso firme lo reduce un 25 % por nivel). */
+    public static double lentitud(Player p) {
+        return EquilibrioArmas.apuntarLentitud() * (1 - 0.25 * pulso(p));
+    }
+
+    /** Por cuánto se multiplica la dispersión del que dispara (1 desde la cadera; Pulso firme la baja un 20 % por nivel). */
     public static double dispersion(Player p) {
-        return apuntando(p) ? EquilibrioArmas.apuntarDispersion() : 1.0;
+        return apuntando(p) ? EquilibrioArmas.apuntarDispersion() * (1 - 0.2 * pulso(p)) : 1.0;
+    }
+
+    /** ¿Lleva apuntando quieto 1,5 s (sin andar y sin mover la mira)? (servidor) */
+    public static boolean quieto(Player p) {
+        float[] q = QUIETO.get(p.getUUID());
+        return q != null && q[4] >= TICKS_QUIETO;
     }
 
     /** Cada tick del servidor: el que ya no lleva el arma en la mano (o se ha puesto a recargar) deja de apuntar. */
     public static void tick(MinecraftServer srv) {
-        if (APUNTANDO.isEmpty()) return;
+        if (APUNTANDO.isEmpty()) {
+            QUIETO.clear();
+            return;
+        }
+        QUIETO.keySet().retainAll(APUNTANDO);
         for (UUID id : APUNTANDO.toArray(new UUID[0])) {
             ServerPlayer p = srv.getPlayerList().getPlayer(id);
             if (p == null) APUNTANDO.remove(id);
             else if (!apuntable(p.getMainHandItem()) || p.isUsingItem() || !p.isAlive()) poner(p, false);
+            else {
+                // quieto: ni andar (cambio de posición) ni mover la mira de un tick al siguiente
+                float[] q = QUIETO.computeIfAbsent(id, k -> new float[]{p.getYRot(), p.getXRot(), (float) p.getX(), (float) p.getZ(), 0});
+                boolean firme = Math.abs(net.minecraft.util.Mth.wrapDegrees(p.getYRot() - q[0])) < 0.6F && Math.abs(p.getXRot() - q[1]) < 0.6F
+                        && (p.getX() - q[2]) * (p.getX() - q[2]) + (p.getZ() - q[3]) * (p.getZ() - q[3]) < 0.0025;
+                q[0] = p.getYRot();
+                q[1] = p.getXRot();
+                q[2] = (float) p.getX();
+                q[3] = (float) p.getZ();
+                q[4] = firme ? q[4] + 1 : 0;
+            }
         }
     }
 
     public static void limpiar() {
         APUNTANDO.clear();
+        QUIETO.clear();
     }
 }
