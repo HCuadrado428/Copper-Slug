@@ -12,7 +12,8 @@
   "client": [
     "CreativeScreenAccessor",
     "ItemPropertiesAccessor",
-    "FovApuntadoMixin"
+    "FovApuntadoMixin",
+    "ItemRendererTamborMixin"
   ],
   "injectors": {
     "defaultRequire": 1
