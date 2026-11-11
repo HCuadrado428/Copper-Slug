@@ -106,6 +106,7 @@ Hecho a mano después (ya no hay errores de compilación en ninguno de los cuatr
 - Fabric 1.21.1: el giro de cámara sobre el eje de la vista (el «roll» del retroceso) no se aplica; lo demás del
   retroceso sí.
 
-En el CI: NeoForge 1.21.1 pasa casi toda PruebaCI (fallaba lo del rifle porque el mundo de 1.21.1 sale junto al agua:
-ahora la zona del rifle va cerrada con cristal); Forge 1.21.1 llega al mundo; Fabric 1.21.1 petaba por un mixin de
-`GameRenderer` con la firma de 1.20.1 (arreglado).
+En el CI: PruebaCI pasa entera en los tres cargadores de 1.21.1 (NeoForge, Forge y Fabric, cada uno con sus 519
+comprobaciones). Fallaba lo del rifle porque el mundo de 1.21.1 sale junto al agua (ahora la zona va cerrada con cristal
+y allanada); Fabric 1.21.1 petaba por un mixin de `GameRenderer` con la firma de 1.20.1 (arreglado); en Forge, el
+jugador de mentira del duelo no tenía conexión y daba NPE (ahora la tiene y no envía nada).
