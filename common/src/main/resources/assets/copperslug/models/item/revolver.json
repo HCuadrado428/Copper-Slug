@@ -23,9 +23,87 @@
  "overrides": [
   {
    "predicate": {
+    "copperslug:cargadas": 1
+   },
+   "model": "copperslug:item/revolver_cargado_0_1"
+  },
+  {
+   "predicate": {
+    "copperslug:cargadas": 2
+   },
+   "model": "copperslug:item/revolver_cargado_0_2"
+  },
+  {
+   "predicate": {
+    "copperslug:cargadas": 3
+   },
+   "model": "copperslug:item/revolver_cargado_0_3"
+  },
+  {
+   "predicate": {
+    "copperslug:cargadas": 4
+   },
+   "model": "copperslug:item/revolver_cargado_0_4"
+  },
+  {
+   "predicate": {
+    "copperslug:cargadas": 5
+   },
+   "model": "copperslug:item/revolver_cargado_0_5"
+  },
+  {
+   "predicate": {
+    "copperslug:cargadas": 6
+   },
+   "model": "copperslug:item/revolver_cargado_0_6"
+  },
+  {
+   "predicate": {
     "copperslug:oxido": 0.25
    },
    "model": "copperslug:item/revolver_expuesto"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:cargadas": 1
+   },
+   "model": "copperslug:item/revolver_cargado_1_1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:cargadas": 2
+   },
+   "model": "copperslug:item/revolver_cargado_1_2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:cargadas": 3
+   },
+   "model": "copperslug:item/revolver_cargado_1_3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:cargadas": 4
+   },
+   "model": "copperslug:item/revolver_cargado_1_4"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:cargadas": 5
+   },
+   "model": "copperslug:item/revolver_cargado_1_5"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.25,
+    "copperslug:cargadas": 6
+   },
+   "model": "copperslug:item/revolver_cargado_1_6"
   },
   {
    "predicate": {
@@ -35,9 +113,93 @@
   },
   {
    "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:cargadas": 1
+   },
+   "model": "copperslug:item/revolver_cargado_2_1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:cargadas": 2
+   },
+   "model": "copperslug:item/revolver_cargado_2_2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:cargadas": 3
+   },
+   "model": "copperslug:item/revolver_cargado_2_3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:cargadas": 4
+   },
+   "model": "copperslug:item/revolver_cargado_2_4"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:cargadas": 5
+   },
+   "model": "copperslug:item/revolver_cargado_2_5"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.5,
+    "copperslug:cargadas": 6
+   },
+   "model": "copperslug:item/revolver_cargado_2_6"
+  },
+  {
+   "predicate": {
     "copperslug:oxido": 0.75
    },
    "model": "copperslug:item/revolver_oxidado"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:cargadas": 1
+   },
+   "model": "copperslug:item/revolver_cargado_3_1"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:cargadas": 2
+   },
+   "model": "copperslug:item/revolver_cargado_3_2"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:cargadas": 3
+   },
+   "model": "copperslug:item/revolver_cargado_3_3"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:cargadas": 4
+   },
+   "model": "copperslug:item/revolver_cargado_3_4"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:cargadas": 5
+   },
+   "model": "copperslug:item/revolver_cargado_3_5"
+  },
+  {
+   "predicate": {
+    "copperslug:oxido": 0.75,
+    "copperslug:cargadas": 6
+   },
+   "model": "copperslug:item/revolver_cargado_3_6"
   },
   {
    "predicate": {
