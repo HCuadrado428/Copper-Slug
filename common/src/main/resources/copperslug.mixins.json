@@ -7,7 +7,8 @@
   "mixins": [
     "EnchantmentHelperMixin",
     "LivingEntityGolpeAccessor",
-    "RiflePlayerMixin"
+    "RiflePlayerMixin",
+    "PillagerArmadoMixin"
   ],
   "client": [
     "CreativeScreenAccessor",
