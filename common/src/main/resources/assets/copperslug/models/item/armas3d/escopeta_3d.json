@@ -41,7 +41,7 @@
       15,
       13
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "east": {
      "uv": [
@@ -50,7 +50,7 @@
       15,
       13
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "west": {
      "uv": [
@@ -59,7 +59,7 @@
       15,
       13
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "up": {
      "uv": [
@@ -68,7 +68,7 @@
       15,
       15
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "down": {
      "uv": [
@@ -77,7 +77,7 @@
       15,
       15
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     }
    }
   },
@@ -649,7 +649,7 @@
       11,
       2.75
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "south": {
      "uv": [
@@ -658,7 +658,7 @@
       11,
       2.75
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "east": {
      "uv": [
@@ -667,7 +667,7 @@
       11,
       2.75
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "west": {
      "uv": [
@@ -676,7 +676,7 @@
       11,
       2.75
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "up": {
      "uv": [
@@ -694,7 +694,7 @@
       11,
       9.75
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     }
    }
   },
@@ -717,7 +717,7 @@
       11.0,
       7.5
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "south": {
      "uv": [
@@ -726,7 +726,7 @@
       11.0,
       7.5
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "east": {
      "uv": [
@@ -735,7 +735,7 @@
       8.5,
       7.5
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "west": {
      "uv": [
@@ -744,7 +744,7 @@
       8.5,
       7.5
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "up": {
      "uv": [
@@ -753,7 +753,7 @@
       11.0,
       4.0
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     },
     "down": {
      "uv": [
@@ -762,7 +762,7 @@
       11.0,
       4.0
      ],
-     "texture": "#hierro"
+     "texture": "#cobre"
     }
    }
   },
