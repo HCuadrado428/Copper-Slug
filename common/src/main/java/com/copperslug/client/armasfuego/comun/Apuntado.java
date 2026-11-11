@@ -232,7 +232,7 @@ public final class Apuntado {
      */
     private record Mira(float rx, float ry, float tx, float ty, float tz, float s, float yr, float zr, float yf, float zf, float prof) {}
 
-    private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 12.25F, 12.5F, 11.25F, 2.5F, 0.55F);
+    private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 11.05F, 12.35F, 11.15F, 2.15F, 0.55F);
     private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11.3F, 1.0F, 11.5F, -13.25F, 0.36F);
     private static final Mira DERRINGER = new Mira(4, 18, 1.5F, 4.5F, -2, 0.45F, 12.3F, 10.6F, 11.4F, 1.2F, 0.5F);
     private static final Mira THOMPSON = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 12.25F, 9.5F, 10.6F, -11F, 0.4F);
@@ -303,20 +303,21 @@ public final class Apuntado {
         Item i = s.getItem();
         var f = mc.font;
         if (i instanceof RevolverItem) {
-            // el tambor grande (x2) con los agujeros de las recámaras y las balas dentro, a la derecha de la mira; el
-            // pequeño de siempre se oculta mientras se apunta (PistolaCliente.hud) para que no se pisen
+            // la bala que toca, a la derecha de la mira; en la ruleta rusa, un interrogante
+            Carga c = revolverSiguiente(s, p.getXRot());
             g.fill(cx - 7, cy, cx - 3, cy + 1, 0xC0FFFFFF);
             g.fill(cx + 4, cy, cx + 8, cy + 1, 0xC0FFFFFF);
-            g.pose().pushPose();
-            g.pose().translate(cx + 34, cy + 2, 0);
-            g.pose().scale(2F, 2F, 1F);
-            com.copperslug.client.armasfuego.pistola.PistolaCliente.dibujar(g, s, 0, 0, mc.level.getGameTime(), pt);
-            g.pose().popPose();
-            // y el nombre de la que toca debajo (en la ruleta rusa no se sabe: ya lo dice el interrogante del tambor)
-            Carga c = revolverSiguiente(s, p.getXRot());
-            if (c != null) {
-                Component nombre = Component.translatable(c.clave() + ".corto");
-                g.drawString(f, nombre, cx + 34 - f.width(nombre) / 2, cy + 28, c == Carga.VACIA ? 0xFF909090 : 0xFF000000 | c.color, true);
+            if (c == null) {
+                g.drawString(f, "?", cx + 14, cy - 4, 0xFFC27BFF, true);
+            } else if (c == Carga.VACIA) {
+                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 14, cy - 4, 0xFF909090, true);
+            } else {
+                g.pose().pushPose();
+                g.pose().translate(cx + 12, cy - 6, 0);
+                g.pose().scale(0.75F, 0.75F, 1F);
+                g.renderItem(new ItemStack(c.item()), 0, 0);
+                g.pose().popPose();
+                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 26, cy - 4, 0xFF000000 | c.color, true);
             }
         } else if (i instanceof WinchesterItem) {
             // alza de cuernos: dos patillas y la bala que va a salir
