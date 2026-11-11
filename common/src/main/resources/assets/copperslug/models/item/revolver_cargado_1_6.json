@@ -1,0 +1,23 @@
+{
+ "loader": "forge:separate_transforms",
+ "gui_light": "front",
+ "textures": {
+  "particle": "copperslug:item/revolver_expuesto"
+ },
+ "base": {
+  "parent": "copperslug:item/armas3d/revolver_3d_n6",
+  "textures": {
+   "cobre": "copperslug:item/armas3d/cobre_1",
+   "tambor": "copperslug:item/armas3d/tambor_frente_1",
+   "tambor_lado": "copperslug:item/armas3d/tambor_lado_1"
+  }
+ },
+ "perspectives": {
+  "gui": {
+   "parent": "minecraft:item/generated",
+   "textures": {
+    "layer0": "copperslug:item/revolver_expuesto"
+   }
+  }
+ }
+}
