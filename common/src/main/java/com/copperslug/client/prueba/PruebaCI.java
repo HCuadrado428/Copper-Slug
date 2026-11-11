@@ -3145,6 +3145,7 @@ public final class PruebaCI {
             a2Apuntar(z.getBoundingBox().getCenter());
         }));
         sin("a2o_bayoneta_golpe", 4, () -> {
+            PI.put("bay_vista", false);
             var z = mc.level.getEntity(mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, mc.player.getBoundingBox().inflate(6)).stream()
                     .findFirst().map(net.minecraft.world.entity.Entity::getId).orElse(-1));
             if (z != null) {
@@ -3152,10 +3153,14 @@ public final class PruebaCI {
                 mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
             }
         });
+        // vigilancia por tick: el fuego del golpe se mira en cada tick siguiente (si el CI lo apaga un tick, se ve igual)
+        for (int i = 0; i < 3; i++) sin("a2o_bayoneta_vigila" + i, 1, () -> piSrv(sp -> {
+            if (sp.serverLevel().getEntity(a2Diana) instanceof net.minecraft.world.entity.LivingEntity le && le.isOnFire()) PI.put("bay_vista", true);
+        }));
         sin("a2o_bayoneta_ver", 2, () -> piSrv(sp -> {
             var z = (net.minecraft.world.entity.LivingEntity) sp.serverLevel().getEntity(a2Diana);
             PI.put("bay_dano", z == null ? -1F : (Float) PI.get("bay_vida0") - z.getHealth());
-            PI.put("bay_fuego", z != null && z.isOnFire());
+            PI.put("bay_fuego", (z != null && z.isOnFire()) || Boolean.TRUE.equals(PI.get("bay_vista")));
             // la experiencia arregla la espada calada (Reparación)
             ItemStack b = com.copperslug.armasfuego.oeste.MosqueteItem.bayoneta(sp.getMainHandItem());
             PI.put("bay_rota0", b.getDamageValue());
