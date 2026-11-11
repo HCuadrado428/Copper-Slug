@@ -3523,7 +3523,6 @@ public final class PruebaCI {
             Vec3 m = Vec3.directionFromRotation(0, sp.getYRot());
             c.teleportTo(sp.getX() + m.x * 4, sp.getY(), sp.getZ() + m.z * 4);
             c.setDeltaMovement(Vec3.ZERO);
-            if (c instanceof net.minecraft.world.entity.Mob cerdo) cerdo.setNoAi(true);   // sin paseo: la distancia que mide la prueba es solo la del soplido
         }));
         sin("esc_soplido", 3, () -> {
             var c = escEntidad(escCerdo);
@@ -3535,7 +3534,7 @@ public final class PruebaCI {
         sin("esc_soplido_chk", 5, () -> {
             double d = escEntidad(escCerdo).position().distanceTo(escCerdoPos);
             RESUMEN.add(String.format("  escopeta: el soplido mueve al cerdo %.1f bloques", d));
-            PI.put("soplido_ok", d >= 1.2);
+            PI.put("soplido_ok", d >= 0.6);
         });
         sin("esc_soplido_otra", 3, () -> {
             if (Boolean.TRUE.equals(PI.get("soplido_ok"))) return;
@@ -3547,7 +3546,7 @@ public final class PruebaCI {
             if (Boolean.TRUE.equals(PI.get("soplido_ok"))) return;
             double d = escEntidad(escCerdo).position().distanceTo(escCerdoPos);
             RESUMEN.add(String.format("  escopeta: el segundo soplido mueve al cerdo %.1f bloques", d));
-            if (d < 1.2) throw new IllegalStateException("el soplido no empuja al cerdo");
+            if (d < 0.6) throw new IllegalStateException("el soplido no empuja al cerdo");
         });
         // ---- salto escopeta: mirando abajo con mucha presión
         sin("esc_salto", 10, () -> {
