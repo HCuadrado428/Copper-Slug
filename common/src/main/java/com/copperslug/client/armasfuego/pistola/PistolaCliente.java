@@ -68,7 +68,12 @@ public final class PistolaCliente {
         // del HUD le caería encima, así que no se dibuja
         if (com.copperslug.client.armasfuego.comun.Apuntado.apunta && com.copperslug.client.armasfuego.comun.Apuntado.k >= 0.6F
                 && mc.options.getCameraType().isFirstPerson()) return;
-        dibujar(g, s, w / 2 + 17, h / 2 + 15, mc.level.getGameTime(), pt);
+        // abajo a la derecha, fuera de la mira y de la mano (en medio de la pantalla era una galleta flotando junto a la cruz)
+        int cx = w - 30, cy = h - 40;
+        g.fill(cx - 15, cy - 15, cx + 16, cy + 24, 0x55000000);
+        dibujar(g, s, cx, cy, mc.level.getGameTime(), pt);
+        String n = Tambor.cargadas(s) + "/" + Tambor.N;
+        g.drawString(mc.font, n, cx - mc.font.width(n) / 2 + 1, cy + 14, Tambor.cargadas(s) == 0 ? 0xFFFF6060 : 0xFFE8D8A0, true);
     }
 
     /** El tambor con centro en (cx, cy). */
