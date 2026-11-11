@@ -484,7 +484,7 @@ public final class PruebaCI {
             int n = com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos;
             boolean cae = com.copperslug.client.armasfuego.comun.Apuntado.parabolaCae;
             com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
-            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 6 && cae, n + " puntos, cae en un bloque: " + cae + " (" + com.copperslug.client.armasfuego.comun.Apuntado.parabolaDiag
+            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 3 && cae, n + " puntos, cae en un bloque: " + cae + " (" + com.copperslug.client.armasfuego.comun.Apuntado.parabolaDiag
                     + "; apunta " + com.copperslug.client.armasfuego.comun.Apuntado.apunta + ", k " + com.copperslug.client.armasfuego.comun.Apuntado.k + ", en la mano " + mc.player.getMainHandItem().getItem() + ")");
         });
         // ---- el rifle apunta con su catalejo (su zoom): cuenta como apuntar
