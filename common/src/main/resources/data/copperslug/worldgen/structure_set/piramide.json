@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "copperslug:piramide",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 36,
+    "separation": 14,
+    "salt": 1923481,
+    "exclusion_zone": {
+      "other_set": "minecraft:desert_pyramids",
+      "chunk_count": 5
+    }
+  }
+}
