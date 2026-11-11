@@ -183,6 +183,18 @@ jobs:
             printf 'enableShaders=true\nshaderPack=%s\n' "$PACK" > run/config/iris.properties
           fi
           ls run/mods
+      # Los paquetes que instala MC-Runtime-Test, antes y con reintentos: el DNS del runner falla a ratos con los
+      # espejos de Ubuntu y la acción no reintenta. Al segundo fallo se prueba con otros servidores de nombres.
+      - name: Paquetes de gráficos (con reintentos)
+        run: |
+          for i in 1 2 3 4 5 6; do
+            if sudo DEBIAN_FRONTEND=noninteractive apt-get install -y x11-xserver-utils libgl1-mesa-dri mesa-vulkan-drivers; then exit 0; fi
+            echo "::warning::apt ha fallado (intento $i)"
+            getent hosts archive.ubuntu.com || echo "archive.ubuntu.com no resuelve"
+            if [ "$i" -ge 2 ]; then printf 'nameserver 1.1.1.1\nnameserver 8.8.8.8\n' | sudo tee /etc/resolv.conf; fi
+            sleep 15
+          done
+          echo "::warning::no se han podido instalar los paquetes; sigue la acción (puede fallar)"
       - name: Abrir el juego (y probar las armas)
         uses: headlesshq/mc-runtime-test@5.0.0
         with:
