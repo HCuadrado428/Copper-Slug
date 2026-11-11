@@ -64,6 +64,9 @@ public final class PistolaCliente {
         if (mc.player == null || mc.options.hideGui || mc.screen != null && !(mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen)) return;
         ItemStack s = mc.player.getMainHandItem();
         if (!(s.getItem() instanceof RevolverItem)) return;
+        // apuntando, el tambor lo dibuja la mira (grande, junto a la cruz): este pequeño taparía
+        if (com.copperslug.client.armasfuego.comun.Apuntado.apunta && com.copperslug.client.armasfuego.comun.Apuntado.k >= 0.6F
+                && mc.options.getCameraType().isFirstPerson()) return;
         dibujar(g, s, w / 2 + 17, h / 2 + 15, mc.level.getGameTime(), pt);
     }
 
