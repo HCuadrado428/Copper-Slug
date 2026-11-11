@@ -64,11 +64,11 @@ public final class PistolaCliente {
         if (mc.player == null || mc.options.hideGui || mc.screen != null && !(mc.screen instanceof net.minecraft.client.gui.screens.ChatScreen)) return;
         ItemStack s = mc.player.getMainHandItem();
         if (!(s.getItem() instanceof RevolverItem)) return;
-        // apuntando en primera persona, el arma está en el centro y el tambor de siempre le caería encima (tapa la ventana de
-        // carga del modelo 3D): se aparta a la derecha del arma
-        boolean apuntando = com.copperslug.client.armasfuego.comun.Apuntado.apunta && com.copperslug.client.armasfuego.comun.Apuntado.k >= 0.6F
-                && mc.options.getCameraType().isFirstPerson();
-        dibujar(g, s, w / 2 + (apuntando ? 52 : 17), h / 2 + 15, mc.level.getGameTime(), pt);
+        // apuntando en primera persona el arma está en el centro (y su modelo 3D enseña las recámaras por detrás): el tambor
+        // del HUD le caería encima, así que no se dibuja
+        if (com.copperslug.client.armasfuego.comun.Apuntado.apunta && com.copperslug.client.armasfuego.comun.Apuntado.k >= 0.6F
+                && mc.options.getCameraType().isFirstPerson()) return;
+        dibujar(g, s, w / 2 + 17, h / 2 + 15, mc.level.getGameTime(), pt);
     }
 
     /** El tambor con centro en (cx, cy). */
