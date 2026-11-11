@@ -244,6 +244,11 @@ public final class FuegoCliente {
         int x = w / 2 + 12 + (apuntando ? 28 : 0), y = h / 2 + 8;
         var f = mc.font;
         int balas = ArmaFuegoItem.balas(s), cap = a.capacidad(s);
+        // los contadores solo salen un rato tras sacar el arma, apuntar o disparar, y siempre que importen (sin balas, pocas,
+        // encasquillada, recargando o con la mecha del cañón encendida): siempre encendidos tapaban la pantalla
+        boolean urgente = balas == 0 || ArmaFuegoItem.atascada(s) || (cap > 0 && balas * 4 <= cap) || p.isUsingItem() && p.getUseItem() == s
+                || s.getItem() instanceof CanonManoItem && CanonManoItem.mecha(s) >= 0;
+        if (!urgente && !HudActividad.reciente()) return;
         // balas: la Winchester, su depósito tubular con el color de cada bala; las demás, puntitos de latón si caben
         // (hasta 12), si no el número
         if (s.getItem() instanceof WinchesterItem) {

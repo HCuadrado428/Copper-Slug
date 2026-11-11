@@ -68,6 +68,8 @@ public final class PistolaCliente {
         // del HUD le caería encima, así que no se dibuja
         if (com.copperslug.client.armasfuego.comun.Apuntado.apunta && com.copperslug.client.armasfuego.comun.Apuntado.k >= 0.6F
                 && mc.options.getCameraType().isFirstPerson()) return;
+        // solo un rato tras sacarlo, apuntar, disparar o recargar, o si está vacío o con el tambor girado
+        if (Tambor.cargadas(s) > 0 && !Tambor.girado(s) && !mc.player.isUsingItem() && !com.copperslug.client.armasfuego.comun.HudActividad.reciente()) return;
         // abajo a la derecha, fuera de la mira y de la mano (en medio de la pantalla era una galleta flotando junto a la cruz)
         int cx = w - 30, cy = h - 40;
         g.fill(cx - 15, cy - 15, cx + 16, cy + 24, 0x55000000);
