@@ -308,16 +308,16 @@ public final class Apuntado {
             g.fill(cx - 7, cy, cx - 3, cy + 1, 0xC0FFFFFF);
             g.fill(cx + 4, cy, cx + 8, cy + 1, 0xC0FFFFFF);
             if (c == null) {
-                g.drawString(f, "?", cx + 14, cy - 4, 0xFFC27BFF, true);
+                g.drawString(f, "?", cx + 32, cy - 4, 0xFFC27BFF, true);
             } else if (c == Carga.VACIA) {
-                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 14, cy - 4, 0xFF909090, true);
+                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 32, cy - 4, 0xFF909090, true);
             } else {
                 g.pose().pushPose();
-                g.pose().translate(cx + 12, cy - 6, 0);
+                g.pose().translate(cx + 30, cy - 6, 0);
                 g.pose().scale(0.75F, 0.75F, 1F);
                 g.renderItem(new ItemStack(c.item()), 0, 0);
                 g.pose().popPose();
-                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 26, cy - 4, 0xFF000000 | c.color, true);
+                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 44, cy - 4, 0xFF000000 | c.color, true);
             }
         } else if (i instanceof WinchesterItem) {
             // alza de cuernos: dos patillas y la bala que va a salir

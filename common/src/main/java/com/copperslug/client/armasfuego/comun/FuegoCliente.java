@@ -239,7 +239,9 @@ public final class FuegoCliente {
             }
         }
         if (!(s.getItem() instanceof ArmaFuegoItem a)) return;
-        int x = w / 2 + 12, y = h / 2 + 8;
+        // apuntando en primera persona el arma ocupa el centro: los contadores se apartan a su derecha
+        boolean apuntando = Apuntado.apunta && Apuntado.k >= 0.6F && mc.options.getCameraType().isFirstPerson();
+        int x = w / 2 + 12 + (apuntando ? 28 : 0), y = h / 2 + 8;
         var f = mc.font;
         int balas = ArmaFuegoItem.balas(s), cap = a.capacidad(s);
         // balas: la Winchester, su depósito tubular con el color de cada bala; las demás, puntitos de latón si caben
@@ -348,7 +350,8 @@ public final class FuegoCliente {
 
     private static void hudGatling(GuiGraphics g, Minecraft mc, GatlingEntity gat, int w, int h) {
         // debajo de la mira (abajo están el aviso de bajarse y los mensajes de la barra de acción)
-        int x = w / 2 - 40, y = h / 2 + 24;
+        // a la derecha de la mira (debajo caía sobre el modelo de la Gatling y los avisos de la barra de acción)
+        int x = w / 2 + 30, y = h / 2 + 2;
         var f = mc.font;
         float c = gat.calor() / 100F;
         int col = c < 0.5F ? 0xFF5FD35F : c < 0.8F ? 0xFFE8C840 : 0xFFE84030;
@@ -359,7 +362,7 @@ public final class FuegoCliente {
         g.drawString(f, b, x + 80 - f.width(b), y - 11, gat.balas() == 0 ? 0xFFFF5555 : 0xFFF0D080, true);
         if (gat.recarga() > 0) {
             Component t = Component.translatable("hud.copperslug.gatling.recargando");
-            g.drawString(f, t, w / 2 - f.width(t) / 2, y + 8, 0xFFE0C060, true);
+            g.drawString(f, t, x, y + 8, 0xFFE0C060, true);
         }
     }
 
