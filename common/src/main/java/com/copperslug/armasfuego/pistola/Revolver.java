@@ -133,7 +133,8 @@ public final class Revolver {
             critico = sacado != null && ahora - sacado <= VENTANA_DESENFUNDE
                     && EncantamientoRevolver.nivel(ModEnchantments.REVOLVER_DESENFUNDE, s) > 0;
         }
-        double disp = critico ? 0 : DISPERSION[0] + com.copperslug.armasfuego.comun.Cobre.dispersion(ox) + (abanico ? 0.10 : 0);
+        double disp = critico ? 0 : (DISPERSION[0] + com.copperslug.armasfuego.comun.Cobre.dispersion(ox)) * (abanico ? 1 : com.copperslug.armasfuego.comun.Apuntar.dispersion(p))
+                + (abanico ? 0.10 : 0);
         Vec3 mira = p.getViewVector(1.0F);
         Vec3 dir = mira.add(r.nextGaussian() * disp, r.nextGaussian() * disp, r.nextGaussian() * disp).normalize();
 
@@ -161,6 +162,7 @@ public final class Revolver {
                 // la bala imán se pega donde da (no rebota): con Carambola se iba rebotando lejos de lo tirado
                 int rebotes = c == Carga.IMAN ? 0 : EncantamientoRevolver.nivel(ModEnchantments.REVOLVER_CARAMBOLA, s);
                 Impacto im = trazar(l, p, p.getEyePosition(), dir, ALCANCE, rebotes, boca);
+                if (im.rebotes() == 0) com.copperslug.armasfuego.comun.Balistica.trazo(l, boca, im.pos(), c.item());
                 impactar(l, p, c, im, critico, s);
             }
             case BENGALA -> {
@@ -275,9 +277,7 @@ public final class Revolver {
         }
         if (im.bloque() != null) {
             BlockState st = l.getBlockState(im.bloque().getBlockPos());
-            if (!st.isAir())
-                l.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, st), q.x, q.y, q.z, 6, 0.05, 0.05, 0.05, 0.1);
-            l.sendParticles(ParticleTypes.SMOKE, q.x, q.y, q.z, 2, 0.02, 0.02, 0.02, 0.01);
+            com.copperslug.armasfuego.comun.Balistica.polvo(l, st, q);
             if (st.getBlock() instanceof BellBlock bell) bell.attemptToRing(p, l, im.bloque().getBlockPos(), im.bloque().getDirection());
         }
         if (c == Carga.IMAN) atraer(l, p, q);

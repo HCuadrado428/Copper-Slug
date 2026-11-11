@@ -182,6 +182,11 @@ public class CanonManoItem extends ArmaFuegoItem {
         LogrosMiscelanea.dar(p, "canon_revienta");
     }
 
+    /** Velocidad con la que sale el bolaño (la mira dibuja con ella la parábola). */
+    public static float velocidad(ItemStack s) {
+        return 2.2F * (1 + 0.2F * nivel(com.copperslug.registry.ModEnchantments.CANON_POLVORA_FINA, s));
+    }
+
     @Override
     protected void disparar(ServerPlayer p, ItemStack s) {
         ServerLevel l = p.serverLevel();
@@ -191,8 +196,7 @@ public class CanonManoItem extends ArmaFuegoItem {
         bola.setItem(new ItemStack(tipo));
         bola.ponerOxido(com.copperslug.armasfuego.comun.Cobre.oxido(s));
         bola.setPos(b.x, b.y, b.z);
-        float v = 2.2F * (1 + 0.2F * nivel(com.copperslug.registry.ModEnchantments.CANON_POLVORA_FINA, s));
-        bola.shootFromRotation(p, p.getXRot(), p.getYRot(), 0F, v, 4.0F);
+        bola.shootFromRotation(p, p.getXRot(), p.getYRot(), 0F, velocidad(s), (float) (4.0 * com.copperslug.armasfuego.comun.Apuntar.dispersion(p)));
         l.addFreshEntity(bola);
         efectos(l, p, b, ModSounds.CANON_DISPARO.get(), 6.0F, 0.9F, 0, false);
         Vec3 m = p.getViewVector(1F);

@@ -65,6 +65,10 @@ public final class ModNetwork {
                 com.copperslug.armasfuego.gatling.GatlingPacket::new, com.copperslug.armasfuego.gatling.GatlingPacket::handle);
         alServidor("manga", com.copperslug.armasfuego.oeste.MangaPacket.class, com.copperslug.armasfuego.oeste.MangaPacket::encode,
                 com.copperslug.armasfuego.oeste.MangaPacket::new, com.copperslug.armasfuego.oeste.MangaPacket::handle);
+        alServidor("apuntar", com.copperslug.armasfuego.comun.ApuntarPacket.class, com.copperslug.armasfuego.comun.ApuntarPacket::encode,
+                com.copperslug.armasfuego.comun.ApuntarPacket::new, com.copperslug.armasfuego.comun.ApuntarPacket::handle);
+        alServidor("gatillo", com.copperslug.armasfuego.comun.GatilloPacket.class, com.copperslug.armasfuego.comun.GatilloPacket::encode,
+                com.copperslug.armasfuego.comun.GatilloPacket::new, com.copperslug.armasfuego.comun.GatilloPacket::handle);
         alCliente("config", com.copperslug.config.ConfigPacket.class, com.copperslug.config.ConfigPacket::encode,
                 com.copperslug.config.ConfigPacket::new, com.copperslug.config.ConfigPacket::handle);
     }

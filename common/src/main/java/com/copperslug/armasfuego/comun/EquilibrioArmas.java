@@ -45,6 +45,8 @@ public final class EquilibrioArmas {
     // ---- el cobre de las nueve: lo que hace cada fase (nueva, expuesta, erosionada, oxidada) y lo que dura la cera
     private static ForgeConfigSpec.ConfigValue<java.util.List<? extends Double>> OX_ATASCO, OX_DISPERSION, OX_DANO, OX_PERFORACION;
     private static ForgeConfigSpec.IntValue CERA, CERA_AUTOMATICAS;
+    // ---- apuntar (clic derecho mantenido; todas menos la escopeta de presión)
+    private static ForgeConfigSpec.DoubleValue APUNTAR_DISPERSION, APUNTAR_FOV, APUNTAR_LENTITUD;
     // ---- botín
     private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON;
 
@@ -63,6 +65,12 @@ public final class EquilibrioArmas {
         OX_PERFORACION = b.comment("Parte del daño que se salta la armadura que añade cada fase (0-1; 0,1 = 10 puntos).").defineList("perforacion", java.util.List.of(0.0, 0.03, 0.06, 0.1), num);
         CERA = b.comment("Disparos que dura la cera de un panal (luego vuelve a oxidarse; volver a encerar la rellena).").defineInRange("cera_disparos", 200, 1, 100000);
         CERA_AUTOMATICAS = b.comment("Lo mismo para la Gatling y la Thompson (disparan muchísimo más).").defineInRange("cera_disparos_automaticas", 1500, 1, 1000000);
+        b.pop();
+        b.comment("Apuntar: mantener el clic derecho con un arma en la mano (todas menos la escopeta de presión, que dispara solo desde la cadera).",
+                "El rifle apunta con su catalejo (su zoom es el del catalejo) y solo usa la dispersión de aquí.").push("apuntado");
+        APUNTAR_DISPERSION = b.comment("Por cuánto se multiplica la dispersión al apuntar (1 = igual que desde la cadera; 0,4 = un 60 % menos).").defineInRange("dispersion", 0.4, 0.0, 1.0);
+        APUNTAR_FOV = b.comment("Por cuánto se multiplica el campo de visión al apuntar (1 = sin zoom; 0,8 = se cierra un 20 %).").defineInRange("fov", 0.8, 0.3, 1.0);
+        APUNTAR_LENTITUD = b.comment("Cuánto más lento se anda apuntando (0 = igual; 0,35 = un 35 % más lento).").defineInRange("lentitud", 0.35, 0.0, 0.9);
         b.pop();
         ENCASQUILLADO_BASE = b.comment("Probabilidad de que cualquier arma de fuego se encasquille en un disparo, aunque esté nueva (el óxido la sube).",
                 "Encasquillada: agachado + clic derecho para desatascarla (o el cerrojo/la palanca).").defineInRange("encasquillado_base", 0.01, 0.0, 1.0);
@@ -156,6 +164,9 @@ public final class EquilibrioArmas {
     public static volatile boolean sinAtascosPrueba;
 
     public static float encasquilladoBase() { return sinAtascosPrueba ? 0F : (float) d(ENCASQUILLADO_BASE); }
+    public static double apuntarDispersion() { return d(APUNTAR_DISPERSION); }
+    public static float apuntarFov() { return (float) d(APUNTAR_FOV); }
+    public static double apuntarLentitud() { return d(APUNTAR_LENTITUD); }
     public static float revolverDano() { return (float) d(REVOLVER_DANO); }
     public static int revolverEnfriamiento() { return i(REVOLVER_ENFRIAMIENTO); }
     public static float escopetaPerdigon() { return (float) d(ESCOPETA_PERDIGON); }
