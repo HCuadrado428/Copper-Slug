@@ -33,6 +33,8 @@ jobs:
           print('\n'.join(mal) or 'todas de 16x16')
           sys.exit(1 if mal else 0)
           PY
+      - name: Suscriptores al día
+        run: python3 herramientas/comprobar_suscriptores.py
       - name: Compilar
         run: |
           chmod +x gradlew
