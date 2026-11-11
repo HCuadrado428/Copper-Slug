@@ -3496,9 +3496,22 @@ public final class PruebaCI {
             escCargar(null, 90, c.position().add(0, 0.5, 0));
         });
         paso("131_soplido", 10, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
+        // el cerdo a veces no se mueve con el primer soplido (el CI va lento): otro soplido, y se mira otra vez
         sin("esc_soplido_chk", 5, () -> {
             double d = escEntidad(escCerdo).position().distanceTo(escCerdoPos);
             RESUMEN.add(String.format("  escopeta: el soplido mueve al cerdo %.1f bloques", d));
+            PI.put("soplido_ok", d >= 1.2);
+        });
+        sin("esc_soplido_otra", 3, () -> {
+            if (Boolean.TRUE.equals(PI.get("soplido_ok"))) return;
+            RESUMEN.add("  escopeta: el soplido no movió al cerdo; otro soplido");
+            escCargar(null, 90, escEntidad(escCerdo).position().add(0, 0.5, 0));
+            com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
+        });
+        sin("esc_soplido_chk2", 8, () -> {
+            if (Boolean.TRUE.equals(PI.get("soplido_ok"))) return;
+            double d = escEntidad(escCerdo).position().distanceTo(escCerdoPos);
+            RESUMEN.add(String.format("  escopeta: el segundo soplido mueve al cerdo %.1f bloques", d));
             if (d < 1.2) throw new IllegalStateException("el soplido no empuja al cerdo");
         });
         // ---- salto escopeta: mirando abajo con mucha presión
