@@ -126,11 +126,24 @@ public final class Apuntado {
         }
     }
 
-    /** Con un arma que dispara con el clic izquierdo, el clic no pega ni pica. */
+    /**
+     * Con un arma que dispara con el clic izquierdo, el clic no pega ni pica. Y el clic derecho, que es apuntar, no se
+     * le pasa al juego: vanilla lo repite cada 4 ticks y cada vez que el objeto «se usa» baja y sube la mano (la
+     * animación de equipar), con lo que el arma apuntando iba arriba y abajo en primera persona. Agachado y sin apuntar
+     * sí pasa (recargar, encerar, rascar).
+     */
     @SubscribeEvent
     public static void clic(InputEvent.InteractionKeyMappingTriggered e) {
         LocalPlayer p = Minecraft.getInstance().player;
-        if (p == null || !e.isAttack()) return;
+        if (p == null) return;
+        if (e.isUseItem()) {
+            if (GatlingEntity.deJugador(p) == null && Apuntar.apuntable(p.getMainHandItem()) && (!p.isShiftKeyDown() || apunta)) {
+                e.setCanceled(true);
+                e.setSwingHand(false);
+            }
+            return;
+        }
+        if (!e.isAttack()) return;
         if (GatlingEntity.deJugador(p) != null || disparaConClic(p, p.getMainHandItem())) {
             e.setCanceled(true);
             e.setSwingHand(false);
