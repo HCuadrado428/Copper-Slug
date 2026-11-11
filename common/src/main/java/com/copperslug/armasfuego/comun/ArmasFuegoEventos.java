@@ -67,6 +67,7 @@ public final class ArmasFuegoEventos {
         if (e.phase != com.copperslug.shim.event.TickEvent.Phase.END) return;
         Apuntar.tick(e.getServer());
         ArmaFuegoItem.tickRafagas(e.getServer());
+        MobsArmados.tick(e.getServer());
     }
 
     /** Reparación en la espada calada del mosquete. */

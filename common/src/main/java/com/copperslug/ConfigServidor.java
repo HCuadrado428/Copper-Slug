@@ -11,6 +11,9 @@ public final class ConfigServidor {
     private ConfigServidor() {}
 
     private static final ForgeConfigSpec.DoubleValue BOTIN_REVOLVER_HERREROS, BOTIN_REVOLVER_CASAS, BOTIN_ESCOPETA, BOTIN_RIFLE, BOTIN_ENCANTADA;
+    private static final ForgeConfigSpec.BooleanValue MOBS_ACTIVADO;
+    private static final ForgeConfigSpec.DoubleValue MOBS_PROB, MOBS_PROB_CAPITAN, MOBS_DANO, MOBS_SUELTA;
+    private static final ForgeConfigSpec.IntValue MOBS_CADENCIA;
     public static final ForgeConfigSpec SPEC;
 
     static {
@@ -25,6 +28,14 @@ public final class ConfigServidor {
         BOTIN_ENCANTADA = b.comment("Probabilidad de que el arma encontrada lleve uno de sus encantamientos propios.").defineInRange("encantada", 0.25, 0.0, 1.0);
         b.pop();
         b.pop();
+        b.comment("Mobs con armas: algunos saqueadores salen con una Winchester y disparan de verdad.").push("mobs_armados");
+        MOBS_ACTIVADO = b.comment("Apagar esto deja a todos los mobs como en vanilla.").define("activado", true);
+        MOBS_PROB = b.comment("Probabilidad (0-1) de que un saqueador salga armado.").defineInRange("probabilidad_saqueador", 0.05, 0.0, 1.0);
+        MOBS_PROB_CAPITAN = b.comment("Lo mismo para el capitan de la patrulla (el del estandarte).").defineInRange("probabilidad_capitan", 0.3, 0.0, 1.0);
+        MOBS_DANO = b.comment("Dano de cada bala de un mob (2 = un corazon).").defineInRange("dano", 4.0, 0.0, 40.0);
+        MOBS_CADENCIA = b.comment("Ticks entre disparo y disparo de un mob (20 = 1 s).").defineInRange("cadencia", 40, 5, 400);
+        MOBS_SUELTA = b.comment("Probabilidad (0-1) de que suelte el arma al morir.").defineInRange("suelta", 0.1, 0.0, 1.0);
+        b.pop();
         EquilibrioArmas.definir(b);
         SPEC = b.build();
     }
@@ -34,4 +45,14 @@ public final class ConfigServidor {
     public static double botinEscopeta() { return BOTIN_ESCOPETA.get(); }
     public static double botinRifle() { return BOTIN_RIFLE.get(); }
     public static double botinEncantada() { return BOTIN_ENCANTADA.get(); }
+
+    private static boolean b(ForgeConfigSpec.BooleanValue v) { try { return SPEC.isLoaded() ? v.get() : v.getDefault(); } catch (Exception e) { return v.getDefault(); } }
+    private static double d(ForgeConfigSpec.DoubleValue v) { try { return SPEC.isLoaded() ? v.get() : v.getDefault(); } catch (Exception e) { return v.getDefault(); } }
+    private static int i(ForgeConfigSpec.IntValue v) { try { return SPEC.isLoaded() ? v.get() : v.getDefault(); } catch (Exception e) { return v.getDefault(); } }
+    public static boolean mobsArmados() { return b(MOBS_ACTIVADO); }
+    public static double mobsProb() { return d(MOBS_PROB); }
+    public static double mobsProbCapitan() { return d(MOBS_PROB_CAPITAN); }
+    public static float mobsDano() { return (float) d(MOBS_DANO); }
+    public static int mobsCadencia() { return i(MOBS_CADENCIA); }
+    public static float mobsSuelta() { return (float) d(MOBS_SUELTA); }
 }
