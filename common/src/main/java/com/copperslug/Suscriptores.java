@@ -12,6 +12,7 @@ public final class Suscriptores {
     };
 
     public static final String[] CLIENTE = {
+            "com.copperslug.client.armasfuego.comun.Apuntado",
             "com.copperslug.client.armasfuego.comun.FuegoCliente",
             "com.copperslug.client.armasfuego.comun.FuegoClienteMod",
             "com.copperslug.client.armasfuego.escopeta.EscopetaCliente",
