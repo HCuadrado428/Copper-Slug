@@ -233,7 +233,7 @@ public final class Apuntado {
     private record Mira(float rx, float ry, float tx, float ty, float tz, float s, float yr, float zr, float yf, float zf, float prof) {}
 
     private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 11.05F, 12.35F, 11.15F, 2.15F, 0.55F);
-    private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11.3F, 1.0F, 11.5F, -13.25F, 0.36F);
+    private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11.3F, 1.0F, 11.5F, -13.25F, 0.55F);   // el ojo detrás del armazón (con 0,36 quedaba dentro)
     private static final Mira DERRINGER = new Mira(4, 18, 1.5F, 4.5F, -2, 0.45F, 12.3F, 10.6F, 11.4F, 1.2F, 0.5F);
     private static final Mira THOMPSON = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 12.25F, 9.5F, 10.6F, -11F, 0.4F);
     private static final Mira MOSQUETE = new Mira(2, 14, -1, 2.5F, -9, 0.5F, 10.8F, 12F, 11.0F, -9F, 0.42F);
