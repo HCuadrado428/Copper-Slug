@@ -112,10 +112,19 @@ public final class Apuntado {
             apunta = quiere;
             Apuntar.poner(p, quiere);
             ModNetwork.CHANNEL.sendToServer(new ApuntarPacket(quiere));
+            // un clic suave de cobre al poner la mira y otro más grave al soltarla (solo lo oye el que apunta)
+            p.level().playLocalSound(p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.COPPER_HIT, net.minecraft.sounds.SoundSource.PLAYERS,
+                    quiere ? 0.30F : 0.18F, quiere ? 1.7F : 1.3F, false);
         } else if (apunta && !Apuntar.apuntando(p)) Apuntar.poner(p, true);
         gatlingApunta = gat && mc.screen == null && (mc.options.keyUse.isDown() || apuntarPrueba);
         kO = k;
         k = Mth.clamp(k + (apunta || gatlingApunta ? 0.25F : -0.25F), 0F, 1F);
+        // al sacar el mosquete con su bayoneta: un destello en la punta de la hoja (solo en primera persona)
+        Item actual = s.getItem();
+        if (actual != ultimoObjeto) {
+            if (actual instanceof MosqueteItem && !MosqueteItem.bayoneta(s).isEmpty() && mc.options.getCameraType().isFirstPerson()) brilloBayoneta(mc, p);
+            ultimoObjeto = actual;
+        }
         // la ráfaga de la Thompson: cada tick mientras se mantiene el gatillo
         if (rafaga) {
             boolean sigue = s.getItem() instanceof ArmaFuegoItem && mc.screen == null && (mc.options.keyAttack.isDown() || gatilloPrueba) && !p.isUsingItem();
@@ -148,6 +157,21 @@ public final class Apuntado {
             e.setCanceled(true);
             e.setSwingHand(false);
         }
+    }
+
+    /** El objeto de la mano en el tick anterior (para notar que se acaba de sacar uno). */
+    private static Item ultimoObjeto;
+
+    /** Tres destellos a lo largo de la punta de la bayoneta y un tintineo corto. */
+    private static void brilloBayoneta(Minecraft mc, LocalPlayer p) {
+        Vec3 mira = p.getViewVector(1F);
+        Vec3 der = new Vec3(-mira.z, 0, mira.x);
+        der = der.lengthSqr() < 1e-4 ? new Vec3(1, 0, 0) : der.normalize();
+        for (int i = 0; i < 3; i++) {
+            Vec3 q = p.getEyePosition().add(mira.scale(1.3 + 0.25 * i)).add(der.scale(0.22)).add(0, -0.18 + 0.03 * i, 0);
+            mc.level.addParticle(net.minecraft.core.particles.ParticleTypes.END_ROD, q.x, q.y, q.z, 0, 0.012, 0);
+        }
+        p.level().playLocalSound(p.getX(), p.getY(), p.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME, net.minecraft.sounds.SoundSource.PLAYERS, 0.22F, 2.0F, false);
     }
 
     /** Aprieta el gatillo del arma de la mano: en el cliente (retroceso, espera) y se lo pide al servidor. */
@@ -230,6 +254,7 @@ public final class Apuntado {
      * del alza acaba en el eje de la vista y el cañón, paralelo a él.
      */
     public static void alinear(PoseStack ps, int lado, ItemStack st, float pt) {
+        Inspeccion.aplicar(ps, lado, st, pt);   // inspeccionar el arma (tecla N)
         float kk = Mth.lerp(pt, kO, k);
         if (kk <= 0.001F || gatlingApunta) return;
         Mira m = mira(st.getItem());

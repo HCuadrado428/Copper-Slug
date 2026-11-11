@@ -505,5 +505,6 @@
   "advancements.copperslug.raiz.title": "Copper Slug",
   "advancements.copperslug.raiz.description": "Copper revolvers, rifles and cannons: they can't be crafted, they're found in chests.",
   "enchantment.copperslug.pulso_firme": "Steady Hand",
-  "enchantment.copperslug.pulso_firme.desc": "While aiming: 20% less spread per level and less slowdown. For the guns you aim with the right click."
+  "enchantment.copperslug.pulso_firme.desc": "While aiming: 20% less spread per level and less slowdown. For the guns you aim with the right click.",
+  "key.copperslug.inspeccionar": "Inspect the weapon"
 }

@@ -498,6 +498,7 @@ public abstract class ArmaFuegoItem extends Item {
         // la bala se ve pasar, del color de su munición, y la boca echa lo suyo
         Item mun = arma.getItem() instanceof ArmaFuegoItem af ? af.tipoActual(arma) : null;
         Balistica.trazo(l, boca, t.pos(), mun);
+        Cobre.polvoPatina(l, boca, p.getViewVector(1.0F), Cobre.oxido(arma));
         Balistica.bocaMunicion(l, boca.add(dir.scale(0.3)), dir, mun);
         if (t.entidad() != null) {
             float d = dano * Balistica.caida(t.distancia(), desdeCaida, alcance, minCaida);
