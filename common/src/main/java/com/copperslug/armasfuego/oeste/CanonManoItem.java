@@ -202,7 +202,8 @@ public class CanonManoItem extends ArmaFuegoItem {
         Vec3 m = p.getViewVector(1F);
         for (int i = 0; i < 7; i++) {
             Vec3 q = b.add(m.scale(0.3 + i * 0.3));
-            l.sendParticles(ParticleTypes.LARGE_SMOKE, q.x, q.y, q.z, 1, 0.15 + i * 0.03, 0.12, 0.15 + i * 0.03, 0.004);
+            // la mitad, humo de hoguera: dura mucho más y sube despacio, así que la nube de pólvora negra se queda un rato
+            l.sendParticles(i % 2 == 0 ? ParticleTypes.CAMPFIRE_COSY_SMOKE : ParticleTypes.LARGE_SMOKE, q.x, q.y, q.z, 1, 0.15 + i * 0.03, 0.12, 0.15 + i * 0.03, 0.004);
         }
         l.sendParticles(ParticleTypes.FLAME, b.x, b.y, b.z, 5, 0.08, 0.08, 0.08, 0.04);
         p.setDeltaMovement(p.getDeltaMovement().add(m.scale(-0.35)));
