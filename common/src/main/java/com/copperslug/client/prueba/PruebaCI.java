@@ -3207,6 +3207,7 @@ public final class PruebaCI {
             var z = (net.minecraft.world.entity.LivingEntity) sp.serverLevel().getEntity(a2Diana);
             PI.put("bay_dano", z == null ? -1F : (Float) PI.get("bay_vida0") - z.getHealth());
             PI.put("bay_fuego", (z != null && z.isOnFire()) || Boolean.TRUE.equals(PI.get("bay_vista")));
+            PI.put("bay_diag", "vista " + PI.get("bay_vista") + ", ticks de fuego " + (z == null ? "sin entidad" : z.getRemainingFireTicks()) + ", nivel de Aspecto ígneo en el mosquete " + net.minecraft.world.item.enchantment.EnchantmentHelper.getItemEnchantmentLevel(net.minecraft.world.item.enchantment.Enchantments.FIRE_ASPECT, sp.getMainHandItem()) + ", en el agua " + (z != null && z.isInWaterRainOrBubble()));
             // la experiencia arregla la espada calada (Reparación)
             ItemStack b = com.copperslug.armasfuego.oeste.MosqueteItem.bayoneta(sp.getMainHandItem());
             PI.put("bay_rota0", b.getDamageValue());
@@ -3239,8 +3240,8 @@ public final class PruebaCI {
             a2Comprobar("la bayoneta usa los encantamientos de la espada (Filo, Aspecto ígneo, Botín, Reparación; Barrido no), brilla y los lista",
                     d >= 10F && Boolean.TRUE.equals(PI.get("bay_fuego")) && Integer.valueOf(2).equals(PI.get("bay_botin")) && Float.valueOf(0F).equals(PI.get("bay_barrido"))
                             && Boolean.TRUE.equals(PI.get("bay_brilla")) && tip.contains("Filo") && tip.contains("es una estocada") && r1 < r0 && Boolean.TRUE.equals(PI.get("bay_logro")),
-                    String.format("daño %.1f (diamante 8 + Filo V 3), arde %s, botín %s, barrido %s, brilla %s, desgaste %d → %d con la experiencia, logro %s; tooltip «%s»",
-                            d, PI.get("bay_fuego"), PI.get("bay_botin"), PI.get("bay_barrido"), PI.get("bay_brilla"), r0, r1, PI.get("bay_logro"), tip));
+                    String.format("daño %.1f (diamante 8 + Filo V 3), arde %s (%s), botín %s, barrido %s, brilla %s, desgaste %d → %d con la experiencia, logro %s; tooltip «%s»",
+                            d, PI.get("bay_fuego"), PI.get("bay_diag"), PI.get("bay_botin"), PI.get("bay_barrido"), PI.get("bay_brilla"), r0, r1, PI.get("bay_logro"), tip));
         });
     }
 
