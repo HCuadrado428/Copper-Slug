@@ -20,6 +20,18 @@
 - The violin is played with a bow in the other hand: sustained note and staff on the HUD.
 - New advancements: "Professional Polisher" (wax the same gun five times) and "Flambéed Bayonet" (finish something with a
   bayonet that has Fire Aspect). "Paganini of the West" changed.
+- Controls like a shooter: left click shoots and holding right click aims (revolver, Winchester, Derringer, Thompson,
+  musket, hand cannon and the Gatling at its controls; the rifle aims through its spyglass). Aiming centres the gun,
+  narrows the field of view, tightens the spread and slows you down, and other players see the pose. The pressure shotgun
+  does not aim: it fires from the hip only. Sneak + right click still reloads; on the musket, left click with no ball
+  loaded, jammed or sneaking is the bayonet thrust. Values in `armas_de_fuego_equilibrio.apuntado`.
+- Each sight shows something: the revolver shows the next round (never in Russian roulette), the Winchester the round about
+  to leave, the Thompson its spread, the hand cannon the arc of the ball and the Gatling its barrel heat.
+- More visual detail: bullets are seen flying, coloured by their ammo; impacts depend on the block (sparks on metal,
+  splinters on wood, dust on earth, chips on stone, shards on glass); special ammo adds its own muzzle effect; the cannon
+  ball and the rope bullet spin in flight; recoil is lighter while aiming.
+- Balance: revolver 10 ticks between shots (every shot counts against the invulnerability window), rifle headshot x1.5,
+  Thompson 1.6 per bullet, shotgun pellet 1.5.
 - Minecraft 1.20.1: Forge (also NeoForge 1.20.1) and Fabric. Minecraft 1.21.1: NeoForge, Forge and Fabric.
 - Fabric has no reach attribute for the musket bayonet (Forge and NeoForge do). On 1.21.1 Fabric does not apply the camera
   roll of the rifle recoil (the rest of the recoil is applied).
@@ -48,6 +60,20 @@
 - El violín se toca con un arco en la otra mano: nota sostenida y pentagrama en el HUD.
 - Logros nuevos: «Abrillantador profesional» (encerar cinco veces la misma arma) y «Bayoneta flambeada» (rematar con una
   bayoneta que tenga Aspecto ígneo). «Paganini del Oeste» cambia.
+- Controles de juego de tiros: el clic izquierdo dispara y mantener el clic derecho apunta (revólver, Winchester,
+  Derringer, Thompson, mosquete, cañón de mano y la Gatling a sus mandos; el rifle apunta por su catalejo). Apuntar lleva
+  el arma al centro, cierra el campo de visión, dispersa menos y hace andar más lento, y los demás ven la pose. La
+  escopeta de presión no apunta: dispara solo desde la cadera. Agachado + clic derecho sigue recargando; en el mosquete,
+  el clic izquierdo sin bola, encasquillado o agachado es la estocada de la bayoneta. Valores en
+  `armas_de_fuego_equilibrio.apuntado`.
+- Cada mira enseña algo: la del revólver, la bala que toca (nunca en la ruleta rusa); la de la Winchester, la bala que
+  va a salir; la de la Thompson, lo que dispersa; la del cañón de mano, la parábola del bolaño; la de la Gatling, el
+  calor del cañón.
+- Más detalle visual: las balas se ven pasar, del color de su munición; el impacto depende del bloque (chispas en el
+  metal, astillas en la madera, polvo en la tierra, esquirlas en la piedra, añicos en el cristal); la munición especial
+  añade su efecto en la boca; el bolaño y la bala de cuerda giran en vuelo; el retroceso es menor apuntando.
+- Equilibrio: revólver a 10 ticks entre disparos (cuentan todos los tiros contra la ventana de invulnerabilidad),
+  cabeza del rifle x1,5, Thompson 1,6 por bala y perdigón de la escopeta 1,5.
 - Minecraft 1.20.1: Forge (y NeoForge 1.20.1) y Fabric. Minecraft 1.21.1: NeoForge, Forge y Fabric.
 - Fabric no tiene el alcance de la bayoneta del mosquete (en Forge y NeoForge sí). En 1.21.1 Fabric no aplica el giro de
   cámara del retroceso del rifle (el resto del retroceso sí).

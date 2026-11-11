@@ -30,6 +30,12 @@ Copper Slug adds nine firearms from the Wild West and beyond, each with its own 
 - **Bayonet musket**: bolas, harpoon bolas and chain bolas. Fit a sword as a bayonet and it keeps the sword's enchantments.
 - **Hand cannon**: explosive bolas, incendiary, firework and bouncing ones, falling blocks and anvils.
 
+**Controls:** left click shoots and holding right click aims, as in most shooters. Aiming centres the gun, narrows the
+field of view, tightens the spread and slows you down. Sneak + right click reloads. The pressure shotgun is the
+exception: right click pumps it and it fires from the hip only. At the Gatling controls, hold left click to crank and
+right click to aim. Each sight shows something useful: the revolver's next round (never in Russian roulette), the hand
+cannon's arc, the Gatling's barrel heat.
+
 Copper rusts over time. Each rust phase trades accuracy for damage and piercing; wax it with honeycomb or scrape it with
 an axe. Guns are found in vanilla structure chests. Most ammo, the violin case and the bayonet fitting can be crafted.
 Every gun has a HUD, sounds, particles, 3D models and its own advancement tab (57 advancements, listed below).
@@ -61,6 +67,13 @@ Copper Slug añade nueve armas de fuego del Oeste y de más allá, cada una con 
   encantamientos.
 - **Cañón de mano**: bolaños que estallan, incendiarios, de fuegos artificiales y saltarines, y bloques que caen o yunques
   disparados.
+
+**Controles:** el clic izquierdo dispara y mantener el clic derecho apunta, como en casi todos los juegos de tiros.
+Apuntar lleva el arma al centro, cierra el campo de visión, dispersa menos y hace andar más lento. Agachado + clic
+derecho recarga. La escopeta de presión es la excepción: el clic derecho la bombea y dispara solo desde la cadera. A los
+mandos de la Gatling, mantener el clic izquierdo gira la manivela y el derecho apunta. Cada mira enseña algo útil: la
+del revólver, la bala que toca (nunca en la ruleta rusa); la del cañón de mano, la parábola; la de la Gatling, el calor
+del cañón.
 
 El cobre se oxida con el tiempo. Cada fase de óxido cambia precisión por daño y perforación; se encera con panal o se
 rasca con un hacha. Las armas se encuentran en los cofres de estructuras vanilla. La mayor parte de la munición, el
