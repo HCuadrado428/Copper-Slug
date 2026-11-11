@@ -140,6 +140,7 @@ public final class Revolver {
 
         // fogonazo, humo y ruido (los sensores de sculk y el warden lo oyen)
         fogonazo(l, boca, p.getViewVector(1.0F), c == Carga.FOGUEO);
+        com.copperslug.armasfuego.comun.Cobre.polvoPatina(l, boca, p.getViewVector(1.0F), ox);
         if (c == Carga.FOGUEO) {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.REVOLVER_FOGUEO.get(), SoundSource.PLAYERS, 6.0F, 0.95F + r.nextFloat() * 0.1F);
             l.gameEvent(p, GameEvent.EXPLODE, boca);

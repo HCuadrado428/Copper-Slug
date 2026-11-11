@@ -120,6 +120,7 @@ public final class FuegoClienteMod {
     @SubscribeEvent
     public static void teclas(com.copperslug.shim.client.event.RegisterKeyMappingsEvent e) {
         e.register(FuegoCliente.MANGA);
+        e.register(Inspeccion.TECLA);
     }
 
     @SubscribeEvent
