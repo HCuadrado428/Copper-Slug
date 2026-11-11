@@ -19,6 +19,8 @@ public final class PosesNeoForge {
 
     public static final EnumProxy<HumanoidModel.ArmPose> REVOLVER = new EnumProxy<>(HumanoidModel.ArmPose.class, false, transformador("COPPERSLUG_REVOLVER"));
 
+    public static final EnumProxy<HumanoidModel.ArmPose> APUNTAR = new EnumProxy<>(HumanoidModel.ArmPose.class, true, transformador("COPPERSLUG_APUNTAR"));
+
     private static IArmPoseTransformer transformador(String nombre) {
         return (modelo, entidad, brazo) -> {
             var p = POSES.get(nombre);

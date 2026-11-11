@@ -61,6 +61,14 @@ public final class ArmasFuegoEventos {
         return g;
     }
 
+    /** El que apunta y cambia de objeto deja de apuntar. */
+    @SubscribeEvent
+    public static void tick(com.copperslug.shim.event.TickEvent.ServerTickEvent e) {
+        if (e.phase != com.copperslug.shim.event.TickEvent.Phase.END) return;
+        Apuntar.tick(e.getServer());
+        ArmaFuegoItem.tickRafagas(e.getServer());
+    }
+
     /** Reparación en la espada calada del mosquete. */
     @SubscribeEvent
     public static void xp(com.copperslug.shim.event.entity.player.PlayerXpEvent.PickupXp e) {
