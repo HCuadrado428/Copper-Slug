@@ -137,13 +137,15 @@ def construir(mascara, abierto=False):
     el.append(caja(CX + 0.35, 8.95, 2.6, CX + 0.85, 9.4, 8.4, 'hierro', 'varilla'))
     el.append(caja(CX + 0.25, 8.85, 2.35, CX + 0.95, 9.5, 2.6, 'hierro', 'tapon_varilla'))
     # ---- el armazón: la cinta de arriba con la muesca de la mira, y el escudo de atrás con el hueco de carga a la derecha
-    el.append(caja(6.95, 10.5, 8.4, 9.05, 11.05, 12.1, 'cobre', 'cinta'))
-    el.append(caja(6.95, 10.5, 12.1, 7.85, 11.05, 12.6, 'cobre', 'alza_izq'))
-    el.append(caja(8.15, 10.5, 12.1, 9.05, 11.05, 12.6, 'cobre', 'alza_der'))
+    el.append(caja(6.55, 10.5, 8.4, 9.45, 11.05, 12.1, 'cobre', 'cinta'))
+    el.append(caja(6.55, 10.5, 12.1, 7.85, 11.05, 12.6, 'cobre', 'alza_izq'))
+    el.append(caja(8.15, 10.5, 12.1, 9.45, 11.05, 12.6, 'cobre', 'alza_der'))
     el.append(caja(7.85, 10.5, 12.1, 8.15, 10.8, 12.6, 'cobre', 'muesca'))
-    # (el escudo se deja abierto a los dos lados y en el centro, para que desde la mira se vean casi todas las recámaras:
-    # solo queda una tira abajo y una espiga donde se agarra el martillo)
-    el.append(caja(7.4, 7.3, 11.0, 9.05, 7.6, 12.35, 'cobre', 'escudo_bajo'))
+    # (el escudo es un marco más ancho que el tambor con una ventana grande: desde atrás o desde el lado se ve la parte de
+    # atrás del armazón, y por la ventana, todas las recámaras; una espiga en el centro sujeta el martillo)
+    el.append(caja(6.2, 7.0, 11.0, 9.8, 7.55, 12.35, 'cobre', 'marco_bajo'))
+    el.append(caja(6.2, 7.0, 11.0, 6.55, 10.55, 12.35, 'cobre', 'marco_izq'))
+    el.append(caja(9.45, 7.0, 11.0, 9.8, 10.55, 12.35, 'cobre', 'marco_der'))
     el.append(caja(7.72, 8.9, 11.0, 8.28, 9.35, 12.35, 'cobre', 'espiga'))
     # ---- el martillo (bajado): cuerpo y espolón inclinado hacia atrás
     el.append(caja(7.85, 9.2, 12.35, 8.15, 10.1, 12.95, 'hierro', 'martillo'))
