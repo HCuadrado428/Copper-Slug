@@ -2,7 +2,7 @@ name: Probar en el juego (1.21.1)
 
 # Lo mismo que «Probar en el juego» para la rama 1.21.1 (los workflow_run van siempre con el archivo de main, por eso
 # está aquí): servidor dedicado en NeoForge, Forge y Fabric, y el juego sin pantalla en los tres. En NeoForge, dentro
-# del mundo, PruebaCI prueba las armas y saca las capturas; en Forge y Fabric solo se comprueba que se llega al mundo.
+# del mundo, PruebaCI prueba las armas y saca las capturas; en Forge y Fabric también se hace la prueba entera.
 
 on:
   workflow_run:
@@ -141,8 +141,8 @@ jobs:
       matrix:
         include:
           - {cargador: neoforge, shaders: false, prueba: true}
-          - {cargador: forge, shaders: false, prueba: false}
-          - {cargador: fabric, shaders: false, prueba: false}
+          - {cargador: forge, shaders: false, prueba: true}
+          - {cargador: fabric, shaders: false, prueba: true}
     env:
       NOMBRE: ${{ format('{0}-1.21.1{1}', matrix.cargador, matrix.shaders && '-shaders' || '') }}
     steps:
