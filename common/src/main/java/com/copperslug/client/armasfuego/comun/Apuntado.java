@@ -400,9 +400,10 @@ public final class Apuntado {
             Vector3f d = new Vector3f((float) (sig.x - ojo.x), (float) (sig.y - ojo.y), (float) (sig.z - ojo.z));
             inv.transform(d);
             if (t == 0) primero = String.format("boca %.1f,%.1f,%.1f v %.2f; el primer tramo acaba en %.1f,%.1f,%.1f (%s), en cámara z %.2f", q.x, q.y, q.z, v.length(), sig.x, sig.y, sig.z, da ? "choca" : "libre", d.z);
-            if (d.z < -0.3F) {
+            // en 1.20.1 la cámara mira hacia +Z (y +X es su izquierda); en 1.21.1 hacia -Z
+            if (d.z > 0.3F) {
                 delante++;
-                int x = w / 2 + (int) Math.round(d.x / -d.z * foco), y = h / 2 - (int) Math.round(d.y / -d.z * foco);
+                int x = w / 2 - (int) Math.round(d.x / d.z * foco), y = h / 2 - (int) Math.round(d.y / d.z * foco);
                 if (x > 2 && x < w - 2 && y > 2 && y < h - 2) {
                     if (da) {
                         for (int j = -3; j <= 3; j++) {
