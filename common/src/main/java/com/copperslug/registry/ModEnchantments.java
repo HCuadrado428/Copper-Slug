@@ -48,4 +48,6 @@ public final class ModEnchantments {
     public static final ResourceKey<Enchantment> CANON_MECHA_CORTA = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "canon_mecha_corta"));
     public static final ResourceKey<Enchantment> CANON_BIEN_FUNDIDO = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "canon_bien_fundido"));
     public static final ResourceKey<Enchantment> CANON_POLVORA_FINA = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "canon_polvora_fina"));
+    /** Pulso firme: apuntando, dispersa menos y se anda menos lento (data/copperslug/enchantment/pulso_firme.json). */
+    public static final ResourceKey<Enchantment> PULSO_FIRME = ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "pulso_firme"));
 }
