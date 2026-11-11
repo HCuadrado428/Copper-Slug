@@ -38,7 +38,8 @@ import java.util.function.Consumer;
  * Base de las armas de fuego de mano de la segunda tanda (Winchester, Derringer, Thompson, mosquete y cañón de mano).
  * Controles comunes (con el arma en la mano principal):
  * <ul>
- *   <li>Clic derecho: disparar (la Thompson, manteniéndolo, en ráfaga).</li>
+ *   <li>Clic izquierdo: disparar (la Thompson, manteniéndolo, en ráfaga). Lo pide el cliente con {@link GatilloPacket}.</li>
+ *   <li>Mantener clic derecho: apuntar ({@link Apuntar}).</li>
  *   <li>Agachado + mantener clic derecho: recargar (con animación; se corta si se suelta) o, si está encasquillada,
  *       desatascarla.</li>
  * </ul>
@@ -242,7 +243,8 @@ public abstract class ArmaFuegoItem extends Item {
         ItemStack s = p.getItemInHand(hand);
         if (hand != InteractionHand.MAIN_HAND) return InteractionResultHolder.pass(s);
         CompoundTag t = com.copperslug.shim.Nbt.tag(s);
-        if (p.isShiftKeyDown()) {
+        // apuntando, el clic derecho no hace nada más (aunque uno se agache con la mira puesta)
+        if (p.isShiftKeyDown() && !Apuntar.apuntando(p)) {
             // agachado con un panal o un hacha en la otra mano: encerar o rascar el cobre (como el revólver)
             ItemStack otra = p.getOffhandItem();
             if (Cobre.esPanal(otra) || Cobre.esHacha(otra)) {
@@ -275,11 +277,33 @@ public abstract class ArmaFuegoItem extends Item {
             if (!level.isClientSide) empezarRecarga((ServerPlayer) p, s);
             return InteractionResultHolder.consume(s);
         }
-        t.putInt(MODO, MODO_NADA);
-        return apretarGatillo(level, p, s);
+        // sin agacharse, el clic derecho es apuntar (lo lleva el cliente): aquí solo se evita usar lo de la otra mano
+        return InteractionResultHolder.consume(s);
     }
 
-    /** Clic derecho sin agacharse: por defecto, un disparo (semiautomática). */
+    /** El gatillo (clic izquierdo): lo llama el cliente en su lado y el servidor al llegar {@link GatilloPacket}. */
+    public void gatillo(Level level, Player p, ItemStack s) {
+        if (p.isUsingItem() || p.getMainHandItem() != s) return;
+        com.copperslug.shim.Nbt.tag(s).putInt(MODO, MODO_NADA);
+        apretarGatillo(level, p, s);
+    }
+
+    /** Ráfagas en marcha (servidor): ticks con el gatillo apretado de cada jugador. */
+    private static final Map<UUID, Integer> RAFAGAS = new HashMap<>();
+
+    /** Empieza una ráfaga (armas automáticas): sigue cada tick hasta que se suelte el gatillo. */
+    protected void empezarRafaga(Player p) {
+        if (p.level().isClientSide) com.copperslug.client.armasfuego.comun.Apuntado.rafagaLocal(true);
+        else RAFAGAS.put(p.getUUID(), 0);
+    }
+
+    /** Se suelta el gatillo: acaba la ráfaga. */
+    public static void soltarGatillo(Player p) {
+        if (p.level().isClientSide) com.copperslug.client.armasfuego.comun.Apuntado.rafagaLocal(false);
+        else RAFAGAS.remove(p.getUUID());
+    }
+
+    /** Apretar el gatillo: por defecto, un disparo (semiautomática). */
     protected InteractionResultHolder<ItemStack> apretarGatillo(Level level, Player p, ItemStack s) {
         if (p.getCooldowns().isOnCooldown(this)) return InteractionResultHolder.fail(s);
         if (!intentar(level, p, s)) return InteractionResultHolder.fail(s);
@@ -381,8 +405,8 @@ public abstract class ArmaFuegoItem extends Item {
     /** Tras cada paso de recarga. */
     protected void alRecargar(ServerPlayer p, ItemStack s) {}
 
-    /** Ráfaga: cada tick con el clic mantenido (solo la Thompson). */
-    protected void rafaga(Level level, Player p, ItemStack s, int t) {}
+    /** Ráfaga: cada tick con el gatillo apretado (solo la Thompson). */
+    public void rafaga(Level level, Player p, ItemStack s, int t) {}
 
     @Override
     public void releaseUsing(ItemStack s, Level level, LivingEntity e, int quedan) {
@@ -409,6 +433,20 @@ public abstract class ArmaFuegoItem extends Item {
                 SACADO.put(p.getUUID(), ahora);
                 alSacar(p, s);
             }
+            Integer r = RAFAGAS.get(p.getUUID());
+            if (r != null) {
+                RAFAGAS.put(p.getUUID(), r + 1);
+                rafaga(level, p, s, r);
+            }
+        }
+    }
+
+    /** Cada tick del servidor: la ráfaga se acaba si ya no se lleva el arma en la mano (o se está recargando). */
+    public static void tickRafagas(net.minecraft.server.MinecraftServer srv) {
+        if (RAFAGAS.isEmpty()) return;
+        for (UUID id : RAFAGAS.keySet().toArray(new UUID[0])) {
+            ServerPlayer p = srv.getPlayerList().getPlayer(id);
+            if (p == null || !(p.getMainHandItem().getItem() instanceof ArmaFuegoItem) || p.isUsingItem() || !p.isAlive()) RAFAGAS.remove(id);
         }
     }
 
@@ -422,11 +460,14 @@ public abstract class ArmaFuegoItem extends Item {
     }
 
     public static void olvidar(UUID id) {
+        RAFAGAS.remove(id);
         SACADO.remove(id);
         VISTO.remove(id);
     }
 
     public static void limpiar() {
+        RAFAGAS.clear();
+        Apuntar.limpiar();
         SACADO.clear();
         VISTO.clear();
     }
@@ -448,11 +489,16 @@ public abstract class ArmaFuegoItem extends Item {
         ServerLevel l = p.serverLevel();
         // el cobre: más disperso cuanto más oxidado, pero el cañón gastado pega más y perfora más armadura
         ItemStack arma = p.getMainHandItem();
-        disp += Cobre.dispersion(Cobre.oxido(arma));
+        disp = (disp + Cobre.dispersion(Cobre.oxido(arma))) * Apuntar.dispersion(p);
         dano *= Cobre.dano(arma);
         perf = Math.min(1F, perf + Cobre.perforacion(arma));
         Vec3 dir = Balistica.dispersar(p.getViewVector(1.0F), disp, p.getRandom());
-        Balistica.Tiro t = Balistica.trazar(l, p, p.getEyePosition(), dir, alcance, boca(p, 0.8, 0.3, 0.22), estela);
+        Vec3 boca = boca(p, 0.8, 0.3, 0.22);
+        Balistica.Tiro t = Balistica.trazar(l, p, p.getEyePosition(), dir, alcance, boca, estela);
+        // la bala se ve pasar, del color de su munición, y la boca echa lo suyo
+        Item mun = arma.getItem() instanceof ArmaFuegoItem af ? af.tipoActual(arma) : null;
+        Balistica.trazo(l, boca, t.pos(), mun);
+        Balistica.bocaMunicion(l, boca.add(dir.scale(0.3)), dir, mun);
         if (t.entidad() != null) {
             float d = dano * Balistica.caida(t.distancia(), desdeCaida, alcance, minCaida);
             if (Balistica.herir(t.entidad(), p, d, perf, tipo, rafaga)) {
@@ -555,6 +601,7 @@ public abstract class ArmaFuegoItem extends Item {
         String id = getDescriptionId();
         l.add(Component.translatable(id + ".ayuda1").withStyle(ChatFormatting.GRAY));
         l.add(Component.translatable(id + ".ayuda2").withStyle(ChatFormatting.DARK_GRAY));
+        l.add(Component.translatable("msg.copperslug.armafuego.ayuda_apuntar").withStyle(ChatFormatting.DARK_GRAY));
         l.add(Component.translatable("msg.copperslug.armafuego.ayuda_recarga").withStyle(ChatFormatting.DARK_GRAY));
         l.add(Component.translatable("msg.copperslug.armafuego.ayuda_cobre").withStyle(ChatFormatting.DARK_GRAY));
     }

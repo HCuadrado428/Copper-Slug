@@ -11,7 +11,8 @@
   ],
   "client": [
     "CreativeScreenAccessor",
-    "ItemPropertiesAccessor"
+    "ItemPropertiesAccessor",
+    "FovApuntadoMixin"
   ],
   "injectors": {
     "defaultRequire": 1

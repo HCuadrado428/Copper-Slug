@@ -274,6 +274,7 @@ public final class PruebaCI {
         rifle();
         armas3d();
         armas2();
+        apuntado();
         sin("armas_avisos", 1, () -> {
             com.copperslug.armasfuego.comun.EquilibrioArmas.sinAtascosPrueba = false;
             sinToasts = false;
@@ -307,6 +308,220 @@ public final class PruebaCI {
      * acción (el criterio propio, un efecto y un objeto). Capturas del aviso al conseguirlos y de la pantalla de logros con
      * la pestaña de Copper Slug abierta.
      */
+    // ================================================================ apuntar (clic derecho) y disparar (clic izquierdo)
+
+    private static UUID apDiana;
+
+    /** La Gatling no ha gastado balas solo por apuntar (la manivela es el clic izquierdo). */
+    private static boolean a2Gat0Balas() {
+        var p = Minecraft.getInstance().player;
+        var g = com.copperslug.armasfuego.gatling.GatlingEntity.deJugador(p);
+        return g != null && !g.girando();
+    }
+
+    private static float apVida(ServerPlayer sp) {
+        return apDiana != null && sp.serverLevel().getEntity(apDiana) instanceof net.minecraft.world.entity.LivingEntity v ? v.getHealth() : -1F;
+    }
+
+    /** Lo que se mira en el servidor de un arma apuntada: si apunta, el factor de dispersión y la velocidad de andar. */
+    private static void apEstado(String clave) {
+        piSrv(sp -> {
+            PI.put(clave + "_apunta", com.copperslug.armasfuego.comun.Apuntar.apuntando(sp));
+            PI.put(clave + "_disp", com.copperslug.armasfuego.comun.Apuntar.dispersion(sp));
+            PI.put(clave + "_vel", sp.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED));
+            PI.put(clave + "_vida", apVida(sp));
+            PI.put(clave + "_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem()));
+        });
+    }
+
+    private static double apD(String k) {
+        return PI.get(k) instanceof Number n ? n.doubleValue() : -999;
+    }
+
+    /**
+     * Un arma de las que apuntan con el modificador: en la cadera no apunta; con el clic derecho mantenido apunta (el
+     * servidor lo sabe, dispersa menos y anda más lento; el cliente lleva el arma al centro); el clic izquierdo dispara
+     * apuntando; el clic derecho ya no dispara; al soltar, vuelve a la cadera.
+     */
+    private static void apArma(String n, int foto, java.util.function.Supplier<ItemStack> arma, boolean tercera) {
+        Minecraft mc = Minecraft.getInstance();
+        sin("ap_" + n, 10, () -> {
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            a2Camara1p();
+            a2Mano(arma.get());
+            piApuntar(a2Punto(8, 0, 1.2));
+        });
+        sin("ap_" + n + "_cadera", 4, () -> apEstado("ap_" + n + "_c"));
+        // el clic derecho (sin agacharse) ya no dispara
+        sin("ap_" + n + "_clic_derecho", 8, () -> mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND));
+        sin("ap_" + n + "_clic_derecho_ver", 4, () -> apEstado("ap_" + n + "_d"));
+        sin("ap_" + n + "_apunta", 10, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true);
+        paso(foto + "_" + n + "_apuntando", 6, () -> {
+            piApuntar(a2Punto(8, 0, 1.2));
+            apEstado("ap_" + n + "_a");
+        });
+        if (tercera) paso((foto + 1) + "_" + n + "_apuntando_3p", 8, () -> a2Vista(1.9, 0.9, 0.35));
+        sin("ap_" + n + "_tiro", 4, () -> {
+            a2Camara1p();
+            piApuntar(a2Punto(8, 0, 1.2));
+            piDisparar();
+        });
+        sin("ap_" + n + "_tiro_espera", 50, () -> {});
+        sin("ap_" + n + "_tiro_ver", 4, () -> apEstado("ap_" + n + "_t"));
+        sin("ap_" + n + "_suelta", 8, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false);
+        sin("ap_" + n + "_suelta_ver", 4, () -> apEstado("ap_" + n + "_s"));
+        vigila("ap_" + n + "_ok", 2, () -> {
+            String c = "ap_" + n + "_c", d = "ap_" + n + "_d", a = "ap_" + n + "_a", t = "ap_" + n + "_t", z = "ap_" + n + "_s";
+            double cfgDisp = com.copperslug.armasfuego.comun.EquilibrioArmas.apuntarDispersion();
+            boolean cadera = Boolean.FALSE.equals(PI.get(c + "_apunta")) && apD(c + "_disp") == 1.0;
+            boolean derecho = apD(d + "_vida") == apD(c + "_vida") && apD(d + "_balas") == apD(c + "_balas");
+            boolean apunta = Boolean.TRUE.equals(PI.get(a + "_apunta")) && Math.abs(apD(a + "_disp") - cfgDisp) < 1e-6 && apD(a + "_vel") < apD(c + "_vel") * 0.9;
+            boolean tiro = apD(t + "_vida") < apD(a + "_vida") - 0.5 || apD(t + "_balas") < apD(a + "_balas");
+            boolean suelta = Boolean.FALSE.equals(PI.get(z + "_apunta")) && Math.abs(apD(z + "_vel") - apD(c + "_vel")) < 1e-6;
+            a2Comprobar(n + ": apunta con el clic derecho (menos dispersión, más lento), dispara con el izquierdo y vuelve a la cadera",
+                    cadera && derecho && apunta && tiro && suelta,
+                    String.format("cadera %s (disp %.2f, vel %.3f); clic derecho: vida %.1f → %.1f, balas %.0f → %.0f; apuntando %s (disp %.2f, vel %.3f); tiro: vida %.1f → %.1f, balas %.0f → %.0f; al soltar %s (vel %.3f)",
+                            PI.get(c + "_apunta"), apD(c + "_disp"), apD(c + "_vel"), apD(c + "_vida"), apD(d + "_vida"), apD(c + "_balas"), apD(d + "_balas"),
+                            PI.get(a + "_apunta"), apD(a + "_disp"), apD(a + "_vel"), apD(a + "_vida"), apD(t + "_vida"), apD(a + "_balas"), apD(t + "_balas"),
+                            PI.get(z + "_apunta"), apD(z + "_vel")));
+        });
+    }
+
+    private static void apuntado() {
+        Minecraft mc = Minecraft.getInstance();
+        sin("ap_preparar", 20, () -> {
+            mc.setScreen(null);
+            a2Camara1p();
+            mc.options.keyShift.setDown(false);
+            rifleUsar(false);
+            com.copperslug.armasfuego.comun.EquilibrioArmas.sinAtascosPrueba = true;
+            piSrv(sp -> {
+                var l = sp.serverLevel();
+                // en supervivencia (sin daño ni hambre): los disparos gastan munición, que es lo que se comprueba
+                sp.setGameMode(GameType.SURVIVAL);
+                sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 12000, 4, false, false));
+                sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.SATURATION, 12000, 0, false, false));
+                sp.connection.teleport(a2O.getX() + 0.5, a2O.getY(), a2O.getZ() + 0.5, a2Mira.toYRot(), 0F);
+                l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new net.minecraft.world.phys.AABB(a2O).inflate(24)).forEach(net.minecraft.world.entity.Entity::discard);
+                // una diana con mucha vida a 8 bloques
+                var h = net.minecraft.world.entity.EntityType.HUSK.create(l);
+                Vec3 q = a2Punto(8, 0, 0);
+                h.moveTo(q.x, q.y, q.z, a2Mira.toYRot() + 180, 0);
+                h.setNoAi(true);
+                h.setPersistenceRequired();
+                h.setSilent(true);
+                h.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MAX_HEALTH).setBaseValue(400);
+                h.setHealth(400);
+                l.addFreshEntity(h);
+                apDiana = h.getUUID();
+            });
+        });
+        // ---- revólver: la mira enseña la bala que toca; en la ruleta rusa (tambor girado o a la sien), no
+        apArma("revolver", 300, () -> {
+            ItemStack r = piRevolver(0);
+            for (int i = 0; i < 6; i++) com.copperslug.armasfuego.pistola.Tambor.poner(r, i, i == 1 ? com.copperslug.armasfuego.pistola.Carga.DARDO : com.copperslug.armasfuego.pistola.Carga.BALA);
+            return r;
+        }, true);
+        sin("ap_revolver_mira", 10, () -> {
+            a2Camara1p();
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true;
+            piApuntar(a2Punto(8, 0, 1.2));
+        });
+        paso("302_revolver_mira_siguiente", 4, () -> {
+            ItemStack s = mc.player.getMainHandItem();
+            PI.put("ap_rev_sig", String.valueOf(com.copperslug.client.armasfuego.comun.Apuntado.revolverSiguiente(s, mc.player.getXRot())));
+            PI.put("ap_rev_sien", String.valueOf(com.copperslug.client.armasfuego.comun.Apuntado.revolverSiguiente(s, 85F)));
+        });
+        // se gira el tambor (ruleta): ya no se sabe cuál toca
+        sin("ap_revolver_girar", 6, () -> piSrv(sp -> com.copperslug.shim.Nbt.tag(sp.getMainHandItem()).putBoolean(com.copperslug.armasfuego.pistola.Tambor.GIRADO, true)));
+        paso("303_revolver_mira_ruleta", 10, () -> PI.put("ap_rev_ruleta",
+                String.valueOf(com.copperslug.client.armasfuego.comun.Apuntado.revolverSiguiente(mc.player.getMainHandItem(), mc.player.getXRot()))));
+        vigila("ap_revolver_mira_ok", 2, () -> {
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            // tras el primer tiro (una bala) toca el dardo
+            a2Comprobar("la mira del revólver enseña la bala que toca, y en la ruleta rusa (tambor girado o cañón a la sien) no",
+                    "DARDO".equals(PI.get("ap_rev_sig")) && "null".equals(PI.get("ap_rev_sien")) && "null".equals(PI.get("ap_rev_ruleta")),
+                    "apuntando: " + PI.get("ap_rev_sig") + "; a la sien: " + PI.get("ap_rev_sien") + "; tambor girado: " + PI.get("ap_rev_ruleta"));
+        });
+        // ---- las de la segunda tanda
+        apArma("winchester", 310, () -> a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6), true);
+        apArma("derringer", 320, () -> a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2), false);
+        apArma("thompson", 330, () -> a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50), false);
+        sin("ap_thompson_suelta_gatillo", 4, () -> com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = false);
+        apArma("mosquete", 340, () -> a2Cargada(com.copperslug.registry.ModItems.MOSQUETE, 1), false);
+        // el mosquete: con bola, el clic izquierdo dispara; sin bola o agachado, es la estocada de la bayoneta
+        sin("ap_mosquete_bayoneta", 6, () -> {
+            ItemStack con = a2Cargada(com.copperslug.registry.ModItems.MOSQUETE, 1), sin = a2Cargada(com.copperslug.registry.ModItems.MOSQUETE, 0);
+            boolean dispara = com.copperslug.client.armasfuego.comun.Apuntado.disparaConClic(mc.player, con);
+            boolean estocada = !com.copperslug.client.armasfuego.comun.Apuntado.disparaConClic(mc.player, sin);
+            mc.options.keyShift.setDown(true);
+            PI.put("ap_mosq", dispara + "/" + estocada);
+        });
+        vigila("ap_mosquete_bayoneta_ok", 4, () -> {
+            boolean agachado = !com.copperslug.client.armasfuego.comun.Apuntado.disparaConClic(mc.player, a2Cargada(com.copperslug.registry.ModItems.MOSQUETE, 1));
+            if (!mc.player.isShiftKeyDown()) throw new IllegalStateException("aún no está agachado");
+            mc.options.keyShift.setDown(false);
+            a2Comprobar("mosquete: con bola el clic izquierdo dispara; sin bola o agachado es la estocada de la bayoneta",
+                    "true/true".equals(PI.get("ap_mosq")) && agachado, "con bola dispara/sin bola estocada: " + PI.get("ap_mosq") + "; agachado estocada: " + agachado);
+        });
+        apArma("canon", 350, () -> a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1), false);
+        // el cañón: la mira dibuja la parábola del bolaño hasta donde cae
+        sin("ap_canon_parabola", 10, () -> {
+            a2Camara1p();
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1));
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true;
+            com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos = 0;
+            piApuntar(a2Punto(8, 0, 2.5));
+        });
+        paso("352_canon_parabola", 10, () -> {});
+        vigila("ap_canon_parabola_ok", 2, () -> {
+            int n = com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos;
+            boolean cae = com.copperslug.client.armasfuego.comun.Apuntado.parabolaCae;
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 6 && cae, n + " puntos, cae en un bloque: " + cae);
+        });
+        // ---- el rifle apunta con su catalejo (su zoom): cuenta como apuntar
+        sin("ap_rifle", 10, () -> {
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            a2Mano(new ItemStack(com.copperslug.registry.ModItems.RIFLE.get()));
+            piApuntar(a2Punto(8, 0, 1.2));
+        });
+        sin("ap_rifle_usa", 12, () -> rifleUsar(true));
+        paso("360_rifle_apuntando", 4, () -> apEstado("ap_rifle"));
+        vigila("ap_rifle_ok", 2, () -> {
+            boolean mira = mc.player.isScoping();
+            rifleUsar(false);
+            a2Comprobar("rifle: su catalejo es su apuntado (zoom, mira y menos dispersión)",
+                    Boolean.TRUE.equals(PI.get("ap_rifle_apunta")) && mira, "servidor apunta " + PI.get("ap_rifle_apunta") + ", mira del catalejo " + mira);
+        });
+        // ---- la escopeta de presión no apunta: dispara solo desde la cadera
+        sin("ap_escopeta", 10, () -> {
+            rifleUsar(false);
+            a2Mano(new ItemStack(com.copperslug.registry.ModItems.ESCOPETA_PRESION.get()));
+        });
+        sin("ap_escopeta_apunta", 10, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true);
+        paso("370_escopeta_cadera", 4, () -> apEstado("ap_esc"));
+        vigila("ap_escopeta_ok", 2, () -> {
+            boolean cliente = com.copperslug.client.armasfuego.comun.Apuntado.apunta;
+            float k = com.copperslug.client.armasfuego.comun.Apuntado.k;
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            a2Comprobar("la escopeta de presión no apunta (dispara solo desde la cadera)",
+                    Boolean.FALSE.equals(PI.get("ap_esc_apunta")) && !cliente && k == 0F && apD("ap_esc_disp") == 1.0,
+                    "servidor apunta " + PI.get("ap_esc_apunta") + ", cliente " + cliente + ", k " + k);
+        });
+        sin("ap_fin", 6, () -> {
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = false;
+            a2Camara1p();
+            piSrv(sp -> {
+                if (apDiana != null && sp.serverLevel().getEntity(apDiana) != null) sp.serverLevel().getEntity(apDiana).discard();
+                sp.setGameMode(GameType.CREATIVE);
+            });
+            Object e = PI.remove("error");
+            if (e != null) throw new IllegalStateException("error en el servidor: " + e);
+        });
+    }
+
     private static void logros() {
         Minecraft mc = Minecraft.getInstance();
         sin("logros_cargados", 10, () -> {
@@ -450,7 +665,8 @@ public final class PruebaCI {
 
     private static void piDisparar() {
         Minecraft mc = Minecraft.getInstance();
-        mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
+        if (mc.options.keyShift.isDown() || mc.player.isShiftKeyDown()) mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
+        else com.copperslug.client.armasfuego.comun.Apuntado.gatillo();
     }
 
     private static net.minecraft.world.entity.monster.Husk piHusk(ServerPlayer sp) {
@@ -1016,8 +1232,16 @@ public final class PruebaCI {
     }
 
     private static void rifleUsar(boolean si) {
+        Minecraft mc = Minecraft.getInstance();
+        // la ráfaga de la Thompson va con el gatillo (clic izquierdo) mantenido
+        if (si && mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.ThompsonItem && !mc.options.keyShift.isDown()) {
+            com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = true;
+            com.copperslug.client.armasfuego.comun.Apuntado.gatillo();
+            return;
+        }
+        if (!si) com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = false;
         mantenerUso = si;
-        Minecraft.getInstance().options.keyUse.setDown(si);
+        mc.options.keyUse.setDown(si);
     }
 
     private static int rifleCuenta(net.minecraft.world.item.Item i) {
@@ -1787,6 +2011,16 @@ public final class PruebaCI {
                 throw new IllegalStateException("no se ha subido a la Gatling (vehículo: " + mc.player.getVehicle() + ")");
             piApuntar(a2Punto(8, 0, 1.2));
         });
+        sin("ap_gatling_apunta", 8, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true);
+        paso("208_gatling_apuntando", 6, () -> piSrv(sp -> {
+            var g = com.copperslug.armasfuego.gatling.GatlingEntity.deJugador(sp);
+            PI.put("ap_gat", g != null && g.apuntando() && com.copperslug.armasfuego.comun.Apuntar.apuntando(sp));
+        }));
+        vigila("ap_gatling_ok", 2, () -> a2Comprobar("a los mandos de la Gatling, el clic derecho apunta (mira con el calor) y no gira la manivela",
+                Boolean.TRUE.equals(PI.get("ap_gat")) && com.copperslug.client.armasfuego.comun.Apuntado.gatlingApunta
+                        && com.copperslug.client.armasfuego.comun.Apuntado.k >= 1F && a2Gat0Balas(),
+                "servidor " + PI.get("ap_gat") + ", cliente " + com.copperslug.client.armasfuego.comun.Apuntado.gatlingApunta + ", k " + com.copperslug.client.armasfuego.comun.Apuntado.k));
+        sin("ap_gatling_suelta", 6, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false);
         sin("a2_gatling_vida0", 2, () -> a2Vida("g0"));
         sin("a2_gatling_girar", 12, () -> com.copperslug.client.armasfuego.comun.FuegoCliente.manivelaPrueba = true);
         paso("202_gatling_disparando", 4, () -> piApuntar(a2Punto(8, 0, 1.2)));
