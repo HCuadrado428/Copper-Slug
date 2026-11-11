@@ -125,6 +125,15 @@ public class PlataformaForge implements Plataforma {
     static final class JugadorFalso extends ServerPlayer {
         JugadorFalso(net.minecraft.server.level.ServerLevel l, com.mojang.authlib.GameProfile perfil) {
             super(l.getServer(), l, perfil, net.minecraft.server.level.ClientInformation.createDefault());
+            // sin cliente: la conexión no envía nada (sin esto, mandar un título o un mensaje al forastero da NPE)
+            this.connection = new net.minecraft.server.network.ServerGamePacketListenerImpl(l.getServer(),
+                    new net.minecraft.network.Connection(net.minecraft.network.protocol.PacketFlow.SERVERBOUND) {
+                        @Override
+                        public void send(net.minecraft.network.protocol.Packet<?> paquete) {}
+
+                        @Override
+                        public void send(net.minecraft.network.protocol.Packet<?> paquete, net.minecraft.network.PacketSendListener listener) {}
+                    }, this, net.minecraft.server.network.CommonListenerCookie.createInitial(perfil, false));
         }
 
         @Override
