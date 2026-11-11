@@ -334,6 +334,9 @@ public final class Apuntado {
     /** Para la prueba: los puntos de la última parábola dibujada y si acaba en un bloque. */
     public static int parabolaPuntos;
     public static boolean parabolaCae;
+    /** Para la prueba: cuántas veces se ha dibujado la parábola y qué vio la última vez (por qué no salen puntos). */
+    public static int parabolaDibujos;
+    public static String parabolaDiag = "sin dibujar";
 
     /**
      * El cañón de mano: la parábola que va a hacer el bolaño (la misma cuenta que el proyectil: velocidad, rozamiento
@@ -350,14 +353,20 @@ public final class Apuntado {
         double foco = (h / 2.0) / Math.tan(fov / 2);
         parabolaPuntos = 0;
         parabolaCae = false;
+        parabolaDibujos++;
+        String primero = "sin tramos";
+        int pasos = 0, delante = 0;
         for (int t = 0; t < 120; t++) {
+            pasos++;
             Vec3 sig = q.add(v);
             BlockHitResult bh = mc.level.clip(new ClipContext(q, sig, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, p));
             boolean da = bh.getType() != HitResult.Type.MISS;
             if (da) sig = bh.getLocation();
             Vector3f d = new Vector3f((float) (sig.x - ojo.x), (float) (sig.y - ojo.y), (float) (sig.z - ojo.z));
             inv.transform(d);
+            if (t == 0) primero = String.format("boca %.1f,%.1f,%.1f v %.2f; el primer tramo acaba en %.1f,%.1f,%.1f (%s), en cámara z %.2f", q.x, q.y, q.z, v.length(), sig.x, sig.y, sig.z, da ? "choca" : "libre", d.z);
             if (d.z < -0.3F) {
+                delante++;
                 int x = w / 2 + (int) Math.round(d.x / -d.z * foco), y = h / 2 - (int) Math.round(d.y / -d.z * foco);
                 if (x > 2 && x < w - 2 && y > 2 && y < h - 2) {
                     if (da) {
@@ -377,6 +386,7 @@ public final class Apuntado {
             v = v.scale(0.99).add(0, -0.035, 0);
             if (q.y < mc.level.getMinBuildHeight() - 8) break;
         }
+        parabolaDiag = "dibujos " + parabolaDibujos + ", tramos " + pasos + ", delante de la cámara " + delante + ", pantalla " + w + "x" + h + "; " + primero;
         if (CanonManoItem.mecha(s) >= 0) g.drawString(mc.font, Component.translatable("hud.copperslug.canon.mecha").withStyle(ChatFormatting.GOLD), w / 2 + 12, h / 2 - 12, 0xFFFF7A20, true);
     }
 }

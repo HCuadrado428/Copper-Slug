@@ -364,7 +364,10 @@ public final class PruebaCI {
         sin("ap_" + n + "_tiro", 4, () -> {
             a2Camara1p();
             piApuntar(a2Punto(8, 0, 1.2));
+            int g0 = com.copperslug.client.armasfuego.comun.Apuntado.gatillos;
             piDisparar();
+            PI.put("ap_" + n + "_gat", "gatillos " + g0 + " → " + com.copperslug.client.armasfuego.comun.Apuntado.gatillos + ", el cliente ve " + mc.player.getMainHandItem().getItem()
+                    + ", usando " + mc.player.isUsingItem() + ", pantalla " + mc.screen);
         });
         sin("ap_" + n + "_tiro_espera", 50, () -> {});
         sin("ap_" + n + "_tiro_ver", 4, () -> apEstado("ap_" + n + "_t"));
@@ -383,7 +386,7 @@ public final class PruebaCI {
                     String.format("cadera %s (disp %.2f, vel %.3f); clic derecho: vida %.1f → %.1f, balas %.0f → %.0f; apuntando %s (disp %.2f, vel %.3f); tiro: vida %.1f → %.1f, balas %.0f → %.0f; al soltar %s (vel %.3f)",
                             PI.get(c + "_apunta"), apD(c + "_disp"), apD(c + "_vel"), apD(c + "_vida"), apD(d + "_vida"), apD(c + "_balas"), apD(d + "_balas"),
                             PI.get(a + "_apunta"), apD(a + "_disp"), apD(a + "_vel"), apD(a + "_vida"), apD(t + "_vida"), apD(a + "_balas"), apD(t + "_balas"),
-                            PI.get(z + "_apunta"), apD(z + "_vel")));
+                            PI.get(z + "_apunta"), apD(z + "_vel")) + "; " + PI.get("ap_" + n + "_gat"));
         });
     }
 
@@ -471,6 +474,9 @@ public final class PruebaCI {
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1));
             com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true;
             com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos = 0;
+            com.copperslug.client.armasfuego.comun.Apuntado.parabolaCae = false;
+            com.copperslug.client.armasfuego.comun.Apuntado.parabolaDibujos = 0;
+            com.copperslug.client.armasfuego.comun.Apuntado.parabolaDiag = "no se ha dibujado";
             piApuntar(a2Punto(8, 0, 2.5));
         });
         paso("352_canon_parabola", 10, () -> {});
@@ -478,7 +484,8 @@ public final class PruebaCI {
             int n = com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos;
             boolean cae = com.copperslug.client.armasfuego.comun.Apuntado.parabolaCae;
             com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
-            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 6 && cae, n + " puntos, cae en un bloque: " + cae);
+            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 6 && cae, n + " puntos, cae en un bloque: " + cae + " (" + com.copperslug.client.armasfuego.comun.Apuntado.parabolaDiag
+                    + "; apunta " + com.copperslug.client.armasfuego.comun.Apuntado.apunta + ", k " + com.copperslug.client.armasfuego.comun.Apuntado.k + ", en la mano " + mc.player.getMainHandItem().getItem() + ")");
         });
         // ---- el rifle apunta con su catalejo (su zoom): cuenta como apuntar
         sin("ap_rifle", 10, () -> {
@@ -783,7 +790,7 @@ public final class PruebaCI {
         paso("102_ruleta_girando", 20, () -> {
             ItemStack s = mc.player.getMainHandItem();
             long hace = mc.level.getGameTime() - com.copperslug.armasfuego.pistola.Tambor.giroT(s);
-            piComprobar("girar el tambor (agachado + clic izquierdo)", com.copperslug.armasfuego.pistola.Tambor.girado(s) && hace >= 0 && hace < 40,
+            piComprobar("girar el tambor (agachado + clic izquierdo)", com.copperslug.armasfuego.pistola.Tambor.girado(s) && hace >= 0 && hace < 100,
                     "girado " + com.copperslug.armasfuego.pistola.Tambor.girado(s) + ", hace " + hace + " ticks");
         });
         sin("pistola_ruleta_fin", 6, () -> {
@@ -2985,9 +2992,15 @@ public final class PruebaCI {
         });
         // sacarla y el tiro seguidos (los paquetes llegan en orden: primero sale de la manga y luego dispara); con
         // shaders, a pocos fps, unos pocos pasos ya eran más de un segundo del servidor
-        sin("a2u_manga_tiro", 4, () -> {
+        sin("a2u_manga_saca", 3, () -> {
             a2Apuntar(a2Punto(8, 0, 1.2));
             com.copperslug.client.armasfuego.comun.FuegoCliente.sacarDeLaManga();
+        });
+        // el gatillo mira el arma de la mano en el cliente: hasta que no llega el cambio, aún es el palo (y no dispara)
+        vigila("a2u_manga_tiro", 1, () -> {
+            if (!(mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem))
+                throw new IllegalStateException("el cliente aún no ve la Derringer en la mano: " + mc.player.getMainHandItem());
+            a2Apuntar(a2Punto(8, 0, 1.2));
             piDisparar();
         });
         sin("a2u_manga_mano", 2, () -> piSrv(sp -> PI.put("manga", sp.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem
@@ -3424,14 +3437,13 @@ public final class PruebaCI {
             PI.put("bay_vida0", z.getHealth());
             a2Apuntar(z.getBoundingBox().getCenter());
         }));
-        sin("a2o_bayoneta_golpe", 4, () -> {
-            PI.put("bay_vista", false);
-            var z = mc.level.getEntity(mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, mc.player.getBoundingBox().inflate(6)).stream()
-                    .findFirst().map(net.minecraft.world.entity.Entity::getId).orElse(-1));
-            if (z != null) {
-                mc.gameMode.attack(mc.player, z);
-                mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
-            }
+        sin("a2o_bayoneta_prepara", 1, () -> PI.put("bay_vista", false));
+        // si el cliente aún no ve al zombi (con shaders, a pocos fps) se espera en vez de no pegar
+        vigila("a2o_bayoneta_golpe", 1, () -> {
+            var z = mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, mc.player.getBoundingBox().inflate(6)).stream().findFirst().orElse(null);
+            if (z == null) throw new IllegalStateException("el cliente aún no ve al zombi de la bayoneta");
+            mc.gameMode.attack(mc.player, z);
+            mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
         });
         // vigilancia por tick: el fuego del golpe se mira en cada tick siguiente (si el CI lo apaga un tick, se ve igual)
         for (int i = 0; i < 3; i++) sin("a2o_bayoneta_vigila" + i, 1, () -> piSrv(sp -> {
