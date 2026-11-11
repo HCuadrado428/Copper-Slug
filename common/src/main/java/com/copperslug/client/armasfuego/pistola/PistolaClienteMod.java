@@ -28,10 +28,11 @@ public final class PistolaClienteMod {
                     (s, l, ent, seed) -> Tambor.oxido(s) / 4F);
             // las recámaras cargadas, en su sitio: máscara de 6 bits (bit k = la recámara k desde la que toca). El modelo
             // 3D enseña por detrás un agujero por recámara y el culote de latón de las cargadas (generar_tambor.py).
-            // Con el tambor girado (ruleta rusa) no se gira con la que toca, para no delatarla.
+            // Con el tambor girado (ruleta rusa) no se enseña ninguna bala: nada que delate cuál toca.
             ItemProperties.register(ModItems.REVOLVER.get(), new ResourceLocation(CopperSlug.MOD_ID, "recamaras"), (s, l, ent, seed) -> {
+                if (Tambor.girado(s)) return 0F;
                 int[] r = Tambor.recamaras(s);
-                int pos = Tambor.girado(s) ? 0 : Tambor.pos(s), mascara = 0;
+                int pos = Tambor.pos(s), mascara = 0;
                 for (int k = 0; k < Tambor.N; k++) if (r[(pos + k) % Tambor.N] != 0) mascara |= 1 << k;
                 return (float) mascara;
             });
