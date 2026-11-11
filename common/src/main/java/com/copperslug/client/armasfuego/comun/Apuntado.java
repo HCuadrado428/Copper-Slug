@@ -189,7 +189,7 @@ public final class Apuntado {
     public static float fov(LocalPlayer p) {
         if (k <= 0F) return 1F;
         float f = 1F - (1F - EquilibrioArmas.apuntarFov()) * pesoFov(p) * k;
-        if (apunta && Apuntar.apuntando(p)) f /= (float) (2.0 - EquilibrioArmas.apuntarLentitud()) / 2F;
+        if (apunta && Apuntar.apuntando(p)) f /= (float) (2.0 - Apuntar.lentitud(p)) / 2F;
         return f;
     }
 
