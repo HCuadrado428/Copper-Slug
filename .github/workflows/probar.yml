@@ -6,9 +6,8 @@ name: Probar en el juego
 # se llega al mundo sin errores. Lo que sale (capturas, registros, resumen) se sube como artefacto y a la prerelease.
 
 on:
-  workflow_run:
-    workflows: [Compilar]
-    types: [completed]
+  # Ya no se lanza solo tras cada compilación (gastaba minutos y las pruebas se probaban a mano con el jar):
+  # solo a mano, desde Actions > Run workflow.
   workflow_dispatch:
     inputs:
       build:
