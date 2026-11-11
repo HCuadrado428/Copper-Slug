@@ -74,7 +74,8 @@ public final class RevolverTambor {
                 ang += 720F * k * k;
             }
         }
-        boolean abierto = s.hasTag() && mc.level.getGameTime() - s.getTag().getLong(Revolver.CARGA_T) < 12 && mc.level.getGameTime() - s.getTag().getLong(Revolver.CARGA_T) >= 0;
+        long desdeCarga = com.copperslug.shim.Nbt.tiene(s) ? mc.level.getGameTime() - com.copperslug.shim.Nbt.leer(s).getLong(Revolver.CARGA_T) : -1;
+        boolean abierto = desdeCarga >= 0 && desdeCarga < 12;
         BakedModel real = PlataformaCliente.P.modeloPara(m, ctx);
         ps.pushPose();
         // la misma colocación que hace el ItemRenderer con el modelo: la transformación de la perspectiva y el origen en la esquina
