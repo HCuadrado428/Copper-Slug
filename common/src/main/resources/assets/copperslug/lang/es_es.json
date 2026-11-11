@@ -505,5 +505,6 @@
   "advancements.copperslug.raiz.title": "Copper Slug",
   "advancements.copperslug.raiz.description": "Revólveres, rifles y cañones de cobre: no se fabrican, se encuentran en los cofres.",
   "enchantment.copperslug.pulso_firme": "Pulso firme",
-  "enchantment.copperslug.pulso_firme.desc": "Apuntando, dispersa un 20 % menos por nivel y se anda menos lento. Para las armas que apuntan con el clic derecho."
+  "enchantment.copperslug.pulso_firme.desc": "Apuntando, dispersa un 20 % menos por nivel y se anda menos lento. Para las armas que apuntan con el clic derecho.",
+  "key.copperslug.inspeccionar": "Inspeccionar el arma"
 }

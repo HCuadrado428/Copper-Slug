@@ -386,6 +386,7 @@ public final class FuegoCliente {
         if (en && gm.velocidad > 0.35F && gm.girando() && gm.balas() > 0 && gm.atasco() == 0 && p.tickCount % 2 == 0)
             patada(0F, 0.9F, 0F);
         mangaTick(mc, p);
+        Inspeccion.tick(mc, p);
     }
 
     /** El que va a los mandos de la Gatling: los dos brazos a los mandos (como con la ballesta cargada). */
