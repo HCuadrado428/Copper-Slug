@@ -177,10 +177,11 @@ def modelo_cilindro(ox):
 def modelo_culote():
     """El culote de una bala (un cubito con el pistón): neutro, el código lo tinta con el color del tipo de bala."""
     m = {'credit': 'copperslug', 'ambientocclusion': False, 'textures': {'culote': 'copperslug:item/armas3d/culote_tinte', 'particle': 'copperslug:item/armas3d/culote_tinte'}}
-    cara = {'uv': [0, 0, 4, 4], 'texture': '#culote'}
+    # tintindex 0: sin él Minecraft no tiñe las caras y el culote sale siempre blanco
+    cara = {'uv': [0, 0, 4, 4], 'texture': '#culote', 'tintindex': 0}
     m['elements'] = [
         {'name': 'culote', 'from': [-0.3, -0.3, 0], 'to': [0.3, 0.3, 0.4], 'faces': {d: dict(cara) for d in ('north', 'south', 'east', 'west', 'up', 'down')}},
-        {'name': 'piston', 'from': [-0.12, -0.12, 0.4], 'to': [0.12, 0.12, 0.42], 'faces': {'south': {'uv': [7, 7, 9, 9], 'texture': '#culote'}}},
+        {'name': 'piston', 'from': [-0.12, -0.12, 0.4], 'to': [0.12, 0.12, 0.42], 'faces': {'south': {'uv': [7, 7, 9, 9], 'texture': '#culote', 'tintindex': 0}}},
     ]
     return m
 

@@ -476,6 +476,11 @@ public abstract class ArmaFuegoItem extends Item {
 
     /** Dónde sale el tiro: {@code adelante}, {@code derecha} y {@code abajo} desde los ojos. */
     public static Vec3 boca(Entity p, double adelante, double derecha, double abajo) {
+        // apuntando, el tiro sale del centro (por la mira), no de la derecha como desde la cadera
+        if (p instanceof Player ap && Apuntar.apuntando(ap)) {
+            derecha = 0;
+            abajo = Math.min(abajo, 0.06);
+        }
         Vec3 mira = p.getViewVector(1.0F);
         Vec3 der = mira.cross(new Vec3(0, 1, 0));
         der = der.lengthSqr() < 1e-4 ? new Vec3(1, 0, 0) : der.normalize();
