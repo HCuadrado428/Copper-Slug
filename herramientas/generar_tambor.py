@@ -136,20 +136,23 @@ def construir(mascara, abierto=False):
     el.append(caja(CX - 0.18, 10.55, 1.9, CX + 0.18, 11.15, 2.4, 'hierro', 'punto_de_mira'))
     el.append(caja(CX + 0.35, 8.95, 2.6, CX + 0.85, 9.4, 8.4, 'hierro', 'varilla'))
     el.append(caja(CX + 0.25, 8.85, 2.35, CX + 0.95, 9.5, 2.6, 'hierro', 'tapon_varilla'))
-    # ---- el armazón: la cinta de arriba con la muesca de la mira, y el escudo de atrás con el hueco de carga a la derecha
-    el.append(caja(6.55, 10.5, 8.4, 9.45, 11.05, 12.1, 'cobre', 'cinta'))
-    el.append(caja(6.55, 10.5, 12.1, 7.85, 11.05, 12.6, 'cobre', 'alza_izq'))
-    el.append(caja(8.15, 10.5, 12.1, 9.45, 11.05, 12.6, 'cobre', 'alza_der'))
-    el.append(caja(7.85, 10.5, 12.1, 8.15, 10.8, 12.6, 'cobre', 'muesca'))
-    # (el escudo es un marco más ancho que el tambor con una ventana grande: desde atrás o desde el lado se ve la parte de
-    # atrás del armazón, y por la ventana, todas las recámaras; una espiga en el centro sujeta el martillo)
-    el.append(caja(6.2, 7.0, 11.0, 9.8, 7.55, 12.35, 'cobre', 'marco_bajo'))
-    el.append(caja(6.2, 7.0, 11.0, 6.55, 10.55, 12.35, 'cobre', 'marco_izq'))
-    el.append(caja(9.45, 7.0, 11.0, 9.8, 10.55, 12.35, 'cobre', 'marco_der'))
-    el.append(caja(7.72, 8.9, 11.0, 8.28, 9.35, 12.35, 'cobre', 'espiga'))
-    # ---- el martillo (bajado): cuerpo y espolón inclinado hacia atrás
-    el.append(caja(7.85, 9.2, 12.35, 8.15, 10.1, 12.95, 'hierro', 'martillo'))
-    el.append(caja(7.82, 9.85, 12.8, 8.18, 10.5, 13.3, 'hierro', 'martillo_espolon', rot=((CX, 9.9, 12.85), 'x', 22.5)))
+    # ---- la parte de atrás de un Colt de acción simple
+    # la cinta de arriba, con la ranura de la mira a todo lo largo (dos raíles y el fondo más bajo)
+    el.append(caja(7.0, 10.5, 8.4, 7.85, 11.05, 12.6, 'cobre', 'cinta_izq'))
+    el.append(caja(8.15, 10.5, 8.4, 9.0, 11.05, 12.6, 'cobre', 'cinta_der'))
+    el.append(caja(7.85, 10.5, 8.4, 8.15, 10.8, 12.6, 'cobre', 'cinta_fondo'))
+    # el escudo de retroceso: una placa detrás del tambor, con el agujero del percutor y el hueco de carga SOLO a la
+    # derecha (por ahí se ven los culotes de las dos recámaras de ese lado, como por la puerta de carga de uno de verdad)
+    el.append(caja(6.8, 7.4, 11.0, 8.4, 10.5, 12.2, 'cobre', 'escudo_izq'))
+    el.append(caja(8.4, 9.8, 11.0, 9.2, 10.5, 12.2, 'cobre', 'escudo_der_alto'))
+    el.append(caja(8.4, 7.4, 11.0, 9.2, 8.0, 12.2, 'cobre', 'escudo_der_bajo'))
+    el.append({'name': 'percutor', 'from': [7.8, 8.7, 12.18], 'to': [8.2, 9.1, 12.2], 'faces': {'south': {'uv': list(UV_NEGRO), 'texture': '#negro'}}})
+    # el martillo: cuerpo, cuello inclinado hacia atrás y el espolón plano (por debajo de la línea de mira)
+    el.append(caja(7.85, 9.3, 12.2, 8.15, 10.3, 12.7, 'hierro', 'martillo'))
+    el.append(caja(7.85, 10.0, 12.55, 8.15, 10.8, 13.05, 'hierro', 'martillo_cuello', rot=((CX, 10.0, 12.8), 'x', 22.5)))
+    el.append(caja(7.75, 10.55, 12.95, 8.25, 10.85, 13.55, 'hierro', 'martillo_espolon'))
+    # la cola de la empuñadura: una tira que sube desde la culata hasta detrás del escudo, inclinada hacia atrás
+    el.append(caja(7.55, 7.0, 12.2, 8.45, 10.2, 12.8, 'cobre', 'cola', rot=((CX, 10.2, 12.5), 'x', -22.5)))
     el += conservar
     cil = cilindro(mascara)
     if abierto:
