@@ -110,6 +110,7 @@ public final class Apuntado {
                 && !p.isUsingItem() && (apunta || !p.isShiftKeyDown()) && !p.isSpectator();
         if (quiere != apunta) {
             apunta = quiere;
+            if (quiere) HudActividad.tocar(70);
             Apuntar.poner(p, quiere);
             ModNetwork.CHANNEL.sendToServer(new ApuntarPacket(quiere));
             // un clic suave de cobre al poner la mira y otro más grave al soltarla (solo lo oye el que apunta)
@@ -123,6 +124,7 @@ public final class Apuntado {
         Item actual = s.getItem();
         if (actual != ultimoObjeto) {
             if (actual instanceof MosqueteItem && !MosqueteItem.bayoneta(s).isEmpty() && mc.options.getCameraType().isFirstPerson()) brilloBayoneta(mc, p);
+            if (Apuntar.apuntable(s)) HudActividad.tocar(80);   // al sacar el arma se ven sus balas un rato
             ultimoObjeto = actual;
         }
         // la ráfaga de la Thompson: cada tick mientras se mantiene el gatillo
@@ -149,7 +151,7 @@ public final class Apuntado {
             if (GatlingEntity.deJugador(p) == null && Apuntar.apuntable(p.getMainHandItem()) && (!p.isShiftKeyDown() || apunta)) {
                 e.setCanceled(true);
                 e.setSwingHand(false);
-            }
+            } else if (Apuntar.apuntable(p.getMainHandItem())) HudActividad.tocar(70);   // recargar, encerar...
             return;
         }
         if (!e.isAttack()) return;
@@ -184,6 +186,7 @@ public final class Apuntado {
         else if (s.getItem() instanceof RevolverItem r) r.gatillo(mc.level, p, s);
         else return;
         gatillos++;
+        HudActividad.tocar(70);
         ModNetwork.CHANNEL.sendToServer(new GatilloPacket(true));
     }
 
@@ -317,7 +320,6 @@ public final class Apuntado {
                 g.pose().scale(0.75F, 0.75F, 1F);
                 g.renderItem(new ItemStack(c.item()), 0, 0);
                 g.pose().popPose();
-                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 44, cy - 4, 0xFF000000 | c.color, true);
             }
         } else if (i instanceof WinchesterItem) {
             // alza de cuernos: dos patillas y la bala que va a salir
@@ -329,7 +331,6 @@ public final class Apuntado {
             if (!dep.isEmpty()) {
                 Item b = dep.get(dep.size() - 1);
                 g.fill(cx + 14, cy - 9, cx + 17, cy - 3, WinchesterItem.color(b));
-                g.drawString(f, b.getDescription(), cx + 20, cy - 10, 0xFFE8E0D0, true);
             }
         } else if (i instanceof DerringerItem) {
             // dos cañones: un punto por cada bala que queda
