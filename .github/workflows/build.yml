@@ -35,6 +35,8 @@ jobs:
           PY
       - name: Suscriptores al día
         run: python3 herramientas/comprobar_suscriptores.py
+      - name: Modelos válidos
+        run: python3 herramientas/validar_modelos.py
       - name: Compilar
         run: |
           chmod +x gradlew

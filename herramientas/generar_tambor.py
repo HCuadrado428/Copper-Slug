@@ -65,7 +65,7 @@ def octogono(cy, a, z1, z2, tex, nombre, tex_lado=None, uv_lado=None):
     """Un prisma octogonal de apotema a: dos cajas rectas y dos giradas 45° (la unión es el octógono)."""
     s = 2 * a * math.tan(math.radians(22.5))
     out = []
-    for i, (ang, dx, dy) in enumerate(((0, a, s / 2), (0, s / 2, a), (45, a, s / 2), (135, a, s / 2))):
+    for i, (ang, dx, dy) in enumerate(((0, a, s / 2), (0, s / 2, a), (45, a, s / 2), (-45, a, s / 2))):
         # los extremos se desplazan una pizca para que no peleen entre sí al coincidir
         e = caja(CX - dx, cy - dy, z1 + 0.004 * i, CX + dx, cy + dy, z2 - 0.004 * i, tex, nombre + '_%d' % i,
                  rot=((CX, cy, 0), 'z', ang) if ang else None)
@@ -146,7 +146,7 @@ def construir(mascara, abierto=False):
     el.append(caja(7.5, 8.0, 11.3, 8.46, 10.5, 12.35, 'cobre', 'escudo_centro'))
     # ---- el martillo (bajado): cuerpo y espolón inclinado hacia atrás
     el.append(caja(7.85, 9.2, 12.35, 8.15, 10.1, 12.95, 'hierro', 'martillo'))
-    el.append(caja(7.82, 9.85, 12.8, 8.18, 10.5, 13.3, 'hierro', 'martillo_espolon', rot=((CX, 9.9, 12.85), 'x', 25)))
+    el.append(caja(7.82, 9.85, 12.8, 8.18, 10.5, 13.3, 'hierro', 'martillo_espolon', rot=((CX, 9.9, 12.85), 'x', 22.5)))
     el += conservar
     cil = cilindro(mascara)
     if abierto:
