@@ -278,21 +278,20 @@ public final class Apuntado {
         Item i = s.getItem();
         var f = mc.font;
         if (i instanceof RevolverItem) {
-            // la bala que toca, a la derecha de la mira; en la ruleta rusa, un interrogante
-            Carga c = revolverSiguiente(s, p.getXRot());
+            // el tambor grande (x2) con los agujeros de las recámaras y las balas dentro, a la derecha de la mira; el
+            // pequeño de siempre se oculta mientras se apunta (PistolaCliente.hud) para que no se pisen
             g.fill(cx - 7, cy, cx - 3, cy + 1, 0xC0FFFFFF);
             g.fill(cx + 4, cy, cx + 8, cy + 1, 0xC0FFFFFF);
-            if (c == null) {
-                g.drawString(f, "?", cx + 14, cy - 4, 0xFFC27BFF, true);
-            } else if (c == Carga.VACIA) {
-                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 14, cy - 4, 0xFF909090, true);
-            } else {
-                g.pose().pushPose();
-                g.pose().translate(cx + 12, cy - 6, 0);
-                g.pose().scale(0.75F, 0.75F, 1F);
-                g.renderItem(new ItemStack(c.item()), 0, 0);
-                g.pose().popPose();
-                g.drawString(f, Component.translatable(c.clave() + ".corto"), cx + 26, cy - 4, 0xFF000000 | c.color, true);
+            g.pose().pushPose();
+            g.pose().translate(cx + 34, cy + 2, 0);
+            g.pose().scale(2F, 2F, 1F);
+            com.copperslug.client.armasfuego.pistola.PistolaCliente.dibujar(g, s, 0, 0, mc.level.getGameTime(), pt);
+            g.pose().popPose();
+            // y el nombre de la que toca debajo (en la ruleta rusa no se sabe: ya lo dice el interrogante del tambor)
+            Carga c = revolverSiguiente(s, p.getXRot());
+            if (c != null) {
+                Component nombre = Component.translatable(c.clave() + ".corto");
+                g.drawString(f, nombre, cx + 34 - f.width(nombre) / 2, cy + 28, c == Carga.VACIA ? 0xFF909090 : 0xFF000000 | c.color, true);
             }
         } else if (i instanceof WinchesterItem) {
             // alza de cuernos: dos patillas y la bala que va a salir
@@ -303,8 +302,8 @@ public final class Apuntado {
             var dep = WinchesterItem.deposito(s);
             if (!dep.isEmpty()) {
                 Item b = dep.get(dep.size() - 1);
-                g.fill(cx + 14, cy - 2, cx + 17, cy + 4, WinchesterItem.color(b));
-                g.drawString(f, b.getDescription(), cx + 20, cy - 3, 0xFFE8E0D0, true);
+                g.fill(cx + 14, cy - 9, cx + 17, cy - 3, WinchesterItem.color(b));
+                g.drawString(f, b.getDescription(), cx + 20, cy - 10, 0xFFE8E0D0, true);
             }
         } else if (i instanceof DerringerItem) {
             // dos cañones: un punto por cada bala que queda
@@ -339,9 +338,6 @@ public final class Apuntado {
             int col = fr >= c ? 0x60202020 : fr < 0.5F ? 0xFF5FD35F : fr < 0.8F ? 0xFFE8C840 : 0xFFE84030;
             g.fill(x - 1, y - 1, x + 1, y + 1, col);
         }
-        String t = Math.round(c * 100) + "%";
-        var f = Minecraft.getInstance().font;
-        g.drawString(f, t, cx - f.width(t) / 2, cy + 18, c < 0.8F ? 0xFFE0E0E0 : 0xFFE84030, true);
     }
 
     /** Para la prueba: los puntos de la última parábola dibujada y si acaba en un bloque. */
