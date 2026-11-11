@@ -363,7 +363,7 @@
       4.65,
       14.95
      ],
-     "texture": "#acero"
+     "texture": "#cobre"
     },
     "south": {
      "uv": [
@@ -372,7 +372,7 @@
       4.65,
       14.95
      ],
-     "texture": "#acero"
+     "texture": "#cobre"
     },
     "east": {
      "uv": [
@@ -381,7 +381,7 @@
       16,
       14.95
      ],
-     "texture": "#acero"
+     "texture": "#cobre"
     },
     "west": {
      "uv": [
@@ -390,7 +390,7 @@
       16,
       14.95
      ],
-     "texture": "#acero"
+     "texture": "#cobre"
     },
     "down": {
      "uv": [
@@ -399,7 +399,7 @@
       4.65,
       16
      ],
-     "texture": "#acero"
+     "texture": "#cobre"
     }
    }
   },
