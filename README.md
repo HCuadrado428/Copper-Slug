@@ -28,6 +28,26 @@ ammo and enchantments.
 | Bayonet musket | Long musket with bolas, harpoon bolas and chain bolas. Fit a sword on it as a bayonet: it keeps the sword's enchantments (Sharpness, Fire Aspect, Looting, Sweeping Edge and Mending). |
 | Hand cannon | Fires iron bolas that explode. Incendiary, fireworks and bouncing bolas, falling blocks and anvils. |
 
+## Controls
+
+Left click shoots and holding right click aims, as in most shooters. Aiming brings the gun to the centre of the screen,
+narrows the field of view, tightens the spread and slows you down; other players see you raise the gun.
+
+| Weapon | Left click | Hold right click | Sneaking |
+|--------|------------|------------------|----------|
+| Roulette revolver | Shoot (looking straight down: at your own temple) | Aim. The sight shows the next round, except in Russian roulette (after spinning the cylinder, or at your temple) | Left click spins the cylinder. Right click loads the ammo in your other hand, waxes (honeycomb) or scrapes (axe), fans the hammer (with Fanning) or challenges a player to a duel |
+| Spyglass rifle | Shoot, or work the bolt if no round is ready | Aim through the spyglass (zoom and rangefinder) | Left click works the bolt by hand; while aiming, it takes a photo |
+| Pressure shotgun | Shoot, from the hip only: it does not aim | Pump | Hold right click to suck in items and pull mobs |
+| Winchester 1873 | Shoot | Aim (the sight shows the round about to leave) | Hold right click to reload round by round, or to clear a jam |
+| Derringer | Shoot | Aim | Hold right click to reload. The sleeve key (K) draws it from anywhere in the inventory |
+| Thompson | Hold for burst fire | Aim (the sight opens up as the burst goes on) | Hold right click to change the drum |
+| Bayonet musket | Shoot. With no ball loaded, jammed or sneaking, it is a bayonet thrust | Aim | Hold right click to reload (powder, ball, ramrod) |
+| Hand cannon | Light the fuse | Aim. The sight draws the arc of the ball | Hold right click to reload |
+| Crank Gatling Gun (at the controls) | Hold to turn the crank and fire | Aim. The sight shows the barrel heat | Right click picks it up |
+
+Every copper gun: sneak + right click with a honeycomb or an axe in the other hand waxes or scrapes it. The aiming values
+(spread, field of view and slowdown) are in the server config, section `armas_de_fuego_equilibrio.apuntado`.
+
 ## Downloads
 
 There are no versioned releases yet: every CI build is published as a `build-N` prerelease.
@@ -80,6 +100,28 @@ especial y sus encantamientos.
 | Thompson | Subfusil con tambor, dentro de un estuche de violín. Tambores de agua, de tinta y trazadores. Toca el estuche con un arco para hacer música. |
 | Mosquete con bayoneta | Mosquete largo con bolas, bolas arpón y bolas encadenadas. Cala una espada en el mosquete como bayoneta: conserva los encantamientos de la espada (Filo, Aspecto ígneo, Botín, Barrido, Reparación). |
 | Cañón de mano | Dispara bolaños que estallan. Bolaños incendiarios, de fuegos artificiales y saltarines, y bloques que caen o yunques disparados. |
+
+## Controles
+
+El clic izquierdo dispara y mantener el clic derecho apunta, como en casi todos los juegos de tiros. Al apuntar, el arma
+va al centro de la pantalla, se cierra el campo de visión, se dispersa menos y se anda más lento; los demás jugadores
+ven que encaras el arma.
+
+| Arma | Clic izquierdo | Mantener clic derecho | Agachado |
+|------|----------------|------------------------|----------|
+| Revólver de ruleta | Disparar (mirando al suelo del todo: a tu propia sien) | Apuntar. La mira enseña la bala que toca, salvo en la ruleta rusa (tras girar el tambor, o con el cañón en la sien) | El clic izquierdo gira el tambor. El clic derecho carga la munición de la otra mano, encera (panal) o rasca (hacha), dispara en abanico (con Abanico) o reta a un jugador a un duelo |
+| Rifle de catalejo | Disparar, o accionar el cerrojo si no hay bala lista | Apuntar por el catalejo (zoom y telémetro) | El clic izquierdo acciona el cerrojo a mano; apuntando, saca una foto |
+| Escopeta de presión | Disparar, solo desde la cadera: no apunta | Bombear | Mantener clic derecho aspira objetos y tira de los mobs |
+| Winchester 1873 | Disparar | Apuntar (la mira enseña la bala que va a salir) | Mantener clic derecho recarga bala a bala, o la desatasca |
+| Derringer | Disparar | Apuntar | Mantener clic derecho recarga. La tecla de la manga (K) la saca de cualquier hueco del inventario |
+| Thompson | Mantener: ráfaga | Apuntar (la mira se abre según dura la ráfaga) | Mantener clic derecho cambia el tambor |
+| Mosquete con bayoneta | Disparar. Sin bola, encasquillado o agachado, es la estocada de la bayoneta | Apuntar | Mantener clic derecho recarga (pólvora, bola y baqueta) |
+| Cañón de mano | Prender la mecha | Apuntar. La mira dibuja la parábola del bolaño | Mantener clic derecho recarga |
+| Gatling de manivela (a los mandos) | Mantener: girar la manivela y disparar | Apuntar. La mira enseña el calor del cañón | El clic derecho la recoge |
+
+Todas las armas de cobre: agachado + clic derecho con un panal o un hacha en la otra mano la encera o la rasca. Los
+valores del apuntado (dispersión, campo de visión y lentitud) están en la config del servidor, sección
+`armas_de_fuego_equilibrio.apuntado`.
 
 ## Descargas
 
