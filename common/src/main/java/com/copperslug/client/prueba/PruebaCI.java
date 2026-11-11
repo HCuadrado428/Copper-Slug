@@ -849,6 +849,11 @@ public final class PruebaCI {
                 && com.copperslug.armasfuego.pistola.Tambor.siguiente(sp.getMainHandItem()) == com.copperslug.armasfuego.pistola.Carga.FOGUEO)));
         sin("pistola_duelo_espera", 32, () -> piComprobar("duelo: antes del ¡YA! no dispara", Boolean.TRUE.equals(PI.get("antes")), String.valueOf(PI.get("antes"))));
         paso("118_duelo_ya", 8, () -> {});
+        // el «¡YA!» sale a los 60 ticks del servidor: el tiro espera a que el servidor diga que ya se puede disparar
+        PI.remove("ya");
+        for (int i = 0; i < 60; i++) PASOS.add(new Paso("~pistola_duelo_ya", 2,
+                () -> piSrv(sp -> PI.put("ya", !com.copperslug.armasfuego.pistola.Duelo.bloqueado(sp))), false,
+                () -> Boolean.TRUE.equals(PI.get("ya"))));
         vigila("pistola_duelo_tiro", 4, () -> piSrv(sp -> com.copperslug.armasfuego.pistola.Duelo.impacto(sp, piForastero)));
         paso("119_duelo_gana", 10, () -> piComprobar("duelo: gana el primero que da", mc.player.getGameProfile().getName().equals(com.copperslug.armasfuego.pistola.Duelo.ganadorPrueba),
                 String.valueOf(com.copperslug.armasfuego.pistola.Duelo.ganadorPrueba)));
