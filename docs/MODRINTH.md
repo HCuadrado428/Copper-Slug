@@ -34,7 +34,8 @@ Copper Slug adds nine firearms from the Wild West and beyond, each with its own 
 field of view, tightens the spread and slows you down. Sneak + right click reloads. The pressure shotgun is the
 exception: right click pumps it and it fires from the hip only. At the Gatling controls, hold left click to crank and
 right click to aim. Each sight shows something useful: the revolver's next round (never in Russian roulette), the hand
-cannon's arc, the Gatling's barrel heat.
+cannon's arc, the Gatling's barrel heat. Press N to inspect the gun in your hand. All the guns' main metal is copper, so
+they all rust.
 
 Copper rusts over time. Each rust phase trades accuracy for damage and piercing; wax it with honeycomb or scrape it with
 an axe. Guns are found in vanilla structure chests. Most ammo, the violin case and the bayonet fitting can be crafted.
@@ -73,7 +74,8 @@ Apuntar lleva el arma al centro, cierra el campo de visión, dispersa menos y ha
 derecho recarga. La escopeta de presión es la excepción: el clic derecho la bombea y dispara solo desde la cadera. A los
 mandos de la Gatling, mantener el clic izquierdo gira la manivela y el derecho apunta. Cada mira enseña algo útil: la
 del revólver, la bala que toca (nunca en la ruleta rusa); la del cañón de mano, la parábola; la de la Gatling, el calor
-del cañón.
+del cañón. La N inspecciona el arma de la mano. El metal principal de todas las armas es de cobre, así que todas se
+oxidan.
 
 El cobre se oxida con el tiempo. Cada fase de óxido cambia precisión por daño y perforación; se encera con panal o se
 rasca con un hacha. Las armas se encuentran en los cofres de estructuras vanilla. La mayor parte de la munición, el

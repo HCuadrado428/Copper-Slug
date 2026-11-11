@@ -46,7 +46,8 @@ narrows the field of view, tightens the spread and slows you down; other players
 | Crank Gatling Gun (at the controls) | Hold to turn the crank and fire | Aim. The sight shows the barrel heat | Right click picks it up |
 
 Every copper gun: sneak + right click with a honeycomb or an axe in the other hand waxes or scrapes it. The aiming values
-(spread, field of view and slowdown) are in the server config, section `armas_de_fuego_equilibrio.apuntado`.
+(spread, field of view and slowdown) are in the server config, section `armas_de_fuego_equilibrio.apuntado`. Press N to
+inspect the gun in your hand (rebindable under Controls > Copper Slug).
 
 ## Downloads
 
@@ -121,7 +122,7 @@ ven que encaras el arma.
 
 Todas las armas de cobre: agachado + clic derecho con un panal o un hacha en la otra mano la encera o la rasca. Los
 valores del apuntado (dispersión, campo de visión y lentitud) están en la config del servidor, sección
-`armas_de_fuego_equilibrio.apuntado`.
+`armas_de_fuego_equilibrio.apuntado`. La N inspecciona el arma de la mano (se puede cambiar en Controles > Copper Slug).
 
 ## Descargas
 
