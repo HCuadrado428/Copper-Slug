@@ -26,7 +26,8 @@ def candidato(e):
     if 'rotation' in e or str(e.get('name', '')).startswith('redondo_'):
         return False
     w, h, l = e['to'][0] - e['from'][0], e['to'][1] - e['from'][1], e['to'][2] - e['from'][2]
-    if l < 5 or max(w, h) > 2.0 or min(w, h) < 0.6 or not 0.6 <= w / h <= 1.7:
+    # solo piezas casi cuadradas: si no, el octógono las dejaba más finas por un lado (palancas, bandas)
+    if l < 5 or max(w, h) > 2.0 or min(w, h) < 0.6 or not 0.85 <= w / h <= 1.18:
         return False
     tex = collections.Counter(f['texture'] for f in e['faces'].values()).most_common(1)[0][0]
     return tex == '#cobre'
