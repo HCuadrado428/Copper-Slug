@@ -1130,11 +1130,11 @@ public final class PruebaCI {
         sin("rifle_cabeza_comprobar", 2, () -> rifleSrv(sp -> {
             var l = sp.serverLevel();
             var z = l.getEntity(rifleZ1);
-            // 9 x 1,6 en la cabeza = 14,4 (equilibrio 1.1.0: ya no mata de un tiro a nadie con 20 de vida)
+            // 9 x 1,5 en la cabeza = 13,5 (no mata de un tiro a nadie con 20 de vida)
             boolean muerto = z == null || !z.isAlive() || ((net.minecraft.world.entity.LivingEntity) z).getHealth() <= 0;
             float hp = muerto ? 0 : ((net.minecraft.world.entity.LivingEntity) z).getHealth();
-            RESUMEN.add("  rifle: disparo a la cabeza → husk " + (muerto ? "muerto" : "vivo con " + hp) + " (esperado ~5,6)");
-            if (hp > 7F && rifleFallo == null) rifleFallo = "el disparo a la cabeza no hace el daño de la cabeza (" + hp + ")";
+            RESUMEN.add("  rifle: disparo a la cabeza → husk " + (muerto ? "muerto" : "vivo con " + hp) + " (esperado ~6,5)");
+            if (hp > 8F && rifleFallo == null) rifleFallo = "el disparo a la cabeza no hace el daño de la cabeza (" + hp + ")";
         }));
         sin("rifle_cerrojo2", 25, () -> {
             rifleComprobar();
