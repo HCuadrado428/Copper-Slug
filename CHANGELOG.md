@@ -46,6 +46,12 @@
   Gatling heat move to the side. The musket and Winchester stocks were lowered so they do not fill the sight picture.
 - Fabric has no reach attribute for the musket bayonet (Forge and NeoForge do). On 1.21.1 Fabric does not apply the camera
   roll of the rifle recoil (the rest of the recoil is applied).
+- Armed mobs: some pillagers carry a Winchester and really shoot (six rounds, then a reload; aim depends on the
+  difficulty). Config section `mobs_armados`: master switch, chance per pillager and per captain, damage, rate of fire and
+  drop chance. Off means vanilla.
+- New structure, the Pharaoh's Pyramid (deserts): a cinematic stepped sandstone pyramid with a pylon gate, obelisks, a
+  trapped corridor (pressure plate over TNT), the sarcophagus chamber with four husks carrying Winchesters, and a rear
+  treasure chapel with ammo and, sometimes, a Winchester or a Derringer.
 
 ---
 
@@ -99,3 +105,9 @@
   Gatling se apartan a un lado. Las culatas del mosquete y de la Winchester son más bajas para que no llenen la mira.
 - Fabric no tiene el alcance de la bayoneta del mosquete (en Forge y NeoForge sí). En 1.21.1 Fabric no aplica el giro de
   cámara del retroceso del rifle (el resto del retroceso sí).
+- Mobs armados: algunos saqueadores llevan una Winchester y disparan de verdad (seis balas y luego recargan; la puntería
+  depende de la dificultad). Sección `mobs_armados` de la config: interruptor, probabilidad por saqueador y por capitán,
+  daño, cadencia y probabilidad de soltar el arma. Apagado, todo es vanilla.
+- Estructura nueva, la Pirámide del faraón (desiertos): una pirámide escalonada de arenisca de película, con pilono de
+  entrada, obeliscos, un pasillo trampa (placa de presión sobre TNT), la cámara del sarcófago con cuatro husks con
+  Winchester y una capilla trasera con el tesoro: munición y, a veces, una Winchester o una Derringer.
