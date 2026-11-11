@@ -396,7 +396,9 @@ public final class Revolver {
         Vec3 der = mira.cross(new Vec3(0, 1, 0));
         der = der.lengthSqr() < 1e-4 ? new Vec3(1, 0, 0) : der.normalize();
         if (p.getMainArm() == net.minecraft.world.entity.HumanoidArm.LEFT) der = der.scale(-1);
-        return ojo.add(mira.scale(0.8)).add(der.scale(0.3)).add(0, -0.22, 0);
+        // apuntando, el tiro sale del centro (por la mira), no de la derecha como desde la cadera
+        boolean apunta = com.copperslug.armasfuego.comun.Apuntar.apuntando(p);
+        return ojo.add(mira.scale(0.8)).add(der.scale(apunta ? 0 : 0.3)).add(0, apunta ? -0.06 : -0.22, 0);
     }
 
     private static void fogonazo(ServerLevel l, Vec3 b, Vec3 mira, boolean grande) {
