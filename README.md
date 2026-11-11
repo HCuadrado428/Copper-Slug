@@ -103,4 +103,4 @@ Todavía no hay versiones publicadas: cada compilación del CI sale como prerele
 Copper Slug es la parte de armas de fuego del mod Miscelánea como mod independiente. No está pensado para instalarlo a la
 vez que Miscelánea.
 
-All Rights Reserved · caihugus
+All Rights Reserved · HCuadrado428
