@@ -26,10 +26,15 @@ public final class PistolaClienteMod {
             com.copperslug.client.armasfuego.comun.Apuntado.init();
             ItemProperties.register(ModItems.REVOLVER.get(), net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "oxido"),
                     (s, l, ent, seed) -> Tambor.oxido(s) / 4F);
-            // las balas que lleva el tambor (0 a 6): el modelo 3D enseña por detrás un agujero por recámara y el
-            // culote de latón de las cargadas (herramientas/generar_tambor.py)
-            ItemProperties.register(ModItems.REVOLVER.get(), net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "cargadas"),
-                    (s, l, ent, seed) -> (float) Tambor.cargadas(s));
+            // las recámaras cargadas, en su sitio: máscara de 6 bits (bit k = la recámara k desde la que toca). El modelo
+            // 3D enseña por detrás un agujero por recámara y el culote de latón de las cargadas (generar_tambor.py).
+            // Con el tambor girado (ruleta rusa) no se gira con la que toca, para no delatarla.
+            ItemProperties.register(ModItems.REVOLVER.get(), net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "recamaras"), (s, l, ent, seed) -> {
+                int[] r = Tambor.recamaras(s);
+                int pos = Tambor.girado(s) ? 0 : Tambor.pos(s), mascara = 0;
+                for (int k = 0; k < Tambor.N; k++) if (r[(pos + k) % Tambor.N] != 0) mascara |= 1 << k;
+                return (float) mascara;
+            });
         });
     }
 

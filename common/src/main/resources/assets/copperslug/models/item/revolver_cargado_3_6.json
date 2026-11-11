@@ -5,7 +5,7 @@
   "particle": "copperslug:item/revolver_oxidado"
  },
  "base": {
-  "parent": "copperslug:item/armas3d/revolver_3d_n6",
+  "parent": "copperslug:item/armas3d/revolver_3d_m6",
   "textures": {
    "cobre": "copperslug:item/armas3d/cobre_3",
    "tambor": "copperslug:item/armas3d/tambor_frente_3",
