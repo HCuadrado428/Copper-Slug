@@ -121,6 +121,9 @@ public final class Balistica {
         BlockPos pos = t.bloque().getBlockPos();
         BlockState st = l.getBlockState(pos);
         polvo(l, st, q);
+        // dar en un bloque de cobre suena a cobre (un tintineo corto, más agudo cuanto más fuerte)
+        if (st.getSoundType() == net.minecraft.world.level.block.SoundType.COPPER)
+            l.playSound(null, q.x, q.y, q.z, net.minecraft.sounds.SoundEvents.COPPER_HIT, SoundSource.BLOCKS, 0.8F, 1.5F + l.random.nextFloat() * 0.3F);
         l.gameEvent(tirador, GameEvent.PROJECTILE_LAND, q);
         if (st.getBlock() instanceof BellBlock bell && tirador instanceof net.minecraft.world.entity.player.Player p)
             bell.attemptToRing(p, l, pos, t.bloque().getDirection());
