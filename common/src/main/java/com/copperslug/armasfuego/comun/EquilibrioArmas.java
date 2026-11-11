@@ -67,10 +67,10 @@ public final class EquilibrioArmas {
         ENCASQUILLADO_BASE = b.comment("Probabilidad de que cualquier arma de fuego se encasquille en un disparo, aunque esté nueva (el óxido la sube).",
                 "Encasquillada: agachado + clic derecho para desatascarla (o el cerrojo/la palanca).").defineInRange("encasquillado_base", 0.01, 0.0, 1.0);
         REVOLVER_DANO = b.comment("Revólver: daño de la bala (antes 7). Desenfunde lo multiplica por 1,75.").defineInRange("revolver_dano", 6.5, 0.0, 100.0);
-        REVOLVER_ENFRIAMIENTO = b.comment("Revólver: ticks entre disparos (antes 7).").defineInRange("revolver_enfriamiento", 8, 1, 100);
-        ESCOPETA_PERDIGON = b.comment("Escopeta de presión: daño de cada perdigón de grava a 100 de presión (10 perdigones).").defineInRange("escopeta_perdigon", 1.6, 0.0, 100.0);
+        REVOLVER_ENFRIAMIENTO = b.comment("Revólver: ticks entre disparos (10 = la ventana de invulnerabilidad: cuentan todos los tiros).").defineInRange("revolver_enfriamiento", 10, 1, 100);
+        ESCOPETA_PERDIGON = b.comment("Escopeta de presión: daño de cada perdigón de grava a 100 de presión (10 perdigones).").defineInRange("escopeta_perdigon", 1.5, 0.0, 100.0);
         RIFLE_DANO = b.comment("Rifle de catalejo: daño de la bala (antes 12; con la respiración contenida, hasta x1,25).").defineInRange("rifle_dano", 9.0, 0.0, 100.0);
-        RIFLE_CABEZA = b.comment("Rifle de catalejo: multiplicador en la cabeza (antes 1,75).").defineInRange("rifle_cabeza", 1.6, 1.0, 10.0);
+        RIFLE_CABEZA = b.comment("Rifle de catalejo: multiplicador en la cabeza (con 1,5 ni el cañón oxidado con Respiración III mata de un tiro).").defineInRange("rifle_cabeza", 1.5, 1.0, 10.0);
 
         GATLING_DANO = b.comment("Gatling: daño de cada bala.").defineInRange("gatling_dano", 2.5, 0.0, 100.0);
         GATLING_CADENCIA = b.comment("Gatling: ticks entre balas con la manivela a toda velocidad.").defineInRange("gatling_cadencia", 2, 1, 40);
@@ -89,7 +89,7 @@ public final class EquilibrioArmas {
         DERRINGER_ALCANCE = b.comment("Derringer: alcance en bloques.").defineInRange("derringer_alcance", 20.0, 2.0, 128.0);
         DERRINGER_DESENFUNDE = b.comment("Derringer: multiplicador del primer tiro justo al sacarla (truco de tahúr).").defineInRange("derringer_desenfunde", 1.4, 1.0, 5.0);
 
-        THOMPSON_DANO = b.comment("Thompson: daño de cada bala.").defineInRange("thompson_dano", 2.0, 0.0, 100.0);
+        THOMPSON_DANO = b.comment("Thompson: daño de cada bala.").defineInRange("thompson_dano", 1.6, 0.0, 100.0);
         THOMPSON_ALCANCE = b.comment("Thompson: alcance en bloques.").defineInRange("thompson_alcance", 40.0, 4.0, 256.0);
         THOMPSON_CADENCIA = b.comment("Thompson: ticks entre balas.").defineInRange("thompson_cadencia", 2, 1, 40);
         THOMPSON_CAPACIDAD = b.comment("Thompson: balas del cargador de tambor.").defineInRange("thompson_capacidad", 50, 1, 500);
