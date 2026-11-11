@@ -110,5 +110,12 @@ public final class ModEnchantments {
     public static final RegistryObject<Enchantment> CANON_POLVORA_FINA = ENCHANTMENTS.register("canon_polvora_fina",
             () -> new com.copperslug.armasfuego.comun.EncantamientoFuego(Enchantment.Rarity.UNCOMMON, CANON, 2, 8, 12));
 
+    // ---- Apuntar (clic derecho): para las armas que apuntan con el modificador (no el rifle, que tiene su catalejo)
+    public static final EnchantmentCategory APUNTAR = com.copperslug.shim.Categorias.create("COPPERSLUG_APUNTAR",
+            item -> item instanceof com.copperslug.armasfuego.comun.ArmaFuegoItem || item instanceof com.copperslug.armasfuego.pistola.RevolverItem);
+    /** Pulso firme: apuntando, dispersa menos y se anda menos lento. */
+    public static final RegistryObject<Enchantment> PULSO_FIRME = ENCHANTMENTS.register("pulso_firme",
+            () -> new com.copperslug.armasfuego.comun.EncantamientoFuego(Enchantment.Rarity.UNCOMMON, APUNTAR, 2, 10, 12));
+
     private ModEnchantments() {}
 }

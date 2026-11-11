@@ -369,7 +369,7 @@
   "enchantment.copperslug.winchester_repeticion": "Repetición",
   "enchantment.copperslug.winchester_repeticion.desc": "Winchester: la palanca va un 15 % más rápida por nivel.",
   "enchantment.copperslug.winchester_dead_eye": "Dead Eye",
-  "enchantment.copperslug.winchester_dead_eye.desc": "Winchester: a caballo, los tiros van rectos y pegan un 25 % más (cosa de Red Dead).",
+  "enchantment.copperslug.winchester_dead_eye.desc": "Winchester: a caballo, o apuntando quieto 1,5 s, los tiros van rectos y pegan un 25 % más (cosa de Red Dead).",
   "enchantment.copperslug.winchester_carga_rapida": "Carga rápida",
   "enchantment.copperslug.winchester_carga_rapida.desc": "Winchester: mete cada bala un 25 % más rápido por nivel.",
   "enchantment.copperslug.derringer_as": "As en la manga",
@@ -503,5 +503,7 @@
   "itemGroup.copperslug": "Copper Slug",
   "key.categories.copperslug": "Copper Slug",
   "advancements.copperslug.raiz.title": "Copper Slug",
-  "advancements.copperslug.raiz.description": "Revólveres, rifles y cañones de cobre: no se fabrican, se encuentran en los cofres."
+  "advancements.copperslug.raiz.description": "Revólveres, rifles y cañones de cobre: no se fabrican, se encuentran en los cofres.",
+  "enchantment.copperslug.pulso_firme": "Pulso firme",
+  "enchantment.copperslug.pulso_firme.desc": "Apuntando, dispersa un 20 % menos por nivel y se anda menos lento. Para las armas que apuntan con el clic derecho."
 }
