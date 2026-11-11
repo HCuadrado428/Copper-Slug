@@ -1020,7 +1020,7 @@ public final class PruebaCI {
             for (int i = 0; i < 200; i++)
                 for (var e : net.minecraft.world.item.enchantment.EnchantmentHelper.selectEnchantment(rnd, rev, 5 + rnd.nextInt(26), V.mesa()))
                     vistos.add(V.id(e.enchantment).getPath() + " " + e.level);
-            boolean soloSuyos = vistos.stream().allMatch(x -> x.startsWith("revolver_"));
+            boolean soloSuyos = vistos.stream().allMatch(x -> x.startsWith("revolver_") || x.startsWith("pulso_firme"));   // Pulso firme vale para todas las que apuntan
             var ab = com.copperslug.registry.ModEnchantments.REVOLVER_ABANICO;
             var de = com.copperslug.registry.ModEnchantments.REVOLVER_DESENFUNDE;
             boolean incompatibles = !net.minecraft.world.item.enchantment.Enchantment.areCompatible(V.h(ab), V.h(de));
