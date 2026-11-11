@@ -98,9 +98,9 @@ def recamaras(mascara):
         out.append(cara_trasera(x, y, Z_ATRAS, 'hierro', [2, 2, 3.5, 3.5], 0.42, 0.02, 'cil_borde_t'))
         if cargada:
             lat = {'uv': UV_LATON, 'texture': '#tambor'}
-            out.append({'name': 'cil_culote', 'from': [r3(x - 0.3), r3(y - 0.3), Z_ATRAS], 'to': [r3(x + 0.3), r3(y + 0.3), Z_ATRAS + 0.28],
+            out.append({'name': 'cil_culote', 'from': [r3(x - 0.3), r3(y - 0.3), Z_ATRAS], 'to': [r3(x + 0.3), r3(y + 0.3), Z_ATRAS + 0.4],
                         'faces': {'south': dict(lat), 'east': dict(lat), 'west': dict(lat), 'up': dict(lat), 'down': dict(lat)}})
-            out.append(cara_trasera(x, y, Z_ATRAS + 0.28, 'tambor', UV_PISTON, 0.12, 0.02, 'cil_piston'))
+            out.append(cara_trasera(x, y, Z_ATRAS + 0.4, 'tambor', UV_PISTON, 0.12, 0.02, 'cil_piston'))
         else:
             out.append(cara_trasera(x, y, Z_ATRAS + 0.02, 'negro', UV_NEGRO, 0.3, 0.02, 'cil_agujero_t'))
         # cara de delante: los mismos agujeros (se ven mirando al arma de frente); las cargadas, con el plomo
@@ -141,9 +141,10 @@ def construir(mascara, abierto=False):
     el.append(caja(6.95, 10.5, 12.1, 7.85, 11.05, 12.6, 'cobre', 'alza_izq'))
     el.append(caja(8.15, 10.5, 12.1, 9.05, 11.05, 12.6, 'cobre', 'alza_der'))
     el.append(caja(7.85, 10.5, 12.1, 8.15, 10.8, 12.6, 'cobre', 'muesca'))
-    el.append(caja(6.95, 7.3, 11.0, 7.7, 10.5, 12.35, 'cobre', 'escudo_izq'))
-    el.append(caja(7.7, 7.3, 11.0, 9.05, 8.0, 12.35, 'cobre', 'escudo_bajo'))
-    el.append(caja(7.5, 8.0, 11.3, 8.46, 10.5, 12.35, 'cobre', 'escudo_centro'))
+    # (el escudo se deja abierto a los dos lados y en el centro, para que desde la mira se vean casi todas las recámaras:
+    # solo queda una tira abajo y una espiga donde se agarra el martillo)
+    el.append(caja(7.4, 7.3, 11.0, 9.05, 7.6, 12.35, 'cobre', 'escudo_bajo'))
+    el.append(caja(7.72, 8.9, 11.0, 8.28, 9.35, 12.35, 'cobre', 'espiga'))
     # ---- el martillo (bajado): cuerpo y espolón inclinado hacia atrás
     el.append(caja(7.85, 9.2, 12.35, 8.15, 10.1, 12.95, 'hierro', 'martillo'))
     el.append(caja(7.82, 9.85, 12.8, 8.18, 10.5, 13.3, 'hierro', 'martillo_espolon', rot=((CX, 9.9, 12.85), 'x', 22.5)))
