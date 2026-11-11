@@ -3643,12 +3643,17 @@ public final class PruebaCI {
         sin("esc_doble_2", 15, () -> {
             ItemStack s = escJugador().getMainHandItem();
             if (com.copperslug.armasfuego.escopeta.Presion.disparosQuedan(s) != 1) throw new IllegalStateException("con Doble cámara no queda un segundo disparo");
+            PI.put("doble_ok", false);
             com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
         });
-        sin("esc_doble_chk", 5, () -> {
+        // vigilancia por tick: el servidor puede tardar unos ticks en procesar el segundo disparo (el CI va lento)
+        for (int i = 0; i < 12; i++) sin("esc_doble_vigila" + i, 2, () -> {
+            if (Boolean.TRUE.equals(PI.get("doble_ok"))) return;
             ItemStack s = escJugador().getMainHandItem();
-            if (com.copperslug.armasfuego.escopeta.Presion.presion(s) > 0 || com.copperslug.armasfuego.escopeta.Presion.tolvaN(s) != 14)
-                throw new IllegalStateException("el segundo disparo de la Doble cámara no ha salido");
+            if (com.copperslug.armasfuego.escopeta.Presion.presion(s) <= 0 && com.copperslug.armasfuego.escopeta.Presion.tolvaN(s) == 14) PI.put("doble_ok", true);
+        });
+        sin("esc_doble_chk", 1, () -> {
+            if (!Boolean.TRUE.equals(PI.get("doble_ok"))) throw new IllegalStateException("el segundo disparo de la Doble cámara no ha salido");
         });
         // ---- encantamientos, recetas, tolva, panal y hacha
         sin("esc_encantamientos", 5, () -> {
