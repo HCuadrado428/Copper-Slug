@@ -5,10 +5,11 @@ El cubo del tambor (3x3x3 px) enseña por detrás seis agujeros (un borde de hie
 recámaras cargadas, el culote de latón de la bala con su pistón. La pieza trasera del armazón se parte en dos tiras
 (arriba y abajo) para que la cara de atrás del tambor se vea (en primera persona apuntando y desde atrás).
 
-Un modelo no puede girar con el tambor, así que enseña CUÁNTAS balas hay (las primeras recámaras, en orden), no en
-qué recámara están. El número lo da la propiedad de objeto «copperslug:cargadas» (0 a 6), que elige entre:
-  armas3d/revolver_3d.json (0 balas) y armas3d/revolver_3d_n1..n6.json  (los modelos del arma),
-  revolver_cargado_<óxido 0..3>_<n 1..6>.json                          (los de cada nivel de óxido con n balas).
+Las recámaras salen EN SU SITIO: la de arriba es la que toca (como la muesca del HUD) y el resto, en el sentido del
+reloj visto desde atrás. La máscara de 6 bits (bit k = recámara k desde la que toca, cargada o no) la da la propiedad
+de objeto «copperslug:recamaras» (0 a 63), que elige entre:
+  armas3d/revolver_3d.json (máscara 0) y armas3d/revolver_3d_m1..m63.json (los modelos del arma),
+  revolver_cargado_<óxido 0..3>_<máscara 1..63>.json                       (los de cada nivel de óxido).
 El modelo del tambor abierto (recarga) no se toca. Todas las texturas siguen siendo de 16x16.
 
 Es idempotente: se puede volver a ejecutar (quita lo que generó antes). Uso: generar_tambor.py [raíz del repositorio]
@@ -66,7 +67,7 @@ def recamara(k, cargada):
     return e
 
 
-def modelo(base, balas):
+def modelo(base, mascara):
     m = copy.deepcopy(base)
     elementos = []
     placa = None
@@ -87,7 +88,7 @@ def modelo(base, balas):
         t['to'] = [9.1, y1, 12.5]
         elementos.append(t)
     for k in range(6):
-        elementos.extend(recamara(k, k < balas))
+        elementos.extend(recamara(k, bool(mascara >> k & 1)))
     m['elements'] = elementos
     return m
 
@@ -104,17 +105,24 @@ def main():
         entera['from'] = [6.9, 7, 11]
         entera['to'] = [9.1, 11.1, 12.5]
         base['elements'] = [e for e in base['elements'] if not str(e.get('name', '')).startswith(GEN)] + [entera]
-    for n in range(0, 7):
-        nombre = 'revolver_3d.json' if n == 0 else 'revolver_3d_n%d.json' % n
-        guardar(os.path.join(A3D, nombre), modelo(base, n))
+    # lo generado en versiones anteriores (por número de balas) se borra
+    for f in os.listdir(A3D):
+        if f.startswith('revolver_3d_n') or f.startswith('revolver_3d_m'):
+            os.remove(os.path.join(A3D, f))
+    for f in os.listdir(M):
+        if f.startswith('revolver_cargado_'):
+            os.remove(os.path.join(M, f))
+    for mascara in range(0, 64):
+        nombre = 'revolver_3d.json' if mascara == 0 else 'revolver_3d_m%d.json' % mascara
+        guardar(os.path.join(A3D, nombre), modelo(base, mascara))
     # los modelos del objeto con n balas, uno por nivel de óxido
     for ox, nombre, _ in NIVELES:
         obj = cargar(os.path.join(M, nombre + '.json'))
         obj.pop('overrides', None)
-        for n in range(1, 7):
+        for mascara in range(1, 64):
             o = copy.deepcopy(obj)
-            o['base']['parent'] = 'copperslug:item/armas3d/revolver_3d_n%d' % n
-            guardar(os.path.join(M, 'revolver_cargado_%d_%d.json' % (ox, n)), o)
+            o['base']['parent'] = 'copperslug:item/armas3d/revolver_3d_m%d' % mascara
+            guardar(os.path.join(M, 'revolver_cargado_%d_%d.json' % (ox, mascara)), o)
     # los overrides del revólver: más abajo = más prioridad (cargadas, luego óxido, luego el tambor abierto)
     principal = cargar(os.path.join(M, 'revolver.json'))
     abiertos = [o for o in principal.get('overrides', []) if 'copperslug:abierto' in o['predicate']]
@@ -122,14 +130,15 @@ def main():
     for ox, nombre, umbral in NIVELES:
         if umbral is not None:
             nuevos.append({'predicate': {'copperslug:oxido': umbral}, 'model': 'copperslug:item/' + nombre})
-        for n in range(1, 7):
-            p = {'copperslug:cargadas': n}
+        # de menor a mayor máscara: gana la última que cumple (>=), o sea la máscara exacta
+        for mascara in range(1, 64):
+            p = {'copperslug:recamaras': mascara}
             if umbral is not None:
-                p = {'copperslug:oxido': umbral, 'copperslug:cargadas': n}
-            nuevos.append({'predicate': p, 'model': 'copperslug:item/revolver_cargado_%d_%d' % (ox, n)})
+                p = {'copperslug:oxido': umbral, 'copperslug:recamaras': mascara}
+            nuevos.append({'predicate': p, 'model': 'copperslug:item/revolver_cargado_%d_%d' % (ox, mascara)})
     principal['overrides'] = nuevos + abiertos
     guardar(os.path.join(M, 'revolver.json'), principal)
-    print('modelos: revolver_3d + 6, revolver_cargado_*: 24, overrides:', len(principal['overrides']))
+    print('modelos: revolver_3d + 63, revolver_cargado_*: 252, overrides:', len(principal['overrides']))
 
 
 main()
