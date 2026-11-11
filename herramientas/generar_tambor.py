@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
-"""Genera los modelos 3D del revólver (un Colt de acción simple) con las recámaras del tambor.
+"""Genera los modelos 3D del revólver (un Colt de acción simple).
 
 Se parte de herramientas/revolver_3d_original.json (de ahí se conservan el armazón de abajo, el guardamonte, el gatillo y
-la empuñadura) y se construye el resto: cañón y tambor octogonales (cuatro cajas, dos de ellas giradas 45°), punto de
-mira, mira de muesca con alza, martillo, eje del tambor y el hueco de carga del lado derecho del armazón, por donde se
-ven desde atrás los culotes de latón de las balas.
+la empuñadura) y se construye el resto: cañón octogonal, punto de mira, la parte de atrás de un Colt (escudo de retroceso
+con el agujero del percutor y la puerta de carga a la derecha, martillo con espolón, cola de la empuñadura, ranura de la
+mira) y el tambor.
 
-El tambor enseña las recámaras EN SU SITIO: la de arriba es la que toca (como la muesca del HUD) y el resto, en el
-sentido del reloj visto desde atrás. La máscara de 6 bits (bit k = recámara k desde la que toca, cargada o no) la da la
-propiedad de objeto «copperslug:recamaras» (0 a 63), que elige entre:
-  armas3d/revolver_3d.json (máscara 0) y armas3d/revolver_3d_m1..m63.json (los modelos del arma),
-  armas3d/revolver_3d_abierto.json (el tambor salido a un lado, al meter una bala),
-  revolver_cargado_<óxido 0..3>_<máscara 1..63>.json                       (los de cada nivel de óxido).
+El MODELO DEL OBJETO es solo el armazón (armas3d/revolver_3d.json, y revolver_3d_abierto.json con la grúa del tambor
+salido). El TAMBOR no está en él: lo dibuja el código (client/armasfuego/pistola/RevolverTambor.java, enganchado en
+ItemRenderer.render), que lo gira hasta la recámara que toca y pone en cada recámara cargada el culote de su tipo de bala,
+tintado con el color del HUD. Por eso se generan aparte:
+  armas3d/revolver_cilindro_<óxido 0..3>.json   el tambor (cuerpo octogonal, agujeros y eje), uno por nivel de óxido
+  armas3d/revolver_culote.json                  el culote de una bala (neutro: el código lo tinta)
+  textures/item/armas3d/culote_tinte.png        su textura (16x16, casi blanca con el pistón más oscuro)
 Todas las texturas siguen siendo de 16x16. Se puede ejecutar de nuevo cuando se quiera.
 Uso: generar_tambor.py [raíz del repositorio]
 """
@@ -154,19 +155,48 @@ def construir(mascara, abierto=False):
     # la cola de la empuñadura: una tira que sube desde la culata hasta detrás del escudo, inclinada hacia atrás
     el.append(caja(7.55, 7.0, 12.2, 8.45, 10.2, 12.8, 'cobre', 'cola', rot=((CX, 10.2, 12.5), 'x', -22.5)))
     el += conservar
-    cil = cilindro(mascara)
     if abierto:
-        # el tambor salido hacia la izquierda (con su grúa) para meter la bala
-        for e in cil:
-            e['from'][0] = r3(e['from'][0] - 3.4)
-            e['to'][0] = r3(e['to'][0] - 3.4)
-            if 'rotation' in e:
-                e['rotation']['origin'][0] = r3(e['rotation']['origin'][0] - 3.4)
+        # la grúa del tambor salido hacia la izquierda (el tambor en sí lo dibuja el código, desplazado)
         el.append(caja(5.6, 6.9, 8.6, 7.2, 7.45, 10.6, 'cobre', 'grua'))
-    el += cil
     m = copy.deepcopy(original)
     m['elements'] = el
     return m
+
+
+def modelo_cilindro(ox):
+    """Solo el tambor (cuerpo octogonal, agujeros y eje), con las texturas de ese nivel de óxido. Las balas cargadas las
+    pone encima el código (culote tintado del color de cada tipo) y el código lo gira."""
+    m = copy.deepcopy(cargar(ORIGINAL))
+    m['elements'] = cilindro(0)
+    m['textures']['cobre'] = 'copperslug:item/armas3d/cobre_%d' % ox
+    m['textures']['tambor'] = 'copperslug:item/armas3d/tambor_frente_%d' % ox
+    m['textures']['tambor_lado'] = 'copperslug:item/armas3d/tambor_lado_%d' % ox
+    return m
+
+
+def modelo_culote():
+    """El culote de una bala (un cubito con el pistón): neutro, el código lo tinta con el color del tipo de bala."""
+    m = {'credit': 'copperslug', 'ambientocclusion': False, 'textures': {'culote': 'copperslug:item/armas3d/culote_tinte', 'particle': 'copperslug:item/armas3d/culote_tinte'}}
+    cara = {'uv': [0, 0, 4, 4], 'texture': '#culote'}
+    m['elements'] = [
+        {'name': 'culote', 'from': [-0.3, -0.3, 0], 'to': [0.3, 0.3, 0.4], 'faces': {d: dict(cara) for d in ('north', 'south', 'east', 'west', 'up', 'down')}},
+        {'name': 'piston', 'from': [-0.12, -0.12, 0.4], 'to': [0.12, 0.12, 0.42], 'faces': {'south': {'uv': [7, 7, 9, 9], 'texture': '#culote'}}},
+    ]
+    return m
+
+
+def textura_culote():
+    """Textura de 16x16 casi blanca con el centro más oscuro (el pistón): al tintarla queda del color de la bala."""
+    from PIL import Image
+    ruta = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/textures/item/armas3d/culote_tinte.png')
+    im = Image.new('RGBA', (16, 16), (232, 232, 232, 255))
+    for x in range(16):
+        for y in range(16):
+            if 6 <= x <= 9 and 6 <= y <= 9:
+                im.putpixel((x, y), (120, 120, 120, 255))
+            elif x in (0, 15) or y in (0, 15):
+                im.putpixel((x, y), (190, 190, 190, 255))
+    im.save(ruta)
 
 
 def cargar(ruta):
@@ -184,39 +214,26 @@ def guardar(ruta, datos, compacto=False):
 
 
 def main():
+    # lo generado en versiones anteriores (por número de balas o por máscara) se borra
     for f in os.listdir(A3D):
-        if f.startswith('revolver_3d_n') or f.startswith('revolver_3d_m'):
+        if f.startswith('revolver_3d_n') or f.startswith('revolver_3d_m') or f.startswith('revolver_cilindro_'):
             os.remove(os.path.join(A3D, f))
     for f in os.listdir(M):
         if f.startswith('revolver_cargado_'):
             os.remove(os.path.join(M, f))
-    for mascara in range(0, 64):
-        nombre = 'revolver_3d.json' if mascara == 0 else 'revolver_3d_m%d.json' % mascara
-        guardar(os.path.join(A3D, nombre), construir(mascara), True)
+    guardar(os.path.join(A3D, 'revolver_3d.json'), construir(0), True)
     guardar(os.path.join(A3D, 'revolver_3d_abierto.json'), construir(0, abierto=True), True)
-    for ox, nombre, _ in NIVELES:
-        obj = cargar(os.path.join(M, nombre + '.json'))
-        obj.pop('overrides', None)
-        for mascara in range(1, 64):
-            o = copy.deepcopy(obj)
-            o['base']['parent'] = 'copperslug:item/armas3d/revolver_3d_m%d' % mascara
-            guardar(os.path.join(M, 'revolver_cargado_%d_%d.json' % (ox, mascara)), o)
-    # los overrides del revólver: más abajo = más prioridad (máscara, luego óxido, luego el tambor abierto)
+    for ox in range(4):
+        guardar(os.path.join(A3D, 'revolver_cilindro_%d.json' % ox), modelo_cilindro(ox), True)
+    guardar(os.path.join(A3D, 'revolver_culote.json'), modelo_culote())
+    textura_culote()
+    # los overrides del revólver: solo el óxido y el tambor abierto (la máscara de balas ya no hace falta: el código dibuja el tambor)
     principal = cargar(os.path.join(M, 'revolver.json'))
     abiertos = [o for o in principal.get('overrides', []) if 'copperslug:abierto' in o['predicate']]
-    nuevos = []
-    for ox, nombre, umbral in NIVELES:
-        if umbral is not None:
-            nuevos.append({'predicate': {'copperslug:oxido': umbral}, 'model': 'copperslug:item/' + nombre})
-        # de menor a mayor máscara: gana la última que cumple (>=), o sea la máscara exacta
-        for mascara in range(1, 64):
-            p = {'copperslug:recamaras': mascara}
-            if umbral is not None:
-                p = {'copperslug:oxido': umbral, 'copperslug:recamaras': mascara}
-            nuevos.append({'predicate': p, 'model': 'copperslug:item/revolver_cargado_%d_%d' % (ox, mascara)})
-    principal['overrides'] = nuevos + abiertos
+    oxidos = [{'predicate': {'copperslug:oxido': u}, 'model': 'copperslug:item/' + n} for ox, n, u in NIVELES if u is not None]
+    principal['overrides'] = oxidos + abiertos
     guardar(os.path.join(M, 'revolver.json'), principal)
-    print('modelos: revolver_3d + 63 + abierto, revolver_cargado_*: 252, overrides:', len(principal['overrides']))
+    print('modelos: armazón, armazón abierto, 4 tambores, culote; overrides:', len(principal['overrides']))
 
 
 if __name__ == '__main__':
