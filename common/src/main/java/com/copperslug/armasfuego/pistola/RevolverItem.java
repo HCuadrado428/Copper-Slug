@@ -189,10 +189,6 @@ public class RevolverItem extends Item {
         }
         l.add(t);
         if (girado) l.add(Component.translatable("pistola.copperslug.girado").withStyle(ChatFormatting.DARK_PURPLE, ChatFormatting.ITALIC));
-        com.copperslug.armasfuego.comun.Cobre.tooltip(s, l);
-        l.add(Component.translatable("pistola.copperslug.ayuda1").withStyle(ChatFormatting.DARK_GRAY));
-        l.add(Component.translatable("pistola.copperslug.ayuda2").withStyle(ChatFormatting.DARK_GRAY));
-        l.add(Component.translatable("pistola.copperslug.ayuda3").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     public void extensionesCliente(Consumer<IClientItemExtensions> consumer) {

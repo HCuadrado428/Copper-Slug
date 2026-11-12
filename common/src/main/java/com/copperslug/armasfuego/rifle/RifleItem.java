@@ -136,11 +136,6 @@ public class RifleItem extends Item {
         Component recamara = Rifle.gastada(s) ? Component.translatable("item.copperslug.rifle.casquillo")
                 : bala == null ? Component.translatable("item.copperslug.rifle.vacia") : bala.getDescription();
         lista.add(Component.translatable("item.copperslug.rifle.recamara", recamara).withStyle(ChatFormatting.GOLD));
-        Component cobre = Component.translatable("item.copperslug.rifle.cobre." + COBRE[Rifle.oxido(s)]);
-        lista.add(Component.translatable(Rifle.encerado(s) ? "item.copperslug.rifle.estado_encerado" : "item.copperslug.rifle.estado", cobre)
-                .withStyle(ChatFormatting.DARK_AQUA));
-        com.copperslug.armasfuego.comun.Cobre.tooltip(s, lista);
-        for (int i = 1; i <= 4; i++) lista.add(Component.translatable("item.copperslug.rifle.ayuda" + i).withStyle(ChatFormatting.GRAY));
     }
 
     // El NBT cambia con el cerrojo: que no re-equipe ni corte el uso

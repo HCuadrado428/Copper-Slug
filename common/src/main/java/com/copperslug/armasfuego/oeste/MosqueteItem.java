@@ -493,7 +493,6 @@ public class MosqueteItem extends ArmaFuegoItem {
             l.add(x.withStyle(barrido ? ChatFormatting.DARK_GRAY : ChatFormatting.LIGHT_PURPLE));
         }
         super.appendHoverText(s, copperslug$ctx, l, f);
-        l.add(Component.translatable("item.copperslug.mosquete.ayuda_bayoneta").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
