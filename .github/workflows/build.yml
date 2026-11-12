@@ -37,6 +37,10 @@ jobs:
         run: python3 herramientas/comprobar_suscriptores.py
       - name: Modelos válidos
         run: python3 herramientas/validar_modelos.py
+      - name: Estilo Minecraft de las armas
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 herramientas/test_estilo_minecraft.py
       - name: Compilar
         run: |
           chmod +x gradlew
