@@ -18,6 +18,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generar_tambor import caja  # noqa: E402
+from modelos_armas_nuevas import MODELOS  # noqa: E402
 from generar_cerbatana import cobres  # noqa: E402
 
 RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
@@ -84,27 +85,15 @@ def bidon():
 
 def modelo_3d():
     base = json.load(open(os.path.join(A3D, 'winchester_3d.json'), encoding='utf-8'))
-    el = []
-    cx, cy = 8.0, 9.6
-    el.append(caja(cx - 1.0, cy - 1.0, 2.0, cx + 1.0, cy + 1.0, 12.5, 'cobre', 'lan_canon'))
-    for z, n in ((4.5, 'a'), (9.0, 'b')):
-        el.append(caja(cx - 1.2, cy - 1.2, z, cx + 1.2, cy + 1.2, z + 0.8, 'hierro', 'lan_anillo_' + n))
-    # la boquilla y la llama piloto
-    el.append(caja(cx - 0.7, cy - 0.7, 0.6, cx + 0.7, cy + 0.7, 2.0, 'hierro', 'lan_boquilla'))
-    el.append(caja(cx - 0.35, cy - 0.35, 0.0, cx + 0.35, cy + 0.35, 0.6, 'brasa', 'lan_piloto'))
-    # el bidón de debajo y su correa
-    el.append(caja(cx - 1.1, 5.4, 6.0, cx + 1.1, 8.4, 11.5, 'tambor', 'lan_bidon'))
-    el.append(caja(cx - 1.25, 5.25, 7.0, cx + 1.25, 8.55, 7.6, 'cuero', 'lan_correa_a'))
-    el.append(caja(cx - 1.25, 5.25, 10.0, cx + 1.25, 8.55, 10.6, 'cuero', 'lan_correa_b'))
-    # el agarre y la culata corta
-    el.append(caja(cx - 0.6, 5.2, 12.0, cx + 0.6, 8.6, 13.4, 'cuero', 'lan_agarre'))
-    el.append(caja(cx - 0.9, cy - 0.9, 12.5, cx + 0.9, cy + 0.9, 14.5, 'cuero', 'lan_culata'))
-    base['elements'] = el
+    # el juego completo de materiales (el de la Derringer) más el brillo de eco y la cuerda
+    base['textures'] = dict(json.load(open(os.path.join(A3D, 'derringer_3d_oculta.json'), encoding='utf-8'))['textures'])
+    base['textures']['eco'] = 'copperslug:item/armas3d/eco'
+    base['textures']['cuerda'] = 'copperslug:item/armas3d/cuerda'
+    base['elements'] = MODELOS['lanzallamas']()
     base['textures']['particle'] = 'copperslug:item/lanzallamas'
     with open(os.path.join(A3D, 'lanzallamas_3d.json'), 'w', encoding='utf-8') as f:
         json.dump(base, f, separators=(',', ':'), ensure_ascii=False)
         f.write('\n')
-
 
 def modelos_objeto():
     for n, suf, cobre in ((0, '', 'cobre_0'), (1, '_ox1', 'cobre_1'), (2, '_ox2', 'cobre_2'), (3, '_ox3', 'cobre_3')):
