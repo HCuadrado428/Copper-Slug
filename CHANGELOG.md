@@ -102,6 +102,11 @@
   block to reload and when they get hurt, peek out to fire a few shots and go back; when several fight the same target,
   some flank around the sides; and armed mobs that hear a shot (24 blocks by default) come to the shooter.
 
+- Cartridge Belt and Hip Holster (crafted with leather and a copper ingot). The belt holds up to 256 rounds of any ammo
+  and hands them over when you reload; the holster holds a short gun (revolver, Derringer, resonance pistol, harpoon gun)
+  and the holster key (H) draws or holsters it. They go in the Curios/Trinkets belt slot if those mods are installed, or
+  anywhere in the inventory, and they show on the player's waist.
+
 ---
 
 <a id="castellano"></a>
@@ -215,3 +220,7 @@
   cubrirse tras un bloque para recargar y cuando les hieren, se asoman a disparar unas veces y vuelven; si son varios
   contra el mismo objetivo, algunos flanquean por los lados; y los mobs armados que oyen un disparo (24 bloques por
   defecto) acuden a por el tirador.
+- Cartuchera y funda de cadera (con cuero y un lingote de cobre). La cartuchera guarda hasta 256 balas de cualquier
+  munición y las da al recargar; la funda guarda un arma corta (revólver, Derringer, pistola de resonancia, arponera) y
+  la tecla de la funda (H) la saca o la enfunda. Van en el hueco de cinturón de Curios/Trinkets si están instalados, o en
+  cualquier parte del inventario, y se ven en la cintura del jugador.

@@ -115,6 +115,7 @@ public final class FuegoClienteMod {
         for (ResourceLocation r : GatlingRenderer.CUERPOS) e.register(r);
         for (ResourceLocation r : com.copperslug.client.armasfuego.pistola.RevolverTambor.MODELOS) e.register(r);
         for (ResourceLocation r : AccesoriosVisibles.MODELOS) e.register(r);
+        for (ResourceLocation r : com.copperslug.client.armasfuego.cinturon.CinturonCapa.MODELOS) e.register(r);
     }
 
     @SubscribeEvent
@@ -125,6 +126,7 @@ public final class FuegoClienteMod {
     @SubscribeEvent
     public static void teclas(com.copperslug.shim.client.event.RegisterKeyMappingsEvent e) {
         e.register(FuegoCliente.MANGA);
+        e.register(FuegoCliente.FUNDA);
         e.register(Inspeccion.TECLA);
     }
 
