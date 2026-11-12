@@ -133,7 +133,7 @@ public final class Revolver {
             critico = sacado != null && ahora - sacado <= VENTANA_DESENFUNDE
                     && com.copperslug.shim.Enc.nivel(ModEnchantments.REVOLVER_DESENFUNDE, s) > 0;
         }
-        double disp = critico ? 0 : (DISPERSION[0] + com.copperslug.armasfuego.comun.Cobre.dispersion(ox)) * (abanico ? 1 : com.copperslug.armasfuego.comun.Apuntar.dispersion(p))
+        double disp = critico ? 0 : (DISPERSION[0] + com.copperslug.armasfuego.comun.Cobre.dispersion(ox)) * (abanico ? 1 : com.copperslug.armasfuego.comun.Apuntar.dispersion(p)) * com.copperslug.armasfuego.comun.Accesorios.dispersion(s)
                 + (abanico ? 0.10 : 0);
         Vec3 mira = p.getViewVector(1.0F);
         Vec3 dir = mira.add(r.nextGaussian() * disp, r.nextGaussian() * disp, r.nextGaussian() * disp).normalize();

@@ -56,6 +56,10 @@
 - New structure, the Abandoned Copper Mine (hills, mountains and badlands, underground): a 15 x 15 labyrinth with 3-wide
   tunnels, rails and chest minecarts, timber props, powder stores full of TNT, cave-ins, zombie miners with Winchesters
   and, in a corner, the vein chamber of oxidised copper with the treasure. A wooden headframe marks the shaft.
+- Weapon-specific accessories, one per weapon and each made of copper: Long Barrel (revolver), Bipod (rifle), Choke
+  (shotgun), Radiator (Gatling), Extended Tube (Winchester), Suppressor (Derringer), Foregrip (Thompson), Copper Sight
+  (musket) and Rifled Bore (hand cannon). Craft them (copper plus iron bits) and fit them in an anvil: weapon on the left,
+  accessory on the right, 2 levels. An accessory only fits its own weapon, and a weapon carries one at a time.
 
 ---
 
@@ -120,3 +124,7 @@
 - Estructura nueva, la Mina de cobre abandonada (colinas, montañas y mesetas, bajo tierra): un laberinto de 15 x 15 con
   túneles de 3 de ancho, vías y vagonetas con cofre, puntales, polvorines con TNT, derrumbes, mineros zombis con Winchester
   y, en una esquina, la cámara del filón de cobre oxidado con el tesoro. Un cabrestante de madera marca el pozo.
+- Accesorios específicos de cada arma, uno por arma y todos de cobre: Cañón largo (revólver), Bípode (rifle), Estrangulador
+  (escopeta), Radiador (Gatling), Tubo ampliado (Winchester), Silenciador (Derringer), Empuñadura frontal (Thompson), Mira de
+  cobre (mosquete) y Ánima rayada (cañón de mano). Se fabrican (cobre y piezas de hierro) y se montan en el yunque: el arma a
+  la izquierda, el accesorio a la derecha, 2 niveles. Cada accesorio solo vale para su arma, y un arma lleva uno a la vez.
