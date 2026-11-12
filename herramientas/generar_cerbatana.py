@@ -18,7 +18,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generar_tambor import caja  # noqa: E402
-from modelos_armas_nuevas import MODELOS  # noqa: E402
+from modelos_armas_nuevas import MODELOS, con_mano  # noqa: E402
 
 RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
 TEX = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/textures/item')
@@ -121,6 +121,7 @@ def tubo_3d():
     base['textures']['eco'] = 'copperslug:item/armas3d/eco'
     base['textures']['cuerda'] = 'copperslug:item/armas3d/cuerda'
     base['elements'] = MODELOS['cerbatana']()
+    con_mano(base, 'cerbatana', json.load(open(os.path.join(A3D, 'revolver_3d.json'), encoding='utf-8')))
     base['textures']['particle'] = 'copperslug:item/cerbatana'
     with open(os.path.join(A3D, 'cerbatana_3d.json'), 'w', encoding='utf-8') as f:
         json.dump(base, f, separators=(',', ':'), ensure_ascii=False)
