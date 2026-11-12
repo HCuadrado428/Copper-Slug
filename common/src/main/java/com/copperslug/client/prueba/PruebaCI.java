@@ -2440,6 +2440,14 @@ public final class PruebaCI {
         sin("a2_lanzallamas", 8, () -> {
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.LANZALLAMAS, 100));
             piApuntar(a2Punto(4, 0, 1.2));
+            // el husk está a 8 bloques y el chorro llega a 7: se acerca a 4 para esta prueba
+            piSrv(sp -> {
+                var h = a2Ente(sp, a2Husk);
+                if (h != null) {
+                    Vec3 hp = a2Punto(4, 0, 0);
+                    h.moveTo(hp.x, hp.y, hp.z, h.getYRot(), 0);
+                }
+            });
         });
         sin("a2_lanzallamas_vida", 2, () -> a2Vida("l0"));
         sin("a2_lanzallamas_chorro", 2, () -> rifleUsar(true));
@@ -2447,7 +2455,16 @@ public final class PruebaCI {
         sin("a2_lanzallamas_ver", 8, () -> {
             rifleUsar(false);
             a2Vida("l1");
-            piSrv(sp -> PI.put("l_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
+            piSrv(sp -> {
+                PI.put("l_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem()));
+                // el husk vuelve a su sitio (a 8 bloques) y se apaga
+                var h = a2Ente(sp, a2Husk);
+                if (h != null) {
+                    Vec3 hp = a2Punto(8, 0, 0);
+                    h.moveTo(hp.x, hp.y, hp.z, h.getYRot(), 0);
+                    h.clearFire();
+                }
+            });
         });
         vigila("a2_lanzallamas_ok", 2, () -> a2Comprobar("el lanzallamas quema y gasta combustible", a2F("l0") - a2F("l1") > 0.5 && ((Integer) PI.get("l_balas")) < 100,
                 "vida " + a2F("l0") + " → " + a2F("l1") + ", combustible " + PI.get("l_balas")));
