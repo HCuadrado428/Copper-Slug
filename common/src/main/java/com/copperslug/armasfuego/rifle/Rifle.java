@@ -113,11 +113,8 @@ public final class Rifle {
     private static ItemStack buscarMunicion(Player p) {
         ItemStack otra = p.getOffhandItem();
         if (tipo(otra.getItem()) >= 0) return otra;
-        for (int i = 0; i < p.getInventory().getContainerSize(); i++) {
-            ItemStack s = p.getInventory().getItem(i);
-            if (!s.isEmpty() && tipo(s.getItem()) >= 0) return s;
-        }
-        return ItemStack.EMPTY;
+        // (la del inventario, o si no la de la cartuchera)
+        return com.copperslug.armasfuego.comun.ArmaFuegoItem.buscar(p, s -> tipo(s.getItem()) >= 0);
     }
 
     // ------------------------------------------------------------------ cerrojo

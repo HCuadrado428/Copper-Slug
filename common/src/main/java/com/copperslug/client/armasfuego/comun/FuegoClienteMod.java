@@ -94,6 +94,9 @@ public final class FuegoClienteMod {
     public static void particulas(RegisterParticleProvidersEvent e) {
         e.registerSpriteSet(ArmasFuegoRegistro.FOGONAZO.get(), FuegoParticulas.FogonazoProv::new);
         e.registerSpriteSet(ArmasFuegoRegistro.CASQUILLO.get(), FuegoParticulas.CasquilloProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.HUMO.get(), FuegoParticulas.HumoProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.CHISPA.get(), FuegoParticulas.ChispaProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.MARCA.get(), FuegoParticulas.MarcaProv::new);
         e.registerSpriteSet(ArmasFuegoRegistro.TRAZO.get(), s -> new FuegoParticulas.TrazoProv(s, 1.0F, 0.86F, 0.45F));
         e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_FUEGO.get(), s -> new FuegoParticulas.TrazoProv(s, 1.0F, 0.45F, 0.15F));
         e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_FRIO.get(), s -> new FuegoParticulas.TrazoProv(s, 0.7F, 0.9F, 1.0F));
@@ -104,6 +107,7 @@ public final class FuegoClienteMod {
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         e.registerEntityRenderer(ModEntities.GATLING.get(), GatlingRenderer::new);
         e.registerEntityRenderer(ModEntities.BOLA_CANON.get(), BolaCanonRenderer::new);
+        e.registerEntityRenderer(ModEntities.GRANADA.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
     }
 
     @SubscribeEvent
@@ -111,6 +115,8 @@ public final class FuegoClienteMod {
         for (ResourceLocation r : GatlingRenderer.TODOS) e.register(r);
         for (ResourceLocation r : GatlingRenderer.CUERPOS) e.register(r);
         for (ResourceLocation r : com.copperslug.client.armasfuego.pistola.RevolverTambor.MODELOS) e.register(r);
+        for (ResourceLocation r : AccesoriosVisibles.MODELOS) e.register(r);
+        for (ResourceLocation r : com.copperslug.client.armasfuego.cinturon.CinturonCapa.MODELOS) e.register(r);
     }
 
     @SubscribeEvent
@@ -121,6 +127,7 @@ public final class FuegoClienteMod {
     @SubscribeEvent
     public static void teclas(com.copperslug.shim.client.event.RegisterKeyMappingsEvent e) {
         e.register(FuegoCliente.MANGA);
+        e.register(FuegoCliente.FUNDA);
         e.register(Inspeccion.TECLA);
     }
 

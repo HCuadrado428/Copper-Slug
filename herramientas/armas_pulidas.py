@@ -661,6 +661,55 @@ for _n, _f in ACCESORIOS.items():
     for _ox in range(4):
         ARMAS['%s_%d' % (_n, _ox)] = _f
 
+
+# ------------------------------------------------------------------------------------------------ el cinturón (se ve puesto en el cuerpo)
+# Centrado en (8, 8, 8): el cuerpo del jugador mide 8 x 12 x 4. La capa del jugador lo pone a la altura de la cintura;
+# x pequeña es el lado derecho del jugador y z grande el frente.
+
+def cinturon_cartuchera():
+    el = [
+        C('cinto_frente', (3.5, 7.25, 10), (12.5, 8.75, 10.5), 'cuero'),
+        C('cinto_atras', (3.5, 7.25, 5.5), (12.5, 8.75, 6), 'cuero'),
+        C('cinto_izq', (12, 7.25, 6), (12.5, 8.75, 10), 'cuero'),
+        C('cinto_der', (3.5, 7.25, 6), (4, 8.75, 10), 'cuero'),
+        C('hebilla', (7.25, 7, 10.25), (8.75, 9, 10.75), 'laton'),
+    ]
+    # los cartuchos en sus presillas, por los lados y detrás
+    for i, x in enumerate((5, 6, 9.5, 10.5)):
+        el.append(C('bala_%d' % i, (x, 8.75, 5.25), (x + 0.5, 9.5, 5.75), 'laton'))
+    for i, z in enumerate((7, 8.5)):
+        el.append(C('bala_izq_%d' % i, (12.25, 8.75, z), (12.75, 9.5, z + 0.5), 'laton'))
+    el.append(C('bolsa', (9.5, 6.5, 10.25), (11.5, 8.5, 11.25), 'cuero'))
+    return el
+
+
+def cinturon_funda(llena=False):
+    el = [
+        C('funda', (2.5, 3, 7), (3.5, 7.5, 9.5), 'cuero'),
+        C('boca_funda', (2.25, 7, 6.75), (3.75, 7.75, 9.75), 'cuero'),
+        C('remache', (2.48, 5, 8), (2.5, 5.5, 8.5), 'laton', caras=('west',)),
+        C('correa', (3, 7.25, 7.5), (4, 8.75, 8.5), 'cuero'),
+    ]
+    if llena:
+        # la culata del arma asoma por arriba, hacia atrás
+        el += [C('culata', (2.5, 7.75, 6.5), (3.5, 9.75, 8), 'madera'),
+               C('culo', (2.5, 9.75, 6), (3.5, 10.25, 8), 'cobre'),
+               C('martillo', (2.75, 7.75, 8), (3.25, 8.75, 8.75), 'hierro')]
+    return el
+
+
+CINTURON = {'cinturon_cartuchera': cinturon_cartuchera, 'cinturon_funda': cinturon_funda,
+            'cinturon_funda_llena': lambda: cinturon_funda(True)}
+
+
+def generar_cinturon(salida):
+    os.makedirs(salida, exist_ok=True)
+    for n, f in CINTURON.items():
+        m = {'credit': 'copperslug', 'ambientocclusion': False, 'textures': dict(TEXTURAS), 'elements': f()}
+        m['textures']['particle'] = 'copperslug:item/armas3d/p_cuero'
+        with open(os.path.join(salida, n + '.json'), 'w', encoding='utf-8') as fh:
+            json.dump(m, fh, ensure_ascii=False, separators=(',', ':'))
+
 def generar(salida, nombres=None):
     os.makedirs(salida, exist_ok=True)
     for n in nombres or ARMAS:
@@ -689,3 +738,5 @@ if __name__ == '__main__':
     a = ap.parse_args()
     generar_texturas(a.texturas)
     generar(a.salida, a.armas)
+    if not a.armas:
+        generar_cinturon(a.salida)

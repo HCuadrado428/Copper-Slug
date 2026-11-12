@@ -34,7 +34,9 @@ public final class BotinFabric {
                 new LootPoolEntryType(Entrada.CODEC));
         LootTableEvents.MODIFY.register((clave, tabla, fuente, registros) -> {
             ResourceLocation id = clave.location();
-            if (!fuente.isBuiltin() || BotinArmas.arma(id) == null && !id.getPath().startsWith("chests/village/")) return;
+            if (!fuente.isBuiltin() || BotinArmas.arma(id) == null && !id.getPath().startsWith("chests/village/")
+                    && !id.getPath().equals("chests/simple_dungeon") && !id.getPath().equals("chests/abandoned_mineshaft")
+                    && !id.getPath().equals("chests/pillager_outpost")) return;   // (los tres últimos, también por las granadas)
             tabla.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(Entrada.de(id)));
         });
     }

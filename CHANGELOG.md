@@ -94,6 +94,24 @@
   stays as it was, because it turns 60° at a time). New inventory icons for the blowgun, flamethrower, resonance pistol and harpoon gun.
   New style test (`herramientas/test_estilo_minecraft.py`, also in CI).
 
+- Particles redone in vanilla pixels (8x8): a muzzle flash in four frames, sized per gun (small on the Derringer, huge on
+  the hand cannon); gunpowder smoke that drifts with the shot and rises; sparks that bounce off metal and stone; brass
+  casings that bounce twice and lie on the ground; and bullet holes that stay on the block face for 10 seconds.
+
+- Smarter armed mobs (config `mobs_armados.tactica` and `mobs_armados.alerta`): armed pillagers run to cover behind a
+  block to reload and when they get hurt, peek out to fire a few shots and go back; when several fight the same target,
+  some flank around the sides; and armed mobs that hear a shot (24 blocks by default) come to the shooter.
+
+- Cartridge Belt and Hip Holster (crafted with leather and a copper ingot). The belt holds up to 256 rounds of any ammo
+  and hands them over when you reload; the holster holds a short gun (revolver, Derringer, resonance pistol, harpoon gun)
+  and the holster key (H) draws or holsters it. They go in the Curios/Trinkets belt slot if those mods are installed, or
+  anywhere in the inventory, and they show on the player's waist.
+
+- Copper grenades (crafted 2 at a time with copper, gunpowder and charcoal, an iron nugget or a honey bottle; also in
+  pillager outposts, mineshafts and dungeons): they bounce and go off after 3 seconds. Smoke makes a 10-second cloud
+  that blinds and makes mobs lose their target; frag is a small blast that only breaks blocks if the server config says
+  so (`granadas.metralla_rompe_bloques`); glue splashes honey that makes everyone sticky. New advancement "Pull the Pin".
+
 ---
 
 <a id="castellano"></a>
@@ -199,3 +217,20 @@
   modelos 3D se han rehecho sobre una rejilla de medio píxel (`herramientas/voxelizar_armas.py`): piezas enteras en bloques,
   sin piezas giradas y sin caras ocultas (el tambor del revólver se queda como estaba, porque gira de 60 en 60 grados). Iconos nuevos para la cerbatana, el lanzallamas,
   la pistola de resonancia y la arponera. Test de estilo nuevo (`herramientas/test_estilo_minecraft.py`, también en CI).
+- Partículas rehechas en píxeles de vanilla (8x8): fogonazo en cuatro fotogramas y del tamaño de cada arma (pequeño en
+  la Derringer, enorme en el cañón de mano); humo de pólvora que sale con el tiro y sube; chispas que rebotan al dar en
+  metal o piedra; casquillos que rebotan dos veces y se quedan en el suelo; y agujeros de bala que se quedan 10 segundos
+  en la cara del bloque.
+- Mobs armados más listos (config `mobs_armados.tactica` y `mobs_armados.alerta`): los saqueadores armados corren a
+  cubrirse tras un bloque para recargar y cuando les hieren, se asoman a disparar unas veces y vuelven; si son varios
+  contra el mismo objetivo, algunos flanquean por los lados; y los mobs armados que oyen un disparo (24 bloques por
+  defecto) acuden a por el tirador.
+- Cartuchera y funda de cadera (con cuero y un lingote de cobre). La cartuchera guarda hasta 256 balas de cualquier
+  munición y las da al recargar; la funda guarda un arma corta (revólver, Derringer, pistola de resonancia, arponera) y
+  la tecla de la funda (H) la saca o la enfunda. Van en el hueco de cinturón de Curios/Trinkets si están instalados, o en
+  cualquier parte del inventario, y se ven en la cintura del jugador.
+- Granadas de cobre (se fabrican de dos en dos con cobre, pólvora y carbón vegetal, una pepita de hierro o un bote de
+  miel; también salen en puestos de saqueadores, minas y mazmorras): rebotan y estallan a los 3 segundos. La de humo
+  deja una nube de 10 segundos que ciega y hace que los mobs pierdan su objetivo; la de metralla es una explosión pequeña
+  que solo rompe bloques si lo dice la config del servidor (`granadas.metralla_rompe_bloques`); la de pegamento salpica
+  miel y deja pringado a todo el que pilla. Logro nuevo «Quita la anilla».
