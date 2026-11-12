@@ -95,6 +95,8 @@ public final class CopperSlug {
         public static void llenar(java.util.function.Consumer<ItemStack> out) {
             for (var en : List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
                     ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO)) libro(out, en.get());
+            out.accept(new ItemStack(ModItems.CARTUCHERA.get()));
+            out.accept(new ItemStack(ModItems.FUNDA.get()));
             out.accept(new ItemStack(ModItems.REVOLVER.get()));
             for (var m : List.of(ModItems.REVOLVER_BALA, ModItems.REVOLVER_BENGALA, ModItems.REVOLVER_DARDO, ModItems.REVOLVER_FOGUEO,
                     ModItems.REVOLVER_IMAN, ModItems.REVOLVER_TIEMPO)) out.accept(new ItemStack(m.get()));
