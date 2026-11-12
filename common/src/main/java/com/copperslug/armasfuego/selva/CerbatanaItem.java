@@ -82,7 +82,7 @@ public class CerbatanaItem extends ArmaFuegoItem {
         }
         // un soplido y poco más; sin gameEvent, así que el sculk no lo nota
         var q = boca(p, 0.7, 0.25, 0.22);
-        l.sendParticles(ParticleTypes.POOF, q.x, q.y, q.z, 2, 0.03, 0.03, 0.03, 0.01);
+        l.sendParticles(ParticleTypes.SMOKE, q.x, q.y, q.z, 3, 0.02, 0.02, 0.02, 0.005);
         l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.SILENCIADOR_DISPARO.get(), SoundSource.PLAYERS, 0.5F, 1.5F + l.random.nextFloat() * 0.15F);
     }
 }
