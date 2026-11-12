@@ -13,194 +13,75 @@ Nueve armas de fuego de cobre con munición, encantamientos y óxido propios, y 
 
 ## Description (English)
 
-**Nine copper firearms. Rust that matters. Mobs that shoot back.**
+**Nine copper firearms for Minecraft. Copper rusts, and some mobs shoot back.**
 
-Copper Slug brings the Wild West and some older things (a hand cannon, a bayonet musket) to Minecraft. Every gun is made
-of copper, so every gun rusts, and every gun has its own ammo, enchantments, sounds, HUD and 3D model.
+Copper Slug adds Wild West guns (and a hand cannon and a bayonet musket) made of copper, each with its own ammo,
+enchantments and 3D model.
 
-### The guns
+### What it adds
 
-- **Roulette revolver**: Russian roulette, quick draw, duels against other players, and special bullets (blank, magnet,
-  sedative dart, flare).
-- **Spyglass rifle**: scope, breath control for more damage, headshots, ziplines with rope bullets, paint and tracers.
-- **Pressure shotgun**: pump it up, suck in items, pull mobs, and fire cartridges with effects (gravel, incendiary, frost,
-  honey, salt, seeds, confetti, rubber). Pump it too far and it bursts.
-- **Crank Gatling Gun**: automatic and stationary. It overheats if you keep cranking. Belts of peas or popcorn, and it can
-  work as a redstone turret, on a boat or on a minecart.
-- **Winchester 1873**: lever action with a tube magazine. Ice, silver and mixed ammo. Spin the lever from horseback.
-- **Derringer**: hidden up your sleeve. Quick-draw trick, smoke, marked cards and gold bullets.
-- **Thompson**: drum-fed submachine gun inside a violin case. Water, ink and tracer drums. Play the case with a bow.
-- **Bayonet musket**: bolas, harpoon bolas and chain bolas. Fit a sword as a bayonet and it keeps the sword's enchantments.
-- **Hand cannon**: explosive bolas, incendiary, firework and bouncing ones, falling blocks and anvils.
+- **Nine firearms**: roulette revolver, spyglass rifle, pressure shotgun, Gatling, Winchester 1873, Derringer,
+  Thompson in a violin case, bayonet musket and hand cannon.
+- **Special ammo** for every gun: ziplines, frost, silver, sedative darts, explosive balls and much more.
+- **Rust**: copper oxidises over time. Rusty guns jam and scatter more but hit harder. Wax them with honeycomb or scrape
+  them with an axe.
+- **Enchantments that show on the gun**: a Suppressor puts a suppressor on the barrel, Long Barrel lengthens the revolver,
+  and so on.
+- **Three new structures**: the Pharaoh's Pyramid (desert), the Abandoned Copper Mine (underground) and the Raiders'
+  Camp. Labyrinths, traps, loot and armed mobs.
+- **Armed mobs**: some pillagers carry a gun and really shoot. They are rare, and you can turn them off.
+- **57 advancements** in their own tab.
 
-### Copper rusts
+### How it plays
 
-Rust is a trade-off, not a countdown. Each phase jams more and scatters more, but hits and pierces harder. Wax a gun with
-honeycomb to freeze it (200 shots, 1500 on the Gatling and the Thompson) or scrape it with an axe to take a phase off.
-You can see the rust on the model, including on the extra parts.
+Left click shoots, hold right click to aim, sneak + right click reloads. Guns are found in chests of vanilla and new
+structures, and most ammo can be crafted.
 
-### Controls
+### Compatibility
 
-Left click shoots and holding right click aims, as in most shooters. Aiming centres the gun, narrows the field of view,
-tightens the spread and slows you down. Sneak + right click reloads. The pressure shotgun is the exception: right click
-pumps it and it fires from the hip only. At the Gatling controls, hold left click to crank and right click to aim. Each
-sight shows something useful: the revolver's next round (never in Russian roulette), the hand cannon's arc, the Gatling's
-barrel heat. Press N to inspect the gun in your hand.
-
-### Enchantments that show on the gun
-
-Enchant a gun and the part appears on it, rusting along with the barrel. A Suppressor puts a suppressor on the muzzle (and
-the shots become almost silent, so sculk and the Warden do not notice). Long Barrel lengthens the revolver, Choke fits
-the pressure shotgun, Copper Sight adds a front sight to the musket, Rifled Bore rifles the hand cannon, the Winchester's
-Long Tube adds collars and a longer tube, and the Thompson's Compensator shows its brake. Each also
-changes how the gun shoots. There are many more without a part: Fanning, Ricochet, Quick Draw, Held Breath, Pierce
-Through, Hawkeye, Zipliner, Steady Hand, Dead Eye, Cooling, Long Belt, Compressor, Safety Valve and others.
-
-### Three new structures
-
-- **Pharaoh's Pyramid** (deserts): a stepped sandstone pyramid with a pylon gate and obelisks. Inside there are two
-  labyrinth floors: an 11 x 11 maze with pressure-plate TNT traps and husks (some with Winchesters or Derringers), and a
-  smaller 7 x 7 maze reached by a hand ladder, ending in the pharaoh's treasure chamber with four chests.
-- **Abandoned Copper Mine** (hills, mountains and badlands, underground): a 15 x 15 labyrinth of wide tunnels with rails,
-  chest minecarts, timber props, powder stores full of TNT, cave-ins and zombie miners with revolvers and Winchesters. In
-  a corner, the oxidised copper vein chamber holds the treasure. A wooden headframe marks the shaft from the surface.
-- **Raiders' Camp** (plains, savannas, taigas and forests): a log palisade with four watchtowers, a campfire, three
-  tents, the captain's red tent with his chest, a horse corral, supply crates and a caged prisoner (decoration). Pillagers
-  with revolvers and Winchesters guard it, the captain carries a Thompson, and two vindicators stand at the gate.
-
-All three are small enough to find by accident and big enough to get lost in. Guns are also found in vanilla structure
-chests (villages, shipwrecks, pillager outposts and more). Most ammo, the violin case and the bayonet fitting can be
-crafted.
-
-### Mobs that shoot back
-
-Some pillagers carry a real gun and use it: they take a moment to react, cock the gun before every shot, miss a lot
-(more at long range and against moving or crouching targets; the first shot is often a warning), sometimes misfire, step
-sideways and back off when you get close, flinch when hit, and reload with the crossbow gesture. Each gun has its own
-rhythm (revolver in quick shots, Winchester slower and from farther, Derringer short range, Thompson in bursts of three,
-musket one huge shot) and each structure hands out its own. They are rare by default and can be turned off, so vanilla is
-one setting away.
-
-### Sound
-
-Every sound is synthesised (no copyrighted audio) and each gun has its own character: a rifle crack with a long valley
-echo, a pressure shotgun puff, a Gatling tick, a black-powder musket roar. Shots heard from 45 to 150 blocks arrive muffled
-with an echo, shooting indoors adds room echo, and a suppressed shot is just a short puff.
-
-### Settings and compatibility
-
-Server settings live in `serverconfig/copperslug-server.toml` (damage, fire rate, range, rust, wax, loot chances, armed
-mobs). Every value can be changed and every feature switched off.
-
-**Minecraft 1.20.1** (Forge, Fabric; it also runs on NeoForge 1.20.1) and **1.21.1** (NeoForge, Forge, Fabric). Fabric
-needs Fabric API. JEI is optional and shows where each gun is found. Every gun has its own advancement tab (57
-advancements, listed below).
+**Minecraft 1.20.1** (Forge, Fabric) and **1.21.1** (NeoForge, Forge, Fabric). Fabric needs Fabric API. JEI is optional.
+Settings are in `serverconfig/copperslug-server.toml`.
 
 This is the firearms part of Miscelánea as a standalone mod. Do not install both together.
 
-Images to upload: the roulette revolver in hand, a rusted Winchester with its parts, the pyramid from outside, the mine
-from the inside, the raiders' camp, and a pillager aiming at you.
+Images to upload: the revolver in hand, a rusted Winchester, the pyramid from outside, the mine from the inside, the
+raiders' camp and a pillager aiming at you.
 
 ## Descripción (castellano)
 
-**Nueve armas de cobre. Un óxido que importa. Mobs que disparan.**
+**Nueve armas de fuego de cobre para Minecraft. El cobre se oxida, y algunos mobs disparan.**
 
-Copper Slug lleva el Oeste a Minecraft, y algo más antiguo (un cañón de mano, un mosquete con bayoneta). Todas las armas
-son de cobre, así que todas se oxidan, y cada una tiene su munición, sus encantamientos, sus sonidos, su HUD y su modelo 3D.
+Copper Slug añade armas del Oeste (y un cañón de mano y un mosquete con bayoneta) hechas de cobre, cada una con su
+munición, sus encantamientos y su modelo 3D.
 
-### Las armas
+### Qué añade
 
-- **Revólver de ruleta**: ruleta rusa, desenfunde, duelos contra otros jugadores y balas especiales (fogueo, imán, dardo
-  de sedante, bengala).
-- **Rifle de catalejo**: mira, contener la respiración para más daño, headshots, tirolinas con bala de cuerda, pintura y
-  balas trazadoras.
-- **Escopeta de presión**: se bombea, aspira objetos, tira de los mobs, y dispara cartuchos con efecto (grava,
-  incendiario, escarcha, miel, sal, semillas, confeti, goma). Si la bombeas de más, revienta.
-- **Gatling de manivela**: automática y fija. Se calienta si no paras de girar la manivela. Cintas de guisantes o
-  palomitas, y puede ser una torreta con redstone, en un barco o en una vagoneta.
-- **Winchester 1873**: palanca de repetición con depósito tubular. Balas de hielo, de plata y mezclas. Gira la palanca a
-  caballo.
-- **Derringer**: escondida en la manga. Truco de tahúr al sacarla, balas de humo, cartas marcadas y balas de oro.
-- **Thompson**: subfusil de tambor dentro de un estuche de violín. Tambores de agua, de tinta y trazadores. Toca el estuche
-  con un arco.
-- **Mosquete con bayoneta**: bolas, bolas arpón y bolas encadenadas. Cala una espada como bayoneta y conserva sus
-  encantamientos.
-- **Cañón de mano**: bolaños que estallan, incendiarios, de fuegos artificiales y saltarines, y bloques que caen o yunques
-  disparados.
+- **Nueve armas de fuego**: revólver de ruleta, rifle de catalejo, escopeta de presión, Gatling, Winchester 1873,
+  Derringer, Thompson en estuche de violín, mosquete con bayoneta y cañón de mano.
+- **Munición especial** para cada arma: tirolinas, hielo, plata, dardos de sedante, bolaños explosivos y mucho más.
+- **Óxido**: el cobre se oxida con el tiempo. Las armas oxidadas se encasquillan y dispersan más, pero pegan más fuerte.
+  Se enceran con panal o se rascan con un hacha.
+- **Encantamientos que se ven en el arma**: un Silenciador pone un silenciador en el cañón, Cañón largo alarga el
+  revólver, y así con más.
+- **Tres estructuras nuevas**: la Pirámide del faraón (desierto), la Mina de cobre abandonada (bajo tierra) y el
+  Campamento de saqueadores. Laberintos, trampas, botín y mobs armados.
+- **Mobs armados**: algunos saqueadores llevan un arma y disparan de verdad. Son raros y se pueden desactivar.
+- **57 logros** en su propia pestaña.
 
-### El cobre se oxida
+### Cómo se juega
 
-El óxido es un intercambio, no una cuenta atrás. Cada fase encasquilla y dispersa más, pero pega y perfora más fuerte. Se
-encera con panal para congelarlo (200 disparos, 1500 en la Gatling y la Thompson) o se rasca con un hacha para quitar una
-fase. El óxido se ve en el modelo, también en las piezas añadidas.
+El clic izquierdo dispara, mantener el derecho apunta y agachado + clic derecho recarga. Las armas se encuentran en cofres
+de estructuras vanilla y nuevas, y casi toda la munición se fabrica.
 
-### Controles
+### Compatibilidad
 
-El clic izquierdo dispara y mantener el clic derecho apunta, como en casi todos los juegos de tiros. Apuntar lleva el arma
-al centro, cierra el campo de visión, dispersa menos y hace andar más lento. Agachado + clic derecho recarga. La escopeta
-de presión es la excepción: el clic derecho la bombea y dispara solo desde la cadera. A los mandos de la Gatling, mantener
-el clic izquierdo gira la manivela y el derecho apunta. Cada mira enseña algo útil: la del revólver, la bala que toca
-(nunca en la ruleta rusa); la del cañón de mano, la parábola; la de la Gatling, el calor del cañón. La N inspecciona el
-arma de la mano.
-
-### Encantamientos que se ven en el arma
-
-Encanta un arma y la pieza aparece en ella, y se oxida junto al cañón. Silenciador pone un silenciador en la boca (y los
-disparos casi no suenan, así que el sculk y el Warden no se enteran). Cañón largo alarga el revólver, Estrangulador se
-monta en la escopeta de presión, Mira de cobre añade un punto de mira al mosquete, Ánima rayada raya el cañón de mano,
-el Depósito largo de la Winchester le pone abrazaderas y un tubo más largo, y el Compensador de la Thompson enseña su
-freno. Cada uno cambia también cómo dispara el arma. Hay muchos más sin pieza: Abanico, Carambola, Desenfunde,
-Respiración contenida, Atravesar, Ojo de halcón, Tirolinero, Pulso firme, Dead Eye, Refrigeración, Cinta larga,
-Compresor, Válvula de seguridad y otros.
-
-### Tres estructuras nuevas
-
-- **Pirámide del faraón** (desiertos): una pirámide escalonada de arenisca con un pilono de entrada y obeliscos. Por
-  dentro tiene dos pisos laberínticos: un laberinto de 11 x 11 con trampas de TNT de placa de presión y husks (algunos con
-  Winchester o Derringer), y otro más pequeño de 7 x 7 al que se sube por una escalera de mano y que acaba en la cámara del
-  tesoro del faraón, con cuatro cofres.
-- **Mina de cobre abandonada** (colinas, montañas y mesetas, bajo tierra): un laberinto de 15 x 15 de túneles anchos con
-  raíles, vagonetas con cofre, puntales de madera, polvorines llenos de TNT, derrumbes y zombis mineros con revólver y
-  Winchester. En una esquina, la cámara de la veta de cobre oxidado guarda el tesoro. Un castillete de madera marca el pozo
-  desde la superficie.
-- **Campamento de saqueadores** (llanuras, sabanas, taigas y bosques): una empalizada de troncos con cuatro torres de
-  vigilancia, una hoguera, tres tiendas, la tienda roja del capitán con su cofre, un corral de caballos, cajas de
-  suministros y un prisionero enjaulado (decoración). Lo guardan saqueadores con revólver y Winchester, el capitán lleva
-  una Thompson y dos vindicadores vigilan la puerta.
-
-Las tres son lo bastante pequeñas para encontrarlas por casualidad y lo bastante grandes para perderse. Las armas también
-se encuentran en los cofres de estructuras vanilla (aldeas, barcos hundidos, puestos de saqueadores y más). La mayor parte
-de la munición, el estuche de violín y la forma de calar la bayoneta se fabrican.
-
-### Mobs que disparan
-
-Algunos saqueadores llevan un arma de verdad y la usan: tardan un momento en reaccionar, amartillan antes de cada tiro,
-fallan mucho (más de lejos y contra objetivos que se mueven o van agachados; el primer tiro suele ser de aviso), a veces
-se les encasquilla, se desplazan de lado y retroceden si te acercas, se estremecen al recibir un golpe y recargan con el
-gesto de la ballesta. Cada arma tiene su ritmo (el revólver, tiros rápidos; la Winchester, más lenta y de más lejos; la
-Derringer, corto alcance; la Thompson, ráfagas de tres; el mosquete, un tiro enorme) y cada estructura reparte las suyas.
-Son raros por defecto y se pueden desactivar, así que lo vanilla queda a un ajuste de distancia.
-
-### Sonido
-
-Todos los sonidos están sintetizados (sin audio con derechos) y cada arma tiene su carácter: el chasquido del rifle con un
-largo eco de valle, el soplido de la escopeta de presión, el tic de la Gatling, el rugido de pólvora negra del mosquete.
-Los disparos que se oyen de 45 a 150 bloques llegan amortiguados y con eco, disparar en interior añade eco de sala, y un
-disparo silenciado es solo un soplido corto.
-
-### Ajustes y compatibilidad
-
-La configuración del servidor está en `serverconfig/copperslug-server.toml` (daño, cadencia, alcance, óxido, cera,
-probabilidad en cofres, mobs armados). Todos los valores se pueden cambiar y todo se puede desactivar.
-
-**Minecraft 1.20.1** (Forge, Fabric; también funciona en NeoForge 1.20.1) y **1.21.1** (NeoForge, Forge, Fabric). Fabric
-necesita Fabric API. JEI es opcional y enseña dónde se encuentra cada arma. Cada arma tiene su propia pestaña de logros
-(57 logros, abajo).
+**Minecraft 1.20.1** (Forge, Fabric) y **1.21.1** (NeoForge, Forge, Fabric). Fabric necesita Fabric API. JEI es opcional.
+Los ajustes están en `serverconfig/copperslug-server.toml`.
 
 Es la parte de armas de fuego de Miscelánea como mod independiente. No instales los dos a la vez.
 
-Imágenes para subir: el revólver de ruleta en la mano, una Winchester oxidada con sus piezas, la pirámide desde fuera, la
-mina por dentro, el campamento de saqueadores y un saqueador apuntándote.
+Imágenes para subir: el revólver en la mano, una Winchester oxidada, la pirámide desde fuera, la mina por dentro, el
+campamento de saqueadores y un saqueador apuntándote.
 
 ## Advancements / Logros
 
