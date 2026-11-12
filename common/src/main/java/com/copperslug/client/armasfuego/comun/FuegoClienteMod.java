@@ -94,6 +94,9 @@ public final class FuegoClienteMod {
     public static void particulas(RegisterParticleProvidersEvent e) {
         e.registerSpriteSet(ArmasFuegoRegistro.FOGONAZO.get(), FuegoParticulas.FogonazoProv::new);
         e.registerSpriteSet(ArmasFuegoRegistro.CASQUILLO.get(), FuegoParticulas.CasquilloProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.HUMO.get(), FuegoParticulas.HumoProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.CHISPA.get(), FuegoParticulas.ChispaProv::new);
+        e.registerSpriteSet(ArmasFuegoRegistro.MARCA.get(), FuegoParticulas.MarcaProv::new);
         e.registerSpriteSet(ArmasFuegoRegistro.TRAZO.get(), s -> new FuegoParticulas.TrazoProv(s, 1.0F, 0.86F, 0.45F));
         e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_FUEGO.get(), s -> new FuegoParticulas.TrazoProv(s, 1.0F, 0.45F, 0.15F));
         e.registerSpriteSet(ArmasFuegoRegistro.TRAZO_FRIO.get(), s -> new FuegoParticulas.TrazoProv(s, 0.7F, 0.9F, 1.0F));
