@@ -1475,7 +1475,8 @@ public final class PruebaCI {
     private static void rifleUsar(boolean si) {
         Minecraft mc = Minecraft.getInstance();
         // la ráfaga de la Thompson va con el gatillo (clic izquierdo) mantenido
-        if (si && mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.ThompsonItem && !mc.options.keyShift.isDown()) {
+        if (si && (mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.ThompsonItem
+                || mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.nether.LanzallamasItem) && !mc.options.keyShift.isDown()) {
             com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = true;
             com.copperslug.client.armasfuego.comun.Apuntado.gatillo();
             return;
