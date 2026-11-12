@@ -62,7 +62,7 @@ public class WinchesterItem extends ArmaFuegoItem {
 
     @Override
     public int capacidad(ItemStack s) {
-        return EquilibrioArmas.winchesterCapacidad() + 3 * nivel(ModEnchantments.WINCHESTER_DEPOSITO, s);
+        return EquilibrioArmas.winchesterCapacidad() + 3 * nivel(ModEnchantments.WINCHESTER_DEPOSITO, s) + com.copperslug.armasfuego.comun.Accesorios.capacidad(s);
     }
 
     @Override

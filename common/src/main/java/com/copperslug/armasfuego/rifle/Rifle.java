@@ -214,7 +214,7 @@ public final class Rifle {
         int resp = nivel(s, ModEnchantments.RESPIRACION.get());
         boolean contenida = apunta && firme && resp > 0;
         // dispersión (grados): a ojo mucha; con la mira poca; quieta nada. El óxido la sube.
-        double disp = (apunta ? (firme ? 0.0 : 0.35) : 4.0) + ox * 0.4;
+        double disp = ((apunta ? (firme ? 0.0 : 0.35) : 4.0) + ox * 0.4) * com.copperslug.armasfuego.comun.Accesorios.dispersion(s);
         float yr = yRot + (float) (p.getRandom().nextGaussian() * disp * 0.5);
         float xr = xRot + (float) (p.getRandom().nextGaussian() * disp * 0.5);
         Vec3 dir = Vec3.directionFromRotation(xr, yr);
