@@ -29,6 +29,8 @@ public final class EquilibrioArmas {
     private static ForgeConfigSpec.IntValue WINCHESTER_CAPACIDAD, WINCHESTER_PALANCA, WINCHESTER_RECARGA;
     // ---- Derringer
     private static ForgeConfigSpec.DoubleValue DERRINGER_DANO, DERRINGER_ALCANCE, DERRINGER_DESENFUNDE;
+    // ---- Cerbatana
+    private static ForgeConfigSpec.DoubleValue CERBATANA_DANO, CERBATANA_ALCANCE;
     // ---- Thompson
     private static ForgeConfigSpec.DoubleValue THOMPSON_DANO, THOMPSON_ALCANCE;
     private static ForgeConfigSpec.IntValue THOMPSON_CADENCIA, THOMPSON_CAPACIDAD, THOMPSON_RECARGA;
@@ -48,7 +50,7 @@ public final class EquilibrioArmas {
     // ---- apuntar (clic derecho mantenido; todas menos la escopeta de presión)
     private static ForgeConfigSpec.DoubleValue APUNTAR_DISPERSION, APUNTAR_FOV, APUNTAR_LENTITUD;
     // ---- botín
-    private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON;
+    private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON, B_CERBATANA;
 
     /** Lo llama ConfigServidor al final (su propia sección). */
     public static void definir(ForgeConfigSpec.Builder b) {
@@ -126,10 +128,14 @@ public final class EquilibrioArmas {
         VIOLIN_ENFRIAMIENTO = b.comment("Estuche de violín: ticks entre nota y nota.").defineInRange("violin_enfriamiento", 3, 0, 40);
 
         b.comment("Dónde se encuentran las armas nuevas (probabilidad 0-1 en cada cofre; no tienen receta).").push("botin");
+        CERBATANA_DANO = b.comment("Cerbatana: daño del dardo normal (el de veneno hace el 70 % y el somnífero el 35 %).").defineInRange("cerbatana_dano", 3.0, 0.0, 100.0);
+        CERBATANA_ALCANCE = b.comment("Cerbatana: alcance en bloques.").defineInRange("cerbatana_alcance", 40.0, 2.0, 128.0);
+
         B_GATLING = b.comment("Gatling: cofres de las pirámides del desierto.").defineInRange("gatling_piramide", 0.2, 0.0, 1.0);
         B_WINCHESTER = b.comment("Winchester: cofres de las minas abandonadas (vagonetas con cofre).").defineInRange("winchester_mina", 0.1, 0.0, 1.0);
         B_DERRINGER = b.comment("Derringer: cofres de los tesoros enterrados.").defineInRange("derringer_tesoro", 0.35, 0.0, 1.0);
         B_THOMPSON = b.comment("Thompson (en su estuche de violín): cofres de las mansiones del bosque.").defineInRange("thompson_mansion", 0.4, 0.0, 1.0);
+        B_CERBATANA = b.comment("Cerbatana: cofres de los templos de la jungla.").defineInRange("cerbatana_templo", 0.3, 0.0, 1.0);
         B_MOSQUETE = b.comment("Mosquete: cofres de los pasillos y cruces de las fortalezas.").defineInRange("mosquete_fortaleza", 0.15, 0.0, 1.0);
         B_CANON = b.comment("Cañón de mano: cofres de los bastiones (otros y puente).").defineInRange("canon_bastion", 0.15, 0.0, 1.0);
         b.pop();
@@ -188,6 +194,8 @@ public final class EquilibrioArmas {
 
     public static float derringerDano() { return (float) d(DERRINGER_DANO); }
     public static double derringerAlcance() { return d(DERRINGER_ALCANCE); }
+    public static float cerbatanaDano() { return (float) d(CERBATANA_DANO); }
+    public static double cerbatanaAlcance() { return d(CERBATANA_ALCANCE); }
     public static float derringerDesenfunde() { return (float) d(DERRINGER_DESENFUNDE); }
 
     public static float thompsonDano() { return (float) d(THOMPSON_DANO); }
@@ -239,5 +247,6 @@ public final class EquilibrioArmas {
     public static double botinDerringer() { return d(B_DERRINGER); }
     public static double botinThompson() { return d(B_THOMPSON); }
     public static double botinMosquete() { return d(B_MOSQUETE); }
+    public static double botinCerbatana() { return d(B_CERBATANA); }
     public static double botinCanon() { return d(B_CANON); }
 }

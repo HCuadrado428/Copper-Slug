@@ -528,5 +528,13 @@
   "subtitles.copperslug.derringer_disparo_lejos": "Disparo de Derringer, a lo lejos",
   "subtitles.copperslug.thompson_disparo_lejos": "Disparo de Thompson, a lo lejos",
   "subtitles.copperslug.mosquete_disparo_lejos": "Disparo de mosquete, a lo lejos",
-  "subtitles.copperslug.canon_disparo_lejos": "Disparo de cañón, a lo lejos"
+  "subtitles.copperslug.canon_disparo_lejos": "Disparo de cañón, a lo lejos",
+  "item.copperslug.cerbatana": "Cerbatana de cobre",
+  "item.copperslug.dardo_cerbatana": "Dardo de cerbatana",
+  "item.copperslug.dardo_veneno": "Dardo de veneno",
+  "item.copperslug.dardo_somnifero": "Dardo somnífero",
+  "death.attack.copperslug.cerbatana_disparo": "%1$s no oyó venir el dardo",
+  "death.attack.copperslug.cerbatana_disparo.player": "%1$s no oyó venir el dardo de %2$s",
+  "death.attack.copperslug.cerbatana_disparo.item": "%1$s no oyó venir el dardo de %2$s con %3$s",
+  "jei.copperslug.info.cerbatana_botin": "La cerbatana no se fabrica: se encuentra en los cofres de los templos de la jungla. Es silenciosa: el sculk no la oye. Sus dardos se fabrican, también los de veneno y los somníferos."
 }
