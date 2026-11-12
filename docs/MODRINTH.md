@@ -1,87 +1,38 @@
 # Copper Slug: Modrinth page text
 
-Text for the Modrinth project page (1.0.0). Summary first, then the long description in English and in Castellano,
-and the list of advancements as they are in the code. Screenshots to upload are listed at the end of each description.
+Text for the Modrinth project page (1.0.0), English only. Summary first, then the description, then the list of
+advancements as they are in the code.
 
-## Summary (English, 250 characters max)
+## Summary (250 characters max)
 
-Nine copper firearms with their own ammo, enchantments and rust, plus three new structures guarded by armed mobs: a labyrinth pyramid, a copper mine and a raiders' camp. Copper rusts: wax it or scrape it. Forge, Fabric, NeoForge.
+Nine copper firearms with their own ammo and enchantments, three new structures to loot, and pillagers that shoot back. Copper rusts: wax it or scrape it. Forge, Fabric and NeoForge.
 
-## Resumen (castellano, 250 caracteres máximo)
+## Description
 
-Nueve armas de fuego de cobre con munición, encantamientos y óxido propios, y tres estructuras nuevas con mobs armados: pirámide laberíntica, mina de cobre y campamento de saqueadores. El cobre se oxida. Forge, Fabric, NeoForge.
+Copper Slug adds nine guns to Minecraft, all made of copper. There's a roulette revolver, a spyglass rifle, a pressure
+shotgun, a Gatling, a Winchester, a Derringer, a Thompson that lives in a violin case, a bayonet musket and a hand
+cannon. Each one has its own ammo, its own enchantments and its own quirks.
 
-## Description (English)
+Because they're copper, they rust. A rusty gun jams more and sprays wider, but hits harder, so you get to decide if
+you'd rather keep it shiny (wax it with honeycomb) or let it age (scrape it off with an axe when you've had enough).
 
-**Nine copper firearms for Minecraft. Copper rusts, and some mobs shoot back.**
+A few things worth knowing:
 
-Copper Slug adds Wild West guns (and a hand cannon and a bayonet musket) made of copper, each with its own ammo,
-enchantments and 3D model.
+- Enchant a gun and the part shows up on it. A Suppressor puts a suppressor on the barrel, and so on.
+- There are three new structures to explore: a pyramid in the desert, an abandoned copper mine and a raiders' camp. They
+  are mazes full of traps and loot, and the people in them are armed.
+- Some pillagers now carry guns and will shoot you. They're rare, and the whole thing can be switched off in the config.
+- Guns turn up in chests, and most of the ammo can be crafted.
+- Left click shoots, hold right click to aim, sneak + right click reloads.
+- 57 advancements, in their own tab.
 
-### What it adds
+Works on Minecraft 1.20.1 (Forge, Fabric) and 1.21.1 (NeoForge, Forge, Fabric). Fabric needs Fabric API, and JEI is
+optional. Settings are in `serverconfig/copperslug-server.toml`.
 
-- **Nine firearms**: roulette revolver, spyglass rifle, pressure shotgun, Gatling, Winchester 1873, Derringer,
-  Thompson in a violin case, bayonet musket and hand cannon.
-- **Special ammo** for every gun: ziplines, frost, silver, sedative darts, explosive balls and much more.
-- **Rust**: copper oxidises over time. Rusty guns jam and scatter more but hit harder. Wax them with honeycomb or scrape
-  them with an axe.
-- **Enchantments that show on the gun**: a Suppressor puts a suppressor on the barrel, Long Barrel lengthens the revolver,
-  and so on.
-- **Three new structures**: the Pharaoh's Pyramid (desert), the Abandoned Copper Mine (underground) and the Raiders'
-  Camp. Labyrinths, traps, loot and armed mobs.
-- **Armed mobs**: some pillagers carry a gun and really shoot. They are rare, and you can turn them off.
-- **57 advancements** in their own tab.
-
-### How it plays
-
-Left click shoots, hold right click to aim, sneak + right click reloads. Guns are found in chests of vanilla and new
-structures, and most ammo can be crafted.
-
-### Compatibility
-
-**Minecraft 1.20.1** (Forge, Fabric) and **1.21.1** (NeoForge, Forge, Fabric). Fabric needs Fabric API. JEI is optional.
-Settings are in `serverconfig/copperslug-server.toml`.
-
-This is the firearms part of Miscelánea as a standalone mod. Do not install both together.
+If you also use Miscelánea, don't install both: this mod is its firearms part, on its own.
 
 Images to upload: the revolver in hand, a rusted Winchester, the pyramid from outside, the mine from the inside, the
-raiders' camp and a pillager aiming at you.
-
-## Descripción (castellano)
-
-**Nueve armas de fuego de cobre para Minecraft. El cobre se oxida, y algunos mobs disparan.**
-
-Copper Slug añade armas del Oeste (y un cañón de mano y un mosquete con bayoneta) hechas de cobre, cada una con su
-munición, sus encantamientos y su modelo 3D.
-
-### Qué añade
-
-- **Nueve armas de fuego**: revólver de ruleta, rifle de catalejo, escopeta de presión, Gatling, Winchester 1873,
-  Derringer, Thompson en estuche de violín, mosquete con bayoneta y cañón de mano.
-- **Munición especial** para cada arma: tirolinas, hielo, plata, dardos de sedante, bolaños explosivos y mucho más.
-- **Óxido**: el cobre se oxida con el tiempo. Las armas oxidadas se encasquillan y dispersan más, pero pegan más fuerte.
-  Se enceran con panal o se rascan con un hacha.
-- **Encantamientos que se ven en el arma**: un Silenciador pone un silenciador en el cañón, Cañón largo alarga el
-  revólver, y así con más.
-- **Tres estructuras nuevas**: la Pirámide del faraón (desierto), la Mina de cobre abandonada (bajo tierra) y el
-  Campamento de saqueadores. Laberintos, trampas, botín y mobs armados.
-- **Mobs armados**: algunos saqueadores llevan un arma y disparan de verdad. Son raros y se pueden desactivar.
-- **57 logros** en su propia pestaña.
-
-### Cómo se juega
-
-El clic izquierdo dispara, mantener el derecho apunta y agachado + clic derecho recarga. Las armas se encuentran en cofres
-de estructuras vanilla y nuevas, y casi toda la munición se fabrica.
-
-### Compatibilidad
-
-**Minecraft 1.20.1** (Forge, Fabric) y **1.21.1** (NeoForge, Forge, Fabric). Fabric necesita Fabric API. JEI es opcional.
-Los ajustes están en `serverconfig/copperslug-server.toml`.
-
-Es la parte de armas de fuego de Miscelánea como mod independiente. No instales los dos a la vez.
-
-Imágenes para subir: el revólver en la mano, una Winchester oxidada, la pirámide desde fuera, la mina por dentro, el
-campamento de saqueadores y un saqueador apuntándote.
+camp, and a pillager aiming at you.
 
 ## Advancements / Logros
 
