@@ -94,6 +94,10 @@
   stays as it was, because it turns 60° at a time). New inventory icons for the blowgun, flamethrower, resonance pistol and harpoon gun.
   New style test (`herramientas/test_estilo_minecraft.py`, also in CI).
 
+- Particles redone in vanilla pixels (8x8): a muzzle flash in four frames, sized per gun (small on the Derringer, huge on
+  the hand cannon); gunpowder smoke that drifts with the shot and rises; sparks that bounce off metal and stone; brass
+  casings that bounce twice and lie on the ground; and bullet holes that stay on the block face for 10 seconds.
+
 ---
 
 <a id="castellano"></a>
@@ -199,3 +203,7 @@
   modelos 3D se han rehecho sobre una rejilla de medio píxel (`herramientas/voxelizar_armas.py`): piezas enteras en bloques,
   sin piezas giradas y sin caras ocultas (el tambor del revólver se queda como estaba, porque gira de 60 en 60 grados). Iconos nuevos para la cerbatana, el lanzallamas,
   la pistola de resonancia y la arponera. Test de estilo nuevo (`herramientas/test_estilo_minecraft.py`, también en CI).
+- Partículas rehechas en píxeles de vanilla (8x8): fogonazo en cuatro fotogramas y del tamaño de cada arma (pequeño en
+  la Derringer, enorme en el cañón de mano); humo de pólvora que sale con el tiro y sube; chispas que rebotan al dar en
+  metal o piedra; casquillos que rebotan dos veces y se quedan en el suelo; y agujeros de bala que se quedan 10 segundos
+  en la cara del bloque.
