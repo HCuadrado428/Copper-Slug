@@ -5,13 +5,13 @@ advancements as they are in the code.
 
 ## Summary (250 characters max)
 
-Eleven copper firearms with their own ammo and enchantments, three new structures to loot, and pillagers that shoot back. Copper rusts: wax it or scrape it. Forge, Fabric and NeoForge.
+Twelve copper firearms with their own ammo and enchantments, three new structures to loot, and pillagers that shoot back. Copper rusts: wax it or scrape it. Forge, Fabric and NeoForge.
 
 ## Description
 
-Copper Slug adds eleven guns to Minecraft, all made of copper. There's a roulette revolver, a spyglass rifle, a pressure
+Copper Slug adds twelve guns to Minecraft, all made of copper. There's a roulette revolver, a spyglass rifle, a pressure
 shotgun, a Gatling, a Winchester, a Derringer, a Thompson that lives in a violin case, a bayonet musket, a hand
-cannon, a silent blowgun and a flamethrower. Each one has its own ammo, its own enchantments and its own quirks.
+cannon, a silent blowgun, a flamethrower and a pistol that fires sound waves through walls. Each one has its own ammo, its own enchantments and its own quirks.
 
 Because they're copper, they rust. A rusty gun jams more and sprays wider, but hits harder, so you get to decide if
 you'd rather keep it shiny (wax it with honeycomb) or let it age (scrape it off with an axe when you've had enough).

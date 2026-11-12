@@ -84,6 +84,9 @@
   cone and sets fire to what it reaches (if fire spread is on); it runs on fuel canisters (blaze powder, two coal and an iron
   nugget) that are swapped whole, and it does not light underwater. Both have a 3D model, rust like the rest, loot in their
   structure, a JEI note and config values (`cerbatana_*`, `lanzallamas_*`).
+- New weapon, the Resonance Pistol (ancient cities): fires a sound wave through blocks and armor that hurts everything on its line
+  (24 blocks, 9 damage) and runs on vanilla echo shards, one charge each, four at most. It is loud on purpose: the sculk hears it.
+  3D model with turquoise coils, rust like the rest, loot in ancient city chests, JEI note and config values (`resonancia_*`).
 
 ---
 
@@ -180,3 +183,7 @@
   quema todo lo que cae en el cono y prende lo que alcanza (si el fuego se propaga); se alimenta de bidones de combustible
   (polvo de blaze, dos carbones y una pepita de hierro) que se cambian enteros, y no prende bajo el agua. Las dos tienen
   modelo 3D, se oxidan como el resto, botín en su estructura, nota de JEI y valores de config (`cerbatana_*`, `lanzallamas_*`).
+- Arma nueva, la pistola de resonancia (ciudades antiguas): dispara una onda de sonido que atraviesa bloques y armadura y hiere a
+  todo lo que haya en su línea (24 bloques, 9 de daño); funciona con fragmentos de eco normales, una carga cada uno y cuatro como
+  máximo. Es ruidosa a propósito: el sculk la oye. Modelo 3D con bobinas turquesa, se oxida como el resto, botín en los cofres de
+  la ciudad antigua, nota de JEI y valores de config (`resonancia_*`).
