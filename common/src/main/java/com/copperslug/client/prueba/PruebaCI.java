@@ -320,6 +320,21 @@ public final class PruebaCI {
         return new int[]{oro, cofres, tnt, escalera, cobre, rieles, armados, minX, maxX, minZ, maxZ, maxY, railX, railY, railZ, cofreY};
     }
 
+    /** Ejecuta un comando con permisos y devuelve lo que dice (el éxito o el motivo del fallo). */
+    private static String estComando(ServerPlayer sp, String cmd) {
+        StringBuilder out = new StringBuilder();
+        net.minecraft.commands.CommandSource fuente = new net.minecraft.commands.CommandSource() {
+            @Override public void sendSystemMessage(net.minecraft.network.chat.Component c) { out.append(c.getString()).append(' '); }
+            @Override public boolean acceptsSuccess() { return true; }
+            @Override public boolean acceptsFailure() { return true; }
+            @Override public boolean shouldInformAdmins() { return false; }
+        };
+        var o = sp.createCommandSourceStack();
+        var src = new net.minecraft.commands.CommandSourceStack(fuente, o.getPosition(), o.getRotation(), o.getLevel(), 4, "prueba", net.minecraft.network.chat.Component.literal("prueba"), o.getServer(), sp);
+        sp.getServer().getCommands().performPrefixedCommand(src, cmd);
+        return out.toString().trim();
+    }
+
     private static void estPonerCamara(ServerPlayer sp, double x, double y, double z, double mirax, double miray, double miraz) {
         double dx = mirax - x, dy = miray - y, dz = miraz - z;
         float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz)), pitch = (float) Math.toDegrees(-Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
@@ -369,22 +384,20 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
-            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
-                    "place structure copperslug:piramide " + c.getX() + " " + c.getY() + " " + c.getZ());
-            PI.put("est_p_cmd", "sin código en 1.21");
+            PI.put("est_p_cmd", estComando(sp, "place structure copperslug:piramide " + c.getX() + " " + c.getY() + " " + c.getZ()));
         }));
         sin("est_piramide_esperar", 200, () -> {});
         sin("est_piramide_contar", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
-            PI.put("est_p", estContar(l, c, 40, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+            PI.put("est_p", estContar(l, c, 52, 56, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
         }));
         sin("est_piramide_esperar2", 30, () -> {});
         vigila("est_piramide_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_p");
             if (r == null) throw new IllegalStateException("la pirámide aún no se ha contado");
-            String det = "oro " + r[0] + ", cofres " + r[1] + ", TNT " + r[2] + ", escaleras " + r[3] + ", mobs armados " + r[6] + " (/place devolvió " + PI.get("est_p_cmd") + ")";
+            String det = "oro " + r[0] + ", cofres " + r[1] + ", TNT " + r[2] + ", escaleras " + r[3] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_p_cmd") + ")";
             RESUMEN.add("  estructuras: pirámide generada: " + det);
             if (r[0] < 30 || r[1] < 10 || r[2] < 30 || r[3] < 8 || r[6] < 8)
                 throw new IllegalStateException("la pirámide sale entera (oro >= 30, cofres >= 10, TNT >= 30, escaleras >= 8, mobs armados >= 8) (" + det + ")");
@@ -408,22 +421,20 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
-            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
-                    "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ());
-            PI.put("est_m_cmd", "sin código en 1.21");
+            PI.put("est_m_cmd", estComando(sp, "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ()));
         }));
         sin("est_mina_esperar", 200, () -> {});
         sin("est_mina_contar", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
-            PI.put("est_m", estContar(l, c, 34, 34, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
+            PI.put("est_m", estContar(l, c, 44, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
         }));
         sin("est_mina_esperar2", 30, () -> {});
         vigila("est_mina_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_m");
             if (r == null) throw new IllegalStateException("la mina aún no se ha contado");
-            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place devolvió " + PI.get("est_m_cmd") + ")";
+            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_m_cmd") + ")";
             RESUMEN.add("  estructuras: mina generada: " + det);
             if (r[4] < 100 || r[5] < 20 || r[1] < 8 || r[2] < 20 || r[6] < 10)
                 throw new IllegalStateException("la mina sale entera (cobre >= 100, vías >= 20, cofres >= 8, TNT >= 20, mobs armados >= 10) (" + det + ")");
@@ -447,21 +458,20 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() - 400, o.getY(), o.getZ());
-            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
-                    "place structure copperslug:campamento " + c.getX() + " " + c.getY() + " " + c.getZ());
+            PI.put("est_c_cmd", estComando(sp, "place structure copperslug:campamento " + c.getX() + " " + c.getY() + " " + c.getZ()));
             PI.put("est_c_o", c.immutable());
         }));
         sin("est_camp_esperar", 200, () -> {});
         sin("est_camp_contar", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var c = (net.minecraft.core.BlockPos) PI.get("est_c_o");
-            PI.put("est_c", estContar(l, c, 24, 24, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+            PI.put("est_c", estContar(l, c, 32, 32, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
         }));
         sin("est_camp_esperar2", 30, () -> {});
         vigila("est_camp_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_c");
             if (r == null) throw new IllegalStateException("el campamento aún no se ha contado");
-            String det = "cofres " + r[1] + ", saqueadores armados " + r[6];
+            String det = "cofres " + r[1] + ", saqueadores armados " + r[6] + " (/place: " + PI.get("est_c_cmd") + ")";
             RESUMEN.add("  estructuras: campamento generado: " + det);
             if (r[1] < 2 || r[6] < 6) throw new IllegalStateException("el campamento sale entero (cofres >= 2, armados >= 6) (" + det + ")");
         });
