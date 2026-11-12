@@ -108,6 +108,31 @@ for n in ARMAS:
             if lum_borde > lum_int - 8:
                 avisos.append(f'icono {n}: el contorno no es más oscuro que el interior (vanilla bordea con el tono más oscuro)')
 
+# 7. apuntado: cada arma que apunta tiene su Mira y su colocación coincide con el firstperson_righthand del modelo
+#    (si no, al apuntar el arma no queda en el centro de la pantalla)
+JAVA = os.path.join(RAIZ, 'common/src/main/java/com/copperslug/client/armasfuego/comun/Apuntado.java')
+MIRAS = {'REVOLVER': 'revolver', 'WINCHESTER': 'winchester', 'DERRINGER': 'derringer', 'THOMPSON': 'thompson',
+         'MOSQUETE': 'mosquete', 'CANON': 'canon_mano', 'CERBATANA': 'cerbatana', 'LANZALLAMAS': 'lanzallamas',
+         'RESONANCIA': 'resonancia', 'ARPONERA': 'arponera'}
+if os.path.exists(JAVA):
+    java = open(JAVA, encoding='utf-8').read()
+    for const, item in MIRAS.items():
+        mm = re.search(r'Mira %s = new Mira\(([^)]*)\)' % const, java)
+        if not mm:
+            errores.append(f'apuntado: {item} no tiene Mira en Apuntado.java (al apuntar se queda en la cadera)')
+            continue
+        v = [float(x.strip().rstrip('F')) for x in mm.group(1).split(',')]
+        if 'return %s;' % const not in java:
+            errores.append(f'apuntado: la Mira {const} no se usa en mira(Item)')
+        mod = json.load(open(os.path.join(A, 'models/item', item + '.json'), encoding='utf-8'))
+        base = mod.get('base', mod)
+        par = base.get('parent', '').split(':')[-1]
+        disp = base.get('display') or json.load(open(os.path.join(A, 'models', par + '.json'), encoding='utf-8')).get('display', {})
+        fp = disp.get('firstperson_righthand', {})
+        esperado = fp.get('rotation', [0, 0, 0])[:2] + fp.get('translation', [0, 0, 0]) + fp.get('scale', [1])[:1]
+        if any(abs(a - b) > 1e-3 for a, b in zip(v[:6], esperado)):
+            errores.append(f'apuntado: la Mira de {item} ({v[:6]}) no coincide con su firstperson_righthand ({esperado})')
+
 print('== Test de estilo Minecraft ==')
 for e in errores:
     print('ERROR  ', e)
