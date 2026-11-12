@@ -17,6 +17,10 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generar_tambor import caja  # noqa: E402
 
+# OBSOLETO: desde el estilo Minecraft los cañones son cuadrados (herramientas/canones_cuadrados.py deshace esto).
+if '--forzar' not in sys.argv:
+    sys.exit('redondear_canones.py está obsoleto: los cañones son cuadrados (estilo Minecraft). Usa --forzar si de verdad lo quieres.')
+sys.argv = [a for a in sys.argv if a != '--forzar']
 RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
 A3D = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/models/item/armas3d')
 ARMAS = ['winchester_3d*.json', 'thompson_3d*.json', 'escopeta_3d*.json', 'rifle_3d*.json', 'mosquete_3d*.json', 'canon_mano_3d*.json']
