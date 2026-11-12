@@ -121,6 +121,7 @@ public final class Balistica {
         BlockPos pos = t.bloque().getBlockPos();
         BlockState st = l.getBlockState(pos);
         polvo(l, st, q);
+        marca(l, st, t.bloque(), q);
         // dar en un bloque de cobre suena a cobre (un tintineo corto, más agudo cuanto más fuerte)
         if (st.getSoundType() == net.minecraft.world.level.block.SoundType.COPPER)
             l.playSound(null, q.x, q.y, q.z, net.minecraft.sounds.SoundEvents.COPPER_HIT, SoundSource.BLOCKS, 0.8F, 1.5F + l.random.nextFloat() * 0.3F);
@@ -130,6 +131,25 @@ public final class Balistica {
         if (st.is(Tags.Blocks.GLASS_PANES) || st.is(BlockTags.FLOWER_POTS)) l.destroyBlock(pos, false, tirador);
         else if (l.random.nextInt(3) == 0)
             l.playSound(null, q.x, q.y, q.z, ModSounds.REVOLVER_REBOTE.get(), SoundSource.PLAYERS, 0.35F, 1.4F + l.random.nextFloat() * 0.4F);
+    }
+
+    /**
+     * El agujero de bala que se queda en la cara del bloque (10 s). No en lo que no es un bloque macizo (hojas, cristal,
+     * plantas, lana) ni en líquidos. La normal de la cara va en la velocidad de la partícula.
+     */
+    public static void marca(ServerLevel l, BlockState st, BlockHitResult bh, Vec3 q) {
+        if (st.isAir() || !st.isSolidRender(l, bh.getBlockPos()) || st.is(BlockTags.LEAVES) || st.is(BlockTags.WOOL)) return;
+        var n = bh.getDirection().getNormal();
+        Vec3 m = q.add(n.getX() * 0.01, n.getY() * 0.01, n.getZ() * 0.01);
+        l.sendParticles(ArmasFuegoRegistro.MARCA.get(), m.x, m.y, m.z, 0, n.getX(), n.getY(), n.getZ(), 1.0);
+    }
+
+    /** Unas chispas que saltan del punto del impacto, hacia fuera de la cara. */
+    private static void chispas(ServerLevel l, Vec3 q, int n) {
+        for (int i = 0; i < n; i++) {
+            double vx = (l.random.nextFloat() - 0.5) * 0.3, vy = 0.08 + l.random.nextFloat() * 0.15, vz = (l.random.nextFloat() - 0.5) * 0.3;
+            l.sendParticles(ArmasFuegoRegistro.CHISPA.get(), q.x, q.y, q.z, 0, vx, vy, vz, 1.0);
+        }
     }
 
     /**
@@ -144,7 +164,7 @@ public final class Balistica {
                 || snd == net.minecraft.world.level.block.SoundType.ANVIL || snd == net.minecraft.world.level.block.SoundType.CHAIN
                 || snd == net.minecraft.world.level.block.SoundType.NETHERITE_BLOCK || snd == net.minecraft.world.level.block.SoundType.LANTERN;
         if (metal) {
-            l.sendParticles(ParticleTypes.ELECTRIC_SPARK, q.x, q.y, q.z, 5, 0.04, 0.04, 0.04, 0.25);
+            chispas(l, q, 6);
             l.sendParticles(ParticleTypes.CRIT, q.x, q.y, q.z, 2, 0.03, 0.03, 0.03, 0.15);
             l.sendParticles(trozo, q.x, q.y, q.z, 2, 0.04, 0.04, 0.04, 0.08);
         } else if (snd == net.minecraft.world.level.block.SoundType.GLASS) {
@@ -157,6 +177,7 @@ public final class Balistica {
         } else if (st.is(BlockTags.MINEABLE_WITH_PICKAXE)) {
             l.sendParticles(trozo, q.x, q.y, q.z, 6, 0.05, 0.05, 0.05, 0.1);
             l.sendParticles(ParticleTypes.WHITE_ASH, q.x, q.y, q.z, 3, 0.08, 0.08, 0.08, 0.01);
+            chispas(l, q, 2);
             l.sendParticles(ParticleTypes.SMOKE, q.x, q.y, q.z, 1, 0.02, 0.02, 0.02, 0.01);
         } else {
             l.sendParticles(trozo, q.x, q.y, q.z, 5, 0.05, 0.05, 0.05, 0.1);

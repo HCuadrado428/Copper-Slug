@@ -19,6 +19,13 @@ public final class ArmasFuegoRegistro {
     /** Casquillo de latón: sale volando, cae, rebota una vez en el suelo y desaparece. */
     public static final RegistryObject<SimpleParticleType> CASQUILLO = PARTICULAS.register("armafuego_casquillo", () -> new SimpleParticleType(false));
 
+    /** Humo de pólvora: bocanadas grises que suben despacio y se deshacen. */
+    public static final RegistryObject<SimpleParticleType> HUMO = PARTICULAS.register("armafuego_humo", () -> new SimpleParticleType(false));
+    /** Chispa: salta al dar la bala en metal o piedra, cae y rebota (brilla a oscuras). */
+    public static final RegistryObject<SimpleParticleType> CHISPA = PARTICULAS.register("armafuego_chispa", () -> new SimpleParticleType(true));
+    /** Marca de bala: el agujero que se queda pegado al bloque unos segundos (la normal de la cara va en la velocidad). */
+    public static final RegistryObject<SimpleParticleType> MARCA = PARTICULAS.register("armafuego_marca", () -> new SimpleParticleType(false));
+
     /** La bala que se ve pasar (cuatro colores con la misma textura): latón, fuego, frío y verde. */
     public static final RegistryObject<SimpleParticleType> TRAZO = PARTICULAS.register("armafuego_trazo", () -> new SimpleParticleType(true));
     public static final RegistryObject<SimpleParticleType> TRAZO_FUEGO = PARTICULAS.register("armafuego_trazo_fuego", () -> new SimpleParticleType(true));
