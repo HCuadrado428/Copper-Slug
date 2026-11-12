@@ -113,4 +113,15 @@ public final class ModItems {
             () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties().stacksTo(16)));
 
     private ModItems() {}
+
+    // ---- accesorios de cobre (uno por arma, se montan en el yunque)
+    private static final java.util.Map<com.copperslug.armasfuego.comun.Accesorio, RegistryObject<Item>> ACCESORIOS = new java.util.EnumMap<>(com.copperslug.armasfuego.comun.Accesorio.class);
+    static {
+        for (com.copperslug.armasfuego.comun.Accesorio a : com.copperslug.armasfuego.comun.Accesorio.values())
+            ACCESORIOS.put(a, ITEMS.register("accesorio_" + a.id, () -> new com.copperslug.armasfuego.comun.AccesorioItem(a, new Item.Properties().stacksTo(16))));
+    }
+
+    public static Item accesorio(com.copperslug.armasfuego.comun.Accesorio a) {
+        return ACCESORIOS.get(a).get();
+    }
 }

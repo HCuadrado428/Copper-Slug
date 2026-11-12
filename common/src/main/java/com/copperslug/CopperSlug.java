@@ -122,6 +122,7 @@ public final class CopperSlug {
                     ModItems.TAMBOR_AGUA, ModItems.CINTA_INCENDIARIA, ModItems.CINTA_PALOMITAS, ModItems.PALOMITAS, ModItems.METRALLA, ModItems.BOLA_CADENA,
                     ModItems.BOLANO_INCENDIARIO, ModItems.BOLANO_FUEGOS, ModItems.BALA_HIELO, ModItems.BALA_HUMO, ModItems.TAMBOR_TINTA,
                     ModItems.CINTA_GUISANTES, ModItems.BOLA_ARPON, ModItems.BOLANO_SALTARIN)) out.accept(new ItemStack(m.get()));
+            for (var a : com.copperslug.armasfuego.comun.Accesorio.values()) out.accept(new ItemStack(ModItems.accesorio(a)));
             // los libros de los encantamientos propios de las demás armas
             var rev = List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
                     ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO);

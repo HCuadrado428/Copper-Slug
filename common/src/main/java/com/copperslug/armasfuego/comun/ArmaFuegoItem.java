@@ -494,7 +494,7 @@ public abstract class ArmaFuegoItem extends Item {
         ServerLevel l = p.serverLevel();
         // el cobre: más disperso cuanto más oxidado, pero el cañón gastado pega más y perfora más armadura
         ItemStack arma = p.getMainHandItem();
-        disp = (disp + Cobre.dispersion(Cobre.oxido(arma))) * Apuntar.dispersion(p);
+        disp = (disp + Cobre.dispersion(Cobre.oxido(arma))) * Apuntar.dispersion(p) * Accesorios.dispersion(arma);
         dano *= Cobre.dano(arma);
         perf = Math.min(1F, perf + Cobre.perforacion(arma));
         Vec3 dir = Balistica.dispersar(p.getViewVector(1.0F), disp, p.getRandom());
@@ -522,8 +522,9 @@ public abstract class ArmaFuegoItem extends Item {
         Vec3 q = boca.add(mira.scale(0.25));
         l.sendParticles(ArmasFuegoRegistro.FOGONAZO.get(), q.x, q.y, q.z, 1, 0, 0, 0, 0);
         if (humo > 0) l.sendParticles(ParticleTypes.SMOKE, q.x, q.y, q.z, humo, 0.04, 0.04, 0.04, 0.01);
-        l.playSound(null, p.getX(), p.getY(), p.getZ(), snd, SoundSource.PLAYERS, vol, tono + l.random.nextFloat() * 0.08F);
-        l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
+        boolean sil = p instanceof net.minecraft.world.entity.LivingEntity le && Accesorios.silencioso(le.getMainHandItem());
+        l.playSound(null, p.getX(), p.getY(), p.getZ(), snd, SoundSource.PLAYERS, sil ? vol * 0.25F : vol, tono + l.random.nextFloat() * 0.08F);
+        if (!sil) l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
         if (casquillo) casquillo(l, p, boca.subtract(mira.scale(0.45)));
     }
 
