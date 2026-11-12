@@ -521,8 +521,14 @@ public abstract class ArmaFuegoItem extends Item {
     public static void efectos(ServerLevel l, Entity p, Vec3 boca, SoundEvent snd, float vol, float tono, int humo, boolean casquillo) {
         Vec3 mira = p.getViewVector(1.0F);
         Vec3 q = boca.add(mira.scale(0.25));
-        l.sendParticles(ArmasFuegoRegistro.FOGONAZO.get(), q.x, q.y, q.z, 1, 0, 0, 0, 0);
-        if (humo > 0) l.sendParticles(ParticleTypes.SMOKE, q.x, q.y, q.z, humo, 0.04, 0.04, 0.04, 0.01);
+        // el fogonazo, del tamaño de cada arma (va en la velocidad x)
+        float esc = p instanceof net.minecraft.world.entity.LivingEntity le0 ? escalaFogonazo(le0.getMainHandItem()) : 1F;
+        l.sendParticles(ArmasFuegoRegistro.FOGONAZO.get(), q.x, q.y, q.z, 0, esc, 0, 0, 1.0);
+        // el humo de pólvora sale con el tiro y frena
+        for (int i = 0; i < humo + 1; i++) {
+            Vec3 v = mira.scale(0.05 + l.random.nextFloat() * 0.05).add((l.random.nextFloat() - 0.5) * 0.02, 0.01, (l.random.nextFloat() - 0.5) * 0.02);
+            l.sendParticles(ArmasFuegoRegistro.HUMO.get(), q.x, q.y, q.z, 0, v.x, v.y, v.z, 1.0);
+        }
         boolean sil = p instanceof net.minecraft.world.entity.LivingEntity le && Accesorios.silencioso(le.getMainHandItem());
         if (sil) {
             // el silenciador de verdad: un soplido corto y sin estampido (y el sculk no lo oye)
@@ -533,6 +539,16 @@ public abstract class ArmaFuegoItem extends Item {
             sonidoExtra(l, p, snd, vol, tono);
         }
         if (casquillo) casquillo(l, p, boca.subtract(mira.scale(0.45)));
+    }
+
+    /** El tamaño del fogonazo de cada arma (1 = el de la Winchester). */
+    public static float escalaFogonazo(ItemStack s) {
+        Item i = s.getItem();
+        if (i instanceof com.copperslug.armasfuego.oeste.DerringerItem) return 0.7F;
+        if (i instanceof com.copperslug.armasfuego.oeste.ThompsonItem) return 0.85F;
+        if (i instanceof com.copperslug.armasfuego.oeste.MosqueteItem) return 1.4F;
+        if (i instanceof com.copperslug.armasfuego.oeste.CanonManoItem) return 1.7F;
+        return 1F;
     }
 
     private static final java.util.Map<java.util.UUID, Long> ULTIMO_ECO = new java.util.HashMap<>();
