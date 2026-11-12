@@ -18,6 +18,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generar_tambor import caja  # noqa: E402
+from modelos_armas_nuevas import MODELOS  # noqa: E402
 
 RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
 TEX = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/textures/item')
@@ -115,22 +116,15 @@ def modelo_plano(nombre, tex):
 
 def tubo_3d():
     base = json.load(open(os.path.join(A3D, 'winchester_3d.json'), encoding='utf-8'))
-    el = []
-    cx, cy = 8.0, 9.3
-    el.append(caja(cx - 0.7, cy - 0.7, 1.0, cx + 0.7, cy + 0.7, 13.5, 'cobre', 'cer_tubo'))
-    for z, n in ((4.0, 'a'), (9.5, 'b')):
-        el.append(caja(cx - 0.85, cy - 0.85, z, cx + 0.85, cy + 0.85, z + 0.7, 'hierro', 'cer_anillo_' + n))
-    el.append(caja(cx - 0.8, cy - 0.8, 6.2, cx + 0.8, cy + 0.8, 8.4, 'cuero', 'cer_agarre'))
-    el.append(caja(cx - 0.55, cy - 0.55, 13.5, cx + 0.55, cy + 0.55, 15.2, 'cuero', 'cer_boquilla'))
-    # el agujero de la boca
-    el.append({'name': 'cer_boca', 'from': [cx - 0.4, cy - 0.4, 0.96], 'to': [cx + 0.4, cy + 0.4, 1.0],
-               'faces': {'north': {'uv': [15.0, 5.95, 15.5, 6.45], 'texture': '#negro'}}})
-    base['elements'] = el
+    # el juego completo de materiales (el de la Derringer) más el brillo de eco y la cuerda
+    base['textures'] = dict(json.load(open(os.path.join(A3D, 'derringer_3d_oculta.json'), encoding='utf-8'))['textures'])
+    base['textures']['eco'] = 'copperslug:item/armas3d/eco'
+    base['textures']['cuerda'] = 'copperslug:item/armas3d/cuerda'
+    base['elements'] = MODELOS['cerbatana']()
     base['textures']['particle'] = 'copperslug:item/cerbatana'
     with open(os.path.join(A3D, 'cerbatana_3d.json'), 'w', encoding='utf-8') as f:
         json.dump(base, f, separators=(',', ':'), ensure_ascii=False)
         f.write('\n')
-
 
 def modelos_objeto():
     for n, suf, cobre in ((0, '', 'cobre_0'), (1, '_ox1', 'cobre_1'), (2, '_ox2', 'cobre_2'), (3, '_ox3', 'cobre_3')):

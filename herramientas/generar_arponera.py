@@ -18,6 +18,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generar_tambor import caja  # noqa: E402
+from modelos_armas_nuevas import MODELOS  # noqa: E402
 from generar_cerbatana import cobres  # noqa: E402
 
 RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
@@ -72,30 +73,28 @@ def arpon():
     return im
 
 
+def textura_cuerda():
+    im = Image.new('RGBA', (16, 16), CUERDA)
+    for y in range(16):
+        for x in range(16):
+            if (x + y) % 4 == 0:
+                im.putpixel((x, y), CUERDA_OSC)
+            elif (x * 2 + y) % 7 == 0:
+                im.putpixel((x, y), (236, 214, 164, 255))
+    return im
+
+
 def modelo_3d():
     base = json.load(open(os.path.join(A3D, 'winchester_3d.json'), encoding='utf-8'))
-    el = []
-    cx, cy = 8.0, 9.6
-    el.append(caja(cx - 1.0, cy - 1.0, 3.0, cx + 1.0, cy + 1.0, 11.5, 'cobre', 'arp_canon'))
-    for z, n in ((4.5, 'a'), (8.5, 'b')):
-        el.append(caja(cx - 1.2, cy - 1.2, z, cx + 1.2, cy + 1.2, z + 0.7, 'hierro', 'arp_anillo_' + n))
-    # la punta del arpón asomando por la boca
-    el.append(caja(cx - 0.35, cy - 0.35, 0.0, cx + 0.35, cy + 0.35, 3.0, 'hierro', 'arp_asta'))
-    el.append(caja(cx - 0.8, cy - 0.12, 0.6, cx + 0.8, cy + 0.12, 1.6, 'hierro', 'arp_gancho_a'))
-    el.append(caja(cx - 0.12, cy - 0.8, 0.6, cx + 0.12, cy + 0.8, 1.6, 'hierro', 'arp_gancho_b'))
-    # el carrete de la cuerda, a la derecha
-    el.append(caja(cx + 1.2, cy - 1.4, 5.0, cx + 2.6, cy + 1.4, 9.0, 'cuero', 'arp_carrete'))
-    el.append(caja(cx + 1.0, cy - 0.3, 6.5, cx + 1.3, cy + 0.3, 7.5, 'hierro', 'arp_eje'))
-    # el cuerpo, la empuñadura y la culata
-    el.append(caja(cx - 1.1, 7.2, 11.5, cx + 1.1, 10.8, 13.5, 'cobre', 'arp_cuerpo'))
-    el.append(caja(cx - 0.6, 4.0, 11.8, cx + 0.6, 7.2, 13.4, 'madera', 'arp_agarre'))
-    el.append(caja(cx - 0.3, 6.6, 10.3, cx + 0.3, 7.0, 11.1, 'hierro', 'arp_gatillo'))
-    base['elements'] = el
+    # el juego completo de materiales (el de la Derringer) más el brillo de eco y la cuerda
+    base['textures'] = dict(json.load(open(os.path.join(A3D, 'derringer_3d_oculta.json'), encoding='utf-8'))['textures'])
+    base['textures']['eco'] = 'copperslug:item/armas3d/eco'
+    base['textures']['cuerda'] = 'copperslug:item/armas3d/cuerda'
+    base['elements'] = MODELOS['arponera']()
     base['textures']['particle'] = 'copperslug:item/arponera'
     with open(os.path.join(A3D, 'arponera_3d.json'), 'w', encoding='utf-8') as f:
         json.dump(base, f, separators=(',', ':'), ensure_ascii=False)
         f.write('\n')
-
 
 def modelos_objeto():
     for n, suf, cobre in ((0, '', 'cobre_0'), (1, '_ox1', 'cobre_1'), (2, '_ox2', 'cobre_2'), (3, '_ox3', 'cobre_3')):
@@ -116,6 +115,7 @@ if __name__ == '__main__':
     for n, tonos in enumerate(cobres()):
         icono(tonos).save(os.path.join(TEX, 'arponera' + ('' if n == 0 else '_ox%d' % n) + '.png'))
     arpon().save(os.path.join(TEX, 'arpon_cobre.png'))
+    textura_cuerda().save(os.path.join(TEX, 'armas3d', 'cuerda.png'))
     modelo_3d()
     modelos_objeto()
     print('arponera: texturas y modelos generados')
