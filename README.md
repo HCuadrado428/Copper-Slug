@@ -2,10 +2,10 @@
 
 **English** · [Castellano](#castellano)
 
-Eleven copper firearms for Minecraft, from the Wild West and beyond: the Russian-roulette **revolver**, the **scoped
+Twelve copper firearms for Minecraft, from the Wild West and beyond: the Russian-roulette **revolver**, the **scoped
 rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Winchester 1873**, the **Derringer**, the
-**Thompson** (in its violin case), the **musket** with bayonet, the **hand cannon**, the silent **blowgun** and the
-**flamethrower**. Each one has its own special ammo and enchantments.
+**Thompson** (in its violin case), the **musket** with bayonet, the **hand cannon**, the silent **blowgun**, the
+**flamethrower** and the **resonance pistol**. Each one has its own special ammo and enchantments.
 
 - Guns are not crafted: they are found in vanilla structure chests. Most ammo, the violin case and the bayonet fitting
   can be crafted.
@@ -36,6 +36,7 @@ rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Wi
 | Hand cannon | Fires iron bolas that explode. Incendiary, fireworks and bouncing bolas, falling blocks and anvils. |
 | Copper blowgun | Silent: the sculk and the Warden do not hear it. One dart at a time; plain, poison and sleep darts (crafted). Found in jungle temples. |
 | Copper flamethrower | A short, wide jet of fire that burns everything in the cone. Fuel canisters (crafted), swapped whole; it does not light underwater. Found in Nether fortresses. |
+| Resonance pistol | A sound wave that goes through blocks and armor and hurts everything on its line. Runs on echo shards (one charge each); loud, the sculk hears it. Found in ancient cities. |
 
 ## Controls
 
@@ -54,6 +55,7 @@ narrows the field of view, tightens the spread and slows you down; other players
 | Hand cannon | Light the fuse | Aim. The sight draws the arc of the ball | Hold right click to reload |
 | Copper blowgun | Shoot a dart | Aim | Hold right click to load the next dart |
 | Copper flamethrower | Hold to spray fire | Aim | Hold right click to swap the fuel canister |
+| Resonance pistol | Shoot | Aim | Hold right click to load echo shards |
 | Crank Gatling Gun (at the controls) | Hold to turn the crank and fire | Aim. The sight shows the barrel heat | Right click picks it up |
 
 Every copper gun: sneak + right click with a honeycomb or an axe in the other hand waxes or scrapes it. The aiming values
@@ -86,10 +88,10 @@ Miscelánea.
 
 ## Castellano
 
-Once armas de fuego de cobre para Minecraft, del Oeste y de más allá: el **revólver** de ruleta rusa, el **rifle de
+Doce armas de fuego de cobre para Minecraft, del Oeste y de más allá: el **revólver** de ruleta rusa, el **rifle de
 catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Winchester 1873**, la **Derringer**, la
-**Thompson** (en su estuche de violín), el **mosquete** con bayoneta, el **cañón de mano**, la **cerbatana** silenciosa y el
-**lanzallamas**. Cada una con su munición especial y sus encantamientos.
+**Thompson** (en su estuche de violín), el **mosquete** con bayoneta, el **cañón de mano**, la **cerbatana** silenciosa, el
+**lanzallamas** y la **pistola de resonancia**. Cada una con su munición especial y sus encantamientos.
 
 - Las armas no se fabrican: se encuentran en los cofres de estructuras vanilla. La mayor parte de la munición, el estuche
   de violín y la forma de calar la bayoneta sí se fabrican.
@@ -124,6 +126,7 @@ catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Wi
 | Cañón de mano | Dispara bolaños que estallan. Bolaños incendiarios, de fuegos artificiales y saltarines, y bloques que caen o yunques disparados. |
 | Cerbatana de cobre | Silenciosa: el sculk y el Warden no la oyen. Un dardo cada vez; dardos normales, de veneno y somníferos (se fabrican). Se encuentra en los templos de la jungla. |
 | Lanzallamas de cobre | Un chorro de fuego corto y ancho que quema todo lo que cae en el cono. Bidones de combustible (se fabrican), que se cambian enteros; no prende bajo el agua. Se encuentra en las fortalezas del Nether. |
+| Pistola de resonancia | Una onda de sonido que atraviesa bloques y armadura y hiere a todo lo de su línea. Funciona con fragmentos de eco (una carga cada uno); es ruidosa, el sculk la oye. Se encuentra en las ciudades antiguas. |
 
 ## Controles
 
@@ -143,6 +146,7 @@ ven que encaras el arma.
 | Cañón de mano | Prender la mecha | Apuntar. La mira dibuja la parábola del bolaño | Mantener clic derecho recarga |
 | Cerbatana de cobre | Disparar un dardo | Apuntar | Mantener clic derecho para cargar el siguiente dardo |
 | Lanzallamas de cobre | Mantener para echar fuego | Apuntar | Mantener clic derecho para cambiar el bidón |
+| Pistola de resonancia | Disparar | Apuntar | Mantener clic derecho para cargar fragmentos de eco |
 | Gatling de manivela (a los mandos) | Mantener: girar la manivela y disparar | Apuntar. La mira enseña el calor del cañón | El clic derecho la recoge |
 
 Todas las armas de cobre: agachado + clic derecho con un panal o un hacha en la otra mano la encera o la rasca. Los
