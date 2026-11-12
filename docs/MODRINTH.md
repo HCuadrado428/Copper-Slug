@@ -1,94 +1,38 @@
 # Copper Slug: Modrinth page text
 
-Text for the Modrinth project page (1.0.0). Summary first, then the long description in English and in Castellano,
-and the list of advancements as they are in the code.
+Text for the Modrinth project page (1.0.0), English only. Summary first, then the description, then the list of
+advancements as they are in the code.
 
-## Summary (English, 250 characters max)
+## Summary (250 characters max)
 
-Nine copper firearms for Minecraft: roulette revolver, spyglass rifle with ziplines, pressure shotgun, Gatling, Winchester
-1873, Derringer, Thompson in a violin case, bayonet musket and hand cannon. Copper rusts; wax it or scrape it.
+Nine copper firearms with their own ammo and enchantments, three new structures to loot, and pillagers that shoot back. Copper rusts: wax it or scrape it. Forge, Fabric and NeoForge.
 
-## Resumen (castellano, 250 caracteres máximo)
+## Description
 
-Nueve armas de fuego de cobre para Minecraft: revólver de ruleta, rifle de catalejo con tirolinas, escopeta de presión,
-Gatling, Winchester 1873, Derringer, Thompson en estuche de violín, mosquete con bayoneta y cañón de mano. El cobre se oxida.
+Copper Slug adds nine guns to Minecraft, all made of copper. There's a roulette revolver, a spyglass rifle, a pressure
+shotgun, a Gatling, a Winchester, a Derringer, a Thompson that lives in a violin case, a bayonet musket and a hand
+cannon. Each one has its own ammo, its own enchantments and its own quirks.
 
-## Description (English)
+Because they're copper, they rust. A rusty gun jams more and sprays wider, but hits harder, so you get to decide if
+you'd rather keep it shiny (wax it with honeycomb) or let it age (scrape it off with an axe when you've had enough).
 
-Copper Slug adds nine firearms from the Wild West and beyond, each with its own special ammo and enchantments:
+A few things worth knowing:
 
-- **Roulette revolver**: Russian roulette, quick draw, duels against other players, and special bullets (blank, magnet,
-  sedative dart, flare).
-- **Spyglass rifle**: scope, breath control for more damage, headshots, ziplines with rope bullets, paint and tracers.
-- **Pressure shotgun**: pump it up, suck in items, pull mobs, and fire cartridges with effects (gravel, incendiary, frost,
-  honey, salt, seeds, confetti, rubber).
-- **Crank Gatling Gun**: automatic and stationary. It overheats if you keep cranking. Belts of peas or popcorn, and it can
-  work as a redstone turret.
-- **Winchester 1873**: lever action with a tube magazine. Ice, silver and mixed ammo.
-- **Derringer**: hidden up your sleeve. Quick-draw trick, smoke, marked cards and gold bullets.
-- **Thompson**: drum-fed submachine gun inside a violin case. Water, ink and tracer drums. Play the case with a bow.
-- **Bayonet musket**: bolas, harpoon bolas and chain bolas. Fit a sword as a bayonet and it keeps the sword's enchantments.
-- **Hand cannon**: explosive bolas, incendiary, firework and bouncing ones, falling blocks and anvils.
+- Enchant a gun and the part shows up on it. A Suppressor puts a suppressor on the barrel, and so on.
+- There are three new structures to explore: a pyramid in the desert, an abandoned copper mine and a raiders' camp. They
+  are mazes full of traps and loot, and the people in them are armed.
+- Some pillagers now carry guns and will shoot you. They're rare, and the whole thing can be switched off in the config.
+- Guns turn up in chests, and most of the ammo can be crafted.
+- Left click shoots, hold right click to aim, sneak + right click reloads.
+- 57 advancements, in their own tab.
 
-**Controls:** left click shoots and holding right click aims, as in most shooters. Aiming centres the gun, narrows the
-field of view, tightens the spread and slows you down. Sneak + right click reloads. The pressure shotgun is the
-exception: right click pumps it and it fires from the hip only. At the Gatling controls, hold left click to crank and
-right click to aim. Each sight shows something useful: the revolver's next round (never in Russian roulette), the hand
-cannon's arc, the Gatling's barrel heat. Press N to inspect the gun in your hand. All the guns' main metal is copper, so
-they all rust.
+Works on Minecraft 1.20.1 (Forge, Fabric) and 1.21.1 (NeoForge, Forge, Fabric). Fabric needs Fabric API, and JEI is
+optional. Settings are in `serverconfig/copperslug-server.toml`.
 
-Copper rusts over time. Each rust phase trades accuracy for damage and piercing; wax it with honeycomb or scrape it with
-an axe. Guns are found in vanilla structure chests. Most ammo, the violin case and the bayonet fitting can be crafted.
-Every gun has a HUD, sounds, particles, 3D models and its own advancement tab (57 advancements, listed below).
+If you also use Miscelánea, don't install both: this mod is its firearms part, on its own.
 
-Server settings live in `serverconfig/copperslug-server.toml` (damage, fire rate, range, rust, wax, loot chances).
-
-**Minecraft 1.20.1** (Forge, Fabric) and **1.21.1** (NeoForge, Forge, Fabric). Fabric needs Fabric API. JEI is optional
-and shows where each gun is found.
-
-This is the firearms part of Miscelánea as a standalone mod. Do not install both together.
-
-## Descripción (castellano)
-
-Copper Slug añade nueve armas de fuego del Oeste y de más allá, cada una con su munición especial y sus encantamientos:
-
-- **Revólver de ruleta**: ruleta rusa, desenfunde, duelos contra otros jugadores y balas especiales (fogueo, imán, dardo
-  de sedante, bengala).
-- **Rifle de catalejo**: mira, contener la respiración para más daño, headshots, tirolinas con bala de cuerda, pintura y
-  balas trazadoras.
-- **Escopeta de presión**: se bombea, aspira objetos, tira de los mobs, y dispara cartuchos con efecto (grava,
-  incendiario, escarcha, miel, sal, semillas, confeti, goma).
-- **Gatling de manivela**: automática y fija. Se calienta si no paras de girar la manivela. Cintas de guisantes o
-  palomitas, y puede ser una torreta con redstone.
-- **Winchester 1873**: palanca de repetición con depósito tubular. Balas de hielo, de plata y mezclas.
-- **Derringer**: escondida en la manga. Truco de tahúr al sacarla, balas de humo, cartas marcadas y balas de oro.
-- **Thompson**: subfusil de tambor dentro de un estuche de violín. Tambores de agua, de tinta y trazadores. Toca el estuche
-  con un arco.
-- **Mosquete con bayoneta**: bolas, bolas arpón y bolas encadenadas. Cala una espada como bayoneta y conserva sus
-  encantamientos.
-- **Cañón de mano**: bolaños que estallan, incendiarios, de fuegos artificiales y saltarines, y bloques que caen o yunques
-  disparados.
-
-**Controles:** el clic izquierdo dispara y mantener el clic derecho apunta, como en casi todos los juegos de tiros.
-Apuntar lleva el arma al centro, cierra el campo de visión, dispersa menos y hace andar más lento. Agachado + clic
-derecho recarga. La escopeta de presión es la excepción: el clic derecho la bombea y dispara solo desde la cadera. A los
-mandos de la Gatling, mantener el clic izquierdo gira la manivela y el derecho apunta. Cada mira enseña algo útil: la
-del revólver, la bala que toca (nunca en la ruleta rusa); la del cañón de mano, la parábola; la de la Gatling, el calor
-del cañón. La N inspecciona el arma de la mano. El metal principal de todas las armas es de cobre, así que todas se
-oxidan.
-
-El cobre se oxida con el tiempo. Cada fase de óxido cambia precisión por daño y perforación; se encera con panal o se
-rasca con un hacha. Las armas se encuentran en los cofres de estructuras vanilla. La mayor parte de la munición, el
-estuche de violín y la forma de calar la bayoneta se fabrican. Cada arma tiene HUD, sonidos, partículas, modelos 3D y su
-propia pestaña de logros (57 logros, abajo).
-
-La configuración del servidor está en `serverconfig/copperslug-server.toml` (daño, cadencia, alcance, óxido, cera,
-probabilidad en cofres).
-
-**Minecraft 1.20.1** (Forge, Fabric) y **1.21.1** (NeoForge, Forge, Fabric). Fabric necesita Fabric API. JEI es opcional y
-enseña dónde se encuentra cada arma.
-
-Es la parte de armas de fuego de Miscelánea como mod independiente. No instales los dos a la vez.
+Images to upload: the revolver in hand, a rusted Winchester, the pyramid from outside, the mine from the inside, the
+camp, and a pillager aiming at you.
 
 ## Advancements / Logros
 
