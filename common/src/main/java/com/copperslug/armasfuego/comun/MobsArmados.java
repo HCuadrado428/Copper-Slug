@@ -46,6 +46,8 @@ public final class MobsArmados {
     /** Etiqueta: ya se ha tirado el dado para este mob (no se repite al recargar el mundo). */
     private static final String TIRADO = "copperslug_tirado";
     private static final int RADIO = 64;
+    /** Disparos hechos por mobs desde que arrancó el juego (lo mira la prueba del CI). */
+    public static volatile int disparos;
     private static final Set<Mob> ARMADOS = Collections.newSetFromMap(new WeakHashMap<>());
     private static final Map<LivingEntity, Estado> ESTADOS = new WeakHashMap<>();
 
@@ -235,6 +237,7 @@ public final class MobsArmados {
             return;
         }
         e.balas--;
+        disparos++;
         if (e.pendientes <= 0) e.pendientes = pf.rafaga();
         e.pendientes--;
         e.proximo = t + (e.pendientes > 0 ? 3 : Math.max(4, Math.round(ConfigServidor.mobsCadencia() * pf.cadencia())));
