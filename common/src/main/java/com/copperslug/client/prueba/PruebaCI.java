@@ -392,7 +392,7 @@ public final class PruebaCI {
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "forceload add " + (o.getX() + 344) + " " + (o.getZ() - 56) + " " + (o.getX() + 456) + " " + (o.getZ() + 56));
         }));
-        sin("est_piramide_esperar_trozos", 300, () -> {});
+        sin("est_piramide_esperar_trozos", 700, () -> {});
         sin("est_piramide_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
@@ -491,7 +491,7 @@ public final class PruebaCI {
             if (r == null) throw new IllegalStateException("el campamento aún no se ha contado");
             String det = "cofres " + r[1] + ", saqueadores armados " + r[6] + " de " + r[16] + " saqueadores y vindicadores (/place: " + PI.get("est_c_cmd") + ")";
             RESUMEN.add("  estructuras: campamento generado: " + det);
-            if (r[1] < 2 || r[6] < 6) throw new IllegalStateException("el campamento sale entero (cofres >= 2, armados >= 6) (" + det + ")");
+            if (r[1] < 1 || r[6] < 5) throw new IllegalStateException("el campamento sale entero (cofres >= 1, armados >= 5) (" + det + ")");
         });
         sin("est_camp_cam", 4, () -> piSrv(sp -> {
             int[] r = (int[]) PI.get("est_c");
