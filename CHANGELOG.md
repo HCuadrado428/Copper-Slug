@@ -49,6 +49,9 @@
 - Armed mobs: some pillagers carry a Winchester and really shoot (six rounds, then a reload; aim depends on the
   difficulty). Config section `mobs_armados`: master switch, chance per pillager and per captain, damage, rate of fire and
   drop chance. Off means vanilla.
+  Each weapon shoots its own way (revolver: six quick shots; Winchester: slower and farther; Derringer: two shots, short range;
+  Thompson: bursts of three; musket: one huge shot every few seconds) and each structure hands out its own: pillagers carry
+  revolvers or Winchesters, the pyramid husks muskets and Derringers, the mine zombies revolvers and Winchesters.
 - New structure, the Pharaoh's Pyramid (deserts): a cinematic stepped sandstone pyramid (61 x 61) with a pylon gate and
   obelisks, and two labyrinth floors inside: an 11 x 11 maze with loops, pressure-plate TNT traps, husks (some carrying
   Winchesters) and chests in the dead ends, with the sarcophagus hall in the middle; a hand ladder leads to a smaller 7 x 7
@@ -117,6 +120,10 @@
 - Mobs armados: algunos saqueadores llevan una Winchester y disparan de verdad (seis balas y luego recargan; la puntería
   depende de la dificultad). Sección `mobs_armados` de la config: interruptor, probabilidad por saqueador y por capitán,
   daño, cadencia y probabilidad de soltar el arma. Apagado, todo es vanilla.
+  Cada arma dispara a su manera (revólver: seis tiros rápidos; Winchester: más despacio y más lejos; Derringer: dos tiros de
+  cerca; Thompson: ráfagas de tres; mosquete: un tiro enorme cada pocos segundos) y cada estructura reparte las suyas: los
+  saqueadores llevan revólveres o Winchesters, los husks de la pirámide mosquetes y Derringers, los zombis de la mina revólveres
+  y Winchesters.
 - Estructura nueva, la Pirámide del faraón (desiertos): una pirámide escalonada de arenisca de película (61 x 61) con
   pilono de entrada y obeliscos, y dos plantas laberínticas por dentro: un laberinto de 11 x 11 con bucles, trampas de TNT
   con placa de presión, husks (algunos con Winchester) y cofres en los callejones, con la sala del sarcófago en el centro;

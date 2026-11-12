@@ -240,20 +240,21 @@ for c in celdas:
             poner(*p, blk('cobweb'))
 
 # ---------------------------------------------------------------- mineros zombis con Winchester
-def minero(x, z, y=4):
-    g.entidades.append(('minecraft:zombie', x, y, z, E_minero))
+def minero(x, z, y=4, arma=None):
+    arma = arma or rng.choice(['revolver', 'winchester'])
+    g.entidades.append(('minecraft:zombie', x, y, z, lambda v21, a=arma: E_minero(v21, a)))
 
 
-def E_minero(v21):
+def E_minero(v21, arma='winchester'):
     casco = E.comp(id=E.s('minecraft:iron_helmet'), **({'count': E.i(1)} if v21 else {'Count': E.b(1)}))
-    d_ = E.mano_winchester(v21)
+    d_ = E.mano_arma(v21, arma)
     d_['ArmorItems'] = E.lista(E.COMPOUND, [E.comp(), E.comp(), E.comp(), casco])
     d_['ArmorDropChances'] = E.lista(E.FLOAT, [E.f(0.0), E.f(0.0), E.f(0.0), E.f(0.05)])
     return d_
 
 
 for (x, z) in ((47.5, 7.5), (53.5, 7.5), (47.5, 13.5), (53.5, 13.5)):
-    minero(x, z)
+    minero(x, z, arma='winchester')
 cel_mob = [c for c in celdas if c not in usadas and not en_cam(c) and dist[c] >= 3]
 for c in rng.sample(cel_mob, 14):
     minero(cx0(c[0]) + 1.5, cz0(c[1]) + 1.5)

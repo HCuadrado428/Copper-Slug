@@ -244,10 +244,14 @@ def exportar(cuadro, nombre, v21, datos, loot, extras_bloque=None):
     return len(bloques), len(paleta), len(ents)
 
 
+def mano_arma(v21, arma='winchester'):
+    """HandItems/HandDropChances de un mob con ese arma (copperslug:<arma>) en la mano principal."""
+    it = comp(id=s('copperslug:' + arma), **({'count': i(1)} if v21 else {'Count': b(1)}))
+    return dict(HandItems=lista(COMPOUND, [it, comp()]), HandDropChances=lista(FLOAT, [f(0.1), f(0.0)]))
+
+
 def mano_winchester(v21):
-    """HandItems/HandDropChances de un mob con la Winchester en la mano principal."""
-    arma = comp(id=s('copperslug:winchester'), **({'count': i(1)} if v21 else {'Count': b(1)}))
-    return dict(HandItems=lista(COMPOUND, [arma, comp()]), HandDropChances=lista(FLOAT, [f(0.1), f(0.0)]))
+    return mano_arma(v21, 'winchester')
 
 
 def datapack(datos, nombre, v21, biomas, paso, adaptacion, alto_inicio, spacing, separation, salt, exclusion=None,
