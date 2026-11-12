@@ -364,17 +364,28 @@ public final class PruebaCI {
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "forceload add " + (o.getX() + 344) + " " + (o.getZ() - 56) + " " + (o.getX() + 456) + " " + (o.getZ() + 56));
         }));
-        sin("est_piramide_esperar_trozos", 120, () -> {});
+        sin("est_piramide_esperar_trozos", 300, () -> {});
         sin("est_piramide_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:piramide " + c.getX() + " " + c.getY() + " " + c.getZ());
+<<<<<<< ours
             PI.put("est_p", estContar(l, c, 40, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
             PI.put("est_p_cmd", "sin código en 1.21");
+=======
+            PI.put("est_p_cmd", res);
+>>>>>>> theirs
         }));
-        sin("est_piramide_esperar", 100, () -> {});
+        sin("est_piramide_esperar", 200, () -> {});
+        sin("est_piramide_contar", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
+            PI.put("est_p", estContar(l, c, 40, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+        }));
+        sin("est_piramide_esperar2", 30, () -> {});
         vigila("est_piramide_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_p");
             if (r == null) throw new IllegalStateException("la pirámide aún no se ha contado");
@@ -397,17 +408,28 @@ public final class PruebaCI {
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "forceload add " + (o.getX() - 56) + " " + (o.getZ() + 344) + " " + (o.getX() + 56) + " " + (o.getZ() + 456));
         }));
-        sin("est_mina_esperar_trozos", 120, () -> {});
+        sin("est_mina_esperar_trozos", 300, () -> {});
         sin("est_mina_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ());
+<<<<<<< ours
             PI.put("est_m", estContar(l, c, 34, 34, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
             PI.put("est_m_cmd", "sin código en 1.21");
+=======
+            PI.put("est_m_cmd", res);
+>>>>>>> theirs
         }));
-        sin("est_mina_esperar", 100, () -> {});
+        sin("est_mina_esperar", 200, () -> {});
+        sin("est_mina_contar", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
+            PI.put("est_m", estContar(l, c, 34, 34, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
+        }));
+        sin("est_mina_esperar2", 30, () -> {});
         vigila("est_mina_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_m");
             if (r == null) throw new IllegalStateException("la mina aún no se ha contado");
@@ -418,7 +440,10 @@ public final class PruebaCI {
         });
         sin("est_mina_cam", 4, () -> piSrv(sp -> {
             int[] r = (int[]) PI.get("est_m");
-            if (r != null && r[12] != Integer.MIN_VALUE) estPonerCamara(sp, r[12] + 0.5, r[13] + 1.6, r[14] + 0.5, r[12] + 0.5 + 6, r[13] + 1.6, r[14] + 0.5);
+            if (r != null && r[12] != Integer.MIN_VALUE) {
+                estPonerCamara(sp, r[12] + 0.5, r[13] + 1.6, r[14] + 0.5, r[12] + 0.5 + 6, r[13] + 1.6, r[14] + 0.5);
+                sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.NIGHT_VISION, 600, 0, false, false));
+            }
         }));
         paso("est_mina_dentro", 70, () -> {});
         // ---- el campamento de saqueadores (a cielo abierto), al oeste de la arena
@@ -427,17 +452,22 @@ public final class PruebaCI {
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "forceload add " + (o.getX() - 456) + " " + (o.getZ() - 40) + " " + (o.getX() - 344) + " " + (o.getZ() + 40));
         }));
-        sin("est_camp_esperar_trozos", 120, () -> {});
+        sin("est_camp_esperar_trozos", 300, () -> {});
         sin("est_camp_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() - 400, o.getY(), o.getZ());
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:campamento " + c.getX() + " " + c.getY() + " " + c.getZ());
-            PI.put("est_c", estContar(l, c, 24, 24, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
             PI.put("est_c_o", c.immutable());
         }));
-        sin("est_camp_esperar", 80, () -> {});
+        sin("est_camp_esperar", 200, () -> {});
+        sin("est_camp_contar", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var c = (net.minecraft.core.BlockPos) PI.get("est_c_o");
+            PI.put("est_c", estContar(l, c, 24, 24, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+        }));
+        sin("est_camp_esperar2", 30, () -> {});
         vigila("est_camp_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_c");
             if (r == null) throw new IllegalStateException("el campamento aún no se ha contado");
