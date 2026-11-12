@@ -77,6 +77,13 @@
   Compensator shows the Thompson's brake, Extended Magazine shows collars and a longer tube on the Winchester. New enchantments
   with their own part: Long Barrel (revolver), Choke (pressure shotgun), Copper Sight (musket) and Rifled Bore (hand cannon); each
   also tightens the spread. The parts rust with the weapon.
+- Two new weapons, one per structure that did not have one. The Copper Blowgun (jungle temples): one dart at a time, a quick
+  reload and no noise at all (the sculk and the Warden do not hear it); darts are crafted (iron nugget, stick and feather) and
+  come as plain, poison (a spider eye) and sleep (a fermented spider eye: slow, weak and the target forgets who hit it).
+  The Copper Flamethrower (Nether fortresses): hold left click for a short, wide jet of fire that burns everything in the
+  cone and sets fire to what it reaches (if fire spread is on); it runs on fuel canisters (blaze powder, two coal and an iron
+  nugget) that are swapped whole, and it does not light underwater. Both have a 3D model, rust like the rest, loot in their
+  structure, a JEI note and config values (`cerbatana_*`, `lanzallamas_*`).
 
 ---
 
@@ -166,3 +173,10 @@
   enseña el freno de la Thompson, el Depósito largo enseña unos collares y un tubo más largo en la Winchester. Encantamientos
   nuevos con su pieza: Cañón largo (revólver), Estrangulador (escopeta de presión), Mira de cobre (mosquete) y Ánima rayada
   (cañón de mano); cada uno cierra también la dispersión. Las piezas se oxidan con el arma.
+- Dos armas nuevas, una por estructura que aún no tenía. La cerbatana de cobre (templos de la jungla): un dardo cada vez,
+  recarga rápida y ningún ruido (el sculk y el Warden no la oyen); los dardos se fabrican (pepita de hierro, palo y pluma) y los
+  hay normales, de veneno (con un ojo de araña) y somníferos (con uno fermentado: lento, flojo y el blanco olvida quién le dio).
+  El lanzallamas de cobre (fortalezas del Nether): con el clic izquierdo mantenido echa un chorro de fuego corto y ancho que
+  quema todo lo que cae en el cono y prende lo que alcanza (si el fuego se propaga); se alimenta de bidones de combustible
+  (polvo de blaze, dos carbones y una pepita de hierro) que se cambian enteros, y no prende bajo el agua. Las dos tienen
+  modelo 3D, se oxidan como el resto, botín en su estructura, nota de JEI y valores de config (`cerbatana_*`, `lanzallamas_*`).
