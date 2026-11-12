@@ -16,9 +16,4 @@ public class MunicionItem extends Item {
         super(p);
     }
 
-    @Override
-    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> lista, TooltipFlag f) {
-        net.minecraft.world.level.Level l = com.copperslug.shim.Mundo.cliente();
-        lista.add(Component.translatable(getDescriptionId() + ".ayuda").withStyle(ChatFormatting.GRAY));
-    }
 }

@@ -152,7 +152,6 @@ public final class Revolver {
         }
         if (critico) {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0F, 1.2F);
-            p.displayClientMessage(Component.translatable("pistola.copperslug.desenfunde").withStyle(ChatFormatting.GOLD), true);
         }
 
         if (sien) {
@@ -437,7 +436,6 @@ public final class Revolver {
         if (u >= USOS_POR_OXIDO) {
             t.putInt(Tambor.OXIDO, Tambor.oxido(s) + 1);
             t.putInt(Tambor.USOS, 0);
-            p.displayClientMessage(Component.translatable("pistola.copperslug.oxido." + Tambor.oxido(s)).withStyle(ChatFormatting.DARK_AQUA), true);
         } else {
             t.putInt(Tambor.USOS, u);
         }
@@ -487,7 +485,6 @@ public final class Revolver {
         int hueco = Tambor.primeraVacia(s);
         ServerLevel l = p.serverLevel();
         if (hueco < 0) {
-            p.displayClientMessage(Component.translatable("pistola.copperslug.lleno").withStyle(ChatFormatting.GRAY), true);
             return false;
         }
         Tambor.poner(s, hueco, c);

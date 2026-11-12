@@ -19,10 +19,4 @@ public class CartuchoPresionItem extends Item {
         this.tipo = tipo;
     }
 
-    @Override
-    public void appendHoverText(ItemStack s, net.minecraft.world.item.Item.TooltipContext copperslug$ctx, List<Component> l, TooltipFlag f) {
-        net.minecraft.world.level.Level level = com.copperslug.shim.Mundo.cliente();
-        l.add(Component.translatable("item.copperslug.escopeta_cartucho_" + tipo.id + ".ayuda").withStyle(ChatFormatting.GRAY));
-        l.add(Component.translatable("item.copperslug.escopeta_cartucho.cargar").withStyle(ChatFormatting.DARK_GRAY));
-    }
 }
