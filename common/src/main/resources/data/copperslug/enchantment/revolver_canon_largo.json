@@ -1,6 +1,6 @@
 {
   "description": {
-    "translate": "enchantment.copperslug.canon_largo"
+    "translate": "enchantment.copperslug.revolver_canon_largo"
   },
   "supported_items": "#copperslug:enchantable/revolver",
   "weight": 5,
