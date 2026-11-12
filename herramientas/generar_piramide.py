@@ -313,13 +313,15 @@ for p in ((25, 15, 25), (35, 15, 25), (25, 15, 35), (35, 15, 35)):
     poner(*p, TELA)
 
 # ---------------------------------------------------------------- mobs
-def husk(x, y, z, armado):
-    ex = E.mano_winchester if armado else {}
+def husk(x, y, z, armado, arma=None):
+    """Un husk; con `armado`, lleva el arma de la expedición (mosquete o Derringer, al gusto del faraón)."""
+    arma = arma or rng.choice(['mosquete', 'mosquete', 'derringer'])
+    ex = (lambda v21: E.mano_arma(v21, arma)) if armado else {}
     g.entidades.append(('minecraft:husk', x, y, z, ex))
 
 
 for (x, z) in ((28.5, 25.5), (32.5, 25.5), (25.5, 29.5), (35.5, 33.5)):
-    husk(x, 5, z, True)                                                  # sala del sarcófago (en el suelo y la tarima)
+    husk(x, 5, z, True, 'mosquete')                                      # sala del sarcófago: mosquetes (en el suelo y la tarima)
 for (x, z) in ((26.5, 28.5), (34.5, 28.5), (28.5, 34.5), (32.5, 34.5)):
     husk(x, 11, z, True)                                                 # cámara del faraón
 celdas_mob = [c for c in celdas1 if not en_centro(c) and c not in usadas and d1[c] >= 3]
