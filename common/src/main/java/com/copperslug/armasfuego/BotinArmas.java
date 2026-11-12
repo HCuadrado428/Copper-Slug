@@ -29,7 +29,7 @@ public class BotinArmas {
     // Fabric: LootTableEvents); aquí queda lo común: qué arma sale dónde, con qué probabilidad y con qué.
     public static void registrar(com.copperslug.shim.eventbus.api.IEventBus bus) {}
 
-    public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON, CERBATANA, LANZALLAMAS, RESONANCIA}
+    public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON, CERBATANA, LANZALLAMAS, RESONANCIA, ARPONERA}
 
     /** Qué arma puede salir en esa tabla de botín (null: ninguna). */
     public static Arma arma(ResourceLocation id) {
@@ -55,6 +55,8 @@ public class BotinArmas {
             case "chests/nether_bridge": return Arma.LANZALLAMAS;
             case "chests/ancient_city":
             case "chests/ancient_city_ice_box": return Arma.RESONANCIA;
+            case "chests/underwater_ruin_big":
+            case "chests/underwater_ruin_small": return Arma.ARPONERA;
             case "chests/bastion_other":
             case "chests/bastion_bridge": return Arma.CANON;
             default: return null;
@@ -77,6 +79,7 @@ public class BotinArmas {
             case CERBATANA: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinCerbatana();
             case LANZALLAMAS: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinLanzallamas();
             case RESONANCIA: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinResonancia();
+            case ARPONERA: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinArponera();
             default: break;
         }
         if (p.startsWith("chests/village/")) {
@@ -153,6 +156,11 @@ public class BotinArmas {
             case CANON -> {
                 arma = new ItemStack(ModItems.CANON_MANO.get());
                 l.add(new ItemStack(net.minecraft.world.item.Items.GUNPOWDER, 4 + r.nextInt(5)));
+            }
+            case ARPONERA -> {
+                arma = new ItemStack(ModItems.ARPONERA.get());
+                com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(arma, 1);
+                l.add(new ItemStack(ModItems.ARPON_COBRE.get(), 2 + r.nextInt(4)));
             }
             case RESONANCIA -> {
                 arma = new ItemStack(ModItems.RESONANCIA.get());

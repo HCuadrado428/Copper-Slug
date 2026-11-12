@@ -132,5 +132,11 @@ public final class ModItems {
     public static final RegistryObject<Item> RESONANCIA = ITEMS.register("resonancia",
             () -> new com.copperslug.armasfuego.ciudad.ResonanciaItem(new Item.Properties().durability(300).rarity(Rarity.RARE)));
 
+    // ---- Arponera de cobre (ruinas submarinas) y su arpón
+    public static final RegistryObject<Item> ARPONERA = ITEMS.register("arponera",
+            () -> new com.copperslug.armasfuego.oceano.ArponeraItem(new Item.Properties().durability(300).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> ARPON_COBRE = ITEMS.register("arpon_cobre",
+            () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties()));
+
     private ModItems() {}
 }
