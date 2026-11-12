@@ -246,6 +246,7 @@ public final class DisparoPresion {
         sl.sendParticles(ParticleTypes.CLOUD, boca.x, boca.y, boca.z, 3, 0.05, 0.05, 0.05, 0.05);
         sl.sendParticles(ParticleTypes.POOF, boca.x, boca.y, boca.z, 2, 0.03, 0.03, 0.03, 0.03);
         sl.playSound(null, p.getX(), p.getY(), p.getZ(), com.copperslug.registry.ModSounds.PRESION_DISPARO.get(), SoundSource.PLAYERS, 3.0F, 0.95F + r.nextFloat() * 0.1F);
+        com.copperslug.armasfuego.comun.ArmaFuegoItem.sonidoExtra(sl, p, com.copperslug.registry.ModSounds.PRESION_DISPARO.get(), 3.0F, 0.95F);
         if (t == TipoCartucho.CONFETI) {
             sl.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FIREWORK_ROCKET_LARGE_BLAST, SoundSource.PLAYERS, 1.5F, 1.2F);
             sl.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FIREWORK_ROCKET_TWINKLE, SoundSource.PLAYERS, 1.2F, 1.0F);

@@ -514,5 +514,19 @@
   "enchantment.copperslug.mosquete_mira": "Copper Sight",
   "enchantment.copperslug.mosquete_mira.desc": "Musket: a front sight, half the spread.",
   "enchantment.copperslug.canon_anima": "Rifled Bore",
-  "enchantment.copperslug.canon_anima.desc": "Hand cannon: a rifled bore, the ball flies much straighter."
+  "enchantment.copperslug.canon_anima.desc": "Hand cannon: a rifled bore, the ball flies much straighter.",
+  "subtitles.copperslug.silenciador_disparo": "Suppressed shot",
+  "subtitles.copperslug.mob_montar": "Weapon cocked",
+  "subtitles.copperslug.mob_chispa": "Pan spark",
+  "subtitles.copperslug.mob_clic_seco": "Dry click",
+  "subtitles.copperslug.eco_interior": "Shot echo",
+  "subtitles.copperslug.revolver_disparo_lejos": "revolver shot, far away",
+  "subtitles.copperslug.rifle_catalejo_disparo_lejos": "rifle shot, far away",
+  "subtitles.copperslug.presion_disparo_lejos": "pressure shotgun shot, far away",
+  "subtitles.copperslug.gatling_disparo_lejos": "Gatling shot, far away",
+  "subtitles.copperslug.winchester_disparo_lejos": "Winchester shot, far away",
+  "subtitles.copperslug.derringer_disparo_lejos": "Derringer shot, far away",
+  "subtitles.copperslug.thompson_disparo_lejos": "Thompson shot, far away",
+  "subtitles.copperslug.mosquete_disparo_lejos": "musket shot, far away",
+  "subtitles.copperslug.canon_disparo_lejos": "cannon shot, far away"
 }

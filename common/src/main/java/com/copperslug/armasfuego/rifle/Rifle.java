@@ -242,12 +242,10 @@ public final class Rifle {
 
         // ruido: se oye a lo lejos y lo notan el sculk y el Warden (salvo con Silenciador)
         if (silencio) {
-            l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.ARROW_SHOOT, SoundSource.PLAYERS, 0.35F, 1.7F);
-            l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.WOOL_HIT, SoundSource.PLAYERS, 0.6F, 0.6F);
+            l.playSound(null, p.getX(), p.getY(), p.getZ(), com.copperslug.registry.ModSounds.SILENCIADOR_DISPARO.get(), SoundSource.PLAYERS, 1.2F, 0.9F + p.getRandom().nextFloat() * 0.1F);
         } else {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), com.copperslug.registry.ModSounds.RIFLE_CATALEJO_DISPARO.get(), SoundSource.PLAYERS, 4.0F, 0.95F + p.getRandom().nextFloat() * 0.1F);
-            l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.FIREWORK_ROCKET_LARGE_BLAST_FAR, SoundSource.PLAYERS, 4.0F, 0.6F);
-            l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.CROSSBOW_SHOOT, SoundSource.PLAYERS, 1.0F, 0.6F);
+            com.copperslug.armasfuego.comun.ArmaFuegoItem.sonidoExtra(l, p, com.copperslug.registry.ModSounds.RIFLE_CATALEJO_DISPARO.get(), 4.0F, 0.95F);
             l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, p.position());
             Vec3 boca = ojo.add(dir.scale(1.2)).add(0, -0.15, 0);
             l.sendParticles(ParticleTypes.SMOKE, boca.x, boca.y, boca.z, 4, 0.04, 0.04, 0.04, 0.01);
