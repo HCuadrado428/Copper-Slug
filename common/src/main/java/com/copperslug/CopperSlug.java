@@ -111,6 +111,10 @@ public final class CopperSlug {
             out.accept(new ItemStack(ModItems.WINCHESTER.get()));
             out.accept(new ItemStack(ModItems.DERRINGER.get()));
             out.accept(new ItemStack(ModItems.BALA_DERRINGER.get()));
+            out.accept(new ItemStack(ModItems.CERBATANA.get()));
+            out.accept(new ItemStack(ModItems.DARDO_CERBATANA.get()));
+            out.accept(new ItemStack(ModItems.DARDO_VENENO.get()));
+            out.accept(new ItemStack(ModItems.DARDO_SOMNIFERO.get()));
             out.accept(com.copperslug.armasfuego.oeste.EstucheViolinItem.con(new ItemStack(ModItems.THOMPSON.get())));
             out.accept(new ItemStack(ModItems.THOMPSON.get()));
             out.accept(new ItemStack(ModItems.ESTUCHE_VIOLIN.get()));

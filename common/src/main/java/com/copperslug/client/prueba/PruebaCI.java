@@ -2422,6 +2422,19 @@ public final class PruebaCI {
             piSrv(sp -> PI.put("d_balas2", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
         vigila("a2_derringer_rec_ok", 2, () -> a2Comprobar("la Derringer se recarga partiéndola", Integer.valueOf(2).equals(PI.get("d_balas2")), "balas " + PI.get("d_balas2")));
+        // ================================================================ Cerbatana de cobre
+        sin("a2_cerbatana", 8, () -> {
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.CERBATANA, 1));
+            piApuntar(a2Punto(5, 0, 1.2));
+        });
+        sin("a2_cerbatana_vida", 2, () -> a2Vida("c0"));
+        paso("224_cerbatana_1p", 3, piTiro());
+        sin("a2_cerbatana_ver", 6, () -> {
+            a2Vida("c1");
+            piSrv(sp -> PI.put("c_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
+        });
+        vigila("a2_cerbatana_ok", 2, () -> a2Comprobar("la cerbatana dispara un dardo y hiere", a2F("c0") - a2F("c1") > 1 && Integer.valueOf(0).equals(PI.get("c_balas")),
+                "vida " + a2F("c0") + " → " + a2F("c1") + ", dardos " + PI.get("c_balas")));
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);

@@ -29,7 +29,7 @@ public class BotinArmas {
     // Fabric: LootTableEvents); aquí queda lo común: qué arma sale dónde, con qué probabilidad y con qué.
     public static void registrar(com.copperslug.shim.eventbus.api.IEventBus bus) {}
 
-    public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON}
+    public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON, CERBATANA}
 
     /** Qué arma puede salir en esa tabla de botín (null: ninguna). */
     public static Arma arma(ResourceLocation id) {
@@ -50,6 +50,8 @@ public class BotinArmas {
             case "chests/woodland_mansion": return Arma.THOMPSON;
             case "chests/stronghold_corridor":
             case "chests/stronghold_crossing": return Arma.MOSQUETE;
+            case "chests/jungle_temple":
+            case "chests/jungle_temple_dispenser": return Arma.CERBATANA;
             case "chests/bastion_other":
             case "chests/bastion_bridge": return Arma.CANON;
             default: return null;
@@ -69,6 +71,7 @@ public class BotinArmas {
             case THOMPSON: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinThompson();
             case MOSQUETE: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinMosquete();
             case CANON: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinCanon();
+            case CERBATANA: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinCerbatana();
             default: break;
         }
         if (p.startsWith("chests/village/")) {
@@ -145,6 +148,13 @@ public class BotinArmas {
             case CANON -> {
                 arma = new ItemStack(ModItems.CANON_MANO.get());
                 l.add(new ItemStack(net.minecraft.world.item.Items.GUNPOWDER, 4 + r.nextInt(5)));
+            }
+            case CERBATANA -> {
+                arma = new ItemStack(ModItems.CERBATANA.get());
+                com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(arma, 1);
+                l.add(new ItemStack(ModItems.DARDO_CERBATANA.get(), 4 + r.nextInt(5)));
+                if (r.nextFloat() < 0.6F) l.add(new ItemStack(ModItems.DARDO_VENENO.get(), 2 + r.nextInt(4)));
+                if (r.nextFloat() < 0.4F) l.add(new ItemStack(ModItems.DARDO_SOMNIFERO.get(), 1 + r.nextInt(3)));
             }
             default -> {
                 arma = new ItemStack(ModItems.RIFLE.get());

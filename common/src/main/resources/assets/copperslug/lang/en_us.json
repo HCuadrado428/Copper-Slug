@@ -528,5 +528,13 @@
   "subtitles.copperslug.derringer_disparo_lejos": "Derringer shot, far away",
   "subtitles.copperslug.thompson_disparo_lejos": "Thompson shot, far away",
   "subtitles.copperslug.mosquete_disparo_lejos": "musket shot, far away",
-  "subtitles.copperslug.canon_disparo_lejos": "cannon shot, far away"
+  "subtitles.copperslug.canon_disparo_lejos": "cannon shot, far away",
+  "item.copperslug.cerbatana": "Copper Blowgun",
+  "item.copperslug.dardo_cerbatana": "Blowgun Dart",
+  "item.copperslug.dardo_veneno": "Poison Dart",
+  "item.copperslug.dardo_somnifero": "Sleep Dart",
+  "death.attack.copperslug.cerbatana_disparo": "%1$s never heard the dart coming",
+  "death.attack.copperslug.cerbatana_disparo.player": "%1$s never heard %2$s's dart coming",
+  "death.attack.copperslug.cerbatana_disparo.item": "%1$s never heard %2$s's dart coming from %3$s",
+  "jei.copperslug.info.cerbatana_botin": "The blowgun can't be crafted: it is found in jungle temple chests. Silent: the sculk does not hear it. Its darts can be crafted, including poison and sleep ones."
 }
