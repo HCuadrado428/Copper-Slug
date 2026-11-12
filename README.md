@@ -2,10 +2,10 @@
 
 **English** · [Castellano](#castellano)
 
-Nine copper firearms for Minecraft, from the Wild West and beyond: the Russian-roulette **revolver**, the **scoped
+Eleven copper firearms for Minecraft, from the Wild West and beyond: the Russian-roulette **revolver**, the **scoped
 rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Winchester 1873**, the **Derringer**, the
-**Thompson** (in its violin case), the **musket** with bayonet and the **hand cannon**. Each one has its own special
-ammo and enchantments.
+**Thompson** (in its violin case), the **musket** with bayonet, the **hand cannon**, the silent **blowgun** and the
+**flamethrower**. Each one has its own special ammo and enchantments.
 
 - Guns are not crafted: they are found in vanilla structure chests. Most ammo, the violin case and the bayonet fitting
   can be crafted.
@@ -34,6 +34,8 @@ ammo and enchantments.
 | Thompson | Drum-fed submachine gun inside a violin case. Water, ink and tracer drums. Play the case with a bow for music. |
 | Bayonet musket | Long musket with bolas, harpoon bolas and chain bolas. Fit a sword on it as a bayonet: it keeps the sword's enchantments (Sharpness, Fire Aspect, Looting, Sweeping Edge and Mending). |
 | Hand cannon | Fires iron bolas that explode. Incendiary, fireworks and bouncing bolas, falling blocks and anvils. |
+| Copper blowgun | Silent: the sculk and the Warden do not hear it. One dart at a time; plain, poison and sleep darts (crafted). Found in jungle temples. |
+| Copper flamethrower | A short, wide jet of fire that burns everything in the cone. Fuel canisters (crafted), swapped whole; it does not light underwater. Found in Nether fortresses. |
 
 ## Controls
 
@@ -50,6 +52,8 @@ narrows the field of view, tightens the spread and slows you down; other players
 | Thompson | Hold for burst fire | Aim (the sight opens up as the burst goes on) | Hold right click to change the drum |
 | Bayonet musket | Shoot. With no ball loaded, jammed or sneaking, it is a bayonet thrust | Aim | Hold right click to reload (powder, ball, ramrod) |
 | Hand cannon | Light the fuse | Aim. The sight draws the arc of the ball | Hold right click to reload |
+| Copper blowgun | Shoot a dart | Aim | Hold right click to load the next dart |
+| Copper flamethrower | Hold to spray fire | Aim | Hold right click to swap the fuel canister |
 | Crank Gatling Gun (at the controls) | Hold to turn the crank and fire | Aim. The sight shows the barrel heat | Right click picks it up |
 
 Every copper gun: sneak + right click with a honeycomb or an axe in the other hand waxes or scrapes it. The aiming values
@@ -82,10 +86,10 @@ Miscelánea.
 
 ## Castellano
 
-Nueve armas de fuego de cobre para Minecraft, del Oeste y de más allá: el **revólver** de ruleta rusa, el **rifle de
+Once armas de fuego de cobre para Minecraft, del Oeste y de más allá: el **revólver** de ruleta rusa, el **rifle de
 catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Winchester 1873**, la **Derringer**, la
-**Thompson** (en su estuche de violín), el **mosquete** con bayoneta y el **cañón de mano**. Cada una con su munición
-especial y sus encantamientos.
+**Thompson** (en su estuche de violín), el **mosquete** con bayoneta, el **cañón de mano**, la **cerbatana** silenciosa y el
+**lanzallamas**. Cada una con su munición especial y sus encantamientos.
 
 - Las armas no se fabrican: se encuentran en los cofres de estructuras vanilla. La mayor parte de la munición, el estuche
   de violín y la forma de calar la bayoneta sí se fabrican.
@@ -118,6 +122,8 @@ especial y sus encantamientos.
 | Thompson | Subfusil con tambor, dentro de un estuche de violín. Tambores de agua, de tinta y trazadores. Toca el estuche con un arco para hacer música. |
 | Mosquete con bayoneta | Mosquete largo con bolas, bolas arpón y bolas encadenadas. Cala una espada en el mosquete como bayoneta: conserva los encantamientos de la espada (Filo, Aspecto ígneo, Botín, Barrido, Reparación). |
 | Cañón de mano | Dispara bolaños que estallan. Bolaños incendiarios, de fuegos artificiales y saltarines, y bloques que caen o yunques disparados. |
+| Cerbatana de cobre | Silenciosa: el sculk y el Warden no la oyen. Un dardo cada vez; dardos normales, de veneno y somníferos (se fabrican). Se encuentra en los templos de la jungla. |
+| Lanzallamas de cobre | Un chorro de fuego corto y ancho que quema todo lo que cae en el cono. Bidones de combustible (se fabrican), que se cambian enteros; no prende bajo el agua. Se encuentra en las fortalezas del Nether. |
 
 ## Controles
 
@@ -135,6 +141,8 @@ ven que encaras el arma.
 | Thompson | Mantener: ráfaga | Apuntar (la mira se abre según dura la ráfaga) | Mantener clic derecho cambia el tambor |
 | Mosquete con bayoneta | Disparar. Sin bola, encasquillado o agachado, es la estocada de la bayoneta | Apuntar | Mantener clic derecho recarga (pólvora, bola y baqueta) |
 | Cañón de mano | Prender la mecha | Apuntar. La mira dibuja la parábola del bolaño | Mantener clic derecho recarga |
+| Cerbatana de cobre | Disparar un dardo | Apuntar | Mantener clic derecho para cargar el siguiente dardo |
+| Lanzallamas de cobre | Mantener para echar fuego | Apuntar | Mantener clic derecho para cambiar el bidón |
 | Gatling de manivela (a los mandos) | Mantener: girar la manivela y disparar | Apuntar. La mira enseña el calor del cañón | El clic derecho la recoge |
 
 Todas las armas de cobre: agachado + clic derecho con un panal o un hacha en la otra mano la encera o la rasca. Los
