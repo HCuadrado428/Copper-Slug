@@ -21,6 +21,9 @@ def octogono_x(cx, cy, cz, a, x1, x2, tex, nombre):
     """Un prisma octogonal de apotema a con el eje a lo largo de X (el carrete de la arponera): cuatro cajas, dos rectas y dos
     giradas 45° sobre el eje X, como el octógono de los cañones."""
     import math
+    import generar_tambor
+    if generar_tambor.CUADRADOS:
+        return [caja(x1, cy - a, cz - a, x2, cy + a, cz + a, tex, nombre)]
     s = 2 * a * math.tan(math.radians(22.5))
     out = []
     for i, (ang, dy, dz) in enumerate(((0, a, s / 2), (0, s / 2, a), (45, a, s / 2), (-45, a, s / 2))):
