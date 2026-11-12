@@ -7,7 +7,7 @@
  "base": {
   "parent": "copperslug:item/armas3d/revolver_3d",
   "textures": {
-   "cobre": "copperslug:item/armas3d/cobre_3",
+   "cobre": "copperslug:item/armas3d/p_cobre_3",
    "tambor": "copperslug:item/armas3d/tambor_frente_3",
    "tambor_lado": "copperslug:item/armas3d/tambor_lado_3"
   }

@@ -26,7 +26,8 @@ RAIZ = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.pat
 A = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug')
 ARMAS = ['revolver', 'rifle', 'escopeta_presion_0', 'gatling', 'winchester', 'derringer', 'thompson', 'mosquete',
          'canon_mano', 'cerbatana', 'lanzallamas', 'resonancia', 'arponera']
-MATERIALES = ['cobre_0', 'cobre_1', 'cobre_2', 'cobre_3', 'hierro', 'g_acero', 'laton', 'madera', 'g_madera', 'g_cuero']
+MATERIALES = ['cobre_0', 'cobre_1', 'cobre_2', 'cobre_3', 'hierro', 'g_acero', 'laton', 'madera', 'g_madera', 'g_cuero',
+              'p_cobre_0', 'p_cobre_1', 'p_cobre_2', 'p_cobre_3', 'p_hierro', 'p_acero', 'p_laton', 'p_madera', 'p_cuero', 'p_nacar']
 OCTOGONO_PERMITIDO = re.compile(r'revolver_cilindro_\d\.json$')
 
 errores, avisos = [], []
@@ -74,8 +75,8 @@ for ruta in sorted(glob.glob(os.path.join(A, 'models/item/**/*.json'), recursive
             if OCTOGONO_PERMITIDO.search(ruta):
                 break  # el tambor usa a propósito una UV fija para el lateral (tambor_lado)
             uv = f.get('uv')
-            if not uv:
-                continue
+            if not uv or list(uv) == [0, 0, 16, 16]:
+                continue  # una imagen entera pegada (manómetro, lente, tambor): a propósito
             w, h = ((d[0], d[1]) if cara in ('north', 'south') else (d[2], d[1]) if cara in ('east', 'west') else (d[0], d[2]))
             du, dv = abs(uv[2] - uv[0]), abs(uv[3] - uv[1])
             if f.get('rotation', 0) in (90, 270):

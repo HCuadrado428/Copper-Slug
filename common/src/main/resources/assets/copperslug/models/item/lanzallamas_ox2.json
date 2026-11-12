@@ -7,7 +7,7 @@
  "base": {
   "parent": "copperslug:item/armas3d/lanzallamas_3d",
   "textures": {
-   "cobre": "copperslug:item/armas3d/cobre_2"
+   "cobre": "copperslug:item/armas3d/p_cobre_2"
   }
  },
  "perspectives": {
