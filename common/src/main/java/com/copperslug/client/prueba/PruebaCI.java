@@ -429,7 +429,7 @@ public final class PruebaCI {
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "forceload add " + (o.getX() - 56) + " " + (o.getZ() + 344) + " " + (o.getX() + 56) + " " + (o.getZ() + 456));
         }));
-        sin("est_mina_esperar_trozos", 300, () -> {});
+        sin("est_mina_esperar_trozos", 700, () -> {});
         sin("est_mina_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
@@ -468,7 +468,7 @@ public final class PruebaCI {
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "forceload add " + (o.getX() - 456) + " " + (o.getZ() - 40) + " " + (o.getX() - 344) + " " + (o.getZ() + 40));
         }));
-        sin("est_camp_esperar_trozos", 300, () -> {});
+        sin("est_camp_esperar_trozos", 700, () -> {});
         sin("est_camp_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
