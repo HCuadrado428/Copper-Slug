@@ -251,6 +251,5 @@ public final class Cobre {
         l.add(efectoFase(s));
         Component c = ceraQueda(s);
         if (c != null) l.add(c);
-        Accesorios.tooltip(s, l);
     }
 }

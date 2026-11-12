@@ -22,6 +22,8 @@ public abstract class ItemRendererTamborMixin {
     @Inject(method = "render", at = @At("RETURN"))
     private void copperslug$tambor(ItemStack s, ItemDisplayContext ctx, boolean izq, PoseStack ps, MultiBufferSource buf, int luz, int overlay,
                                    BakedModel m, CallbackInfo ci) {
-        if (ctx != ItemDisplayContext.GUI && s.getItem() instanceof RevolverItem) RevolverTambor.dibujar(s, ctx, izq, ps, buf, luz, overlay, m);
+        if (ctx == ItemDisplayContext.GUI) return;
+        if (s.getItem() instanceof RevolverItem) RevolverTambor.dibujar(s, ctx, izq, ps, buf, luz, overlay, m);
+        com.copperslug.client.armasfuego.comun.AccesoriosVisibles.dibujar(s, ctx, izq, ps, buf, luz, overlay, m);
     }
 }

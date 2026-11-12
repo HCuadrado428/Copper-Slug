@@ -1,59 +1,29 @@
 package com.copperslug.armasfuego.comun;
 
-import com.copperslug.registry.ModItems;
-import com.copperslug.shim.Nbt;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import com.copperslug.registry.ModEnchantments;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.List;
-
-/** Lo que lleva montado un arma (en su NBT, clave {@code Accesorio}) y lo que cambia: dispersión, calor, balas y ruido. */
+/**
+ * Las piezas de cobre de las armas son sus encantamientos: el que lleva Cañón largo, Estrangulador, Mira de cobre o Ánima
+ * rayada tiene esa pieza puesta (se ve en el modelo) y su efecto; igual el Silenciador, el Compensador y el Depósito largo,
+ * que ya existían. Aquí, los efectos nuevos: dispersión y silencio.
+ */
 public final class Accesorios {
     private Accesorios() {}
 
-    public static final String CLAVE = "Accesorio";
-
-    /** El accesorio montado en el arma (o null). */
-    public static Accesorio de(ItemStack arma) {
-        if (arma == null || arma.isEmpty() || !Nbt.tiene(arma) || !Nbt.leer(arma).contains(CLAVE)) return null;
-        Accesorio a = Accesorio.de(Nbt.leer(arma).getString(CLAVE));
-        return a != null && a.vale(arma.getItem()) ? a : null;
-    }
-
-    public static void poner(ItemStack arma, Accesorio a) {
-        Nbt.tag(arma).putString(CLAVE, a.id);
-    }
-
-    /** Qué accesorio es este objeto (o null si no lo es). */
-    public static Accesorio deObjeto(ItemStack s) {
-        if (s.isEmpty()) return null;
-        for (Accesorio a : Accesorio.values()) if (s.is(ModItems.accesorio(a))) return a;
-        return null;
-    }
-
+    /** Multiplicador de la dispersión por las piezas puestas (cañón largo 0,6, estrangulador 0,6, mira 0,5, ánima 0,35). */
     public static float dispersion(ItemStack arma) {
-        Accesorio a = de(arma);
-        return a == null ? 1F : a.dispersion;
+        if (arma == null || arma.isEmpty()) return 1F;
+        float m = 1F;
+        if (ArmaFuegoItem.nivel(ModEnchantments.CANON_LARGO, arma) > 0) m *= 0.6F;
+        if (ArmaFuegoItem.nivel(ModEnchantments.ESCOPETA_ESTRANGULADOR, arma) > 0) m *= 0.6F;
+        if (ArmaFuegoItem.nivel(ModEnchantments.MOSQUETE_MIRA, arma) > 0) m *= 0.5F;
+        if (ArmaFuegoItem.nivel(ModEnchantments.CANON_ANIMA, arma) > 0) m *= 0.35F;
+        return m;
     }
 
-    public static float calor(ItemStack arma) {
-        Accesorio a = de(arma);
-        return a == null ? 1F : a.calor;
-    }
-
-    public static int capacidad(ItemStack arma) {
-        Accesorio a = de(arma);
-        return a == null ? 0 : a.capacidad;
-    }
-
+    /** ¿Lleva silenciador? (el disparo casi no suena ni lo oye el sculk) */
     public static boolean silencioso(ItemStack arma) {
-        Accesorio a = de(arma);
-        return a != null && a.silencioso;
-    }
-
-    public static void tooltip(ItemStack arma, List<Component> l) {
-        Accesorio a = de(arma);
-        if (a != null) l.add(Component.translatable("msg.copperslug.accesorio.montado", Component.translatable(a.claveNombre())).withStyle(ChatFormatting.AQUA));
+        return arma != null && !arma.isEmpty() && ArmaFuegoItem.nivel(ModEnchantments.SILENCIADOR, arma) > 0;
     }
 }

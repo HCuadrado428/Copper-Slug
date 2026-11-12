@@ -462,7 +462,7 @@ public class GatlingEntity extends Entity {
         Entity quien = duenoP != null ? duenoP : this;
         if (!creativo) entityData.set(BALAS, balas() - 1);
         float c = calor();
-        entityData.set(CALOR, c + EquilibrioArmas.gatlingCalor() * (1 - 0.2F * nivel(com.copperslug.registry.ModEnchantments.GATLING_REFRIGERACION)) * com.copperslug.armasfuego.comun.Accesorios.calor(arma));
+        entityData.set(CALOR, c + EquilibrioArmas.gatlingCalor() * (1 - 0.2F * nivel(com.copperslug.registry.ModEnchantments.GATLING_REFRIGERACION)));
         double disp = (0.025 + (c > 70 ? 0.03 : 0) + com.copperslug.armasfuego.comun.Cobre.dispersion(oxido()))
                 * (apunta && p != null ? EquilibrioArmas.apuntarDispersion() : 1.0);
         boolean fuego = cintaEs(ModItems.CINTA_INCENDIARIA), palomitas = cintaEs(ModItems.CINTA_PALOMITAS), guisantes = cintaEs(ModItems.CINTA_GUISANTES);
