@@ -125,7 +125,7 @@ public final class ModEnchantments {
 
     // ---- piezas de cobre que se ven en el arma (el accesorio es el encantamiento): una por arma que no tenía una
     /** Cañón largo (revólver): cañón más largo, disparos más juntos. */
-    public static final RegistryObject<Enchantment> CANON_LARGO = ENCHANTMENTS.register("canon_largo",
+    public static final RegistryObject<Enchantment> CANON_LARGO = ENCHANTMENTS.register("revolver_canon_largo",
             () -> new com.copperslug.armasfuego.comun.EncantamientoFuego(Enchantment.Rarity.UNCOMMON, REVOLVER, 1, 12, 0));
     /** Estrangulador (escopeta de presión): los perdigones salen más juntos. */
     public static final RegistryObject<Enchantment> ESCOPETA_ESTRANGULADOR = ENCHANTMENTS.register("escopeta_estrangulador",
