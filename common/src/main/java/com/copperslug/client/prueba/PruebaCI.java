@@ -2480,6 +2480,19 @@ public final class PruebaCI {
         });
         vigila("a2_lanzallamas_ok", 2, () -> a2Comprobar("el lanzallamas quema y gasta combustible", a2F("l0") - a2F("l1") > 0.5 && ((Integer) PI.get("l_balas")) < 100,
                 "vida " + a2F("l0") + " → " + a2F("l1") + ", combustible " + PI.get("l_balas")));
+        // ================================================================ Pistola de resonancia
+        sin("a2_resonancia", 8, () -> {
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.RESONANCIA, 4));
+            piApuntar(a2Punto(8, 0, 1.2));
+        });
+        sin("a2_resonancia_vida", 2, () -> a2Vida("r0"));
+        paso("226_resonancia_1p", 3, piTiro());
+        sin("a2_resonancia_ver", 6, () -> {
+            a2Vida("r1");
+            piSrv(sp -> PI.put("r_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
+        });
+        vigila("a2_resonancia_ok", 2, () -> a2Comprobar("la pistola de resonancia dispara una onda y hiere", a2F("r0") - a2F("r1") > 2 && Integer.valueOf(3).equals(PI.get("r_balas")),
+                "vida " + a2F("r0") + " → " + a2F("r1") + ", cargas " + PI.get("r_balas")));
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);
