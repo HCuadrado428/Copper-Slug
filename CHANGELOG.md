@@ -56,6 +56,12 @@
   every shot, miss much more (farther away, against a moving or crouching target, when wounded; the first shot is often a warning
   to the side; config `fallo`), sometimes misfire with a dry click, step sideways and back away when you get close, flinch when
   hit, and reload with step by step sounds and the crossbow-loading gesture (zombies lower their arms), also between fights.
+- New sounds, all synthesised (no copyrighted audio) and each weapon with its own character: the revolver dry and punchy, the rifle a
+  whip crack with a long valley echo, the pressure shotgun a puff with a thump, the Gatling a short metallic tick, the Winchester a
+  big-calibre bang, the Derringer a small dry pop, the Thompson a rattle, the musket a black-powder roar with a spark first and the
+  hand cannon thunder. Also new: a real suppressor sound (a short puff, no bang), a far-away version of every shot for players 45 to
+  150 blocks away (muffled, with echo), a room echo when shooting indoors or underground, redone reloads, levers, drums, ramrod,
+  belt, crank, ricochets and shell casings, and the sounds armed mobs make (cocking, pan spark, dry click).
 - New structure, the Pharaoh's Pyramid (deserts): a cinematic stepped sandstone pyramid (61 x 61) with a pylon gate and
   obelisks, and two labyrinth floors inside: an 11 x 11 maze with loops, pressure-plate TNT traps, husks (some carrying
   Winchesters) and chests in the dead ends, with the sarcophagus hall in the middle; a hand ladder leads to a smaller 7 x 7
@@ -133,6 +139,13 @@
   suele ser de aviso a un lado; config `fallo`), a veces se encasquillan con un clic en seco, se mueven de lado y retroceden si te
   acercas, se sobresaltan si les das y recargan con sonidos paso a paso y el gesto de cargar la ballesta (los zombis bajan los
   brazos), también entre combates.
+- Sonidos nuevos, todos sintetizados (sin audio con copyright) y con el carácter de cada arma: el revólver seco y con pegada, el
+  rifle un latigazo con eco largo de valle, la escopeta de presión un soplido con golpe, la Gatling un «tuc» metálico corto, la
+  Winchester un estampido de calibre grande, la Derringer un pum pequeño y seco, la Thompson un traqueteo, el mosquete un estruendo
+  de pólvora negra con chispazo antes y el cañón de mano un trueno. También nuevos: un silenciador de verdad (un soplido corto, sin
+  estampido), una versión lejana de cada disparo para los jugadores a 45-150 bloques (apagada y con eco), un eco de sala al disparar
+  en interiores o bajo tierra, recargas, palancas, tambores, baqueta, cinta, manivela, rebotes y casquillos rehechos, y los sonidos de
+  los mobs armados (montar el arma, chispa de la cazoleta, clic en seco).
 - Estructura nueva, la Pirámide del faraón (desiertos): una pirámide escalonada de arenisca de película (61 x 61) con
   pilono de entrada y obeliscos, y dos plantas laberínticas por dentro: un laberinto de 11 x 11 con bucles, trampas de TNT
   con placa de presión, husks (algunos con Winchester) y cofres en los callejones, con la sala del sarcófago en el centro;
