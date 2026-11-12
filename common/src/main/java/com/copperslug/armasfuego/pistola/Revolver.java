@@ -148,6 +148,7 @@ public final class Revolver {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.REVOLVER_DISPARO.get(), SoundSource.PLAYERS, 4.0F,
                     (c == Carga.DARDO ? 1.25F : c == Carga.BENGALA ? 0.8F : c == Carga.TIEMPO ? 0.7F : 1.0F) + r.nextFloat() * 0.08F);
             l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
+            com.copperslug.armasfuego.comun.ArmaFuegoItem.sonidoExtra(l, p, ModSounds.REVOLVER_DISPARO.get(), 4.0F, 1.0F);
         }
         if (critico) {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0F, 1.2F);

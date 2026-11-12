@@ -150,7 +150,7 @@ public final class MobsArmados {
             if (m.hurtTime > 0 && t - e.vistoHerido > 10) {
                 e.vistoHerido = t;
                 e.recargaFin += 8;
-                l.playSound(null, m.getX(), m.getY(), m.getZ(), net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.HOSTILE, 0.6F, 0.7F);
+                l.playSound(null, m.getX(), m.getY(), m.getZ(), ModSounds.MOB_CLIC_SECO.get(), SoundSource.HOSTILE, 0.6F, 0.8F);
             }
             long dur = Math.max(1, e.recargaFin - e.recargaIni), paso = Math.max(1, dur / Math.max(1, pf.pasos()));
             if ((t - e.recargaIni) % paso == 0 && t > e.recargaIni && t < e.recargaFin) sonidoRecarga(l, m, pf, (int) ((t - e.recargaIni) / paso));
@@ -159,7 +159,7 @@ public final class MobsArmados {
                 e.balas = pf.balas();
                 e.proximo = t + 6;
                 posaRecarga(m, false);
-                l.playSound(null, m.getX(), m.getY(), m.getZ(), net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.HOSTILE, 0.8F, 1.6F);
+                l.playSound(null, m.getX(), m.getY(), m.getZ(), ModSounds.MOB_MONTAR.get(), SoundSource.HOSTILE, 0.8F, 1.2F);
             }
             return;
         }
@@ -230,7 +230,7 @@ public final class MobsArmados {
         e.disparaEn = -1;
         // un fallo del arma: clic en seco y tiene que volver a montarla
         if (m.getRandom().nextFloat() < 0.03F) {
-            l.playSound(null, m.getX(), m.getY(), m.getZ(), net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.HOSTILE, 0.9F, 1.3F);
+            l.playSound(null, m.getX(), m.getY(), m.getZ(), ModSounds.MOB_CLIC_SECO.get(), SoundSource.HOSTILE, 0.9F, 1.0F);
             e.proximo = t + 25;
             return;
         }
@@ -274,8 +274,8 @@ public final class MobsArmados {
     }
 
     private static SoundEvent saqueadorSonidoAviso(Perfil pf) {
-        return pf.aviso() >= 20 ? net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE
-                : pf.cargar() == ModSounds.WINCHESTER_CARGAR.get() ? ModSounds.WINCHESTER_PALANCA.get() : net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON;
+        return pf.aviso() >= 20 ? ModSounds.MOB_CHISPA.get()
+                : pf.cargar() == ModSounds.WINCHESTER_CARGAR.get() ? ModSounds.WINCHESTER_PALANCA.get() : ModSounds.MOB_MONTAR.get();
     }
 
     private static void empezarRecarga(ServerLevel l, Mob m, Perfil pf, Estado e, long t) {
