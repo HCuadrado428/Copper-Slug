@@ -87,6 +87,12 @@
 - New weapon, the Resonance Pistol (ancient cities): fires a sound wave through blocks and armor that hurts everything on its line
   (24 blocks, 9 damage) and runs on vanilla echo shards, one charge each, four at most. It is loud on purpose: the sculk hears it.
   3D model with turquoise coils, rust like the rest, loot in ancient city chests, JEI note and config values (`resonancia_*`).
+- Minecraft-style look for the guns: the model materials (copper in its four phases, iron, steel, brass, wood and leather)
+  are redrawn with five-tone vanilla ramps and brushed-metal and wood-grain patterns instead of flat random blotches;
+  exposed and weathered copper keep specks of the previous phase, like vanilla copper. The 3D models are rebuilt on a half-pixel grid
+  (`herramientas/voxelizar_armas.py`): whole blocky parts, no rotated pieces and fewer hidden faces (the revolver cylinder
+  stays as it was, because it turns 60° at a time). New inventory icons for the blowgun, flamethrower, resonance pistol and harpoon gun.
+  New style test (`herramientas/test_estilo_minecraft.py`, also in CI).
 
 ---
 
@@ -187,3 +193,9 @@
   todo lo que haya en su línea (24 bloques, 9 de daño); funciona con fragmentos de eco normales, una carga cada uno y cuatro como
   máximo. Es ruidosa a propósito: el sculk la oye. Modelo 3D con bobinas turquesa, se oxida como el resto, botín en los cofres de
   la ciudad antigua, nota de JEI y valores de config (`resonancia_*`).
+- Estilo Minecraft en las armas: los materiales de los modelos (el cobre en sus cuatro fases, hierro, acero, latón, madera y
+  cuero) se han redibujado con rampas de cinco tonos como las de vanilla y vetas de metal cepillado y de madera, en vez de
+  manchas planas al azar; el cobre expuesto y el erosionado conservan pintas de la fase anterior, como el de vanilla. Los
+  modelos 3D se han rehecho sobre una rejilla de medio píxel (`herramientas/voxelizar_armas.py`): piezas enteras en bloques,
+  sin piezas giradas y sin caras ocultas (el tambor del revólver se queda como estaba, porque gira de 60 en 60 grados). Iconos nuevos para la cerbatana, el lanzallamas,
+  la pistola de resonancia y la arponera. Test de estilo nuevo (`herramientas/test_estilo_minecraft.py`, también en CI).
