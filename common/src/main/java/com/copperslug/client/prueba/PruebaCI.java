@@ -2447,6 +2447,19 @@ public final class PruebaCI {
         });
         vigila("a2_cerbatana_ok", 2, () -> a2Comprobar("la cerbatana dispara un dardo y hiere", a2F("c0") - a2F("c1") > 1 && Integer.valueOf(0).equals(PI.get("c_balas")),
                 "vida " + a2F("c0") + " → " + a2F("c1") + ", dardos " + PI.get("c_balas")));
+        // ================================================================ Lanzallamas de cobre
+        sin("a2_lanzallamas", 8, () -> {
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.LANZALLAMAS, 100));
+            piApuntar(a2Punto(4, 0, 1.2));
+        });
+        sin("a2_lanzallamas_vida", 2, () -> a2Vida("l0"));
+        paso("225_lanzallamas_1p", 3, piTiro());
+        sin("a2_lanzallamas_ver", 8, () -> {
+            a2Vida("l1");
+            piSrv(sp -> PI.put("l_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
+        });
+        vigila("a2_lanzallamas_ok", 2, () -> a2Comprobar("el lanzallamas quema y gasta combustible", a2F("l0") - a2F("l1") > 0.5 && ((Integer) PI.get("l_balas")) < 100,
+                "vida " + a2F("l0") + " → " + a2F("l1") + ", combustible " + PI.get("l_balas")));
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);
