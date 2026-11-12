@@ -14,7 +14,8 @@
     "CreativeScreenAccessor",
     "ItemPropertiesAccessor",
     "FovApuntadoMixin",
-    "ItemRendererTamborMixin"
+    "ItemRendererTamborMixin",
+    "PlayerRendererCinturonMixin"
   ],
   "injectors": {
     "defaultRequire": 1

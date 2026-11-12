@@ -1,0 +1,29 @@
+{
+  "parent": "copperslug:armas/mosquete",
+  "display": {
+    "icon": {
+      "id": "copperslug:granada_metralla"
+    },
+    "title": {
+      "translate": "advancements.copperslug.armas.granada.title"
+    },
+    "description": {
+      "translate": "advancements.copperslug.armas.granada.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "granada": {
+      "trigger": "copperslug:accion",
+      "conditions": {
+        "accion": "granada"
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}
