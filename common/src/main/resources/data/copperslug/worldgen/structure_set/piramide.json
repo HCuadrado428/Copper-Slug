@@ -7,12 +7,12 @@
   ],
   "placement": {
     "type": "minecraft:random_spread",
-    "spacing": 36,
-    "separation": 14,
+    "spacing": 40,
+    "separation": 16,
     "salt": 1923481,
     "exclusion_zone": {
       "other_set": "minecraft:desert_pyramids",
-      "chunk_count": 5
+      "chunk_count": 6
     }
   }
 }
