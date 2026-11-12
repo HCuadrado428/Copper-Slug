@@ -49,26 +49,30 @@ public final class MobsArmados {
     private static final Set<Mob> ARMADOS = Collections.newSetFromMap(new WeakHashMap<>());
     private static final Map<LivingEntity, Estado> ESTADOS = new WeakHashMap<>();
 
+    /** Lo que recuerda cada mob armado: cargador, cuándo puede disparar, si apunta, recarga o está aturdido. */
     private static final class Estado {
-        long proximo;
-        int balas = -1, pendientes;
+        long proximo, apuntaDesde, disparaEn = -1, recargaIni = -1, recargaFin = -1, strafe, vistoHerido;
+        int balas = -1, pendientes, reaccion;
+        java.util.UUID objetivo;
+        boolean aviso;
     }
 
     /** Cómo dispara cada arma, relativo a la Winchester (daño y cadencia de la config). */
     private record Perfil(float dano, float cadencia, int balas, int recarga, double alcance, double disp, int rafaga,
-                          ResourceKey<DamageType> tipo, SoundEvent sonido, float tono, float vol, SoundEvent cargar) {}
+                          ResourceKey<DamageType> tipo, SoundEvent sonido, float tono, float vol, SoundEvent cargar,
+                          int aviso, int pasos, float retroceso) {}
 
     private static Perfil perfil(Item i) {
         if (i instanceof RevolverItem)
-            return new Perfil(1.1F, 0.6F, 6, 70, 28, 1.0, 1, Revolver.DISPARO, ModSounds.REVOLVER_DISPARO.get(), 1.0F, 2.5F, ModSounds.REVOLVER_CARGAR.get());
+            return new Perfil(1.1F, 0.6F, 6, 70, 28, 1.0, 1, Revolver.DISPARO, ModSounds.REVOLVER_DISPARO.get(), 1.0F, 2.5F, ModSounds.REVOLVER_CARGAR.get(), 8, 6, 0.10F);
         if (i instanceof WinchesterItem)
-            return new Perfil(1.0F, 1.0F, 6, 80, EquilibrioArmas.winchesterAlcance() * 0.5, 0.8, 1, WinchesterItem.DANO, ModSounds.WINCHESTER_DISPARO.get(), 0.95F, 3.0F, ModSounds.WINCHESTER_CARGAR.get());
+            return new Perfil(1.0F, 1.0F, 6, 80, EquilibrioArmas.winchesterAlcance() * 0.5, 0.8, 1, WinchesterItem.DANO, ModSounds.WINCHESTER_DISPARO.get(), 0.95F, 3.0F, ModSounds.WINCHESTER_CARGAR.get(), 12, 6, 0.14F);
         if (i instanceof DerringerItem)
-            return new Perfil(1.4F, 0.8F, 2, 70, 18, 1.3, 1, DerringerItem.DANO, ModSounds.DERRINGER_DISPARO.get(), 1.1F, 2.0F, ModSounds.REVOLVER_CARGAR.get());
+            return new Perfil(1.4F, 0.8F, 2, 70, 18, 1.3, 1, DerringerItem.DANO, ModSounds.DERRINGER_DISPARO.get(), 1.1F, 2.0F, ModSounds.REVOLVER_CARGAR.get(), 6, 2, 0.08F);
         if (i instanceof ThompsonItem)
-            return new Perfil(0.55F, 1.0F, 30, 100, 26, 1.6, 3, ThompsonItem.DANO, ModSounds.THOMPSON_DISPARO.get(), 1.0F, 2.5F, ModSounds.WINCHESTER_CARGAR.get());
+            return new Perfil(0.55F, 1.0F, 30, 100, 26, 1.6, 3, ThompsonItem.DANO, ModSounds.THOMPSON_DISPARO.get(), 1.0F, 2.5F, ModSounds.WINCHESTER_CARGAR.get(), 8, 3, 0.05F);
         if (i instanceof MosqueteItem)
-            return new Perfil(2.2F, 2.0F, 1, 100, 40, 0.5, 1, MosqueteItem.DANO, ModSounds.MOSQUETE_DISPARO.get(), 0.9F, 4.0F, ModSounds.MOSQUETE_BAQUETA.get());
+            return new Perfil(2.2F, 2.0F, 1, 100, 40, 0.5, 1, MosqueteItem.DANO, ModSounds.MOSQUETE_DISPARO.get(), 0.9F, 4.0F, ModSounds.MOSQUETE_BAQUETA.get(), 30, 4, 0.30F);
         return null;
     }
 
@@ -119,31 +123,115 @@ public final class MobsArmados {
         m.setDropChance(EquipmentSlot.MAINHAND, ConfigServidor.mobsSuelta());
     }
 
+    /** Pone o quita la pose de recarga: el saqueador "carga" como con la ballesta; el zombi baja los brazos. */
+    private static void posaRecarga(Mob m, boolean recargando) {
+        if (m instanceof Pillager p) p.setChargingCrossbow(recargando);
+        else if (recargando) m.setAggressive(false);
+        else m.setAggressive(m.getTarget() != null);
+    }
+
+    private static void sonidoRecarga(ServerLevel l, Mob m, Perfil pf, int paso) {
+        float tono = 0.8F + 0.4F * paso / Math.max(1, pf.pasos() - 1);
+        l.playSound(null, m.getX(), m.getY(), m.getZ(), pf.cargar(), SoundSource.HOSTILE, 0.7F, tono);
+        if (pf.pasos() >= 6 && paso % 2 == 0) ArmaFuegoItem.casquillo(l, m, m.getEyePosition().add(0, -0.4, 0));
+    }
+
     private static void disparar(ServerLevel l, Mob m) {
         Perfil pf = perfil(m.getMainHandItem().getItem());
         if (pf == null) return;
         boolean saqueador = m instanceof Pillager;
-        LivingEntity v = m.getTarget();
-        if (v == null || !v.isAlive()) return;
-        double alcance = pf.alcance();
-        double dist = m.distanceTo(v);
-        if (dist > alcance) return;
-        // el ballestero de vanilla se queda quieto; este se acerca hasta tener distancia de tiro
-        m.getLookControl().setLookAt(v, 30F, 30F);
-        boolean ruta = m.tickCount % 10 == 0;
-        if (!m.hasLineOfSight(v)) {
-            if (saqueador && ruta && dist > 8) m.getNavigation().moveTo(v, 1.0);
-            return;
-        }
-        if (saqueador && ruta) { if (dist > alcance * 0.7) m.getNavigation().moveTo(v, 1.0); else m.getNavigation().stop(); }
         Estado e = ESTADOS.computeIfAbsent(m, k -> new Estado());
         if (e.balas < 0) e.balas = pf.balas();
         long t = l.getGameTime();
-        if (t < e.proximo) return;
+        LivingEntity v = m.getTarget();
+        boolean objetivo = v != null && v.isAlive();
+        // recargando: la pose, los sonidos paso a paso y el final; si le dan, se asusta y tarda un poco más
+        if (e.recargaFin >= 0) {
+            if (m.hurtTime > 0 && t - e.vistoHerido > 10) {
+                e.vistoHerido = t;
+                e.recargaFin += 8;
+                l.playSound(null, m.getX(), m.getY(), m.getZ(), net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.HOSTILE, 0.6F, 0.7F);
+            }
+            long dur = Math.max(1, e.recargaFin - e.recargaIni), paso = Math.max(1, dur / Math.max(1, pf.pasos()));
+            if ((t - e.recargaIni) % paso == 0 && t > e.recargaIni && t < e.recargaFin) sonidoRecarga(l, m, pf, (int) ((t - e.recargaIni) / paso));
+            if (t >= e.recargaFin) {
+                e.recargaIni = e.recargaFin = -1;
+                e.balas = pf.balas();
+                e.proximo = t + 6;
+                posaRecarga(m, false);
+                l.playSound(null, m.getX(), m.getY(), m.getZ(), net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.HOSTILE, 0.8F, 1.6F);
+            }
+            return;
+        }
+        // sin objetivo: aprovecha para recargar lo gastado
+        if (!objetivo) {
+            e.objetivo = null;
+            e.disparaEn = -1;
+            if (e.balas < pf.balas() && e.balas <= pf.balas() * 0.5) empezarRecarga(l, m, pf, e, t);
+            return;
+        }
+        double alcance = pf.alcance();
+        double dist = m.distanceTo(v);
+        if (dist > alcance) return;
+        m.getLookControl().setLookAt(v, 30F, 30F);
+        boolean ruta = m.tickCount % 10 == 0;
+        boolean vista = m.hasLineOfSight(v);
+        if (!java.util.Objects.equals(e.objetivo, v.getUUID()) || !vista) {
+            // objetivo nuevo (o lo ha perdido de vista): vuelve a apuntar desde cero y tarda en reaccionar
+            if (vista) {
+                e.objetivo = v.getUUID();
+                e.apuntaDesde = t;
+                e.reaccion = 12 + m.getRandom().nextInt(18);
+                e.aviso = m.getRandom().nextFloat() < 0.35F;     // el primer tiro, de aviso (a un lado)
+            }
+            e.disparaEn = -1;
+            if (saqueador && ruta && dist > 8) m.getNavigation().moveTo(v, 1.0);
+            if (!vista) return;
+        }
+        if (saqueador && ruta) {
+            if (dist < 5) {
+                // demasiado cerca: retrocede (y sigue disparando)
+                Vec3 a = m.position().subtract(v.position()).normalize().scale(6);
+                m.getNavigation().moveTo(m.getX() + a.x, m.getY(), m.getZ() + a.z, 1.2);
+            } else if (dist > alcance * 0.7) m.getNavigation().moveTo(v, 1.0);
+            else if (t >= e.strafe) {
+                // un paso de lado de vez en cuando, para no ser un blanco quieto
+                Vec3 d = v.position().subtract(m.position());
+                Vec3 lado = new Vec3(-d.z, 0, d.x).normalize().scale((m.getRandom().nextBoolean() ? 1 : -1) * (3 + m.getRandom().nextInt(3)));
+                m.getNavigation().moveTo(m.getX() + lado.x, m.getY(), m.getZ() + lado.z, 1.0);
+                e.strafe = t + 40 + m.getRandom().nextInt(50);
+            } else if (m.getNavigation().isDone()) m.getNavigation().stop();
+        }
+        // le han dado: se sobresalta, tarda en volver a apuntar
+        if (m.hurtTime > 0 && t - e.vistoHerido > 10) {
+            e.vistoHerido = t;
+            e.proximo = Math.max(e.proximo, t + 8);
+            e.disparaEn = -1;
+        }
+        if (t - e.apuntaDesde < e.reaccion || t < e.proximo) return;
         if (e.balas <= 0) {
-            e.balas = pf.balas();
-            e.proximo = t + pf.recarga();
-            l.playSound(null, m.getX(), m.getY(), m.getZ(), pf.cargar(), SoundSource.HOSTILE, 0.8F, 1.0F);
+            empezarRecarga(l, m, pf, e, t);
+            return;
+        }
+        // el aviso: antes de disparar se oye el gatillo (y el mosquete echa chispa): da tiempo a moverse
+        if (e.disparaEn < 0) {
+            e.disparaEn = t + pf.aviso();
+            if (pf.aviso() > 0) {
+                l.playSound(null, m.getX(), m.getY(), m.getZ(), saqueadorSonidoAviso(pf), SoundSource.HOSTILE, 0.8F, 1.0F);
+                Vec3 q = m.getEyePosition().add(m.getViewVector(1F).scale(0.8));
+                l.sendParticles(pf.aviso() >= 20 ? net.minecraft.core.particles.ParticleTypes.SMALL_FLAME : net.minecraft.core.particles.ParticleTypes.CRIT, q.x, q.y - 0.2, q.z, 3, 0.05, 0.05, 0.05, 0.02);
+            }
+        }
+        if (pf.aviso() >= 20 && (e.disparaEn - t) % 4 == 0 && t < e.disparaEn) {
+            Vec3 q = m.getEyePosition().add(m.getViewVector(1F).scale(0.8));
+            l.sendParticles(net.minecraft.core.particles.ParticleTypes.SMALL_FLAME, q.x, q.y - 0.2, q.z, 1, 0.03, 0.03, 0.03, 0.01);
+        }
+        if (t < e.disparaEn) return;
+        e.disparaEn = -1;
+        // un fallo del arma: clic en seco y tiene que volver a montarla
+        if (m.getRandom().nextFloat() < 0.03F) {
+            l.playSound(null, m.getX(), m.getY(), m.getZ(), net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON, SoundSource.HOSTILE, 0.9F, 1.3F);
+            e.proximo = t + 25;
             return;
         }
         e.balas--;
@@ -152,12 +240,23 @@ public final class MobsArmados {
         e.proximo = t + (e.pendientes > 0 ? 3 : Math.max(4, Math.round(ConfigServidor.mobsCadencia() * pf.cadencia())));
         Vec3 ojo = m.getEyePosition();
         Vec3 punto = v.position().add(0, v.getBbHeight() * 0.6, 0);
+        if (e.aviso) {
+            // el tiro de aviso: se va a un lado del objetivo
+            Vec3 d = punto.subtract(ojo);
+            punto = punto.add(new Vec3(-d.z, 0, d.x).normalize().scale(2.2 * (m.getRandom().nextBoolean() ? 1 : -1)));
+            e.aviso = false;
+        }
         Vec3 mira = punto.subtract(ojo).normalize();
-        double disp = pf.disp() * switch (l.getDifficulty()) {
-            case HARD -> 0.025;
-            case NORMAL -> 0.05;
-            default -> 0.085;
+        double base = switch (l.getDifficulty()) {
+            case HARD -> 0.03;
+            case NORMAL -> 0.06;
+            default -> 0.10;
         };
+        // fallan más cuanto más lejos, si el blanco se mueve, si no han tenido tiempo de afinar y si están heridos
+        double afinado = Math.min(1.0, (t - e.apuntaDesde - e.reaccion) / 30.0);
+        double mov = Math.min(1.0, v.getDeltaMovement().horizontalDistance() * 4.0);
+        double disp = pf.disp() * base * (1 + dist / alcance * 1.5) * (1 + mov * 0.9) * (1.7 - 0.7 * afinado)
+                * (m.getHealth() < m.getMaxHealth() * 0.35F ? 1.5 : 1.0) * (v.isCrouching() ? 1.25 : 1.0) * ConfigServidor.mobsFallo();
         Vec3 dir = Balistica.dispersar(mira, disp, m.getRandom());
         Vec3 der = mira.cross(new Vec3(0, 1, 0));
         der = der.lengthSqr() < 1e-4 ? new Vec3(1, 0, 0) : der.normalize();
@@ -170,5 +269,21 @@ public final class MobsArmados {
         }
         Balistica.impacto(l, m, tiro);
         ArmaFuegoItem.efectos(l, m, boca, pf.sonido(), pf.vol(), pf.tono(), 3, true);
+        // el retroceso: el tirador se echa un poco hacia atrás
+        m.setDeltaMovement(m.getDeltaMovement().add(mira.x * -pf.retroceso(), 0.02, mira.z * -pf.retroceso()));
+    }
+
+    private static SoundEvent saqueadorSonidoAviso(Perfil pf) {
+        return pf.aviso() >= 20 ? net.minecraft.sounds.SoundEvents.FLINTANDSTEEL_USE
+                : pf.cargar() == ModSounds.WINCHESTER_CARGAR.get() ? ModSounds.WINCHESTER_PALANCA.get() : net.minecraft.sounds.SoundEvents.TRIPWIRE_CLICK_ON;
+    }
+
+    private static void empezarRecarga(ServerLevel l, Mob m, Perfil pf, Estado e, long t) {
+        e.recargaIni = t;
+        e.recargaFin = t + pf.recarga();
+        e.disparaEn = -1;
+        posaRecarga(m, true);
+        m.getNavigation().stop();
+        sonidoRecarga(l, m, pf, 0);
     }
 }
