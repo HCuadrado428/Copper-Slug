@@ -536,5 +536,11 @@
   "death.attack.copperslug.cerbatana_disparo": "%1$s no oyó venir el dardo",
   "death.attack.copperslug.cerbatana_disparo.player": "%1$s no oyó venir el dardo de %2$s",
   "death.attack.copperslug.cerbatana_disparo.item": "%1$s no oyó venir el dardo de %2$s con %3$s",
-  "jei.copperslug.info.cerbatana_botin": "La cerbatana no se fabrica: se encuentra en los cofres de los templos de la jungla. Es silenciosa: el sculk no la oye. Sus dardos se fabrican, también los de veneno y los somníferos."
+  "jei.copperslug.info.cerbatana_botin": "La cerbatana no se fabrica: se encuentra en los cofres de los templos de la jungla. Es silenciosa: el sculk no la oye. Sus dardos se fabrican, también los de veneno y los somníferos.",
+  "item.copperslug.lanzallamas": "Lanzallamas de cobre",
+  "item.copperslug.bidon_combustible": "Bidón de combustible",
+  "death.attack.copperslug.lanzallamas_fuego": "%1$s ha sido churruscado",
+  "death.attack.copperslug.lanzallamas_fuego.player": "%1$s ha sido churruscado por %2$s",
+  "death.attack.copperslug.lanzallamas_fuego.item": "%1$s ha sido churruscado por %2$s con %3$s",
+  "jei.copperslug.info.lanzallamas_botin": "El lanzallamas no se fabrica: se encuentra en los cofres de las fortalezas del Nether. Mantén el clic izquierdo para echar fuego; bajo el agua no funciona. Los bidones se fabrican (polvo de blaze, dos carbones y una pepita de hierro)."
 }
