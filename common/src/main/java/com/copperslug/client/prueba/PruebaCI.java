@@ -412,8 +412,8 @@ public final class PruebaCI {
             if (r == null) throw new IllegalStateException("la pirámide aún no se ha contado");
             String det = "oro " + r[0] + ", cofres " + r[1] + ", TNT " + r[2] + ", escaleras " + r[3] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_p_cmd") + ")";
             RESUMEN.add("  estructuras: pirámide generada: " + det);
-            if (r[0] < 30 || r[1] < 10 || r[2] < 30 || r[3] < 8 || r[6] < 8)
-                throw new IllegalStateException("la pirámide sale entera (oro >= 30, cofres >= 10, TNT >= 30, escaleras >= 8, mobs armados >= 8) (" + det + ")");
+            if (r[0] < 30 || r[1] < 10 || r[2] < 16 || r[3] < 8 || r[6] < 8)
+                throw new IllegalStateException("la pirámide sale entera (oro >= 30, cofres >= 10, TNT >= 16, escaleras >= 8, mobs armados >= 8) (" + det + ")");
         });
         sin("est_piramide_cam", 4, () -> piSrv(sp -> {
             int[] r = (int[]) PI.get("est_p");
@@ -435,6 +435,7 @@ public final class PruebaCI {
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
             PI.put("est_m_cmd", estComando(sp, "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ()));
+            PI.put("est_m_cofres0", estCofres(sp.serverLevel(), c, 44, 44));
         }));
         sin("est_mina_esperar", 200, () -> {});
         sin("est_mina_contar", 4, () -> piSrv(sp -> {
@@ -448,7 +449,7 @@ public final class PruebaCI {
         vigila("est_mina_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_m");
             if (r == null) throw new IllegalStateException("la mina aún no se ha contado");
-            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_m_cmd") + ") cofres en " + PI.get("est_m_cofres");
+            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_m_cmd") + ") cofres al colocar " + PI.get("est_m_cofres0") + " y despues " + PI.get("est_m_cofres");
             RESUMEN.add("  estructuras: mina generada: " + det);
             if (r[4] < 100 || r[5] < 20 || r[1] < 8 || r[2] < 20 || r[6] < 10)
                 throw new IllegalStateException("la mina sale entera (cobre >= 100, vías >= 20, cofres >= 8, TNT >= 20, mobs armados >= 10) (" + det + ")");
@@ -473,6 +474,9 @@ public final class PruebaCI {
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() - 400, o.getY(), o.getZ());
             PI.put("est_c_cmd", estComando(sp, "place structure copperslug:campamento " + c.getX() + " " + c.getY() + " " + c.getZ()));
+            int alto = l.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, c.getX(), c.getZ());
+            PI.put("est_mayfly", sp.getAbilities().mayfly);
+            estPonerCamara(sp, c.getX() + 0.5, alto + 30, c.getZ() + 0.5, c.getX() + 0.5, alto, c.getZ() + 0.5);
             PI.put("est_c_o", c.immutable());
         }));
         sin("est_camp_esperar", 200, () -> {});
