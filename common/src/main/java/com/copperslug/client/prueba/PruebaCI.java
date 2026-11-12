@@ -354,57 +354,80 @@ public final class PruebaCI {
             if (n == null || (Integer) n < 2) throw new IllegalStateException("el husk armado dispara al menos 2 veces en 8,5 s (disparos " + n + ")");
         });
         // ---- la pirámide, lejos de la arena
-        sin("est_piramide_poner", 8, () -> piSrv(sp -> {
-            var l = sp.serverLevel();
+        sin("est_piramide_cargar", 4, () -> piSrv(sp -> {
             var o = sp.blockPosition();
             PI.put("est_o", o.immutable());
-            var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
+            // /place structure exige que los trozos estén cargados: se fuerzan (7 x 7) y se espera a que lleguen
             sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+                    "forceload add " + (o.getX() + 344) + " " + (o.getZ() - 56) + " " + (o.getX() + 456) + " " + (o.getZ() + 56));
+        }));
+        sin("est_piramide_esperar_trozos", 120, () -> {});
+        sin("est_piramide_poner", 8, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
+            int res = sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:piramide " + c.getX() + " " + c.getY() + " " + c.getZ());
             PI.put("est_p", estContar(l, c, 40, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+            PI.put("est_p_cmd", res);
         }));
+        sin("est_piramide_esperar", 100, () -> {});
         vigila("est_piramide_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_p");
             if (r == null) throw new IllegalStateException("la pirámide aún no se ha contado");
-            String det = "oro " + r[0] + ", cofres " + r[1] + ", TNT " + r[2] + ", escaleras " + r[3] + ", mobs armados " + r[6];
+            String det = "oro " + r[0] + ", cofres " + r[1] + ", TNT " + r[2] + ", escaleras " + r[3] + ", mobs armados " + r[6] + " (/place devolvió " + PI.get("est_p_cmd") + ")";
             RESUMEN.add("  estructuras: pirámide generada: " + det);
             if (r[0] < 30 || r[1] < 10 || r[2] < 30 || r[3] < 8 || r[6] < 8)
                 throw new IllegalStateException("la pirámide sale entera (oro >= 30, cofres >= 10, TNT >= 30, escaleras >= 8, mobs armados >= 8) (" + det + ")");
         });
         sin("est_piramide_cam", 4, () -> piSrv(sp -> {
             int[] r = (int[]) PI.get("est_p");
+            if (r == null || r[0] < 5) return;       // sin pirámide no se mueve al jugador
             double cx = (r[7] + r[8]) / 2.0, cz = (r[9] + r[10]) / 2.0;
+            PI.put("est_mayfly", sp.getAbilities().mayfly);
             estPonerCamara(sp, cx - 75, r[11] - 6, cz - 20, cx, r[11] - 12, cz);
         }));
         paso("est_piramide_fuera", 70, () -> {});
         // ---- la mina, bajo tierra: se mira desde su pozo y por dentro, sobre las vías
+        sin("est_mina_cargar", 4, () -> piSrv(sp -> {
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+                    "forceload add " + (o.getX() - 56) + " " + (o.getZ() + 344) + " " + (o.getX() + 56) + " " + (o.getZ() + 456));
+        }));
+        sin("est_mina_esperar_trozos", 120, () -> {});
         sin("est_mina_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
-            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+            int res = sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ());
             PI.put("est_m", estContar(l, c, 34, 34, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
+            PI.put("est_m_cmd", res);
         }));
+        sin("est_mina_esperar", 100, () -> {});
         vigila("est_mina_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_m");
             if (r == null) throw new IllegalStateException("la mina aún no se ha contado");
-            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6];
+            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place devolvió " + PI.get("est_m_cmd") + ")";
             RESUMEN.add("  estructuras: mina generada: " + det);
             if (r[4] < 100 || r[5] < 20 || r[1] < 8 || r[2] < 20 || r[6] < 10)
                 throw new IllegalStateException("la mina sale entera (cobre >= 100, vías >= 20, cofres >= 8, TNT >= 20, mobs armados >= 10) (" + det + ")");
         });
         sin("est_mina_cam", 4, () -> piSrv(sp -> {
             int[] r = (int[]) PI.get("est_m");
-            if (r[12] != Integer.MIN_VALUE) estPonerCamara(sp, r[12] + 0.5, r[13] + 1.6, r[14] + 0.5, r[12] + 0.5 + 6, r[13] + 1.6, r[14] + 0.5);
+            if (r != null && r[12] != Integer.MIN_VALUE) estPonerCamara(sp, r[12] + 0.5, r[13] + 1.6, r[14] + 0.5, r[12] + 0.5 + 6, r[13] + 1.6, r[14] + 0.5);
         }));
         paso("est_mina_dentro", 70, () -> {});
         // ---- de vuelta a la arena
         sin("est_volver", 4, () -> piSrv(sp -> {
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             sp.getAbilities().flying = false;
+            if (PI.get("est_mayfly") instanceof Boolean mf) sp.getAbilities().mayfly = mf;
+            sp.onUpdateAbilities();
             sp.setNoGravity(false);
             sp.connection.teleport(o.getX() + 0.5, o.getY(), o.getZ() + 0.5, sp.getYRot(), sp.getXRot());
+            var cmd = sp.createCommandSourceStack().withPermission(4).withSuppressedOutput();
+            sp.getServer().getCommands().performPrefixedCommand(cmd, "forceload remove all");
         }));
         sin("est_esperar", 30, () -> {});
     }
