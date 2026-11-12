@@ -537,6 +537,7 @@ public abstract class ArmaFuegoItem extends Item {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), snd, SoundSource.PLAYERS, vol, tono + l.random.nextFloat() * 0.08F);
             l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
             sonidoExtra(l, p, snd, vol, tono);
+            MobsArmados.oirDisparo(l, p, boca);
         }
         if (casquillo) casquillo(l, p, boca.subtract(mira.scale(0.45)));
     }

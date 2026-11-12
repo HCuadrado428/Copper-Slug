@@ -57,7 +57,24 @@ public final class MobsArmados {
         int balas = -1, pendientes, reaccion;
         java.util.UUID objetivo;
         boolean aviso;
+        // táctica: dónde se cubre y dónde se asoma, el modo y hasta cuándo, y el punto de flanqueo
+        net.minecraft.core.BlockPos cobertura, asomo;
+        Modo modo = Modo.ABIERTO;
+        long modoHasta, buscaCobertura, flanqueoHasta;
+        int disparosAsomado;
+        Vec3 flanqueo;
+
+        boolean tactico() {
+            return modo != Modo.ABIERTO || flanqueo != null;
+        }
     }
+
+    /**
+     * ABIERTO: lo de siempre (dispara, da pasos de lado, retrocede si te acercas). A_CUBIERTO: va corriendo a su
+     * cobertura (para recargar o porque le han dado). CUBIERTO: quieto tras el bloque. ASOMANDO: sale a un sitio desde
+     * el que te ve, dispara unas veces y vuelve.
+     */
+    private enum Modo { ABIERTO, A_CUBIERTO, CUBIERTO, ASOMANDO }
 
     /** Cómo dispara cada arma, relativo a la Winchester (daño y cadencia de la config). */
     private record Perfil(float dano, float cadencia, int balas, int recarga, double alcance, double disp, int rafaga,
@@ -185,6 +202,7 @@ public final class MobsArmados {
                 e.balas = pf.balas();
                 e.proximo = t + 6;
                 posaRecarga(m, false);
+                if (e.modo == Modo.CUBIERTO) e.modoHasta = t;   // recargado: ya puede asomarse
                 l.playSound(null, m.getX(), m.getY(), m.getZ(), ModSounds.MOB_MONTAR.get(), SoundSource.HOSTILE, 0.8F, 1.2F);
             }
             return;
@@ -193,6 +211,8 @@ public final class MobsArmados {
         if (!objetivo) {
             e.objetivo = null;
             e.disparaEn = -1;
+            e.modo = Modo.ABIERTO;
+            e.flanqueo = null;
             if (e.balas < pf.balas() && e.balas <= pf.balas() * 0.5) empezarRecarga(l, m, pf, e, t);
             return;
         }
@@ -211,10 +231,14 @@ public final class MobsArmados {
                 e.aviso = m.getRandom().nextFloat() < 0.35F;     // el primer tiro, de aviso (a un lado)
             }
             e.disparaEn = -1;
-            if (saqueador && ruta && dist > 8) m.getNavigation().moveTo(v, 1.0);
-            if (!vista) return;
+            if (saqueador && ruta && dist > 8 && !e.tactico()) m.getNavigation().moveTo(v, 1.0);
+            if (!vista) {
+                if (saqueador && ConfigServidor.mobsTactica()) tactica(l, m, v, e, pf, t, dist, false);
+                return;
+            }
         }
-        if (saqueador && ruta) {
+        boolean controla = saqueador && ConfigServidor.mobsTactica() && tactica(l, m, v, e, pf, t, dist, true);
+        if (saqueador && ruta && !controla) {
             if (dist < 5) {
                 // demasiado cerca: retrocede (y sigue disparando)
                 Vec3 a = m.position().subtract(v.position()).normalize().scale(6);
@@ -236,6 +260,8 @@ public final class MobsArmados {
         }
         if (t - e.apuntaDesde < e.reaccion || t < e.proximo) return;
         if (e.balas <= 0) {
+            // recargar a cubierto: primero corre a su cobertura (si la encuentra), luego recarga
+            if (saqueador && ConfigServidor.mobsTactica() && (e.modo == Modo.A_CUBIERTO || irACubierto(l, m, v, e, t, 50))) return;
             empezarRecarga(l, m, pf, e, t);
             return;
         }
@@ -296,8 +322,161 @@ public final class MobsArmados {
         }
         Balistica.impacto(l, m, tiro);
         ArmaFuegoItem.efectos(l, m, boca, pf.sonido(), pf.vol(), pf.tono(), 3, true);
+        if (e.modo == Modo.ASOMANDO) e.disparosAsomado++;
         // el retroceso: el tirador se echa un poco hacia atrás
         m.setDeltaMovement(m.getDeltaMovement().add(mira.x * -pf.retroceso(), 0.02, mira.z * -pf.retroceso()));
+    }
+
+    // ------------------------------------------------------------------ táctica (saqueadores)
+
+    /**
+     * La táctica de un saqueador armado con objetivo. Devuelve true si este tick manda ella en el movimiento (entonces
+     * no se dan los pasos de lado de siempre). {@code vista}: si ahora ve al objetivo.
+     */
+    private static boolean tactica(ServerLevel l, Mob m, LivingEntity v, Estado e, Perfil pf, long t, double dist, boolean vista) {
+        // le han dado: a veces se cubre un rato (más cuanto más herido)
+        if (m.hurtTime > 0 && e.modo == Modo.ABIERTO && m.getRandom().nextFloat() < (m.getHealth() < m.getMaxHealth() * 0.5F ? 0.7F : 0.35F))
+            irACubierto(l, m, v, e, t, 30 + m.getRandom().nextInt(30));
+        switch (e.modo) {
+            case A_CUBIERTO -> {
+                if (e.cobertura == null || t > e.modoHasta) {
+                    e.modo = Modo.ABIERTO;
+                    return false;
+                }
+                if (m.blockPosition().distManhattan(e.cobertura) <= 1 || m.getNavigation().isDone()) {
+                    e.modo = Modo.CUBIERTO;
+                    e.modoHasta = t + (e.balas <= 0 ? 0 : 30 + m.getRandom().nextInt(30));
+                    m.getNavigation().stop();
+                    if (e.balas <= 0) empezarRecarga(l, m, pf, e, t);
+                } else if (m.tickCount % 10 == 0) {
+                    m.getNavigation().moveTo(e.cobertura.getX() + 0.5, e.cobertura.getY(), e.cobertura.getZ() + 0.5, 1.25);
+                }
+                return true;
+            }
+            case CUBIERTO -> {
+                m.getNavigation().stop();
+                if (t < e.modoHasta || e.recargaFin >= 0) return true;
+                // a asomarse: un sitio cerca de la cobertura desde el que se le vea
+                e.asomo = buscar(l, m, v, e.cobertura, 3, true);
+                if (e.asomo == null) {
+                    e.modo = Modo.ABIERTO;
+                    return false;
+                }
+                e.modo = Modo.ASOMANDO;
+                e.disparosAsomado = 0;
+                e.modoHasta = t + 80;
+                m.getNavigation().moveTo(e.asomo.getX() + 0.5, e.asomo.getY(), e.asomo.getZ() + 0.5, 1.0);
+                return true;
+            }
+            case ASOMANDO -> {
+                if (m.tickCount % 10 == 0 && !vista && e.asomo != null)
+                    m.getNavigation().moveTo(e.asomo.getX() + 0.5, e.asomo.getY(), e.asomo.getZ() + 0.5, 1.0);
+                if (vista) m.getNavigation().stop();
+                // unos tiros y vuelve a cubrirse (o se queda fuera si la cobertura ya no vale)
+                if (e.disparosAsomado >= 2 + m.getRandom().nextInt(2) || t > e.modoHasta) {
+                    if (e.cobertura != null && m.getRandom().nextFloat() < 0.6F) {
+                        e.modo = Modo.A_CUBIERTO;
+                        e.modoHasta = t + 60;
+                    } else e.modo = Modo.ABIERTO;
+                }
+                return true;
+            }
+            default -> {
+                return flanquear(l, m, v, e, t, dist);
+            }
+        }
+    }
+
+    /** Busca una cobertura y, si la hay, va hacia ella durante como mucho {@code hasta} ticks. */
+    private static boolean irACubierto(ServerLevel l, Mob m, LivingEntity v, Estado e, long t, int hasta) {
+        if (t < e.buscaCobertura) return false;
+        e.buscaCobertura = t + 40;
+        net.minecraft.core.BlockPos c = buscar(l, m, v, m.blockPosition(), 7, false);
+        if (c == null) return false;
+        e.cobertura = c;
+        e.modo = Modo.A_CUBIERTO;
+        e.modoHasta = t + Math.max(hasta, 60);
+        m.getNavigation().moveTo(c.getX() + 0.5, c.getY(), c.getZ() + 0.5, 1.25);
+        return true;
+    }
+
+    /**
+     * Busca un sitio donde estar de pie a como mucho {@code radio} de {@code centro}: con {@code verle} = false, uno
+     * donde el objetivo no le vea la cabeza (cobertura); con true, uno donde sí (para asomarse). Prueba unos 60 sitios
+     * al azar y se queda con el más cercano al mob.
+     */
+    private static net.minecraft.core.BlockPos buscar(ServerLevel l, Mob m, LivingEntity v, net.minecraft.core.BlockPos centro, int radio, boolean verle) {
+        net.minecraft.core.BlockPos mejor = null;
+        double mejorD = Double.MAX_VALUE;
+        Vec3 ojoV = v.getEyePosition();
+        for (int i = 0; i < 60; i++) {
+            net.minecraft.core.BlockPos q = centro.offset(m.getRandom().nextInt(radio * 2 + 1) - radio, m.getRandom().nextInt(3) - 1,
+                    m.getRandom().nextInt(radio * 2 + 1) - radio);
+            if (!l.getBlockState(q).getCollisionShape(l, q).isEmpty() || !l.getBlockState(q.above()).getCollisionShape(l, q.above()).isEmpty()
+                    || !l.getBlockState(q.below()).isFaceSturdy(l, q.below(), net.minecraft.core.Direction.UP)) continue;
+            Vec3 cabeza = new Vec3(q.getX() + 0.5, q.getY() + m.getEyeHeight(), q.getZ() + 0.5);
+            if (cabeza.distanceTo(ojoV) < 6) continue;
+            boolean tapado = l.clip(new net.minecraft.world.level.ClipContext(ojoV, cabeza, net.minecraft.world.level.ClipContext.Block.COLLIDER,
+                    net.minecraft.world.level.ClipContext.Fluid.NONE, v)).getType() == net.minecraft.world.phys.HitResult.Type.BLOCK;
+            if (tapado == verle) continue;
+            double d = q.distSqr(m.blockPosition());
+            if (d < mejorD) {
+                mejorD = d;
+                mejor = q;
+            }
+        }
+        return mejor;
+    }
+
+    /**
+     * Flanqueo: si hay varios saqueadores armados contra el mismo objetivo, uno de cada tres va de frente y los otros
+     * dan un rodeo por la izquierda o por la derecha antes de disparar. El papel se reparte por el orden de los UUID.
+     */
+    private static boolean flanquear(ServerLevel l, Mob m, LivingEntity v, Estado e, long t, double dist) {
+        if (e.flanqueo != null) {
+            if (t > e.flanqueoHasta || m.position().distanceTo(e.flanqueo) < 2.5) {
+                e.flanqueo = null;
+                return false;
+            }
+            if (m.tickCount % 10 == 0) m.getNavigation().moveTo(e.flanqueo.x, e.flanqueo.y, e.flanqueo.z, 1.15);
+            return true;
+        }
+        if (t < e.flanqueoHasta + 200 || m.tickCount % 20 != 0) return false;
+        java.util.List<Mob> grupo = new java.util.ArrayList<>();
+        for (Mob o : ARMADOS)
+            if (o.level() == l && o instanceof Pillager && o.getTarget() == v && o.distanceTo(m) < 24) grupo.add(o);
+        if (grupo.size() < 2) return false;
+        grupo.sort(java.util.Comparator.comparing(Mob::getUUID));
+        int papel = grupo.indexOf(m) % 3;
+        if (papel == 0) return false;
+        // el punto de rodeo: a 75 grados del frente, a la misma distancia
+        Vec3 d = m.position().subtract(v.position());
+        double ang = Math.toRadians(papel == 1 ? 75 : -75), c = Math.cos(ang), s2 = Math.sin(ang);
+        Vec3 r = new Vec3(d.x * c - d.z * s2, 0, d.x * s2 + d.z * c);
+        e.flanqueo = v.position().add(r.normalize().scale(Math.max(8, Math.min(dist, 14))));
+        e.flanqueoHasta = t + 100;
+        m.getNavigation().moveTo(e.flanqueo.x, e.flanqueo.y, e.flanqueo.z, 1.15);
+        return true;
+    }
+
+    /**
+     * Alerta: alguien ha disparado en {@code donde}. Los mobs armados sin objetivo que lo oyen (a menos de la distancia de
+     * la config) acuden: si ha sido un jugador, a por él; si ha sido otro mob armado, a por el objetivo de ese mob.
+     */
+    public static void oirDisparo(ServerLevel l, net.minecraft.world.entity.Entity tirador, Vec3 donde) {
+        int radio = ConfigServidor.mobsAlerta();
+        if (radio <= 0 || !ConfigServidor.mobsArmados()) return;
+        LivingEntity a = null;
+        if (tirador instanceof net.minecraft.world.entity.player.Player pl) {
+            if (pl.isCreative() || pl.isSpectator()) return;
+            a = pl;
+        } else if (tirador instanceof Mob mo && armado(mo)) a = mo.getTarget();
+        if (a == null || !a.isAlive()) return;
+        for (Mob m : ARMADOS) {
+            if (m == tirador || m.level() != l || m.getTarget() != null || m.distanceToSqr(donde) > (double) radio * radio) continue;
+            m.setTarget(a);
+            m.getNavigation().moveTo(donde.x, donde.y, donde.z, 1.1);
+        }
     }
 
     private static SoundEvent saqueadorSonidoAviso(Perfil pf) {

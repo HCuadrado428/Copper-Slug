@@ -11,7 +11,8 @@ public final class ConfigServidor {
     private ConfigServidor() {}
 
     private static final ForgeConfigSpec.DoubleValue BOTIN_REVOLVER_HERREROS, BOTIN_REVOLVER_CASAS, BOTIN_ESCOPETA, BOTIN_RIFLE, BOTIN_ENCANTADA;
-    private static final ForgeConfigSpec.BooleanValue MOBS_ACTIVADO;
+    private static final ForgeConfigSpec.BooleanValue MOBS_ACTIVADO, MOBS_TACTICA;
+    private static final ForgeConfigSpec.IntValue MOBS_ALERTA;
     private static final ForgeConfigSpec.DoubleValue MOBS_PROB, MOBS_PROB_CAPITAN, MOBS_DANO, MOBS_SUELTA, MOBS_FALLO;
     private static final ForgeConfigSpec.IntValue MOBS_CADENCIA;
     public static final ForgeConfigSpec SPEC;
@@ -36,6 +37,8 @@ public final class ConfigServidor {
         MOBS_CADENCIA = b.comment("Ticks entre disparo y disparo de un mob (20 = 1 s).").defineInRange("cadencia", 40, 5, 400);
         MOBS_FALLO = b.comment("Cuanto fallan: multiplica la dispersion de los mobs (0 = no fallan nunca, 1 = normal, 2 = fallan el doble).").defineInRange("fallo", 1.0, 0.0, 5.0);
         MOBS_SUELTA = b.comment("Probabilidad (0-1) de que suelte el arma al morir.").defineInRange("suelta", 0.1, 0.0, 1.0);
+        MOBS_TACTICA = b.comment("Tactica de los saqueadores armados: se cubren tras un bloque (sobre todo para recargar), se asoman a disparar y, si son varios, uno flanquea.").define("tactica", true);
+        MOBS_ALERTA = b.comment("Bloques a los que los mobs armados oyen un disparo y acuden (0 = no acuden).").defineInRange("alerta", 24, 0, 64);
         b.pop();
         EquilibrioArmas.definir(b);
         SPEC = b.build();
@@ -57,4 +60,6 @@ public final class ConfigServidor {
     public static int mobsCadencia() { return i(MOBS_CADENCIA); }
     public static double mobsFallo() { return d(MOBS_FALLO); }
     public static float mobsSuelta() { return (float) d(MOBS_SUELTA); }
+    public static boolean mobsTactica() { return b(MOBS_TACTICA); }
+    public static int mobsAlerta() { return i(MOBS_ALERTA); }
 }
