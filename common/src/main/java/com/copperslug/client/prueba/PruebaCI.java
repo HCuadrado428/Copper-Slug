@@ -274,6 +274,7 @@ public final class PruebaCI {
         rifle();
         armas3d();
         armas2();
+        estructuras();
         apuntado();
         sin("armas_avisos", 1, () -> {
             com.copperslug.armasfuego.comun.EquilibrioArmas.sinAtascosPrueba = false;
@@ -286,6 +287,126 @@ public final class PruebaCI {
         sin("cerrar", 10, () -> {
             mc.setScreen(null);
         });
+    }
+
+    // ------------------------------------------------------------------ estructuras y mobs armados
+    /** Cuenta, en un volumen, los bloques que dicen que la estructura está (oro, cofres, TNT...) y los mobs armados. */
+    private static int[] estContar(net.minecraft.server.level.ServerLevel l, net.minecraft.core.BlockPos c, int rx, int rz, int y0, int y1) {
+        int oro = 0, cofres = 0, tnt = 0, escalera = 0, cobre = 0, rieles = 0;
+        int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+        int railX = Integer.MIN_VALUE, railY = 0, railZ = 0;
+        var m = new net.minecraft.core.BlockPos.MutableBlockPos();
+        for (int x = c.getX() - rx; x <= c.getX() + rx; x++)
+            for (int z = c.getZ() - rz; z <= c.getZ() + rz; z++)
+                for (int y = y0; y <= y1; y++) {
+                    var b = l.getBlockState(m.set(x, y, z)).getBlock();
+                    if (b == net.minecraft.world.level.block.Blocks.GOLD_BLOCK) {
+                        oro++;
+                        minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z); maxY = Math.max(maxY, y);
+                    } else if (b == net.minecraft.world.level.block.Blocks.CHEST) cofres++;
+                    else if (b == net.minecraft.world.level.block.Blocks.TNT) tnt++;
+                    else if (b == net.minecraft.world.level.block.Blocks.LADDER) escalera++;
+                    else if (b == net.minecraft.world.level.block.Blocks.COPPER_ORE) cobre++;
+                    else if (b == net.minecraft.world.level.block.Blocks.RAIL) {
+                        rieles++;
+                        if (railX == Integer.MIN_VALUE) { railX = x; railY = y; railZ = z; }
+                    }
+                }
+        int armados = l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new net.minecraft.world.phys.AABB(c).inflate(rx, 150, rz),
+                e -> com.copperslug.armasfuego.comun.MobsArmados.armado(e)).size();
+        return new int[]{oro, cofres, tnt, escalera, cobre, rieles, armados, minX, maxX, minZ, maxZ, maxY, railX, railY, railZ};
+    }
+
+    private static void estPonerCamara(ServerPlayer sp, double x, double y, double z, double mirax, double miray, double miraz) {
+        double dx = mirax - x, dy = miray - y, dz = miraz - z;
+        float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz)), pitch = (float) Math.toDegrees(-Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+        sp.setNoGravity(true);
+        sp.getAbilities().flying = true;
+        sp.getAbilities().mayfly = true;
+        sp.onUpdateAbilities();
+        sp.connection.teleport(x, y, z, yaw, pitch);
+    }
+
+    private static void estructuras() {
+        // ---- los mobs armados disparan de verdad (en la arena plana, con un husk quieto con una Winchester)
+        sin("est_mob_poner", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var h = net.minecraft.world.entity.EntityType.HUSK.create(l);
+            h.moveTo(sp.getX() + 9, sp.getY(), sp.getZ(), 90F, 0F);
+            h.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, new ItemStack(com.copperslug.registry.ModItems.WINCHESTER.get()));
+            h.setPersistenceRequired();
+            h.setNoAi(true);
+            h.setTarget(sp);
+            l.addFreshEntity(h);
+            PI.put("est_h", h.getUUID());
+            PI.put("est_d0", com.copperslug.armasfuego.comun.MobsArmados.disparos);
+        }));
+        sin("est_mob_esperar", 170, () -> {});
+        sin("est_mob_ver", 2, () -> piSrv(sp -> {
+            int n = com.copperslug.armasfuego.comun.MobsArmados.disparos - (Integer) PI.get("est_d0");
+            PI.put("est_disparos", n);
+            var h = sp.serverLevel().getEntity((UUID) PI.get("est_h"));
+            if (h != null) h.discard();
+        }));
+        vigila("est_mob_ok", 6, () -> {
+            Object n = PI.get("est_disparos");
+            RESUMEN.add("  estructuras: el husk con Winchester dispara (disparos en 8,5 s: " + n + ")");
+            if (n == null || (Integer) n < 2) throw new IllegalStateException("el husk armado dispara al menos 2 veces en 8,5 s (disparos " + n + ")");
+        });
+        // ---- la pirámide, lejos de la arena
+        sin("est_piramide_poner", 8, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var o = sp.blockPosition();
+            PI.put("est_o", o.immutable());
+            var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+                    "place structure copperslug:piramide " + c.getX() + " " + c.getY() + " " + c.getZ());
+            PI.put("est_p", estContar(l, c, 40, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+        }));
+        vigila("est_piramide_ok", 4, () -> {
+            int[] r = (int[]) PI.get("est_p");
+            if (r == null) throw new IllegalStateException("la pirámide aún no se ha contado");
+            String det = "oro " + r[0] + ", cofres " + r[1] + ", TNT " + r[2] + ", escaleras " + r[3] + ", mobs armados " + r[6];
+            RESUMEN.add("  estructuras: pirámide generada: " + det);
+            if (r[0] < 30 || r[1] < 10 || r[2] < 30 || r[3] < 8 || r[6] < 8)
+                throw new IllegalStateException("la pirámide sale entera (oro >= 30, cofres >= 10, TNT >= 30, escaleras >= 8, mobs armados >= 8) (" + det + ")");
+        });
+        sin("est_piramide_cam", 4, () -> piSrv(sp -> {
+            int[] r = (int[]) PI.get("est_p");
+            double cx = (r[7] + r[8]) / 2.0, cz = (r[9] + r[10]) / 2.0;
+            estPonerCamara(sp, cx - 75, r[11] - 6, cz - 20, cx, r[11] - 12, cz);
+        }));
+        paso("est_piramide_fuera", 70, () -> {});
+        // ---- la mina, bajo tierra: se mira desde su pozo y por dentro, sobre las vías
+        sin("est_mina_poner", 8, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+                    "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ());
+            PI.put("est_m", estContar(l, c, 34, 34, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
+        }));
+        vigila("est_mina_ok", 4, () -> {
+            int[] r = (int[]) PI.get("est_m");
+            if (r == null) throw new IllegalStateException("la mina aún no se ha contado");
+            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6];
+            RESUMEN.add("  estructuras: mina generada: " + det);
+            if (r[4] < 100 || r[5] < 20 || r[1] < 8 || r[2] < 20 || r[6] < 10)
+                throw new IllegalStateException("la mina sale entera (cobre >= 100, vías >= 20, cofres >= 8, TNT >= 20, mobs armados >= 10) (" + det + ")");
+        });
+        sin("est_mina_cam", 4, () -> piSrv(sp -> {
+            int[] r = (int[]) PI.get("est_m");
+            if (r[12] != Integer.MIN_VALUE) estPonerCamara(sp, r[12] + 0.5, r[13] + 1.6, r[14] + 0.5, r[12] + 0.5 + 6, r[13] + 1.6, r[14] + 0.5);
+        }));
+        paso("est_mina_dentro", 70, () -> {});
+        // ---- de vuelta a la arena
+        sin("est_volver", 4, () -> piSrv(sp -> {
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            sp.getAbilities().flying = false;
+            sp.setNoGravity(false);
+            sp.connection.teleport(o.getX() + 0.5, o.getY(), o.getZ() + 0.5, sp.getYRot(), sp.getXRot());
+        }));
+        sin("est_esperar", 30, () -> {});
     }
 
     // ------------------------------------------------------------------ logros
