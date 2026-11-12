@@ -62,8 +62,22 @@ def caja(x1, y1, z1, x2, y2, z2, tex='cobre', nombre='caja', rot=None, caras=Non
     return e
 
 
-def octogono(cy, a, z1, z2, tex, nombre, tex_lado=None, uv_lado=None):
-    """Un prisma octogonal de apotema a: dos cajas rectas y dos giradas 45° (la unión es el octógono)."""
+# Los cañones son cuadrados, como en Minecraft (ver herramientas/canones_cuadrados.py). Solo el tambor del revólver sigue
+# octogonal: gira de 60 en 60 grados y una caja cuadrada se vería torcida.
+CUADRADOS = True
+
+
+def octogono(cy, a, z1, z2, tex, nombre, tex_lado=None, uv_lado=None, cuadrado=None):
+    """Un prisma de apotema a. Por defecto una caja cuadrada (estilo Minecraft); con cuadrado=False, el octógono de antes:
+    dos cajas rectas y dos giradas 45° (la unión es el octógono)."""
+    if CUADRADOS if cuadrado is None else cuadrado:
+        e = caja(CX - a, cy - a, z1, CX + a, cy + a, z2, tex, nombre)
+        if tex_lado:
+            for d in ('east', 'west', 'up', 'down'):
+                e['faces'][d]['texture'] = '#' + tex_lado
+                if uv_lado:
+                    e['faces'][d]['uv'] = list(uv_lado)
+        return [e]
     s = 2 * a * math.tan(math.radians(22.5))
     out = []
     for i, (ang, dx, dy) in enumerate(((0, a, s / 2), (0, s / 2, a), (45, a, s / 2), (-45, a, s / 2))):
@@ -122,7 +136,8 @@ def recamaras(mascara):
 
 
 def cilindro(mascara):
-    out = octogono(TAMBOR['cy'], TAMBOR['a'], TAMBOR['z1'], TAMBOR['z2'], 'cobre', 'cil_cuerpo', tex_lado='tambor_lado', uv_lado=[6, 6, 10, 10])
+    out = octogono(TAMBOR['cy'], TAMBOR['a'], TAMBOR['z1'], TAMBOR['z2'], 'cobre', 'cil_cuerpo', tex_lado='tambor_lado', uv_lado=[6, 6, 10, 10],
+                   cuadrado=False)
     return out + recamaras(mascara)
 
 
