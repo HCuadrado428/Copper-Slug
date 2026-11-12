@@ -69,6 +69,9 @@
 - New structure, the Abandoned Copper Mine (hills, mountains and badlands, underground): a 15 x 15 labyrinth with 3-wide
   tunnels, rails and chest minecarts, timber props, powder stores full of TNT, cave-ins, zombie miners with Winchesters
   and, in a corner, the vein chamber of oxidised copper with the treasure. A wooden headframe marks the shaft.
+- New structure, the Raiders' Camp (plains, savannas, taigas and forests): a log palisade with four watchtowers, a campfire, three
+  tents, the captain's red tent with his chest, a cage with a (decorative) prisoner, a horse corral and supply crates. It is guarded
+  by armed pillagers (revolver, Winchester and, the captain, a Thompson) and two vindicators at the gate.
 - Copper parts that show on the weapon, and they ARE the enchantments: a weapon carrying Suppressor shows a suppressor on its
   barrel (and its shots are almost silent; now also for the Derringer, Winchester and Thompson, not only the rifle), Muzzle
   Compensator shows the Thompson's brake, Extended Magazine shows collars and a longer tube on the Winchester. New enchantments
@@ -154,6 +157,10 @@
 - Estructura nueva, la Mina de cobre abandonada (colinas, montañas y mesetas, bajo tierra): un laberinto de 15 x 15 con
   túneles de 3 de ancho, vías y vagonetas con cofre, puntales, polvorines con TNT, derrumbes, mineros zombis con Winchester
   y, en una esquina, la cámara del filón de cobre oxidado con el tesoro. Un cabrestante de madera marca el pozo.
+- Estructura nueva, el Campamento de saqueadores (llanuras, sabanas, taigas y bosques): una empalizada de troncos con cuatro torres de
+  vigilancia, una hoguera, tres tiendas, la tienda roja del capitán con su cofre, una jaula con un prisionero (de adorno), un corral con
+  caballos y cajas de suministros. Lo guardan saqueadores armados (revólver, Winchester y, el capitán, una Thompson) y dos vindicadores en
+  la puerta.
 - Piezas de cobre que se ven en el arma, y SON los encantamientos: el arma con Silenciador lleva un silenciador en el cañón
   (y sus disparos casi no suenan; ahora también en la Derringer, la Winchester y la Thompson, no solo el rifle), el Compensador
   enseña el freno de la Thompson, el Depósito largo enseña unos collares y un tubo más largo en la Winchester. Encantamientos

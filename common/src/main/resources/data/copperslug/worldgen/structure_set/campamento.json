@@ -1,0 +1,18 @@
+{
+  "structures": [
+    {
+      "structure": "copperslug:campamento",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 36,
+    "separation": 12,
+    "salt": 5190211,
+    "exclusion_zone": {
+      "other_set": "minecraft:pillager_outposts",
+      "chunk_count": 8
+    }
+  }
+}
