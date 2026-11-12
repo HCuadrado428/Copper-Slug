@@ -74,7 +74,7 @@ public final class FuegoClienteMod {
                 return fr[k] / 3F;
             });
             // el cobre de las seis nuevas (0, 0,25, 0,5, 0,75, como el revólver)
-            for (var it : java.util.List.of(ModItems.GATLING, ModItems.WINCHESTER, ModItems.DERRINGER, ModItems.THOMPSON, ModItems.MOSQUETE, ModItems.CANON_MANO, ModItems.CERBATANA, ModItems.LANZALLAMAS))
+            for (var it : java.util.List.of(ModItems.GATLING, ModItems.WINCHESTER, ModItems.DERRINGER, ModItems.THOMPSON, ModItems.MOSQUETE, ModItems.CANON_MANO, ModItems.CERBATANA, ModItems.LANZALLAMAS, ModItems.RESONANCIA))
                 ItemProperties.register(it.get(), rl("oxido"), (s, l, en, seed) -> com.copperslug.armasfuego.comun.Cobre.oxido(s) / 4F);
             // mosquete: la hoja de la bayoneta (0 sin, 1 madera .. 6 netherita)
             ItemProperties.register(ModItems.MOSQUETE.get(), rl("bayoneta"), (s, l, en, seed) -> com.copperslug.armasfuego.oeste.MosqueteItem.material(s) / 10F);
