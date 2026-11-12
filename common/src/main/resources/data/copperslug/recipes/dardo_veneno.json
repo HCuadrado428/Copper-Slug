@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "equipment",
+  "ingredients": [
+    {
+      "item": "copperslug:dardo_cerbatana"
+    },
+    {
+      "item": "copperslug:dardo_cerbatana"
+    },
+    {
+      "item": "minecraft:spider_eye"
+    }
+  ],
+  "result": {
+    "item": "copperslug:dardo_veneno",
+    "count": 2
+  }
+}

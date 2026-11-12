@@ -112,5 +112,15 @@ public final class ModItems {
     public static final RegistryObject<Item> BOLANO_SALTARIN = ITEMS.register("bolano_saltarin",
             () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties().stacksTo(16)));
 
+    // ---- Cerbatana de cobre (templos de la jungla) y sus dardos
+    public static final RegistryObject<Item> CERBATANA = ITEMS.register("cerbatana",
+            () -> new com.copperslug.armasfuego.selva.CerbatanaItem(new Item.Properties().durability(250).rarity(Rarity.UNCOMMON)));
+    public static final RegistryObject<Item> DARDO_CERBATANA = ITEMS.register("dardo_cerbatana",
+            () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties()));
+    public static final RegistryObject<Item> DARDO_VENENO = ITEMS.register("dardo_veneno",
+            () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties()));
+    public static final RegistryObject<Item> DARDO_SOMNIFERO = ITEMS.register("dardo_somnifero",
+            () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties()));
+
     private ModItems() {}
 }
