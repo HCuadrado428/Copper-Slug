@@ -336,6 +336,18 @@ public final class PruebaCI {
         return out.toString().trim();
     }
 
+    /** Dónde están los cofres (relativos al centro): sirve para ver qué parte de una estructura falta. */
+    private static String estCofres(net.minecraft.server.level.ServerLevel l, net.minecraft.core.BlockPos c, int rx, int rz) {
+        StringBuilder sb = new StringBuilder();
+        var m = new net.minecraft.core.BlockPos.MutableBlockPos();
+        for (int x = c.getX() - rx; x <= c.getX() + rx; x++)
+            for (int z = c.getZ() - rz; z <= c.getZ() + rz; z++)
+                for (int y = l.getMinBuildHeight(); y < l.getMaxBuildHeight(); y++)
+                    if (l.getBlockState(m.set(x, y, z)).getBlock() == net.minecraft.world.level.block.Blocks.CHEST)
+                        sb.append('[').append(x - c.getX()).append(',').append(y - c.getY()).append(',').append(z - c.getZ()).append(']');
+        return sb.toString();
+    }
+
     private static void estPonerCamara(ServerPlayer sp, double x, double y, double z, double mirax, double miray, double miraz) {
         double dx = mirax - x, dy = miray - y, dz = miraz - z;
         float yaw = (float) Math.toDegrees(Math.atan2(-dx, dz)), pitch = (float) Math.toDegrees(-Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
@@ -430,12 +442,13 @@ public final class PruebaCI {
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
             PI.put("est_m", estContar(l, c, 44, 44, l.getMinBuildHeight(), l.getMaxBuildHeight()));
+            PI.put("est_m_cofres", estCofres(l, c, 44, 44));
         }));
         sin("est_mina_esperar2", 30, () -> {});
         vigila("est_mina_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_m");
             if (r == null) throw new IllegalStateException("la mina aún no se ha contado");
-            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_m_cmd") + ")";
+            String det = "mena de cobre " + r[4] + ", vías " + r[5] + ", cofres " + r[1] + ", TNT " + r[2] + ", mobs armados " + r[6] + " (/place: " + PI.get("est_m_cmd") + ") cofres en " + PI.get("est_m_cofres");
             RESUMEN.add("  estructuras: mina generada: " + det);
             if (r[4] < 100 || r[5] < 20 || r[1] < 8 || r[2] < 20 || r[6] < 10)
                 throw new IllegalStateException("la mina sale entera (cobre >= 100, vías >= 20, cofres >= 8, TNT >= 20, mobs armados >= 10) (" + det + ")");
