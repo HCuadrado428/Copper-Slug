@@ -206,6 +206,10 @@ public final class Apuntado {
         if (i instanceof DerringerItem) return 0.45F;
         if (i instanceof ThompsonItem) return 0.8F;
         if (i instanceof CanonManoItem) return 0.55F;
+        if (i instanceof com.copperslug.armasfuego.selva.CerbatanaItem) return 0.8F;
+        if (i instanceof com.copperslug.armasfuego.nether.LanzallamasItem) return 0.35F;   // alcance corto: casi no hace zoom
+        if (i instanceof com.copperslug.armasfuego.ciudad.ResonanciaItem) return 0.6F;
+        if (i instanceof com.copperslug.armasfuego.oceano.ArponeraItem) return 0.6F;
         return 1F;   // Winchester y mosquete
     }
 
@@ -235,12 +239,19 @@ public final class Apuntado {
      */
     private record Mira(float rx, float ry, float tx, float ty, float tz, float s, float yr, float zr, float yf, float zf, float prof) {}
 
-    private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 11.05F, 12.35F, 11.15F, 2.15F, 0.55F);
-    private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11.3F, 1.0F, 11.5F, -13.25F, 0.55F);   // el ojo detrás del armazón (con 0,36 quedaba dentro)
-    private static final Mira DERRINGER = new Mira(4, 18, 1.5F, 4.5F, -2, 0.45F, 12.3F, 10.6F, 11.4F, 1.2F, 0.5F);
-    private static final Mira THOMPSON = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 12.25F, 9.5F, 10.6F, -11F, 0.4F);
-    private static final Mira MOSQUETE = new Mira(2, 14, -1, 2.5F, -9, 0.5F, 10.8F, 12F, 11.0F, -9F, 0.42F);
-    private static final Mira CANON = new Mira(2, 12, -1, 3.0F, -11, 0.58F, 12.4F, 2.75F, 10.75F, -8F, 0.4F);
+    // Alza y punto de mira medidos sobre los modelos de bloques de 0,5 px (lo alto del arma en la columna central). Los
+    // primeros seis números son el firstperson_righthand de cada modelo: si se cambia en el JSON, hay que cambiarlo aquí.
+    private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 11.0F, 12.35F, 11.0F, 2.15F, 0.55F);
+    private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11.5F, 1.0F, 11.5F, -13.25F, 0.55F);   // el ojo detrás del armazón (con 0,36 quedaba dentro)
+    private static final Mira DERRINGER = new Mira(4, 18, 1.5F, 4.5F, -2, 0.45F, 11.5F, 10.6F, 11.5F, 1.2F, 0.5F);
+    private static final Mira THOMPSON = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 12.0F, 9.5F, 10.5F, -11F, 0.4F);
+    private static final Mira MOSQUETE = new Mira(2, 14, -1, 2.5F, -9, 0.5F, 10.0F, 12F, 11.0F, -9F, 0.42F);
+    private static final Mira CANON = new Mira(2, 12, -1, 3.0F, -11, 0.58F, 12.5F, 2.75F, 11.0F, -8F, 0.4F);
+    // las cuatro nuevas (antes no tenían: al apuntar se quedaban en la cadera)
+    private static final Mira CERBATANA = new Mira(2, 18, 1.0F, -2.0F, -6.5F, 0.85F, 10.5F, 14F, 10.5F, 3.5F, 0.45F);
+    private static final Mira LANZALLAMAS = new Mira(2, 20, 0.8F, 1.8F, -5.5F, 0.85F, 11.0F, 14F, 11.0F, 1F, 0.5F);
+    private static final Mira RESONANCIA = new Mira(2, 20, 0.8F, 3.0F, -5.0F, 0.9F, 12.6F, 12F, 12.6F, 2.5F, 0.5F);   // por encima del fragmento de eco
+    private static final Mira ARPONERA = new Mira(2, 20, 0.8F, 1.5F, -5.5F, 0.88F, 11.5F, 12F, 11.5F, 3.5F, 0.5F);
 
     private static Mira mira(Item i) {
         if (i instanceof RevolverItem) return REVOLVER;
@@ -249,6 +260,10 @@ public final class Apuntado {
         if (i instanceof ThompsonItem) return THOMPSON;
         if (i instanceof MosqueteItem) return MOSQUETE;
         if (i instanceof CanonManoItem) return CANON;
+        if (i instanceof com.copperslug.armasfuego.selva.CerbatanaItem) return CERBATANA;
+        if (i instanceof com.copperslug.armasfuego.nether.LanzallamasItem) return LANZALLAMAS;
+        if (i instanceof com.copperslug.armasfuego.ciudad.ResonanciaItem) return RESONANCIA;
+        if (i instanceof com.copperslug.armasfuego.oceano.ArponeraItem) return ARPONERA;
         return null;
     }
 
