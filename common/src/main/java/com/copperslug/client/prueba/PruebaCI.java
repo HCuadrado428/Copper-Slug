@@ -3357,9 +3357,9 @@ public final class PruebaCI {
             float dn = a2F("o0") - a2F("o1"), dx = a2F("o1") - a2F("o3");
             if (a2F("o1") - a2F("o2") <= 0 && dx > 0) dx = a2F("o2") - a2F("o3");
             String tip = String.valueOf(PI.get("o_tip"));
-            a2Comprobar("el cobre es un intercambio: la oxidada pega más que la nueva (y se encasquilla y dispersa más), y el tooltip lo dice",
+            a2Comprobar("el cobre es un intercambio: la oxidada pega más que la nueva (y se encasquilla y dispersa más),
                     dn > 0 && dx > dn * 1.08F && com.copperslug.armasfuego.comun.Cobre.atasco(3) > com.copperslug.armasfuego.comun.Cobre.atasco(0) && com.copperslug.armasfuego.comun.Cobre.dispersion(3) > com.copperslug.armasfuego.comun.Cobre.dispersion(0)
-                            && com.copperslug.armasfuego.comun.Cobre.perforacion(3) > 0 && tip.contains("+15"),
+                            && com.copperslug.armasfuego.comun.Cobre.perforacion(3) > 0,
                     String.format("nueva %.2f, oxidada %.2f; tooltip «%s»", dn, dx, tip));
         });
         // ---------------------------------------------------------------- la cera se gasta

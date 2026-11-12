@@ -482,7 +482,6 @@ public class MosqueteItem extends ArmaFuegoItem {
             l.add(x.withStyle(e == Enchantments.SWEEPING_EDGE ? ChatFormatting.DARK_GRAY : ChatFormatting.LIGHT_PURPLE));
         });
         super.appendHoverText(s, level, l, f);
-        l.add(Component.translatable("item.copperslug.mosquete.ayuda_bayoneta").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override
