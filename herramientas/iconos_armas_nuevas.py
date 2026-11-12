@@ -82,104 +82,108 @@ def empunadura(l, x, y1, y2, r=MADERA):
 
 
 def lanzallamas(c):
+    """Tipo fusil: boquilla ancha a la derecha, escudo de calor, depósito debajo y culata de tubo a la izquierda."""
     l = Lienzo()
-    # el depósito bajo el cañón (acero, con bandas de latón)
-    l.caja(6, 8, 12, 12, ACERO)
-    l.col(8, 8, 12, LATON)
-    l.col(11, 8, 12, LATON)
-    empunadura(l, 2, 8, 12)
-    # cuerpo y cañón
-    l.caja(1, 3, 6, 8, c)
-    l.caja(5, 4, 13, 7, c)
-    for x in (8, 10):
-        l.col(x, 4, 7, HIERRO)
-    # boquilla ancha y llama piloto
-    l.caja(12, 3, 14, 8, HIERRO)
+    # culata de tubo
+    l.caja(0, 4, 1, 9, MADERA)
+    for x in range(1, 5):
+        l.px(x, 4, c[0])
+        l.px(x, 5, c[3])
+        l.px(x, 8, c[1])
+        l.px(x, 9, c[0])
+    empunadura(l, 4, 9, 12)
+    l.caja(8, 9, 12, 12, ACERO)
+    l.col(9, 9, 12, LATON)
+    l.col(11, 9, 12, LATON)
+    l.caja(4, 4, 9, 9, c)
+    l.caja(8, 5, 13, 8, c)
+    for x in range(8, 13):
+        l.px(x, 4, HIERRO[0] if x in (8, 12) else HIERRO[3])
+    l.caja(12, 3, 14, 9, HIERRO)
     l.px(15, 5, FUEGO[3])
     l.px(15, 6, FUEGO[2])
-    l.px(15, 4, FUEGO[1])
-    l.px(14, 2, FUEGO[2])
-    l.px(14, 1, FUEGO[3])
-    # gatillo
-    l.px(6, 9, HIERRO[2])
-    l.px(5, 10, HIERRO[1])
-    return l.imagen()
-
-
-def resonancia(c):
-    l = Lienzo()
-    empunadura(l, 3, 8, 13)
-    l.caja(2, 4, 8, 9, c)
-    l.caja(7, 5, 14, 8, c)
-    # las bobinas de eco a lo largo del cañón
-    for x in (9, 11, 13):
-        l.col(x, 4, 9, ECO)
-    l.caja(14, 4, 15, 9, c)
-    l.px(15, 6, ECO[3])
-    l.px(15, 7, ECO[2])
-    # el fragmento de eco encima
-    l.caja(3, 1, 6, 4, ECO)
-    l.px(4, 2, ECO[4])
-    # emblema de latón
-    l.px(5, 6, LATON[3])
-    l.px(5, 7, LATON[1])
+    l.px(15, 7, FUEGO[1])
+    l.px(13, 10, LATON[3])
+    l.px(13, 11, FUEGO[2])
     l.px(7, 10, HIERRO[2])
     return l.imagen()
 
 
-def arponera(c):
+def resonancia(c):
+    """Pistola: corredera de cobre, bobinas de eco encima y la bocina emisora en la boca."""
     l = Lienzo()
-    empunadura(l, 2, 8, 13)
-    l.caja(1, 4, 9, 8, c)
-    # el carrete de cuerda bajo el cuerpo
-    l.caja(5, 8, 9, 12, HIERRO)
-    for y in (9, 10, 11):
-        for x in (6, 7, 8):
-            l.px(x, y, CUERDA[3] if (x + y) % 2 else CUERDA[2])
-    # aro delantero
-    l.caja(9, 3, 10, 9, c)
-    # varilla y punta del arpón
-    for x in range(11, 14):
-        l.px(x, 5, ACERO[4])
+    empunadura(l, 4, 9, 13)
+    l.caja(2, 5, 11, 9, c)
+    for x in (5, 7, 9):
+        l.px(x, 4, ECO[3])
+        l.px(x + 1, 4, ECO[1])
+    l.caja(10, 6, 12, 8, ECO)
+    # la bocina, más ancha que el cañón
+    l.caja(12, 3, 14, 11, c)
+    for y in range(5, 10):
+        l.px(15, y, ECO[3] if y in (6, 7) else ECO[1])
+    l.px(13, 7, ECO[4])
+    l.px(1, 5, HIERRO[2])
+    l.px(1, 6, HIERRO[0])
+    # guardamonte
+    l.px(7, 10, HIERRO[1])
+    l.px(8, 11, HIERRO[0])
+    l.px(9, 11, HIERRO[0])
+    l.px(8, 10, HIERRO[3])
+    return l.imagen()
+
+
+def arponera(c):
+    """Fusil submarino: el arpón encima del cañón, con la punta a la derecha, el carrete debajo y la culata."""
+    l = Lienzo()
+    # arpón
+    for x in range(2, 14):
+        l.px(x, 5, ACERO[4] if x % 4 else ACERO[3])
         l.px(x, 6, ACERO[1])
-    for y, (x1, x2) in {3: (12, 12), 4: (12, 13), 5: (13, 14), 6: (13, 15), 7: (12, 14), 8: (12, 12)}.items():
-        for x in range(x1, x2 + 1):
-            l.px(x, y, ACERO[3] if y <= 5 else ACERO[1])
-    l.px(15, 6, ACERO[0])
-    l.px(14, 5, ACERO[4])
+    for (x, y) in ((13, 4), (14, 5), (15, 6), (14, 6), (13, 7), (12, 3), (12, 8)):
+        l.px(x, y, ACERO[3] if y <= 5 else ACERO[1])
+    l.px(15, 5, ACERO[0])
+    # cañón y cabeza
+    l.caja(1, 7, 11, 9, c)
+    l.caja(10, 6, 12, 10, c)
+    l.px(11, 8, CUERO[2])
+    # culata
+    l.caja(0, 6, 1, 10, MADERA)
+    empunadura(l, 3, 10, 13)
+    # carrete
+    l.caja(6, 9, 9, 12, HIERRO)
+    l.px(7, 10, CUERDA[3])
+    l.px(8, 10, CUERDA[2])
+    l.px(7, 11, CUERDA[2])
+    l.px(8, 11, CUERDA[3])
     return l.imagen()
 
 
 def cerbatana(c):
+    """Carabina de dardos en diagonal, como las armas largas: culata abajo a la izquierda y boca arriba a la derecha."""
     l = Lienzo()
-    # un tubo de cobre de dos píxeles en diagonal, como el arco y la caña de vanilla: contorno oscuro bajo el tubo
-    for i in range(13):
-        x, y = 2 + i, 13 - i
+    # culata y cámara de aire
+    l.caja(0, 11, 4, 14, MADERA)
+    l.caja(3, 9, 6, 12, c)
+    l.caja(4, 12, 6, 14, CUERO)
+    # el cañón en diagonal (dos píxeles, contorno oscuro debajo)
+    for i in range(10):
+        x, y = 5 + i, 9 - i
         l.px(x, y, c[3])
         l.px(x + 1, y, c[2])
         l.px(x + 1, y + 1, c[0])
-        l.px(x, y + 1, c[1])
-        l.px(x - 1, y, c[0])
         l.px(x, y - 1, c[0])
-    # bandas de latón
-    for i in (4, 8):
-        x, y = 2 + i, 13 - i
-        for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1)):
-            l.px(x + dx, y + dy, LATON[3] if dy == 0 else LATON[1])
-    # boquilla de madera
-    for (x, y) in ((1, 14), (2, 14), (1, 13), (2, 13), (0, 14), (1, 15)):
-        l.px(x, y, MADERA[0])
-    l.px(2, 13, MADERA[3])
-    l.px(1, 14, MADERA[2])
-    # boca de hierro
-    l.px(14, 1, HIERRO[3])
-    l.px(15, 1, HIERRO[0])
-    l.px(14, 0, HIERRO[0])
-    l.px(15, 2, HIERRO[0])
-    # el carcaj de dardos colgado en medio, con dos plumas
-    l.caja(8, 9, 10, 13, CUERO)
-    l.px(9, 8, (90, 200, 90))
-    l.px(10, 8, (200, 200, 210))
+    for i in (3, 7):
+        x, y = 5 + i, 9 - i
+        l.px(x, y, LATON[3])
+        l.px(x + 1, y, LATON[2])
+    l.px(15, 0, HIERRO[0])
+    l.px(14, 0, HIERRO[2])
+    # dos plumas de dardo asomando del carcaj
+    l.px(8, 9, (90, 200, 90))
+    l.px(9, 9, (200, 200, 210))
+    l.px(8, 10, CUERO[1])
+    l.px(9, 10, CUERO[2])
     return l.imagen()
 
 
