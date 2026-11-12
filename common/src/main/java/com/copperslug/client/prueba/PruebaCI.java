@@ -366,10 +366,10 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
-            int res = sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:piramide " + c.getX() + " " + c.getY() + " " + c.getZ());
             PI.put("est_p", estContar(l, c, 40, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
-            PI.put("est_p_cmd", res);
+            PI.put("est_p_cmd", "sin código en 1.21");
         }));
         sin("est_piramide_esperar", 100, () -> {});
         vigila("est_piramide_ok", 4, () -> {
@@ -399,10 +399,10 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
-            int res = sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
                     "place structure copperslug:mina " + c.getX() + " " + c.getY() + " " + c.getZ());
             PI.put("est_m", estContar(l, c, 34, 34, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
-            PI.put("est_m_cmd", res);
+            PI.put("est_m_cmd", "sin código en 1.21");
         }));
         sin("est_mina_esperar", 100, () -> {});
         vigila("est_mina_ok", 4, () -> {
