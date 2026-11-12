@@ -94,11 +94,21 @@ public class BotinArmas {
     /** Lo que se añade al abrir un cofre de la tabla {@code id} (casi siempre nada). */
     public static List<ItemStack> aplicar(ResourceLocation id, RandomSource r) {
         ObjectArrayList<ItemStack> botin = new ObjectArrayList<>();
+        granadas(id, r, botin);
         Arma a = arma(id);
         if (a == null) return botin;
         if (r.nextDouble() >= probabilidad(id)) return botin;
         botin.addAll(generar(a, r));
         return botin;
+    }
+
+    /** Granadas sueltas (1 a 3, de un tipo al azar) en los puestos de saqueadores, las minas abandonadas y las mazmorras. */
+    private static void granadas(ResourceLocation id, RandomSource r, List<ItemStack> botin) {
+        String p = id.getPath();
+        if (!p.equals("chests/pillager_outpost") && !p.equals("chests/abandoned_mineshaft") && !p.equals("chests/simple_dungeon")) return;
+        if (r.nextDouble() >= ConfigServidor.granadaBotin()) return;
+        var tipos = List.of(ModItems.GRANADA_HUMO, ModItems.GRANADA_METRALLA, ModItems.GRANADA_MIEL);
+        botin.add(new ItemStack(tipos.get(r.nextInt(tipos.size())).get(), 1 + r.nextInt(3)));
     }
 
     /** El arma (un poco oxidada a veces, y a veces encantada) y algo de su munición. */

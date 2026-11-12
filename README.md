@@ -11,7 +11,7 @@ rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Wi
   can be crafted.
 - The copper rusts over time: wax it, or scrape it with an axe. Each rust phase trades accuracy for damage.
 - Every gun has a HUD, sounds, particles, 3D models in hand (flat icons in the inventory) and its own advancement tab
-  (57 advancements).
+  (58 advancements).
 - Server config: `<world>/serverconfig/copperslug-server.toml` (damage, fire rate, range, rust, wax, loot chances…).
 - Enchantments show on the gun: a Suppressor puts a suppressor on the barrel, Long Barrel lengthens the revolver, Choke,
   Copper Sight and Rifled Bore fit the shotgun, musket and hand cannon. The parts rust with the gun.
@@ -97,7 +97,7 @@ catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Wi
   de violín y la forma de calar la bayoneta sí se fabrican.
 - El cobre se oxida con el tiempo: se encera o se rasca con un hacha. Cada fase de óxido cambia precisión por daño.
 - Cada arma tiene HUD, sonidos, partículas, modelos 3D en la mano (iconos planos en el inventario) y su propia pestaña de
-  logros (57 logros).
+  logros (58 logros).
 - Config del servidor: `<mundo>/serverconfig/copperslug-server.toml` (daño, cadencia, alcance, óxido, cera, probabilidad
   en cofres…).
 - Los encantamientos se ven en el arma: un Silenciador pone un silenciador en el cañón, Cañón largo alarga el revólver, y

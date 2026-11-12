@@ -138,5 +138,19 @@ public final class ModItems {
     public static final RegistryObject<Item> ARPON_COBRE = ITEMS.register("arpon_cobre",
             () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties()));
 
+    /** El cinturón: la cartuchera (munición) y la funda (un arma corta). Van en el hueco de cinturón de Curios/Trinkets o en el inventario. */
+    public static final RegistryObject<Item> CARTUCHERA = ITEMS.register("cartuchera",
+            () -> new com.copperslug.armasfuego.cinturon.CartucheraItem(new Item.Properties().stacksTo(1)));
+    public static final RegistryObject<Item> FUNDA = ITEMS.register("funda",
+            () -> new com.copperslug.armasfuego.cinturon.FundaItem(new Item.Properties().stacksTo(1)));
+
+    /** Granadas de cobre: humo, metralla y pegamento (miel). */
+    public static final RegistryObject<Item> GRANADA_HUMO = ITEMS.register("granada_humo",
+            () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.HUMO, new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> GRANADA_METRALLA = ITEMS.register("granada_metralla",
+            () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.METRALLA, new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> GRANADA_MIEL = ITEMS.register("granada_miel",
+            () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.MIEL, new Item.Properties().stacksTo(16)));
+
     private ModItems() {}
 }
