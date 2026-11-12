@@ -107,6 +107,7 @@ public final class FuegoClienteMod {
     public static void renderers(EntityRenderersEvent.RegisterRenderers e) {
         e.registerEntityRenderer(ModEntities.GATLING.get(), GatlingRenderer::new);
         e.registerEntityRenderer(ModEntities.BOLA_CANON.get(), BolaCanonRenderer::new);
+        e.registerEntityRenderer(ModEntities.GRANADA.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
     }
 
     @SubscribeEvent

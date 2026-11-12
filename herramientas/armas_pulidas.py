@@ -687,7 +687,7 @@ def cinturon_funda(llena=False):
     el = [
         C('funda', (2.5, 3, 7), (3.5, 7.5, 9.5), 'cuero'),
         C('boca_funda', (2.25, 7, 6.75), (3.75, 7.75, 9.75), 'cuero'),
-        C('remache', (2.24, 5, 8), (2.26, 5.5, 8.5), 'laton'),
+        C('remache', (2.48, 5, 8), (2.5, 5.5, 8.5), 'laton', caras=('west',)),
         C('correa', (3, 7.25, 7.5), (4, 8.75, 8.5), 'cuero'),
     ]
     if llena:
