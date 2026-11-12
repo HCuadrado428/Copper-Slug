@@ -587,8 +587,17 @@ public abstract class ArmaFuegoItem extends Item {
         l.sendParticles(ArmasFuegoRegistro.CASQUILLO.get(), desde.x, desde.y, desde.z, 0, v.x, v.y, v.z, 1.0);
     }
 
-    /** Busca en la otra mano y luego en el inventario algo que cumpla {@code cond}. */
+    /**
+     * Busca en la otra mano y luego en el inventario algo que cumpla {@code cond}. Si no hay y el jugador lleva una
+     * cartuchera con munición que valga, saca una pila de ella al inventario y la devuelve.
+     */
     public static ItemStack buscar(Player p, java.util.function.Predicate<ItemStack> cond) {
+        ItemStack s = buscarSuelto(p, cond);
+        if (s.isEmpty() && !p.level().isClientSide && com.copperslug.armasfuego.cinturon.CartucheraItem.reponer(p, cond)) s = buscarSuelto(p, cond);
+        return s;
+    }
+
+    private static ItemStack buscarSuelto(Player p, java.util.function.Predicate<ItemStack> cond) {
         if (cond.test(p.getOffhandItem())) return p.getOffhandItem();
         for (int i = 0; i < p.getInventory().getContainerSize(); i++) {
             ItemStack s = p.getInventory().getItem(i);
@@ -603,6 +612,9 @@ public abstract class ArmaFuegoItem extends Item {
             ItemStack s = p.getInventory().getItem(i);
             if (!s.isEmpty() && cond.test(s)) n += s.getCount();
         }
+        // y lo que haya en la cartuchera
+        ItemStack c = com.copperslug.armasfuego.cinturon.Cinturon.buscar(p, x -> x.getItem() instanceof com.copperslug.armasfuego.cinturon.CartucheraItem);
+        if (!c.isEmpty()) for (ItemStack x : com.copperslug.armasfuego.cinturon.CartucheraItem.contenido(c)) if (cond.test(x)) n += x.getCount();
         return n;
     }
 

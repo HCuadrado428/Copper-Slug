@@ -553,5 +553,14 @@
   "death.attack.copperslug.arponera_disparo": "%1$s was harpooned",
   "death.attack.copperslug.arponera_disparo.player": "%1$s was harpooned by %2$s",
   "death.attack.copperslug.arponera_disparo.item": "%1$s was harpooned by %2$s using %3$s",
-  "jei.copperslug.info.arponera_botin": "The harpoon gun can't be crafted: it is found in underwater ruin chests. Its harpoon pulls what it hits towards you, or you towards a block, much harder underwater, and can sometimes be picked up again. Harpoons can be crafted (copper ingot, iron nugget and a stick)."
+  "jei.copperslug.info.arponera_botin": "The harpoon gun can't be crafted: it is found in underwater ruin chests. Its harpoon pulls what it hits towards you, or you towards a block, much harder underwater, and can sometimes be picked up again. Harpoons can be crafted (copper ingot, iron nugget and a stick).",
+  "item.copperslug.cartuchera": "Cartridge Belt",
+  "item.copperslug.funda": "Hip Holster",
+  "item.copperslug.cartuchera.lleva": "%s / %s rounds",
+  "item.copperslug.funda.vacia": "Empty",
+  "item.copperslug.funda.lleva": "Holds: %s",
+  "item.copperslug.funda.tecla": "Holster key (H): draw or holster a short gun",
+  "key.copperslug.funda": "Draw or holster (hip holster)",
+  "jei.copperslug.info.cartuchera": "Cartridge Belt: holds up to 256 rounds of any ammo. Right click ammo onto it (or it onto ammo) like a bundle. When you reload and run out of loose ammo, the belt hands you more. Wear it in the Curios/Trinkets belt slot or anywhere in your inventory.",
+  "jei.copperslug.info.funda": "Hip Holster: holds one short gun (revolver, Derringer, resonance pistol or harpoon gun). The holster key (H) draws it to your hand or holsters the one you hold. It shows on your hip. Wear it in the Curios/Trinkets belt slot or anywhere in your inventory."
 }

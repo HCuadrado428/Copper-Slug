@@ -553,5 +553,14 @@
   "death.attack.copperslug.arponera_disparo": "%1$s ha sido arponeado",
   "death.attack.copperslug.arponera_disparo.player": "%1$s ha sido arponeado por %2$s",
   "death.attack.copperslug.arponera_disparo.item": "%1$s ha sido arponeado por %2$s con %3$s",
-  "jei.copperslug.info.arponera_botin": "La arponera no se fabrica: se encuentra en los cofres de las ruinas submarinas. Su arpón tira de lo que alcanza hacia ti, o de ti hacia un bloque, mucho más fuerte bajo el agua, y a veces se puede recoger de nuevo. Los arpones se fabrican (lingote de cobre, pepita de hierro y un palo)."
+  "jei.copperslug.info.arponera_botin": "La arponera no se fabrica: se encuentra en los cofres de las ruinas submarinas. Su arpón tira de lo que alcanza hacia ti, o de ti hacia un bloque, mucho más fuerte bajo el agua, y a veces se puede recoger de nuevo. Los arpones se fabrican (lingote de cobre, pepita de hierro y un palo).",
+  "item.copperslug.cartuchera": "Cartuchera",
+  "item.copperslug.funda": "Funda de cadera",
+  "item.copperslug.cartuchera.lleva": "%s / %s balas",
+  "item.copperslug.funda.vacia": "Vacía",
+  "item.copperslug.funda.lleva": "Lleva: %s",
+  "item.copperslug.funda.tecla": "Tecla de la funda (H): desenfundar o enfundar un arma corta",
+  "key.copperslug.funda": "Desenfundar o enfundar (funda de cadera)",
+  "jei.copperslug.info.cartuchera": "Cartuchera: guarda hasta 256 balas de cualquier munición. Se llena como el saco: clic derecho con la munición sobre ella (o al revés). Al recargar, si no te queda munición suelta, la cartuchera te da más. Se lleva en el hueco de cinturón de Curios/Trinkets o en cualquier parte del inventario.",
+  "jei.copperslug.info.funda": "Funda de cadera: guarda un arma corta (revólver, Derringer, pistola de resonancia o arponera). La tecla de la funda (H) la saca a la mano o enfunda la que llevas. Se ve en la cadera. Se lleva en el hueco de cinturón de Curios/Trinkets o en cualquier parte del inventario."
 }

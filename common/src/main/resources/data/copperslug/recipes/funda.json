@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "L ",
+    "LC",
+    "L "
+  ],
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "C": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "result": {
+    "item": "copperslug:funda"
+  }
+}
