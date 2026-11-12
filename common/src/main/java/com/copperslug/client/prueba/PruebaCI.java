@@ -2453,8 +2453,10 @@ public final class PruebaCI {
             piApuntar(a2Punto(4, 0, 1.2));
         });
         sin("a2_lanzallamas_vida", 2, () -> a2Vida("l0"));
-        paso("225_lanzallamas_1p", 3, piTiro());
+        sin("a2_lanzallamas_chorro", 2, () -> rifleUsar(true));
+        paso("225_lanzallamas_1p", 16, () -> piApuntar(a2Punto(4, 0, 1.2)));
         sin("a2_lanzallamas_ver", 8, () -> {
+            rifleUsar(false);
             a2Vida("l1");
             piSrv(sp -> PI.put("l_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem())));
         });
