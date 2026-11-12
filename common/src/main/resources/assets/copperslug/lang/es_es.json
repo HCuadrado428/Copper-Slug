@@ -562,5 +562,14 @@
   "item.copperslug.funda.tecla": "Tecla de la funda (H): desenfundar o enfundar un arma corta",
   "key.copperslug.funda": "Desenfundar o enfundar (funda de cadera)",
   "jei.copperslug.info.cartuchera": "Cartuchera: guarda hasta 256 balas de cualquier munición. Se llena como el saco: clic derecho con la munición sobre ella (o al revés). Al recargar, si no te queda munición suelta, la cartuchera te da más. Se lleva en el hueco de cinturón de Curios/Trinkets o en cualquier parte del inventario.",
-  "jei.copperslug.info.funda": "Funda de cadera: guarda un arma corta (revólver, Derringer, pistola de resonancia o arponera). La tecla de la funda (H) la saca a la mano o enfunda la que llevas. Se ve en la cadera. Se lleva en el hueco de cinturón de Curios/Trinkets o en cualquier parte del inventario."
+  "jei.copperslug.info.funda": "Funda de cadera: guarda un arma corta (revólver, Derringer, pistola de resonancia o arponera). La tecla de la funda (H) la saca a la mano o enfunda la que llevas. Se ve en la cadera. Se lleva en el hueco de cinturón de Curios/Trinkets o en cualquier parte del inventario.",
+  "item.copperslug.granada_humo": "Granada de humo de cobre",
+  "item.copperslug.granada_metralla": "Granada de metralla de cobre",
+  "item.copperslug.granada_miel": "Granada de pegamento de cobre",
+  "item.copperslug.granada_humo.desc": "Una nube de humo de 10 segundos: ciega y los mobs pierden de vista a su objetivo",
+  "item.copperslug.granada_metralla.desc": "Una explosión pequeña que hiere y empuja",
+  "item.copperslug.granada_miel.desc": "Salpica miel: deja pringado a todo el que pilla",
+  "entity.copperslug.granada": "Granada de cobre",
+  "advancements.copperslug.armas.granada.title": "Quita la anilla",
+  "advancements.copperslug.armas.granada.description": "Lanza una granada de cobre y espera los tres segundos."
 }

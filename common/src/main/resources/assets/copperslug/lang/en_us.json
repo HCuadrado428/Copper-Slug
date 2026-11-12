@@ -562,5 +562,14 @@
   "item.copperslug.funda.tecla": "Holster key (H): draw or holster a short gun",
   "key.copperslug.funda": "Draw or holster (hip holster)",
   "jei.copperslug.info.cartuchera": "Cartridge Belt: holds up to 256 rounds of any ammo. Right click ammo onto it (or it onto ammo) like a bundle. When you reload and run out of loose ammo, the belt hands you more. Wear it in the Curios/Trinkets belt slot or anywhere in your inventory.",
-  "jei.copperslug.info.funda": "Hip Holster: holds one short gun (revolver, Derringer, resonance pistol or harpoon gun). The holster key (H) draws it to your hand or holsters the one you hold. It shows on your hip. Wear it in the Curios/Trinkets belt slot or anywhere in your inventory."
+  "jei.copperslug.info.funda": "Hip Holster: holds one short gun (revolver, Derringer, resonance pistol or harpoon gun). The holster key (H) draws it to your hand or holsters the one you hold. It shows on your hip. Wear it in the Curios/Trinkets belt slot or anywhere in your inventory.",
+  "item.copperslug.granada_humo": "Copper Smoke Grenade",
+  "item.copperslug.granada_metralla": "Copper Frag Grenade",
+  "item.copperslug.granada_miel": "Copper Glue Grenade",
+  "item.copperslug.granada_humo.desc": "A 10-second smoke cloud: blinds, and mobs lose sight of their target",
+  "item.copperslug.granada_metralla.desc": "A small blast that hurts and knocks back",
+  "item.copperslug.granada_miel.desc": "Splashes honey: everyone caught gets sticky",
+  "entity.copperslug.granada": "Copper Grenade",
+  "advancements.copperslug.armas.granada.title": "Pull the Pin",
+  "advancements.copperslug.armas.granada.description": "Throw a copper grenade and wait the three seconds."
 }
