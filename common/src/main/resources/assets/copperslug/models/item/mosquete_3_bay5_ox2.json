@@ -7,7 +7,7 @@
  "base": {
   "parent": "copperslug:item/armas3d/mosquete_3d_3",
   "textures": {
-   "cobre": "copperslug:item/armas3d/cobre_2",
+   "cobre": "copperslug:item/armas3d/p_cobre_2",
    "bayoneta": "minecraft:block/diamond_block"
   }
  },
