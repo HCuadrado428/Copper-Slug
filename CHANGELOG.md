@@ -52,6 +52,10 @@
   Each weapon shoots its own way (revolver: six quick shots; Winchester: slower and farther; Derringer: two shots, short range;
   Thompson: bursts of three; musket: one huge shot every few seconds) and each structure hands out its own: pillagers carry
   revolvers or Winchesters, the pyramid husks muskets and Derringers, the mine zombies revolvers and Winchesters.
+  Armed mobs now behave: they take a moment to react and aim, cock the gun (you hear the trigger; the musket spits sparks) before
+  every shot, miss much more (farther away, against a moving or crouching target, when wounded; the first shot is often a warning
+  to the side; config `fallo`), sometimes misfire with a dry click, step sideways and back away when you get close, flinch when
+  hit, and reload with step by step sounds and the crossbow-loading gesture (zombies lower their arms), also between fights.
 - New structure, the Pharaoh's Pyramid (deserts): a cinematic stepped sandstone pyramid (61 x 61) with a pylon gate and
   obelisks, and two labyrinth floors inside: an 11 x 11 maze with loops, pressure-plate TNT traps, husks (some carrying
   Winchesters) and chests in the dead ends, with the sarcophagus hall in the middle; a hand ladder leads to a smaller 7 x 7
@@ -124,6 +128,11 @@
   cerca; Thompson: ráfagas de tres; mosquete: un tiro enorme cada pocos segundos) y cada estructura reparte las suyas: los
   saqueadores llevan revólveres o Winchesters, los husks de la pirámide mosquetes y Derringers, los zombis de la mina revólveres
   y Winchesters.
+  Los mobs armados ahora se comportan: tardan en reaccionar y apuntar, montan el arma antes de cada disparo (se oye el gatillo; el
+  mosquete echa chispas), fallan mucho más (de lejos, contra un blanco que se mueve o va agachado, si están heridos; el primer tiro
+  suele ser de aviso a un lado; config `fallo`), a veces se encasquillan con un clic en seco, se mueven de lado y retroceden si te
+  acercas, se sobresaltan si les das y recargan con sonidos paso a paso y el gesto de cargar la ballesta (los zombis bajan los
+  brazos), también entre combates.
 - Estructura nueva, la Pirámide del faraón (desiertos): una pirámide escalonada de arenisca de película (61 x 61) con
   pilono de entrada y obeliscos, y dos plantas laberínticas por dentro: un laberinto de 11 x 11 con bucles, trampas de TNT
   con placa de presión, husks (algunos con Winchester) y cofres en los callejones, con la sala del sarcófago en el centro;
