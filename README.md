@@ -13,6 +13,13 @@ ammo and enchantments.
 - Every gun has a HUD, sounds, particles, 3D models in hand (flat icons in the inventory) and its own advancement tab
   (57 advancements).
 - Server config: `<world>/serverconfig/copperslug-server.toml` (damage, fire rate, range, rust, wax, loot chances…).
+- Enchantments show on the gun: a Suppressor puts a suppressor on the barrel, Long Barrel lengthens the revolver, Choke,
+  Copper Sight and Rifled Bore fit the shotgun, musket and hand cannon. The parts rust with the gun.
+- Three new structures: the **Pharaoh's Pyramid** (desert), the **Abandoned Copper Mine** (underground) and the
+  **Raiders' Camp** (plains, savannas, taigas, forests). Labyrinths, traps, loot and armed mobs.
+- Armed mobs: some pillagers (and the husks and zombies of those structures) carry a gun and really shoot: they react,
+  aim, miss, jam, reload and back away. Rare and configurable (`mobs_armados`); off means vanilla.
+- Synthesised sounds with a character per gun, a muffled far version for shots heard from afar and an echo indoors.
 
 ## Weapons
 
@@ -87,6 +94,16 @@ especial y sus encantamientos.
   logros (57 logros).
 - Config del servidor: `<mundo>/serverconfig/copperslug-server.toml` (daño, cadencia, alcance, óxido, cera, probabilidad
   en cofres…).
+- Los encantamientos se ven en el arma: un Silenciador pone un silenciador en el cañón, Cañón largo alarga el revólver, y
+  Estrangulador, Mira de cobre y Ánima rayada se montan en la escopeta, el mosquete y el cañón de mano. Las piezas se
+  oxidan con el arma.
+- Tres estructuras nuevas: la **Pirámide del faraón** (desierto), la **Mina de cobre abandonada** (bajo tierra) y el
+  **Campamento de saqueadores** (llanuras, sabanas, taigas, bosques). Laberintos, trampas, botín y mobs armados.
+- Mobs armados: algunos saqueadores (y los husks y zombis de esas estructuras) llevan un arma y disparan de verdad:
+  reaccionan, apuntan, fallan, se encasquillan, recargan y retroceden. Raros y configurables (`mobs_armados`); apagado es
+  vanilla.
+- Sonidos sintetizados con un carácter por arma, una versión lejana amortiguada para los disparos que se oyen de lejos y
+  eco en interiores.
 
 ## Armas
 
