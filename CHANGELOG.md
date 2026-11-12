@@ -98,6 +98,10 @@
   the hand cannon); gunpowder smoke that drifts with the shot and rises; sparks that bounce off metal and stone; brass
   casings that bounce twice and lie on the ground; and bullet holes that stay on the block face for 10 seconds.
 
+- Smarter armed mobs (config `mobs_armados.tactica` and `mobs_armados.alerta`): armed pillagers run to cover behind a
+  block to reload and when they get hurt, peek out to fire a few shots and go back; when several fight the same target,
+  some flank around the sides; and armed mobs that hear a shot (24 blocks by default) come to the shooter.
+
 ---
 
 <a id="castellano"></a>
@@ -207,3 +211,7 @@
   la Derringer, enorme en el cañón de mano); humo de pólvora que sale con el tiro y sube; chispas que rebotan al dar en
   metal o piedra; casquillos que rebotan dos veces y se quedan en el suelo; y agujeros de bala que se quedan 10 segundos
   en la cara del bloque.
+- Mobs armados más listos (config `mobs_armados.tactica` y `mobs_armados.alerta`): los saqueadores armados corren a
+  cubrirse tras un bloque para recargar y cuando les hieren, se asoman a disparar unas veces y vuelven; si son varios
+  contra el mismo objetivo, algunos flanquean por los lados; y los mobs armados que oyen un disparo (24 bloques por
+  defecto) acuden a por el tirador.
