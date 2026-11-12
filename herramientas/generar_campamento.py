@@ -189,7 +189,10 @@ def mob(eid, x, y, z, arma=None, extra=None):
             d.update(E.mano_arma(v21, arma))
         if extra:
             d.update(extra(v21))
-        d['Tags'] = E.lista(E.STRING, [E.s('copperslug_tirado')])
+        etiquetas = [E.s('copperslug_tirado')]
+        if arma:
+            etiquetas.append(E.s('copperslug_arma_' + arma))
+        d['Tags'] = E.lista(E.STRING, etiquetas)
         return d
     g.entidades.append((eid, x, y, z, ex))
 
