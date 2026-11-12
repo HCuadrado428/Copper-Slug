@@ -542,5 +542,10 @@
   "death.attack.copperslug.lanzallamas_fuego": "%1$s ha sido churruscado",
   "death.attack.copperslug.lanzallamas_fuego.player": "%1$s ha sido churruscado por %2$s",
   "death.attack.copperslug.lanzallamas_fuego.item": "%1$s ha sido churruscado por %2$s con %3$s",
-  "jei.copperslug.info.lanzallamas_botin": "El lanzallamas no se fabrica: se encuentra en los cofres de las fortalezas del Nether. Mantén el clic izquierdo para echar fuego; bajo el agua no funciona. Los bidones se fabrican (polvo de blaze, dos carbones y una pepita de hierro)."
+  "jei.copperslug.info.lanzallamas_botin": "El lanzallamas no se fabrica: se encuentra en los cofres de las fortalezas del Nether. Mantén el clic izquierdo para echar fuego; bajo el agua no funciona. Los bidones se fabrican (polvo de blaze, dos carbones y una pepita de hierro).",
+  "item.copperslug.resonancia": "Pistola de resonancia",
+  "death.attack.copperslug.resonancia_disparo": "%1$s se deshizo con un sonido",
+  "death.attack.copperslug.resonancia_disparo.player": "%1$s se deshizo por culpa de %2$s",
+  "death.attack.copperslug.resonancia_disparo.item": "%1$s se deshizo por culpa de %2$s con %3$s",
+  "jei.copperslug.info.resonancia_botin": "La pistola de resonancia no se fabrica: se encuentra en los cofres de las ciudades antiguas. Funciona con fragmentos de eco (una carga cada uno) y su onda atraviesa bloques y armadura. Es ruidosa: el sculk la oye."
 }
