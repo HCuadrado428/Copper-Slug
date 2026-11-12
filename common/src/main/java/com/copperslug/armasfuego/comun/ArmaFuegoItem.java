@@ -634,15 +634,7 @@ public abstract class ArmaFuegoItem extends Item {
     @Override
     public void appendHoverText(ItemStack s, @Nullable Level level, List<Component> l, TooltipFlag f) {
         l.add(Component.translatable("msg.copperslug.armafuego.balas", balas(s), capacidad(s), iconoMunicion(s).getHoverName()).withStyle(ChatFormatting.GOLD));
-        l.add(Cobre.estado(s));
-        Cobre.tooltip(s, l);
         if (atascada(s)) l.add(Component.translatable("msg.copperslug.armafuego.atascada").withStyle(ChatFormatting.RED));
-        String id = getDescriptionId();
-        l.add(Component.translatable(id + ".ayuda1").withStyle(ChatFormatting.GRAY));
-        l.add(Component.translatable(id + ".ayuda2").withStyle(ChatFormatting.DARK_GRAY));
-        l.add(Component.translatable("msg.copperslug.armafuego.ayuda_apuntar").withStyle(ChatFormatting.DARK_GRAY));
-        l.add(Component.translatable("msg.copperslug.armafuego.ayuda_recarga").withStyle(ChatFormatting.DARK_GRAY));
-        l.add(Component.translatable("msg.copperslug.armafuego.ayuda_cobre").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     public void extensionesCliente(Consumer<IClientItemExtensions> consumer) {

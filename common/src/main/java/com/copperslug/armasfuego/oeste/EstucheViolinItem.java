@@ -219,7 +219,5 @@ public class EstucheViolinItem extends Item {
         ItemStack arma = dentro(s);
         l.add(arma.isEmpty() ? Component.translatable("item.copperslug.estuche_violin.vacio").withStyle(ChatFormatting.GRAY)
                 : Component.translatable("item.copperslug.estuche_violin.lleva").withStyle(ChatFormatting.GOLD));
-        l.add(Component.translatable("item.copperslug.estuche_violin.violin").withStyle(ChatFormatting.GRAY));
-        l.add(Component.translatable("item.copperslug.estuche_violin.ayuda").withStyle(ChatFormatting.DARK_GRAY));
     }
 }
