@@ -536,5 +536,11 @@
   "death.attack.copperslug.cerbatana_disparo": "%1$s never heard the dart coming",
   "death.attack.copperslug.cerbatana_disparo.player": "%1$s never heard %2$s's dart coming",
   "death.attack.copperslug.cerbatana_disparo.item": "%1$s never heard %2$s's dart coming from %3$s",
-  "jei.copperslug.info.cerbatana_botin": "The blowgun can't be crafted: it is found in jungle temple chests. Silent: the sculk does not hear it. Its darts can be crafted, including poison and sleep ones."
+  "jei.copperslug.info.cerbatana_botin": "The blowgun can't be crafted: it is found in jungle temple chests. Silent: the sculk does not hear it. Its darts can be crafted, including poison and sleep ones.",
+  "item.copperslug.lanzallamas": "Copper Flamethrower",
+  "item.copperslug.bidon_combustible": "Fuel Canister",
+  "death.attack.copperslug.lanzallamas_fuego": "%1$s was roasted",
+  "death.attack.copperslug.lanzallamas_fuego.player": "%1$s was roasted by %2$s",
+  "death.attack.copperslug.lanzallamas_fuego.item": "%1$s was roasted by %2$s using %3$s",
+  "jei.copperslug.info.lanzallamas_botin": "The flamethrower can't be crafted: it is found in Nether fortress chests. Hold left click to spray fire; it doesn't work underwater. Fuel canisters can be crafted (blaze powder, two coal and an iron nugget)."
 }

@@ -122,5 +122,11 @@ public final class ModItems {
     public static final RegistryObject<Item> DARDO_SOMNIFERO = ITEMS.register("dardo_somnifero",
             () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties()));
 
+    // ---- Lanzallamas de cobre (fortalezas del Nether) y su bidón
+    public static final RegistryObject<Item> LANZALLAMAS = ITEMS.register("lanzallamas",
+            () -> new com.copperslug.armasfuego.nether.LanzallamasItem(new Item.Properties().durability(400).rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> BIDON_COMBUSTIBLE = ITEMS.register("bidon_combustible",
+            () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties().stacksTo(8)));
+
     private ModItems() {}
 }

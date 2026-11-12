@@ -31,6 +31,9 @@ public final class EquilibrioArmas {
     private static ForgeConfigSpec.DoubleValue DERRINGER_DANO, DERRINGER_ALCANCE, DERRINGER_DESENFUNDE;
     // ---- Cerbatana
     private static ForgeConfigSpec.DoubleValue CERBATANA_DANO, CERBATANA_ALCANCE;
+    // ---- Lanzallamas
+    private static ForgeConfigSpec.DoubleValue LANZALLAMAS_DANO, LANZALLAMAS_ALCANCE;
+    private static ForgeConfigSpec.IntValue LANZALLAMAS_CAPACIDAD;
     // ---- Thompson
     private static ForgeConfigSpec.DoubleValue THOMPSON_DANO, THOMPSON_ALCANCE;
     private static ForgeConfigSpec.IntValue THOMPSON_CADENCIA, THOMPSON_CAPACIDAD, THOMPSON_RECARGA;
@@ -50,7 +53,7 @@ public final class EquilibrioArmas {
     // ---- apuntar (clic derecho mantenido; todas menos la escopeta de presión)
     private static ForgeConfigSpec.DoubleValue APUNTAR_DISPERSION, APUNTAR_FOV, APUNTAR_LENTITUD;
     // ---- botín
-    private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON, B_CERBATANA;
+    private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON, B_CERBATANA, B_LANZALLAMAS;
 
     /** Lo llama ConfigServidor al final (su propia sección). */
     public static void definir(ForgeConfigSpec.Builder b) {
@@ -131,11 +134,16 @@ public final class EquilibrioArmas {
         CERBATANA_DANO = b.comment("Cerbatana: daño del dardo normal (el de veneno hace el 70 % y el somnífero el 35 %).").defineInRange("cerbatana_dano", 3.0, 0.0, 100.0);
         CERBATANA_ALCANCE = b.comment("Cerbatana: alcance en bloques.").defineInRange("cerbatana_alcance", 40.0, 2.0, 128.0);
 
+        LANZALLAMAS_DANO = b.comment("Lanzallamas: daño de cada pulsación de llama (sale cada 2 ticks) a todo lo que cae en el cono, además de prenderlo.").defineInRange("lanzallamas_dano", 1.5, 0.0, 100.0);
+        LANZALLAMAS_ALCANCE = b.comment("Lanzallamas: alcance del chorro en bloques.").defineInRange("lanzallamas_alcance", 7.0, 2.0, 32.0);
+        LANZALLAMAS_CAPACIDAD = b.comment("Lanzallamas: pulsaciones de llama que da un bidón (cada una gasta una; 2 ticks).").defineInRange("lanzallamas_capacidad", 100, 10, 1000);
+
         B_GATLING = b.comment("Gatling: cofres de las pirámides del desierto.").defineInRange("gatling_piramide", 0.2, 0.0, 1.0);
         B_WINCHESTER = b.comment("Winchester: cofres de las minas abandonadas (vagonetas con cofre).").defineInRange("winchester_mina", 0.1, 0.0, 1.0);
         B_DERRINGER = b.comment("Derringer: cofres de los tesoros enterrados.").defineInRange("derringer_tesoro", 0.35, 0.0, 1.0);
         B_THOMPSON = b.comment("Thompson (en su estuche de violín): cofres de las mansiones del bosque.").defineInRange("thompson_mansion", 0.4, 0.0, 1.0);
         B_CERBATANA = b.comment("Cerbatana: cofres de los templos de la jungla.").defineInRange("cerbatana_templo", 0.3, 0.0, 1.0);
+        B_LANZALLAMAS = b.comment("Lanzallamas: cofres de las fortalezas del Nether.").defineInRange("lanzallamas_fortaleza", 0.25, 0.0, 1.0);
         B_MOSQUETE = b.comment("Mosquete: cofres de los pasillos y cruces de las fortalezas.").defineInRange("mosquete_fortaleza", 0.15, 0.0, 1.0);
         B_CANON = b.comment("Cañón de mano: cofres de los bastiones (otros y puente).").defineInRange("canon_bastion", 0.15, 0.0, 1.0);
         b.pop();
@@ -196,6 +204,9 @@ public final class EquilibrioArmas {
     public static double derringerAlcance() { return d(DERRINGER_ALCANCE); }
     public static float cerbatanaDano() { return (float) d(CERBATANA_DANO); }
     public static double cerbatanaAlcance() { return d(CERBATANA_ALCANCE); }
+    public static float lanzallamasDano() { return (float) d(LANZALLAMAS_DANO); }
+    public static double lanzallamasAlcance() { return d(LANZALLAMAS_ALCANCE); }
+    public static int lanzallamasCapacidad() { return i(LANZALLAMAS_CAPACIDAD); }
     public static float derringerDesenfunde() { return (float) d(DERRINGER_DESENFUNDE); }
 
     public static float thompsonDano() { return (float) d(THOMPSON_DANO); }
@@ -248,5 +259,6 @@ public final class EquilibrioArmas {
     public static double botinThompson() { return d(B_THOMPSON); }
     public static double botinMosquete() { return d(B_MOSQUETE); }
     public static double botinCerbatana() { return d(B_CERBATANA); }
+    public static double botinLanzallamas() { return d(B_LANZALLAMAS); }
     public static double botinCanon() { return d(B_CANON); }
 }

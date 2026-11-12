@@ -89,7 +89,8 @@ public final class FuegoCliente {
             float k = ThompsonItem.compensador(s);
             patadaArma((0.55F + Math.min(0.6F, n * 0.03F)) * k, 1.4F, 0.45F);
             p.setYRot(p.getYRot() + (p.getRandom().nextFloat() - 0.45F) * 1.1F * k * Apuntado.retroceso());
-        } else if (arma instanceof MosqueteItem) patadaArma(4.5F, 7F, 1.6F);
+        } else if (arma instanceof com.copperslug.armasfuego.nether.LanzallamasItem) patadaArma(0.2F, 0.5F, 0.1F);
+        else if (arma instanceof MosqueteItem) patadaArma(4.5F, 7F, 1.6F);
         else if (arma instanceof CanonManoItem) patadaArma(6F, 10F, 2F);
         else patadaArma(2F, 3F, 1F);
     }

@@ -29,7 +29,7 @@ public class BotinArmas {
     // Fabric: LootTableEvents); aquí queda lo común: qué arma sale dónde, con qué probabilidad y con qué.
     public static void registrar(com.copperslug.shim.eventbus.api.IEventBus bus) {}
 
-    public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON, CERBATANA}
+    public enum Arma {REVOLVER, ESCOPETA, RIFLE, GATLING, WINCHESTER, DERRINGER, THOMPSON, MOSQUETE, CANON, CERBATANA, LANZALLAMAS}
 
     /** Qué arma puede salir en esa tabla de botín (null: ninguna). */
     public static Arma arma(ResourceLocation id) {
@@ -52,6 +52,7 @@ public class BotinArmas {
             case "chests/stronghold_crossing": return Arma.MOSQUETE;
             case "chests/jungle_temple":
             case "chests/jungle_temple_dispenser": return Arma.CERBATANA;
+            case "chests/nether_bridge": return Arma.LANZALLAMAS;
             case "chests/bastion_other":
             case "chests/bastion_bridge": return Arma.CANON;
             default: return null;
@@ -72,6 +73,7 @@ public class BotinArmas {
             case MOSQUETE: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinMosquete();
             case CANON: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinCanon();
             case CERBATANA: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinCerbatana();
+            case LANZALLAMAS: return com.copperslug.armasfuego.comun.EquilibrioArmas.botinLanzallamas();
             default: break;
         }
         if (p.startsWith("chests/village/")) {
@@ -148,6 +150,12 @@ public class BotinArmas {
             case CANON -> {
                 arma = new ItemStack(ModItems.CANON_MANO.get());
                 l.add(new ItemStack(net.minecraft.world.item.Items.GUNPOWDER, 4 + r.nextInt(5)));
+            }
+            case LANZALLAMAS -> {
+                arma = new ItemStack(ModItems.LANZALLAMAS.get());
+                com.copperslug.armasfuego.comun.ArmaFuegoItem.ponerBalas(arma, 20 + r.nextInt(40));
+                l.add(new ItemStack(ModItems.BIDON_COMBUSTIBLE.get(), 1 + r.nextInt(2)));
+                l.add(new ItemStack(net.minecraft.world.item.Items.BLAZE_POWDER, 2 + r.nextInt(4)));
             }
             case CERBATANA -> {
                 arma = new ItemStack(ModItems.CERBATANA.get());
