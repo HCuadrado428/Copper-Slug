@@ -547,5 +547,11 @@
   "death.attack.copperslug.resonancia_disparo": "%1$s se deshizo con un sonido",
   "death.attack.copperslug.resonancia_disparo.player": "%1$s se deshizo por culpa de %2$s",
   "death.attack.copperslug.resonancia_disparo.item": "%1$s se deshizo por culpa de %2$s con %3$s",
-  "jei.copperslug.info.resonancia_botin": "La pistola de resonancia no se fabrica: se encuentra en los cofres de las ciudades antiguas. Funciona con fragmentos de eco (una carga cada uno) y su onda atraviesa bloques y armadura. Es ruidosa: el sculk la oye."
+  "jei.copperslug.info.resonancia_botin": "La pistola de resonancia no se fabrica: se encuentra en los cofres de las ciudades antiguas. Funciona con fragmentos de eco (una carga cada uno) y su onda atraviesa bloques y armadura. Es ruidosa: el sculk la oye.",
+  "item.copperslug.arponera": "Arponera de cobre",
+  "item.copperslug.arpon_cobre": "Arpón de cobre",
+  "death.attack.copperslug.arponera_disparo": "%1$s ha sido arponeado",
+  "death.attack.copperslug.arponera_disparo.player": "%1$s ha sido arponeado por %2$s",
+  "death.attack.copperslug.arponera_disparo.item": "%1$s ha sido arponeado por %2$s con %3$s",
+  "jei.copperslug.info.arponera_botin": "La arponera no se fabrica: se encuentra en los cofres de las ruinas submarinas. Su arpón tira de lo que alcanza hacia ti, o de ti hacia un bloque, mucho más fuerte bajo el agua, y a veces se puede recoger de nuevo. Los arpones se fabrican (lingote de cobre, pepita de hierro y un palo)."
 }

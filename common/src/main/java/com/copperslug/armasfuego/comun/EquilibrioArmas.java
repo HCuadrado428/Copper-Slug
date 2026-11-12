@@ -36,6 +36,8 @@ public final class EquilibrioArmas {
     private static ForgeConfigSpec.IntValue LANZALLAMAS_CAPACIDAD;
     // ---- Pistola de resonancia
     private static ForgeConfigSpec.DoubleValue RESONANCIA_DANO, RESONANCIA_ALCANCE;
+    // ---- Arponera
+    private static ForgeConfigSpec.DoubleValue ARPONERA_DANO, ARPONERA_ALCANCE, ARPONERA_TIRON;
     // ---- Thompson
     private static ForgeConfigSpec.DoubleValue THOMPSON_DANO, THOMPSON_ALCANCE;
     private static ForgeConfigSpec.IntValue THOMPSON_CADENCIA, THOMPSON_CAPACIDAD, THOMPSON_RECARGA;
@@ -55,7 +57,7 @@ public final class EquilibrioArmas {
     // ---- apuntar (clic derecho mantenido; todas menos la escopeta de presión)
     private static ForgeConfigSpec.DoubleValue APUNTAR_DISPERSION, APUNTAR_FOV, APUNTAR_LENTITUD;
     // ---- botín
-    private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON, B_CERBATANA, B_LANZALLAMAS, B_RESONANCIA;
+    private static ForgeConfigSpec.DoubleValue B_GATLING, B_WINCHESTER, B_DERRINGER, B_THOMPSON, B_MOSQUETE, B_CANON, B_CERBATANA, B_LANZALLAMAS, B_RESONANCIA, B_ARPONERA;
 
     /** Lo llama ConfigServidor al final (su propia sección). */
     public static void definir(ForgeConfigSpec.Builder b) {
@@ -143,6 +145,10 @@ public final class EquilibrioArmas {
         RESONANCIA_DANO = b.comment("Pistola de resonancia: daño de la onda a todo lo que cruza (la armadura casi no la frena; atraviesa bloques).").defineInRange("resonancia_dano", 9.0, 0.0, 100.0);
         RESONANCIA_ALCANCE = b.comment("Pistola de resonancia: alcance de la onda en bloques.").defineInRange("resonancia_alcance", 24.0, 2.0, 128.0);
 
+        ARPONERA_DANO = b.comment("Arponera: daño del arpón a una criatura (tira de ella hacia ti).").defineInRange("arponera_dano", 8.0, 0.0, 100.0);
+        ARPONERA_ALCANCE = b.comment("Arponera: alcance de la cuerda en bloques.").defineInRange("arponera_alcance", 36.0, 2.0, 128.0);
+        ARPONERA_TIRON = b.comment("Arponera: fuerza del tirón (bajo el agua, x1,6).").defineInRange("arponera_tiron", 1.8, 0.2, 5.0);
+
         B_GATLING = b.comment("Gatling: cofres de las pirámides del desierto.").defineInRange("gatling_piramide", 0.2, 0.0, 1.0);
         B_WINCHESTER = b.comment("Winchester: cofres de las minas abandonadas (vagonetas con cofre).").defineInRange("winchester_mina", 0.1, 0.0, 1.0);
         B_DERRINGER = b.comment("Derringer: cofres de los tesoros enterrados.").defineInRange("derringer_tesoro", 0.35, 0.0, 1.0);
@@ -150,6 +156,7 @@ public final class EquilibrioArmas {
         B_CERBATANA = b.comment("Cerbatana: cofres de los templos de la jungla.").defineInRange("cerbatana_templo", 0.3, 0.0, 1.0);
         B_LANZALLAMAS = b.comment("Lanzallamas: cofres de las fortalezas del Nether.").defineInRange("lanzallamas_fortaleza", 0.25, 0.0, 1.0);
         B_RESONANCIA = b.comment("Pistola de resonancia: cofres de las ciudades antiguas.").defineInRange("resonancia_ciudad", 0.3, 0.0, 1.0);
+        B_ARPONERA = b.comment("Arponera: cofres de las ruinas submarinas.").defineInRange("arponera_ruinas", 0.3, 0.0, 1.0);
         B_MOSQUETE = b.comment("Mosquete: cofres de los pasillos y cruces de las fortalezas.").defineInRange("mosquete_fortaleza", 0.15, 0.0, 1.0);
         B_CANON = b.comment("Cañón de mano: cofres de los bastiones (otros y puente).").defineInRange("canon_bastion", 0.15, 0.0, 1.0);
         b.pop();
@@ -215,6 +222,9 @@ public final class EquilibrioArmas {
     public static int lanzallamasCapacidad() { return i(LANZALLAMAS_CAPACIDAD); }
     public static float resonanciaDano() { return (float) d(RESONANCIA_DANO); }
     public static double resonanciaAlcance() { return d(RESONANCIA_ALCANCE); }
+    public static float arponeraDano() { return (float) d(ARPONERA_DANO); }
+    public static double arponeraAlcance() { return d(ARPONERA_ALCANCE); }
+    public static float arponeraTiron() { return (float) d(ARPONERA_TIRON); }
     public static float derringerDesenfunde() { return (float) d(DERRINGER_DESENFUNDE); }
 
     public static float thompsonDano() { return (float) d(THOMPSON_DANO); }
@@ -269,5 +279,6 @@ public final class EquilibrioArmas {
     public static double botinCerbatana() { return d(B_CERBATANA); }
     public static double botinLanzallamas() { return d(B_LANZALLAMAS); }
     public static double botinResonancia() { return d(B_RESONANCIA); }
+    public static double botinArponera() { return d(B_ARPONERA); }
     public static double botinCanon() { return d(B_CANON); }
 }

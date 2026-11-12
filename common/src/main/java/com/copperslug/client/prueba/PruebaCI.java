@@ -2481,6 +2481,28 @@ public final class PruebaCI {
         });
         vigila("a2_resonancia_ok", 2, () -> a2Comprobar("la pistola de resonancia dispara una onda y hiere", a2F("r0") - a2F("r1") > 2 && Integer.valueOf(3).equals(PI.get("r_balas")),
                 "vida " + a2F("r0") + " → " + a2F("r1") + ", cargas " + PI.get("r_balas")));
+        // ================================================================ Arponera de cobre
+        sin("a2_arponera", 8, () -> {
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.ARPONERA, 1));
+            piApuntar(a2Punto(8, 0, 1.2));
+        });
+        sin("a2_arponera_vida", 2, () -> a2Vida("a0"));
+        paso("227_arponera_1p", 3, piTiro());
+        sin("a2_arponera_ver", 6, () -> {
+            a2Vida("a1");
+            piSrv(sp -> {
+                PI.put("a_balas", com.copperslug.armasfuego.comun.ArmaFuegoItem.balas(sp.getMainHandItem()));
+                // el arpón lo ha tirado hacia ti: el husk vuelve a su sitio (a 8 bloques)
+                var h = a2Ente(sp, a2Husk);
+                if (h != null) {
+                    Vec3 hp = a2Punto(8, 0, 0);
+                    h.moveTo(hp.x, hp.y, hp.z, h.getYRot(), 0);
+                    h.setDeltaMovement(Vec3.ZERO);
+                }
+            });
+        });
+        vigila("a2_arponera_ok", 2, () -> a2Comprobar("la arponera hiere y tira del husk, y gasta el arpón", a2F("a0") - a2F("a1") > 3 && Integer.valueOf(0).equals(PI.get("a_balas")),
+                "vida " + a2F("a0") + " → " + a2F("a1") + ", arpones " + PI.get("a_balas")));
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);

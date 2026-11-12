@@ -41,6 +41,7 @@ public class CopperSlugJei implements IModPlugin {
         info(r, ModItems.CERBATANA, "cerbatana_botin");
         info(r, ModItems.LANZALLAMAS, "lanzallamas_botin");
         info(r, ModItems.RESONANCIA, "resonancia_botin");
+        info(r, ModItems.ARPONERA, "arponera_botin");
         info(r, ModItems.THOMPSON, "thompson_botin");
         info(r, ModItems.MOSQUETE, "mosquete_botin");
         info(r, ModItems.CANON_MANO, "canon_botin");
