@@ -247,7 +247,9 @@ def exportar(cuadro, nombre, v21, datos, loot, extras_bloque=None):
 def mano_arma(v21, arma='winchester'):
     """HandItems/HandDropChances de un mob con ese arma (copperslug:<arma>) en la mano principal."""
     it = comp(id=s('copperslug:' + arma), **({'count': i(1)} if v21 else {'Count': b(1)}))
-    return dict(HandItems=lista(COMPOUND, [it, comp()]), HandDropChances=lista(FLOAT, [f(0.1), f(0.0)]))
+    # la etiqueta copperslug_arma_<arma> repone el arma si vanilla se la cambia al aparecer (el saqueador sale con una ballesta)
+    return dict(HandItems=lista(COMPOUND, [it, comp()]), HandDropChances=lista(FLOAT, [f(0.1), f(0.0)]),
+                Tags=lista(STRING, [s('copperslug_arma_' + arma)]))
 
 
 def mano_winchester(v21):

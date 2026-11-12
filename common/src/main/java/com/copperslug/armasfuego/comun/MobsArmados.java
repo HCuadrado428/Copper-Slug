@@ -103,8 +103,32 @@ public final class MobsArmados {
             ServerLevel l = p.serverLevel();
             for (Mob m : l.getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(RADIO), e -> e.isAlive() && (e instanceof Pillager || e instanceof Zombie))) {
                 if (m instanceof Pillager pi && !m.getTags().contains(TIRADO)) tirar(pi);
+                reponerArma(m);
                 if (armado(m)) ARMADOS.add(m);
             }
+        }
+    }
+
+    /**
+     * Los mobs de las estructuras llevan la etiqueta copperslug_arma_<arma>: al aparecer, vanilla puede cambiarles lo que llevan (a un
+     * saqueador le pone una ballesta), así que si no llevan un arma de fuego se les pone la de la etiqueta.
+     */
+    private static void reponerArma(Mob m) {
+        if (armado(m)) return;
+        for (String t : m.getTags()) {
+            if (!t.startsWith("copperslug_arma_")) continue;
+            Item arma = switch (t.substring("copperslug_arma_".length())) {
+                case "revolver" -> ModItems.REVOLVER.get();
+                case "winchester" -> ModItems.WINCHESTER.get();
+                case "derringer" -> ModItems.DERRINGER.get();
+                case "thompson" -> ModItems.THOMPSON.get();
+                case "mosquete" -> ModItems.MOSQUETE.get();
+                default -> null;
+            };
+            if (arma == null) continue;
+            m.setItemSlot(EquipmentSlot.MAINHAND, new ItemStack(arma));
+            m.setDropChance(EquipmentSlot.MAINHAND, ConfigServidor.mobsSuelta());
+            return;
         }
     }
 

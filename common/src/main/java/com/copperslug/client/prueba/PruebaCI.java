@@ -317,7 +317,8 @@ public final class PruebaCI {
                 }
         int armados = l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new net.minecraft.world.phys.AABB(c).inflate(rx, 150, rz),
                 e -> com.copperslug.armasfuego.comun.MobsArmados.armado(e)).size();
-        return new int[]{oro, cofres, tnt, escalera, cobre, rieles, armados, minX, maxX, minZ, maxZ, maxY, railX, railY, railZ, cofreY};
+        int raiders = l.getEntitiesOfClass(net.minecraft.world.entity.raid.Raider.class, new net.minecraft.world.phys.AABB(c).inflate(rx, 150, rz), e -> true).size();
+        return new int[]{oro, cofres, tnt, escalera, cobre, rieles, armados, minX, maxX, minZ, maxZ, maxY, railX, railY, railZ, cofreY, raiders};
     }
 
     /** Ejecuta un comando con permisos y devuelve lo que dice (el éxito o el motivo del fallo). */
@@ -391,7 +392,7 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX() + 400, o.getY(), o.getZ());
-            PI.put("est_p", estContar(l, c, 52, 56, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+            PI.put("est_p", estContar(l, c, 52, 56, l.getMinBuildHeight(), l.getMaxBuildHeight()));
         }));
         sin("est_piramide_esperar2", 30, () -> {});
         vigila("est_piramide_ok", 4, () -> {
@@ -428,7 +429,7 @@ public final class PruebaCI {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
             var c = new net.minecraft.core.BlockPos(o.getX(), o.getY(), o.getZ() + 400);
-            PI.put("est_m", estContar(l, c, 44, 44, l.getMinBuildHeight(), l.getMinBuildHeight() + 260));
+            PI.put("est_m", estContar(l, c, 44, 44, l.getMinBuildHeight(), l.getMaxBuildHeight()));
         }));
         sin("est_mina_esperar2", 30, () -> {});
         vigila("est_mina_ok", 4, () -> {
@@ -465,13 +466,13 @@ public final class PruebaCI {
         sin("est_camp_contar", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var c = (net.minecraft.core.BlockPos) PI.get("est_c_o");
-            PI.put("est_c", estContar(l, c, 32, 32, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+            PI.put("est_c", estContar(l, c, 32, 32, l.getMinBuildHeight(), l.getMaxBuildHeight()));
         }));
         sin("est_camp_esperar2", 30, () -> {});
         vigila("est_camp_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_c");
             if (r == null) throw new IllegalStateException("el campamento aún no se ha contado");
-            String det = "cofres " + r[1] + ", saqueadores armados " + r[6] + " (/place: " + PI.get("est_c_cmd") + ")";
+            String det = "cofres " + r[1] + ", saqueadores armados " + r[6] + " de " + r[16] + " saqueadores y vindicadores (/place: " + PI.get("est_c_cmd") + ")";
             RESUMEN.add("  estructuras: campamento generado: " + det);
             if (r[1] < 2 || r[6] < 6) throw new IllegalStateException("el campamento sale entero (cofres >= 2, armados >= 6) (" + det + ")");
         });
