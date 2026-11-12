@@ -128,5 +128,9 @@ public final class ModItems {
     public static final RegistryObject<Item> BIDON_COMBUSTIBLE = ITEMS.register("bidon_combustible",
             () -> new com.copperslug.armasfuego.comun.MunicionItem(new Item.Properties().stacksTo(8)));
 
+    // ---- Pistola de resonancia (ciudades antiguas): funciona con fragmentos de eco
+    public static final RegistryObject<Item> RESONANCIA = ITEMS.register("resonancia",
+            () -> new com.copperslug.armasfuego.ciudad.ResonanciaItem(new Item.Properties().durability(300).rarity(Rarity.RARE)));
+
     private ModItems() {}
 }
