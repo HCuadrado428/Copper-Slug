@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#minecraft:is_hill",
+    "#minecraft:is_mountain",
+    "minecraft:badlands",
+    "minecraft:wooded_badlands",
+    "minecraft:eroded_badlands"
+  ]
+}

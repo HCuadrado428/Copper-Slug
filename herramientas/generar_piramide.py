@@ -1,332 +1,359 @@
 #!/usr/bin/env python3
 """Genera la «Pirámide del faraón» (estructura de desierto estilo película de aventuras) como datapack.
 
-Escribe en common/src/main/resources/data/copperslug/:
-  structures/piramide.nbt (1.21.1: structure/)       la plantilla de bloques y mobs
-  worldgen/template_pool, structure, structure_set    cómo sale en el mundo
-  tags/worldgen/biome/has_structure/piramide.json     dónde (desiertos)
-  loot_tables/chests/piramide.json (1.21.1: loot_table/)
-Uso: generar_piramide.py [raíz del repositorio] [--mc 1.20.1|1.21.1]
-Es idempotente. La plantilla es una pirámide escalonada de arenisca con patio y obeliscos, un pasillo con
-pilares y una trampa de TNT, la cámara del sarcófago con cuatro husks que llevan Winchester, y la sala del tesoro.
+Una pirámide escalonada de 61 x 61 con dos plantas laberínticas por dentro:
+  planta 1 (y 4..8)   laberinto de 11 x 11 celdas con bucles, trampas de TNT, husks y cofres en los callejones, y en el
+                      centro la sala del sarcófago; una escalera de mano en un callejón lejano sube a la planta 2
+  planta 2 (y 11..15) laberinto de 7 x 7 celdas y, en el centro, la cámara del tesoro del faraón
+Delante, un pilono de entrada con obeliscos. Todo se genera con una semilla fija; el script comprueba que no hay fugas
+al exterior y que desde la puerta se llega a cada cofre, cada husk y la escalera.
+Es idempotente. Uso: generar_piramide.py [raíz del repositorio] [--mc 1.20.1|1.21.1]
 """
-import gzip
-import json
 import os
-import struct
+import random
 import sys
 
-args = [a for a in sys.argv[1:] if not a.startswith('--')]
-RAIZ = args[0] if args else '.'
-MC = '1.21.1' if '--mc' in sys.argv and sys.argv[sys.argv.index('--mc') + 1] == '1.21.1' else '1.20.1'
-V21 = MC == '1.21.1'
-DATA = os.path.join(RAIZ, 'common/src/main/resources/data/copperslug')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from estruc import *  # noqa: E402,F401,F403
+import estruc as E  # noqa: E402
 
-# ---------------------------------------------------------------- NBT mínimo (solo lo que hace falta)
-END, BYTE, INT, FLOAT, DOUBLE, STRING, LIST, COMPOUND = 0, 1, 3, 5, 6, 8, 9, 10
+RAIZ, V21 = E.contexto(sys.argv)
+DATOS = os.path.join(RAIZ, 'common/src/main/resources/data/copperslug')
+NOMBRE = 'piramide'
+W, H, D = 61, 36, 73
+CX = 30
+rng = random.Random(20261112)
+g = E.Cuadro(W, H, D)
+poner, rell, blk, AIRE = g.poner, g.rell, E.blk, E.AIRE
 
-
-class T:
-    def __init__(self, tipo, valor, sub=None):
-        self.tipo, self.valor, self.sub = tipo, valor, sub
-
-
-def b(v): return T(BYTE, v)
-def i(v): return T(INT, v)
-def f(v): return T(FLOAT, v)
-def d(v): return T(DOUBLE, v)
-def s(v): return T(STRING, v)
-def lista(sub, items): return T(LIST, items, sub)
-def comp(**kw): return T(COMPOUND, kw)
+AREN, CORT, CINC, LISA = blk('sandstone'), blk('cut_sandstone'), blk('chiseled_sandstone'), blk('smooth_sandstone')
+ARENA, ORO, LAPIS, TELA = blk('sand'), blk('gold_block'), blk('lapis_block'), blk('cobweb')
 
 
-def cadena(x):
-    r = x.encode('utf-8')
-    return struct.pack('>H', len(r)) + r
+def losa(t): return blk('smooth_sandstone_slab', type=t, waterlogged=False)
 
 
-def carga(t):
-    if t.tipo == BYTE: return struct.pack('>b', t.valor)
-    if t.tipo == INT: return struct.pack('>i', t.valor)
-    if t.tipo == FLOAT: return struct.pack('>f', t.valor)
-    if t.tipo == DOUBLE: return struct.pack('>d', t.valor)
-    if t.tipo == STRING: return cadena(t.valor)
-    if t.tipo == LIST:
-        r = struct.pack('>bi', t.sub, len(t.valor))
-        return r + b''.join(carga(e) for e in t.valor)
-    if t.tipo == COMPOUND:
-        r = b''
-        for k, v in t.valor.items():
-            r += struct.pack('>b', v.tipo) + cadena(k) + carga(v)
-        return r + b'\x00'
-    raise ValueError(t.tipo)
-
-
-def nbt_bytes(raiz):
-    return struct.pack('>b', COMPOUND) + cadena('') + carga(raiz)
-
-
-# ---------------------------------------------------------------- la cuadrícula de bloques
-W, H, D = 29, 20, 41
-AIRE = ('minecraft:air', ())
-cuadro = {}
-
-
-def blk(nombre, **props):
-    return ('minecraft:' + nombre if ':' not in nombre else nombre, tuple(sorted((k, str(v).lower() if isinstance(v, bool) else str(v)) for k, v in props.items())))
-
-
-def poner(x, y, z, e):
-    assert 0 <= x < W and 0 <= y < H and 0 <= z < D, (x, y, z)
-    cuadro[(x, y, z)] = e
-
-
-def rell(x1, y1, z1, x2, y2, z2, e):
-    for x in range(min(x1, x2), max(x1, x2) + 1):
-        for y in range(min(y1, y2), max(y1, y2) + 1):
-            for z in range(min(z1, z2), max(z1, z2) + 1):
-                poner(x, y, z, e)
-
-
-AREN = blk('sandstone')
-CORT = blk('cut_sandstone')
-CINC = blk('chiseled_sandstone')
-LISA = blk('smooth_sandstone')
-ARENA = blk('sand')
-ORO = blk('gold_block')
-LAPIS = blk('lapis_block')
-OCRE = blk('orange_terracotta')
-TELA = blk('cobweb')
-
-
-def losa(tipo): return blk('smooth_sandstone_slab', type=tipo, waterlogged=False)
-
-
-# ---- cimientos y pirámide escalonada (siete escalones de dos de alto)
+# ---------------------------------------------------------------- cimientos y pirámide escalonada (15 escalones)
 rell(0, 0, 0, W - 1, 3, D - 1, ARENA)
-rell(0, 2, 0, W - 1, 3, 31, AREN)
-for t in range(7):
-    ya, yb, a, z2 = 4 + 2 * t, 5 + 2 * t, 2 * t, 28 - 2 * t
-    rell(a, ya, a, 28 - a, yb, z2, AREN)
-    for y in (ya, yb):                                  # el borde exterior de cada escalón, tallado
-        for x in range(a, 29 - a):
+rell(0, 2, 0, W - 1, 3, 63, AREN)
+for t in range(15):
+    ya, yb, a = 4 + 2 * t, 5 + 2 * t, 2 * t
+    z2 = 60 - 2 * t
+    rell(a, ya, a, 60 - a, yb, z2, AREN)
+    for y in (ya, yb):
+        for x in range(a, 61 - a):
             for z in (a, z2):
                 poner(x, y, z, CORT)
         for z in range(a, z2 + 1):
-            for x in (a, 28 - a):
+            for x in (a, 60 - a):
                 poner(x, y, z, CORT)
-    if t % 2 == 1:                                      # esquinas de oro en los escalones impares
-        for x in (a, 28 - a):
+    if t % 2 == 1:
+        for x in (a, 60 - a):
             for z in (a, z2):
                 poner(x, yb, z, ORO)
-    if t in (2, 4):                                     # una banda de lapislázuli en el centro de cada cara
-        for c in range(13, 16):
+    if t in (4, 8, 11):
+        for c in range(29, 32):
             poner(c, yb, z2, LAPIS)
             poner(c, yb, a, LAPIS)
-poner(14, 18, 14, ORO)                                  # el remate
+poner(CX, 34, CX, ORO)
 
-# ---- la capilla trasera del tesoro (x 8..20, z 0..4, y 4..9): pegada a la pirámide, con cornisa y esquinas de oro
-rell(8, 4, 0, 20, 9, 4, AREN)
-for x in range(8, 21):
-    for z in (0,):
-        rell(x, 4, z, x, 9, z, CORT)
-for z in range(0, 5):
-    for x in (8, 20):
-        rell(x, 4, z, x, 9, z, CORT)
-rell(8, 9, 0, 20, 9, 0, CINC)
-for x in (8, 20):
-    poner(x, 9, 0, ORO)
-
-# ---- el pilono de la entrada (x 7..21, z 25..31): dos torres macizas con el paso en medio, como un templo egipcio
-rell(7, 4, 25, 21, 9, 31, AREN)
-rell(7, 10, 25, 10, 11, 31, AREN)
-rell(18, 10, 25, 21, 11, 31, AREN)
-for x in range(7, 22):
+# ---------------------------------------------------------------- pilono de la entrada (x 22..38, z 57..63)
+rell(22, 4, 57, 38, 9, 63, AREN)
+rell(22, 10, 57, 26, 11, 63, AREN)
+rell(34, 10, 57, 38, 11, 63, AREN)
+for x in range(22, 39):
     for y in range(4, 12):
-        if y > 9 and 10 < x < 18:
+        if y > 9 and 26 < x < 34:
             continue
-        for z in (25, 31):
+        for z in (57, 63):
             poner(x, y, z, CORT)
-for z in range(25, 32):
-    for x in (7, 21):
+for z in range(57, 64):
+    for x in (22, 38):
         rell(x, 4, z, x, 11, z, CORT)
-for x in (7, 8, 9, 10, 18, 19, 20, 21):
-    poner(x, 11, 31, CINC)
-    for x2 in (8, 9, 10, 18, 19, 20):
-        poner(x2, 8, 31, LAPIS)
-for x in (7, 21):
-    for z in (25, 31):
+for x in list(range(22, 27)) + list(range(34, 39)):
+    poner(x, 11, 63, CINC)
+for x in list(range(23, 26)) + list(range(35, 38)):
+    poner(x, 8, 63, LAPIS)
+for x in (22, 38):
+    for z in (57, 63):
         poner(x, 11, z, ORO)
-rell(13, 4, 25, 15, 7, 31, AIRE)                        # el paso: 3 de ancho y 4 de alto
+# patio de delante (z 64..72): suelo liso, camino, obeliscos y columnas
+rell(0, 3, 64, W - 1, 3, D - 1, ARENA)
+rell(26, 3, 64, 34, 3, D - 1, LISA)
+rell(29, 3, 64, 31, 3, D - 1, CINC)
+for cx in (23, 37):
+    rell(cx - 1, 4, 67, cx + 1, 4, 69, AREN)
+    rell(cx - 1, 5, 67, cx + 1, 5, 69, CINC)
+    rell(cx, 6, 68, cx, 12, 68, CORT)
+    poner(cx, 13, 68, ORO)
+for cx in (27, 33):
+    rell(cx, 4, 65, cx, 8, 65, CINC)
+    poner(cx, 9, 65, ORO)
+
+# ---------------------------------------------------------------- las dos plantas
+PASO = 4
+X0, Z0 = 9, 9            # esquina de la celda (0,0) de la planta 1
+N1 = 11
+L1_Y0, L1_Y1 = 4, 8       # carvado de la planta 1
+L2_Y0, L2_Y1 = 11, 15     # carvado de la planta 2
+SUB = range(2, 9)         # celdas de la planta 1 que tiene la planta 2 (7 x 7)
+CENTRO = range(4, 7)      # el bloque central 3 x 3 de celdas (sala del sarcófago / cámara del tesoro)
+ENTRADA = (5, 10)
+
+
+def cx0(i): return X0 + PASO * i
+def cz0(j): return Z0 + PASO * j
+
+
+def carvar(pasos, celdas, y0, y1):
+    for (i, j) in celdas:
+        rell(cx0(i), y0, cz0(j), cx0(i) + 2, y1, cz0(j) + 2, AIRE)
+    for (a, b2) in pasos:
+        if a < b2:
+            (i, j), (i2, j2) = a, b2
+            if i2 == i + 1:
+                rell(cx0(i) + 3, y0, cz0(j), cx0(i) + 3, y1, cz0(j) + 2, AIRE)
+            else:
+                rell(cx0(i), y0, cz0(j) + 3, cx0(i) + 2, y1, cz0(j) + 3, AIRE)
+
+
+pasos1 = E.laberinto(N1, rng, 0.14)
+celdas1 = [(i, j) for i in range(N1) for j in range(N1)]
+carvar(pasos1, celdas1, L1_Y0, L1_Y1)
+# planta 2: laberinto de 7 x 7 sobre las celdas 2..8
+pasos2_loc = E.laberinto(7, rng, 0.12)
+pasos2 = {((a[0] + 2, a[1] + 2), (b2[0] + 2, b2[1] + 2)) for (a, b2) in pasos2_loc}
+celdas2 = [(i, j) for i in SUB for j in SUB]
+rell(cx0(2) - 1, 9, cz0(2) - 1, cx0(8) + 3, 10, cz0(8) + 3, AREN)    # el suelo de la planta 2 (ya lo es: es macizo)
+carvar(pasos2, celdas2, L2_Y0, L2_Y1)
+
+
+def abrir_bloque(y0, y1):
+    """El bloque central 3 x 3 de celdas, todo abierto (sala)."""
+    rell(cx0(4), y0, cz0(4), cx0(6) + 2, y1, cz0(6) + 2, AIRE)
+
+
+abrir_bloque(L1_Y0, L1_Y1)
+abrir_bloque(L2_Y0, L2_Y1)
+SX1, SX2 = cx0(4), cx0(6) + 2       # 25..35
+ENT_X = cx0(ENTRADA[0]) + 1         # 30
+
+# pasillo de entrada: desde la celda de entrada, por la pared sur, hasta la puerta del pilono
+rell(29, 4, 52, 31, 7, 63, AIRE)
 for y in range(4, 9):
-    for x in (12, 16):
-        poner(x, y, 31, CINC)
-rell(12, 8, 31, 16, 8, 31, CINC)
-poner(14, 8, 31, ORO)
+    for x in (28, 32):
+        poner(x, y, 63, CINC)
+rell(28, 8, 63, 32, 8, 63, CINC)
+poner(30, 8, 63, ORO)
+PUERTA = {(x, y, 63) for x in (29, 30, 31) for y in range(4, 8)}
 
-# ---- el patio de delante (z 32..40): suelo liso, camino, obeliscos y dos columnas
-rell(0, 3, 32, W - 1, 3, D - 1, ARENA)
-rell(10, 3, 32, 18, 3, D - 1, LISA)
-rell(13, 3, 32, 15, 3, D - 1, CINC)
-for cx in (9, 19):
-    rell(cx - 1, 4, 35, cx + 1, 4, 37, AREN)
-    rell(cx - 1, 5, 35, cx + 1, 5, 37, CINC)
-    rell(cx, 6, 36, cx, 11, 36, CORT)
-    poner(cx, 12, 36, ORO)
-for cx in (11, 17):
-    rell(cx, 4, 33, cx, 8, 33, CINC)
-    poner(cx, 9, 33, ORO)
+# decoración de las paredes: jeroglíficos y algún destello de oro
+def muros(pasos, celdas, y0, y1):
+    cs = set(celdas)
+    for (i, j) in celdas:
+        for di, dj in ((1, 0), (0, 1)):
+            n = (i + di, j + dj)
+            if n in cs and ((i, j), n) not in pasos:
+                wx = cx0(i) + 3 if di else cx0(i) + 1
+                wz = cz0(j) + 1 if di else cz0(j) + 3
+                if g.c.get((wx, y0 + 2, wz)) == AIRE:
+                    continue
+                if rng.random() < 0.40:
+                    poner(wx, y0 + 2, wz, CINC)
+                    if rng.random() < 0.25:
+                        poner(wx, y0 + 3, wz, ORO)
 
-# ---- el pasillo (x 11..17, z 18..24, y 4..8) con pilares, antorchas y telarañas
-rell(11, 4, 18, 17, 8, 24, AIRE)
-for x in (11, 17):
-    for z in (19, 22):
-        rell(x, 4, z, x, 8, z, CINC)
-for z in (20, 24):
-    poner(11, 6, z, blk('wall_torch', facing='east'))
-    poner(17, 6, z, blk('wall_torch', facing='west'))
-for z in (21, 22, 23):                                  # un panel de jeroglíficos en cada pared
-    for y in (5, 6):
-        poner(10, y, z, CINC)
-        poner(18, y, z, CINC)
-for p in ((11, 8, 18), (17, 8, 18), (11, 8, 24), (17, 8, 24), (14, 8, 20), (12, 7, 23), (16, 7, 21)):
+
+muros(pasos1, celdas1, L1_Y0, L1_Y1)
+muros(pasos2, celdas2, L2_Y0, L2_Y1)
+
+# ---------------------------------------------------------------- qué va en cada celda
+en_centro = lambda c: c[0] in CENTRO and c[1] in CENTRO
+d1 = E.distancias(pasos1, ENTRADA)
+d2 = E.distancias(pasos2, ENTRADA if ENTRADA in celdas2 else (5, 8))
+grado = lambda p, c: len(E.vecinos(p, c))
+usadas = set()
+
+
+def libres(celdas, pasos, minimo=0):
+    return [c for c in celdas if not en_centro(c) and c not in usadas and c != ENTRADA and d1.get(c, 99) >= minimo]
+
+
+# --- la escalera de mano a la planta 2: un callejón de la planta 1 dentro del bloque 7 x 7
+def lado_cerrado(p, c):
+    """Lados de la celda sin paso (muro macizo): ('N'|'S'|'E'|'O')."""
+    i, j = c
+    r = []
+    if ((i, j), (i, j - 1)) not in p: r.append('N')
+    if ((i, j), (i, j + 1)) not in p: r.append('S')
+    if ((i, j), (i + 1, j)) not in p: r.append('E')
+    if ((i, j), (i - 1, j)) not in p: r.append('O')
+    return r
+
+
+cands = [c for c in celdas2 if not en_centro(c) and c != ENTRADA]
+escalera = None
+for c in sorted(cands, key=lambda c: (grado(pasos1, c), -d1[c])):
+    comun = [lado for lado in lado_cerrado(pasos1, c) if lado in lado_cerrado(pasos2, c)]
+    if comun:
+        escalera = (c, comun[0])
+        break
+assert escalera, 'no hay callejón para la escalera'
+(ec, elado) = escalera
+usadas.add(ec)
+ex, ez = cx0(ec[0]) + 1, cz0(ec[1]) + 1
+if elado == 'N': lx, lz, fac = cx0(ec[0]) + 1, cz0(ec[1]), 'south'
+elif elado == 'S': lx, lz, fac = cx0(ec[0]) + 1, cz0(ec[1]) + 2, 'north'
+elif elado == 'E': lx, lz, fac = cx0(ec[0]) + 2, cz0(ec[1]) + 1, 'west'
+else: lx, lz, fac = cx0(ec[0]), cz0(ec[1]) + 1, 'east'
+rell(lx, 9, lz, lx, 10, lz, AIRE)
+for y in range(4, 12):
+    poner(lx, y, lz, blk('ladder', facing=fac, waterlogged=False))
+ESCALERA_PIE = (ex if elado in 'NS' else lx + (-1 if elado == 'E' else 1), 4, ez if elado in 'EO' else lz + (1 if elado == 'N' else -1))
+
+# --- cofres en callejones (con la boca hacia la abertura)
+def cofre(c, y, lado_abierto):
+    x0, z0 = cx0(c[0]), cz0(c[1])
+    if lado_abierto == 'N': x, z, f = x0 + 1, z0 + 2, 'north'
+    elif lado_abierto == 'S': x, z, f = x0 + 1, z0, 'south'
+    elif lado_abierto == 'E': x, z, f = x0, z0 + 1, 'east'
+    else: x, z, f = x0 + 2, z0 + 1, 'west'
+    poner(x, y, z, blk('chest', facing=f, type='single', waterlogged=False))
+    g.cofres.append((x, y, z))
+    return (x + {'east': 1, 'west': -1}.get(f, 0), y, z + {'south': 1, 'north': -1}.get(f, 0))
+
+
+def lado_abierto(p, c):
+    i, j = c
+    for nx in E.vecinos(p, c):
+        return {(0, -1): 'N', (0, 1): 'S', (1, 0): 'E', (-1, 0): 'O'}[(nx[0] - i, nx[1] - j)]
+
+
+FRENTES = []
+for c in sorted([c for c in celdas1 if grado(pasos1, c) == 1 and not en_centro(c) and c not in usadas], key=lambda c: -d1[c])[:7]:
+    FRENTES.append(cofre(c, 4, lado_abierto(pasos1, c)))
+    usadas.add(c)
+d2 = E.distancias(pasos2, ec)
+for c in sorted([c for c in celdas2 if grado(pasos2, c) == 1 and not en_centro(c) and c not in usadas], key=lambda c: -d2.get(c, 0))[:5]:
+    FRENTES.append(cofre(c, 11, lado_abierto(pasos2, c)))
+    usadas.add(c)
+
+# --- trampas: placa de presión sobre cuatro TNT, en celdas de paso
+def trampa(c, suelo):
+    x, z = cx0(c[0]) + 1, cz0(c[1]) + 1
+    for dx in (0, 1):
+        for dz in (0, 1):
+            poner(x + dx, suelo - 1, z + dz, blk('tnt', unstable=False))
+    poner(x, suelo, z, blk('stone_pressure_plate', powered=False))
+    usadas.add(c)
+
+
+for c in rng.sample([c for c in celdas1 if grado(pasos1, c) >= 2 and not en_centro(c) and c not in usadas and d1[c] >= 3], 7):
+    trampa(c, 3)
+for c in rng.sample([c for c in celdas2 if grado(pasos2, c) >= 2 and not en_centro(c) and c not in usadas], 4):
+    trampa(c, 10)
+
+# --- iluminación y telarañas
+def decora(celdas, pasos, ytecho, ysuelo, prob_lampara):
+    for c in celdas:
+        if en_centro(c):
+            continue
+        x0, z0 = cx0(c[0]), cz0(c[1])
+        if c not in usadas or True:
+            if rng.random() < prob_lampara and g.c.get((x0 + 1, ytecho, z0 + 1)) == AIRE:
+                poner(x0 + 1, ytecho, z0 + 1, blk('lantern', hanging=True, waterlogged=False))
+        if rng.random() < 0.30:
+            poner(*rng.choice([(x0, ytecho, z0), (x0 + 2, ytecho, z0), (x0, ytecho, z0 + 2), (x0 + 2, ytecho, z0 + 2)]), TELA)
+
+
+decora(celdas1, pasos1, L1_Y1, 4, 0.45)
+decora(celdas2, pasos2, L2_Y1, 11, 0.45)
+# antorchas en los pilares del pasillo de entrada
+for z in (54, 58):
+    poner(29, 6, z, blk('wall_torch', facing='east')) if g.c.get((28, 6, z)) not in (None, AIRE) else None
+    poner(31, 6, z, blk('wall_torch', facing='west')) if g.c.get((32, 6, z)) not in (None, AIRE) else None
+
+# ---------------------------------------------------------------- las salas centrales
+SC = 30
+
+
+def sarcofago(y):
+    rell(27, y, 27, 33, y, 33, CORT)                                  # tarima
+    for x in range(29, 32):
+        for z in range(29, 32):
+            poner(x, y + 1, z, LISA)
+            poner(x, y + 2, z, losa('top'))
+    poner(30, y + 2, 29, ORO)
+    poner(29, y + 2, 29, LAPIS)
+    poner(31, y + 2, 29, LAPIS)
+    poner(30, y + 2, 30, ORO)
+    for x, z in ((27, 27), (33, 27), (27, 33), (33, 33)):
+        poner(x, y + 1, z, blk('campfire', facing='north', lit=True, signal_fire=False, waterlogged=False))
+    for x, z in ((26, 26), (34, 26), (26, 34), (34, 34), (26, 30), (34, 30)):
+        rell(x, y, z, x, y + 4, z, CINC)
+
+
+sarcofago(4)
+for x, z in ((30, 26), (30, 34), (26, 30), (34, 30)):
+    poner(x, 8, z, blk('lantern', hanging=True, waterlogged=False))
+for p in ((25, 8, 25), (35, 8, 25), (25, 8, 35), (35, 8, 35)):
     poner(*p, TELA)
-# la trampa: una placa en el suelo sobre nueve TNT
-rell(13, 2, 21, 15, 2, 23, blk('tnt', unstable=False))
-poner(14, 3, 22, blk('stone_pressure_plate', powered=False))
-
-# ---- la cámara del sarcófago (x 8..20, z 6..17, y 4..9)
-rell(8, 4, 6, 20, 9, 17, AIRE)
-rell(10, 4, 7, 18, 4, 13, CORT)                         # la tarima
-for x, z in ((9, 7), (19, 7), (9, 16), (19, 16), (9, 12), (19, 12)):
-    rell(x, 4, z, x, 9, z, CINC)
-for x in range(13, 16):                                 # el sarcófago
-    for z in range(9, 12):
-        poner(x, 5, z, LISA)
-        poner(x, 6, z, losa('top'))
-poner(14, 6, 9, ORO)
-poner(13, 6, 9, LAPIS)
-poner(15, 6, 9, LAPIS)
-poner(14, 6, 10, ORO)
-for x, z in ((10, 7), (18, 7), (10, 13), (18, 13)):     # brasas en las esquinas de la tarima
-    poner(x, 5, z, blk('campfire', facing='north', lit=True, signal_fire=False, waterlogged=False))
-for x, z in ((11, 10), (17, 10), (14, 15), (11, 15), (17, 15)):
-    poner(x, 9, z, blk('lantern', hanging=True, waterlogged=False))
-for p in ((8, 9, 6), (20, 9, 6), (8, 9, 17), (20, 9, 17), (12, 8, 8), (16, 8, 14), (8, 8, 12)):
+# cámara del tesoro del faraón (planta 2): tarima de oro con cuatro cofres
+rell(27, 11, 27, 33, 11, 33, CORT)
+rell(29, 11, 29, 31, 11, 31, ORO)
+for (x, z, f) in ((30, 28, 'south'), (28, 30, 'east'), (32, 30, 'west'), (30, 32, 'north')):
+    poner(x, 12, z, blk('chest', facing=f, type='single', waterlogged=False))
+    g.cofres.append((x, 12, z))
+    FRENTES.append((x + {'east': 1, 'west': -1}.get(f, 0), 12, z + {'south': 1, 'north': -1}.get(f, 0)))
+for x, z in ((26, 26), (34, 26), (26, 34), (34, 34)):
+    rell(x, 11, z, x, 15, z, CINC)
+for x, z in ((30, 26), (30, 34), (26, 30), (34, 30), (30, 30)):
+    poner(x, 15, z, blk('lantern', hanging=True, waterlogged=False))
+for p in ((25, 15, 25), (35, 15, 25), (25, 15, 35), (35, 15, 35)):
     poner(*p, TELA)
-# el arco a la sala del tesoro (x 13..15) en la pared norte (z 5)
-rell(13, 4, 5, 15, 7, 5, AIRE)
-for y in range(4, 8):
-    poner(12, y, 5, CINC)
-    poner(16, y, 5, CINC)
-rell(12, 8, 5, 16, 8, 5, CINC)
 
-# ---- la sala del tesoro (x 10..18, z 1..4, y 4..7)
-rell(10, 4, 1, 18, 7, 4, AIRE)
-for x in (12, 14, 16):
-    poner(x, 4, 1, blk('chest', facing='south', type='single', waterlogged=False))
-rell(10, 3, 1, 18, 3, 4, CORT)
-for x in (10, 18):
-    poner(x, 4, 4, ORO)
-poner(14, 4, 3, ORO)
-poner(14, 7, 3, blk('lantern', hanging=True, waterlogged=False))
-poner(11, 7, 2, TELA)
-poner(17, 7, 2, TELA)
-
-# ---------------------------------------------------------------- a NBT
-paleta, indice = [], {}
+# ---------------------------------------------------------------- mobs
+def husk(x, y, z, armado):
+    ex = E.mano_winchester if armado else {}
+    g.entidades.append(('minecraft:husk', x, y, z, ex))
 
 
-def pal(e):
-    if e not in indice:
-        indice[e] = len(paleta)
-        paleta.append(e)
-    return indice[e]
+for (x, z) in ((28.5, 25.5), (32.5, 25.5), (25.5, 29.5), (35.5, 33.5)):
+    husk(x, 5, z, True)                                                  # sala del sarcófago (en el suelo y la tarima)
+for (x, z) in ((26.5, 28.5), (34.5, 28.5), (28.5, 34.5), (32.5, 34.5)):
+    husk(x, 11, z, True)                                                 # cámara del faraón
+celdas_mob = [c for c in celdas1 if not en_centro(c) and c not in usadas and d1[c] >= 3]
+for c in rng.sample(celdas_mob, 12):
+    husk(cx0(c[0]) + 1.5, 4, cz0(c[1]) + 1.5, rng.random() < 0.40)
+    usadas.add(c)
+celdas_mob2 = [c for c in celdas2 if not en_centro(c) and c not in usadas]
+for c in rng.sample(celdas_mob2, 8):
+    husk(cx0(c[0]) + 1.5, 11, cz0(c[1]) + 1.5, rng.random() < 0.50)
+    usadas.add(c)
 
+# ---------------------------------------------------------------- comprobaciones
+fugas = g.fugas(permitidas=PUERTA)
+assert not fugas, ('fugas', fugas[:10], len(fugas))
+alc = g.alcanzables((ENT_X, 4, 53))
+for fr in FRENTES:
+    assert fr in alc, ('cofre inalcanzable', fr)
+for (eid, x, y, z, ex) in g.entidades:
+    assert (int(x), y, int(z)) in alc, ('husk inalcanzable', x, y, z)
+assert (ESCALERA_PIE[0], 4, ESCALERA_PIE[2]) in alc and (lx, 11, lz) in alc, 'escalera'
+total_aire = sum(1 for e in g.c.values() if e == AIRE)
+print('alcanzables', len(alc), 'de', total_aire, 'celdas de aire; cofres', len(g.cofres), 'husks', len(g.entidades))
+sin_llegar = [p for p, e in g.c.items() if e == AIRE and p not in alc and p[1] in (4, 11)]
+assert len(sin_llegar) < 40, ('zonas sin alcance', len(sin_llegar), sin_llegar[:10])
 
-cofre = comp(id=s('minecraft:chest'), LootTable=s('copperslug:chests/piramide'))
-bloques = []
-for (x, y, z), e in sorted(cuadro.items()):
-    if e == AIRE:
-        continue
-    kw = dict(pos=lista(INT, [i(x), i(y), i(z)]), state=i(pal(e)))
-    if e[0] == 'minecraft:chest':
-        kw['nbt'] = cofre
-    bloques.append(comp(**kw))
-pal(AIRE)     # el aire también está en la paleta (los vanos que se excavan)
-# los vanos de aire se guardan como bloques de aire para que la plantilla los excave del macizo
-for (x, y, z), e in sorted(cuadro.items()):
-    if e == AIRE:
-        bloques.append(comp(pos=lista(INT, [i(x), i(y), i(z)]), state=i(pal(AIRE))))
-
-
-def entrada_paleta(e):
-    kw = dict(Name=s(e[0]))
-    if e[1]:
-        kw['Properties'] = comp(**{k: s(v) for k, v in e[1]})
-    return comp(**kw)
-
-
-def husk(x, y, z):
-    arma = comp(id=s('copperslug:winchester'), **({'count': i(1)} if V21 else {'Count': b(1)}))
-    nbt = comp(id=s('minecraft:husk'), PersistenceRequired=b(1),
-               Pos=lista(DOUBLE, [d(x), d(y), d(z)]),
-               HandItems=lista(COMPOUND, [arma, comp()]),
-               HandDropChances=lista(FLOAT, [f(0.1), f(0.0)]))
-    return comp(pos=lista(DOUBLE, [d(x), d(y), d(z)]), blockPos=lista(INT, [i(int(x)), i(int(y)), i(int(z))]), nbt=nbt)
-
-
-entidades = [husk(*p) for p in ((10.5, 4, 15.5), (18.5, 4, 15.5), (12.5, 5, 8.5), (16.5, 5, 11.5))]
-raiz = comp(DataVersion=i(3955 if V21 else 3465), size=lista(INT, [i(W), i(H), i(D)]),
-            palette=lista(COMPOUND, [entrada_paleta(e) for e in paleta]),
-            blocks=lista(COMPOUND, bloques), entities=lista(COMPOUND, entidades))
-
-
-def escribir(ruta, contenido, binario=False):
-    os.makedirs(os.path.dirname(ruta), exist_ok=True)
-    if binario:
-        with gzip.GzipFile(ruta, 'wb', mtime=0) as g:
-            g.write(contenido)
-    else:
-        with open(ruta, 'w', encoding='utf-8') as fh:
-            json.dump(contenido, fh, indent=2, ensure_ascii=False)
-            fh.write('\n')
-
-
-escribir(os.path.join(DATA, 'structure' if V21 else 'structures', 'piramide.nbt'), nbt_bytes(raiz), binario=True)
-
-WG = os.path.join(DATA, 'worldgen')
-escribir(os.path.join(WG, 'template_pool/piramide/inicio.json'), {
-    'fallback': 'minecraft:empty',
-    'elements': [{'weight': 1, 'element': {
-        'element_type': 'minecraft:single_pool_element', 'location': 'copperslug:piramide',
-        'processors': 'minecraft:empty', 'projection': 'rigid'}}]})
-escribir(os.path.join(WG, 'structure/piramide.json'), {
-    'type': 'minecraft:jigsaw', 'biomes': '#copperslug:has_structure/piramide', 'step': 'surface_structures',
-    'spawn_overrides': {}, 'terrain_adaptation': 'beard_thin', 'start_pool': 'copperslug:piramide/inicio',
-    'size': 1, 'max_distance_from_center': 80, 'use_expansion_hack': False,
-    'start_height': {'absolute': -3}, 'project_start_to_heightmap': 'WORLD_SURFACE_WG'})
-escribir(os.path.join(WG, 'structure_set/piramide.json'), {
-    'structures': [{'structure': 'copperslug:piramide', 'weight': 1}],
-    'placement': {'type': 'minecraft:random_spread', 'spacing': 36, 'separation': 14, 'salt': 1923481,
-                  'exclusion_zone': {'other_set': 'minecraft:desert_pyramids', 'chunk_count': 5}}})
-escribir(os.path.join(DATA, 'tags/worldgen/biome/has_structure/piramide.json'), {'values': ['minecraft:desert']})
-
-
-def item(n, peso, lo=None, hi=None):
-    e = {'type': 'minecraft:item', 'name': n, 'weight': peso}
-    if lo is not None:
-        e['functions'] = [{'function': 'minecraft:set_count', 'count': {'type': 'minecraft:uniform', 'min': lo, 'max': hi}}]
-    return e
-
-
-escribir(os.path.join(DATA, 'loot_table' if V21 else 'loot_tables', 'chests/piramide.json'), {
-    'type': 'minecraft:chest',
-    'pools': [
-        {'rolls': {'type': 'minecraft:uniform', 'min': 4, 'max': 7}, 'entries': [
-            item('minecraft:gold_ingot', 8, 2, 6), item('minecraft:emerald', 4, 1, 3), item('minecraft:diamond', 2, 1, 2),
-            item('minecraft:golden_apple', 2), item('copperslug:revolver_bala', 7, 4, 10), item('copperslug:bala_plata', 3, 2, 5),
-            item('copperslug:bala_dinamita', 2, 1, 3), item('minecraft:bone', 4, 2, 6), item('minecraft:rotten_flesh', 4, 2, 6),
-            item('minecraft:lapis_lazuli', 4, 3, 9)]},
-        {'rolls': 1, 'entries': [item('copperslug:winchester', 3), item('copperslug:derringer', 3), {'type': 'minecraft:empty', 'weight': 4}]}]})
-print(MC, 'bloques', len(bloques), 'paleta', len(paleta), 'husks', len(entidades))
+# ---------------------------------------------------------------- escritura
+nb, npal, ne = E.exportar(g, NOMBRE, V21, DATOS, 'copperslug:chests/' + NOMBRE)
+E.datapack(DATOS, NOMBRE, V21, ['minecraft:desert'], 'surface_structures', 'beard_thin', -3, 40, 16, 1923481,
+           exclusion=('minecraft:desert_pyramids', 6))
+item = E.item
+E.botin(DATOS, V21, 'chests/' + NOMBRE, [
+    item('minecraft:gold_ingot', 8, 2, 6), item('minecraft:emerald', 4, 1, 3), item('minecraft:diamond', 2, 1, 2),
+    item('minecraft:golden_apple', 2), item('copperslug:revolver_bala', 7, 4, 10), item('copperslug:bala_plata', 3, 2, 5),
+    item('copperslug:bala_dinamita', 2, 1, 3), item('minecraft:bone', 4, 2, 6), item('minecraft:rotten_flesh', 4, 2, 6),
+    item('minecraft:lapis_lazuli', 4, 3, 9)],
+    [item('copperslug:winchester', 3), item('copperslug:derringer', 3), {'type': 'minecraft:empty', 'weight': 4}])
+print(MC := ('1.21.1' if V21 else '1.20.1'), 'bloques', nb, 'paleta', npal, 'entidades', ne)

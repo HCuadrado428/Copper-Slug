@@ -11,7 +11,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.monster.Husk;
+import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * Mobs con armas (los saqueadores; y los husks de las estructuras que los llevan puestos): algunos saqueadores salen con una Winchester en la mano (poco, y se puede apagar en la config,
+ * Mobs con armas (los saqueadores; y los zombis y husks de las estructuras que los llevan puestos): algunos saqueadores salen con una Winchester en la mano (poco, y se puede apagar en la config,
  * sección mobs_armados) y disparan de verdad con la misma balística que el jugador: seis balas, una pausa para
  * recargar, y más puntería con la dificultad. El arma se suelta con una probabilidad (por defecto, baja). Se mira
  * cada 10 ticks a los saqueadores que hay cerca de algún jugador.
@@ -48,7 +48,7 @@ public final class MobsArmados {
         if (srv.getTickCount() % 10 != 0 || !ConfigServidor.mobsArmados()) return;
         for (ServerPlayer p : srv.getPlayerList().getPlayers()) {
             ServerLevel l = p.serverLevel();
-            for (Mob m : l.getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(RADIO), e -> e.isAlive() && (e instanceof Pillager || e instanceof Husk))) {
+            for (Mob m : l.getEntitiesOfClass(Mob.class, p.getBoundingBox().inflate(RADIO), e -> e.isAlive() && (e instanceof Pillager || e instanceof Zombie))) {
                 if (m instanceof Pillager pi && !m.getTags().contains(TIRADO)) tirar(pi);
                 if (armado(m)) disparar(l, m);
             }
