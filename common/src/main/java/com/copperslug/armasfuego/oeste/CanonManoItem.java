@@ -196,7 +196,7 @@ public class CanonManoItem extends ArmaFuegoItem {
         bola.setItem(new ItemStack(tipo));
         bola.ponerOxido(com.copperslug.armasfuego.comun.Cobre.oxido(s));
         bola.setPos(b.x, b.y, b.z);
-        bola.shootFromRotation(p, p.getXRot(), p.getYRot(), 0F, velocidad(s), (float) (4.0 * com.copperslug.armasfuego.comun.Apuntar.dispersion(p)));
+        bola.shootFromRotation(p, p.getXRot(), p.getYRot(), 0F, velocidad(s), (float) (4.0 * com.copperslug.armasfuego.comun.Apuntar.dispersion(p) * com.copperslug.armasfuego.comun.Accesorios.dispersion(s)));
         l.addFreshEntity(bola);
         efectos(l, p, b, ModSounds.CANON_DISPARO.get(), 6.0F, 0.9F, 0, false);
         Vec3 m = p.getViewVector(1F);
