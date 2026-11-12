@@ -414,8 +414,13 @@ public final class FuegoCliente {
     public static final net.minecraft.client.KeyMapping MANGA = new net.minecraft.client.KeyMapping("key.copperslug.derringer_manga",
             com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, org.lwjgl.glfw.GLFW.GLFW_KEY_K, "key.categories.copperslug");
 
+    /** La tecla de la funda: enfundar o desenfundar el arma corta (H por defecto). */
+    public static final net.minecraft.client.KeyMapping FUNDA = new net.minecraft.client.KeyMapping("key.copperslug.funda",
+            com.mojang.blaze3d.platform.InputConstants.Type.KEYSYM, org.lwjgl.glfw.GLFW.GLFW_KEY_H, "key.categories.copperslug");
+
     private static void mangaTick(Minecraft mc, LocalPlayer p) {
         while (MANGA.consumeClick()) if (p != null && mc.screen == null) sacarDeLaManga();
+        while (FUNDA.consumeClick()) if (p != null && mc.screen == null) ModNetwork.CHANNEL.sendToServer(new com.copperslug.armasfuego.cinturon.FundaPacket());
     }
 
     /** Pide sacar la Derringer de la manga (también lo usa la prueba). */
