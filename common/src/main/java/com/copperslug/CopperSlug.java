@@ -96,6 +96,9 @@ public final class CopperSlug {
             for (var en : List.of(ModEnchantments.REVOLVER_ABANICO, ModEnchantments.REVOLVER_CARAMBOLA,
                     ModEnchantments.REVOLVER_DESENFUNDE, ModEnchantments.REVOLVER_SENALERO)) libro(out, en.get());
             out.accept(new ItemStack(ModItems.CARTUCHERA.get()));
+            out.accept(new ItemStack(ModItems.GRANADA_HUMO.get()));
+            out.accept(new ItemStack(ModItems.GRANADA_METRALLA.get()));
+            out.accept(new ItemStack(ModItems.GRANADA_MIEL.get()));
             out.accept(new ItemStack(ModItems.FUNDA.get()));
             out.accept(new ItemStack(ModItems.REVOLVER.get()));
             for (var m : List.of(ModItems.REVOLVER_BALA, ModItems.REVOLVER_BENGALA, ModItems.REVOLVER_DARDO, ModItems.REVOLVER_FOGUEO,
