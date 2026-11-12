@@ -1,11 +1,10 @@
 # Test de estilo de las armas: resultados y recomendaciones
 
-> **Estado (12/11/2026):** los cañones cuadrados no gustaron, así que los modelos del juego siguen como estaban. Hay tres
-> versiones nuevas para elegir, con menos polígonos: **A** (bloques de 1 px), **B** (bloques de 0,5 px) y **C** (icono
-> plano, como vanilla). Los modelos de A y B están en `propuestas/`, generados con `herramientas/voxelizar_armas.py`, y la
-> comparación está en `docs/estilo/versiones_armas.html`. Cuando se elija una, se copia a `models/item/armas3d/` y se
-> vuelve a pasar `herramientas/test_estilo_minecraft.py`. Las cifras y las imágenes de abajo son de la primera prueba
-> (cañones cuadrados); las texturas y los iconos nuevos sí están aplicados.
+> **Estado (12/11/2026):** elegida la versión **B (bloques de 0,5 px)** para las 13 armas, y ya está en
+> `models/item/armas3d/` (también los accesorios, las piezas de la Gatling y las cuatro fases del óxido). El tambor del
+> revólver y su culote siguen como estaban, porque el código los gira y coloca las balas en posiciones fijas. Test:
+> 0 errores, 0 avisos. Las versiones descartadas siguen en `propuestas/` y la comparación en
+> `docs/estilo/versiones_armas.html`. Las cifras de abajo son de la primera prueba (cañones cuadrados), que se descartó.
 
 Revisión del 12 de noviembre de 2026. Se han mirado los 14 modelos 3D, sus materiales y los iconos de inventario con
 `herramientas/render_modelo.py` (dibuja los modelos sin abrir el juego) y `herramientas/test_estilo_minecraft.py` (el test
