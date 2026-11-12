@@ -2,7 +2,7 @@
   "description": {
     "translate": "enchantment.copperslug.silenciador"
   },
-  "supported_items": "#copperslug:enchantable/rifle",
+  "supported_items": "#copperslug:enchantable/silenciable",
   "weight": 2,
   "max_level": 1,
   "min_cost": {

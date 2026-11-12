@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "copperslug:rifle",
+    "copperslug:derringer",
+    "copperslug:winchester",
+    "copperslug:thompson"
+  ]
+}

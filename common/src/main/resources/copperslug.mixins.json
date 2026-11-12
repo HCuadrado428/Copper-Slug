@@ -8,8 +8,7 @@
     "EnchantmentHelperMixin",
     "LivingEntityGolpeAccessor",
     "RiflePlayerMixin",
-    "PillagerArmadoMixin",
-    "YunqueAccesorioMixin"
+    "PillagerArmadoMixin"
   ],
   "client": [
     "CreativeScreenAccessor",
