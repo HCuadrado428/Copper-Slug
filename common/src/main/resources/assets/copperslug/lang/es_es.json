@@ -514,5 +514,19 @@
   "enchantment.copperslug.mosquete_mira": "Mira de cobre",
   "enchantment.copperslug.mosquete_mira.desc": "Mosquete: un punto de mira, la mitad de dispersión.",
   "enchantment.copperslug.canon_anima": "Ánima rayada",
-  "enchantment.copperslug.canon_anima.desc": "Cañón de mano: el ánima rayada, la bola sale mucho más recta."
+  "enchantment.copperslug.canon_anima.desc": "Cañón de mano: el ánima rayada, la bola sale mucho más recta.",
+  "subtitles.copperslug.silenciador_disparo": "Disparo silenciado",
+  "subtitles.copperslug.mob_montar": "Arma montada",
+  "subtitles.copperslug.mob_chispa": "Chispa de la cazoleta",
+  "subtitles.copperslug.mob_clic_seco": "Clic en seco",
+  "subtitles.copperslug.eco_interior": "Eco del disparo",
+  "subtitles.copperslug.revolver_disparo_lejos": "Disparo de revólver, a lo lejos",
+  "subtitles.copperslug.rifle_catalejo_disparo_lejos": "Disparo de rifle, a lo lejos",
+  "subtitles.copperslug.presion_disparo_lejos": "Disparo de escopeta de presión, a lo lejos",
+  "subtitles.copperslug.gatling_disparo_lejos": "Disparo de Gatling, a lo lejos",
+  "subtitles.copperslug.winchester_disparo_lejos": "Disparo de Winchester, a lo lejos",
+  "subtitles.copperslug.derringer_disparo_lejos": "Disparo de Derringer, a lo lejos",
+  "subtitles.copperslug.thompson_disparo_lejos": "Disparo de Thompson, a lo lejos",
+  "subtitles.copperslug.mosquete_disparo_lejos": "Disparo de mosquete, a lo lejos",
+  "subtitles.copperslug.canon_disparo_lejos": "Disparo de cañón, a lo lejos"
 }

@@ -466,6 +466,7 @@ public abstract class ArmaFuegoItem extends Item {
     }
 
     public static void limpiar() {
+        ULTIMO_ECO.clear();
         RAFAGAS.clear();
         Apuntar.limpiar();
         SACADO.clear();
@@ -523,9 +524,41 @@ public abstract class ArmaFuegoItem extends Item {
         l.sendParticles(ArmasFuegoRegistro.FOGONAZO.get(), q.x, q.y, q.z, 1, 0, 0, 0, 0);
         if (humo > 0) l.sendParticles(ParticleTypes.SMOKE, q.x, q.y, q.z, humo, 0.04, 0.04, 0.04, 0.01);
         boolean sil = p instanceof net.minecraft.world.entity.LivingEntity le && Accesorios.silencioso(le.getMainHandItem());
-        l.playSound(null, p.getX(), p.getY(), p.getZ(), snd, SoundSource.PLAYERS, sil ? vol * 0.25F : vol, tono + l.random.nextFloat() * 0.08F);
-        if (!sil) l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
+        if (sil) {
+            // el silenciador de verdad: un soplido corto y sin estampido (y el sculk no lo oye)
+            l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.SILENCIADOR_DISPARO.get(), SoundSource.PLAYERS, 1.2F, 0.95F + l.random.nextFloat() * 0.1F);
+        } else {
+            l.playSound(null, p.getX(), p.getY(), p.getZ(), snd, SoundSource.PLAYERS, vol, tono + l.random.nextFloat() * 0.08F);
+            l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
+            sonidoExtra(l, p, snd, vol, tono);
+        }
         if (casquillo) casquillo(l, p, boca.subtract(mira.scale(0.45)));
+    }
+
+    private static final java.util.Map<java.util.UUID, Long> ULTIMO_ECO = new java.util.HashMap<>();
+
+    /**
+     * Lo que le da profundidad a un disparo: a los jugadores lejos del tirador (45 a 150 bloques) les llega su versión lejana (apagada, con
+     * eco), que el sonido normal ya no alcanza; y en un sitio cerrado (cueva, mina, pirámide, un edificio) resuena. Las armas de mucha
+     * cadencia no lo hacen en cada tiro (cada 6 ticks como mucho).
+     */
+    public static void sonidoExtra(ServerLevel l, Entity p, SoundEvent snd, float vol, float tono) {
+        long t = l.getGameTime();
+        Long ult = ULTIMO_ECO.get(p.getUUID());
+        if (ult != null && t - ult < 6) return;
+        ULTIMO_ECO.put(p.getUUID(), t);
+        SoundEvent lej = ModSounds.lejos(snd);
+        if (lej != null) {
+            for (ServerPlayer sp : l.players()) {
+                double d = sp.distanceTo(p);
+                if (d < 45 || d > 150) continue;
+                float v = Math.min(10F, (float) d / 16F + 1F);
+                sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSoundPacket(
+                        net.minecraft.core.registries.BuiltInRegistries.SOUND_EVENT.wrapAsHolder(lej), SoundSource.PLAYERS, p.getX(), p.getY(), p.getZ(), v, tono, l.random.nextLong()));
+            }
+        }
+        if (!l.canSeeSky(net.minecraft.core.BlockPos.containing(p.getEyePosition())))
+            l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.ECO_INTERIOR.get(), SoundSource.PLAYERS, Math.min(1.5F, vol * 0.4F), 0.92F + l.random.nextFloat() * 0.12F);
     }
 
     /** Un casquillo de latón (partícula barata con rebote) que sale a la derecha y hacia arriba. */
