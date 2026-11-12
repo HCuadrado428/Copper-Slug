@@ -49,9 +49,13 @@
 - Armed mobs: some pillagers carry a Winchester and really shoot (six rounds, then a reload; aim depends on the
   difficulty). Config section `mobs_armados`: master switch, chance per pillager and per captain, damage, rate of fire and
   drop chance. Off means vanilla.
-- New structure, the Pharaoh's Pyramid (deserts): a cinematic stepped sandstone pyramid with a pylon gate, obelisks, a
-  trapped corridor (pressure plate over TNT), the sarcophagus chamber with four husks carrying Winchesters, and a rear
-  treasure chapel with ammo and, sometimes, a Winchester or a Derringer.
+- New structure, the Pharaoh's Pyramid (deserts): a cinematic stepped sandstone pyramid (61 x 61) with a pylon gate and
+  obelisks, and two labyrinth floors inside: an 11 x 11 maze with loops, pressure-plate TNT traps, husks (some carrying
+  Winchesters) and chests in the dead ends, with the sarcophagus hall in the middle; a hand ladder leads to a smaller 7 x 7
+  maze and the pharaoh's treasure chamber with four chests (ammo and, sometimes, a Winchester or a Derringer).
+- New structure, the Abandoned Copper Mine (hills, mountains and badlands, underground): a 15 x 15 labyrinth with 3-wide
+  tunnels, rails and chest minecarts, timber props, powder stores full of TNT, cave-ins, zombie miners with Winchesters
+  and, in a corner, the vein chamber of oxidised copper with the treasure. A wooden headframe marks the shaft.
 
 ---
 
@@ -108,6 +112,11 @@
 - Mobs armados: algunos saqueadores llevan una Winchester y disparan de verdad (seis balas y luego recargan; la puntería
   depende de la dificultad). Sección `mobs_armados` de la config: interruptor, probabilidad por saqueador y por capitán,
   daño, cadencia y probabilidad de soltar el arma. Apagado, todo es vanilla.
-- Estructura nueva, la Pirámide del faraón (desiertos): una pirámide escalonada de arenisca de película, con pilono de
-  entrada, obeliscos, un pasillo trampa (placa de presión sobre TNT), la cámara del sarcófago con cuatro husks con
-  Winchester y una capilla trasera con el tesoro: munición y, a veces, una Winchester o una Derringer.
+- Estructura nueva, la Pirámide del faraón (desiertos): una pirámide escalonada de arenisca de película (61 x 61) con
+  pilono de entrada y obeliscos, y dos plantas laberínticas por dentro: un laberinto de 11 x 11 con bucles, trampas de TNT
+  con placa de presión, husks (algunos con Winchester) y cofres en los callejones, con la sala del sarcófago en el centro;
+  una escalera de mano sube a otro laberinto más pequeño (7 x 7) y a la cámara del tesoro del faraón, con cuatro cofres
+  (munición y, a veces, una Winchester o una Derringer).
+- Estructura nueva, la Mina de cobre abandonada (colinas, montañas y mesetas, bajo tierra): un laberinto de 15 x 15 con
+  túneles de 3 de ancho, vías y vagonetas con cofre, puntales, polvorines con TNT, derrumbes, mineros zombis con Winchester
+  y, en una esquina, la cámara del filón de cobre oxidado con el tesoro. Un cabrestante de madera marca el pozo.
