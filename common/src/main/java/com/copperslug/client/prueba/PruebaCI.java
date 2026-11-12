@@ -294,7 +294,7 @@ public final class PruebaCI {
     private static int[] estContar(net.minecraft.server.level.ServerLevel l, net.minecraft.core.BlockPos c, int rx, int rz, int y0, int y1) {
         int oro = 0, cofres = 0, tnt = 0, escalera = 0, cobre = 0, rieles = 0;
         int minX = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, minZ = Integer.MAX_VALUE, maxZ = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-        int railX = Integer.MIN_VALUE, railY = 0, railZ = 0;
+        int railX = Integer.MIN_VALUE, railY = 0, railZ = 0, cofreY = Integer.MIN_VALUE;
         var m = new net.minecraft.core.BlockPos.MutableBlockPos();
         for (int x = c.getX() - rx; x <= c.getX() + rx; x++)
             for (int z = c.getZ() - rz; z <= c.getZ() + rz; z++)
@@ -303,7 +303,10 @@ public final class PruebaCI {
                     if (b == net.minecraft.world.level.block.Blocks.GOLD_BLOCK) {
                         oro++;
                         minX = Math.min(minX, x); maxX = Math.max(maxX, x); minZ = Math.min(minZ, z); maxZ = Math.max(maxZ, z); maxY = Math.max(maxY, y);
-                    } else if (b == net.minecraft.world.level.block.Blocks.CHEST) cofres++;
+                    } else if (b == net.minecraft.world.level.block.Blocks.CHEST) {
+                        cofres++;
+                        if (cofreY == Integer.MIN_VALUE) cofreY = y;
+                    }
                     else if (b == net.minecraft.world.level.block.Blocks.TNT) tnt++;
                     else if (b == net.minecraft.world.level.block.Blocks.LADDER) escalera++;
                     else if (b == net.minecraft.world.level.block.Blocks.COPPER_ORE) cobre++;
@@ -314,7 +317,7 @@ public final class PruebaCI {
                 }
         int armados = l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new net.minecraft.world.phys.AABB(c).inflate(rx, 150, rz),
                 e -> com.copperslug.armasfuego.comun.MobsArmados.armado(e)).size();
-        return new int[]{oro, cofres, tnt, escalera, cobre, rieles, armados, minX, maxX, minZ, maxZ, maxY, railX, railY, railZ};
+        return new int[]{oro, cofres, tnt, escalera, cobre, rieles, armados, minX, maxX, minZ, maxZ, maxY, railX, railY, railZ, cofreY};
     }
 
     private static void estPonerCamara(ServerPlayer sp, double x, double y, double z, double mirax, double miray, double miraz) {
@@ -418,6 +421,38 @@ public final class PruebaCI {
             if (r != null && r[12] != Integer.MIN_VALUE) estPonerCamara(sp, r[12] + 0.5, r[13] + 1.6, r[14] + 0.5, r[12] + 0.5 + 6, r[13] + 1.6, r[14] + 0.5);
         }));
         paso("est_mina_dentro", 70, () -> {});
+        // ---- el campamento de saqueadores (a cielo abierto), al oeste de la arena
+        sin("est_camp_cargar", 4, () -> piSrv(sp -> {
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+                    "forceload add " + (o.getX() - 456) + " " + (o.getZ() - 40) + " " + (o.getX() - 344) + " " + (o.getZ() + 40));
+        }));
+        sin("est_camp_esperar_trozos", 120, () -> {});
+        sin("est_camp_poner", 8, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            var c = new net.minecraft.core.BlockPos(o.getX() - 400, o.getY(), o.getZ());
+            sp.getServer().getCommands().performPrefixedCommand(sp.createCommandSourceStack().withPermission(4).withSuppressedOutput(),
+                    "place structure copperslug:campamento " + c.getX() + " " + c.getY() + " " + c.getZ());
+            PI.put("est_c", estContar(l, c, 24, 24, l.getMinBuildHeight(), l.getMinBuildHeight() + 200));
+            PI.put("est_c_o", c.immutable());
+        }));
+        sin("est_camp_esperar", 80, () -> {});
+        vigila("est_camp_ok", 4, () -> {
+            int[] r = (int[]) PI.get("est_c");
+            if (r == null) throw new IllegalStateException("el campamento aún no se ha contado");
+            String det = "cofres " + r[1] + ", saqueadores armados " + r[6];
+            RESUMEN.add("  estructuras: campamento generado: " + det);
+            if (r[1] < 2 || r[6] < 6) throw new IllegalStateException("el campamento sale entero (cofres >= 2, armados >= 6) (" + det + ")");
+        });
+        sin("est_camp_cam", 4, () -> piSrv(sp -> {
+            int[] r = (int[]) PI.get("est_c");
+            var c = (net.minecraft.core.BlockPos) PI.get("est_c_o");
+            if (r == null || r[1] < 2) return;
+            PI.put("est_mayfly", sp.getAbilities().mayfly);
+            estPonerCamara(sp, c.getX() + 0.5 - 34, r[15] + 16, c.getZ() + 0.5 + 6, c.getX() + 0.5, r[15], c.getZ() + 0.5);
+        }));
+        paso("est_campamento", 70, () -> {});
         // ---- de vuelta a la arena
         sin("est_volver", 4, () -> piSrv(sp -> {
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
