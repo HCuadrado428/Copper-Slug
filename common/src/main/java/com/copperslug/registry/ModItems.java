@@ -144,5 +144,13 @@ public final class ModItems {
     public static final RegistryObject<Item> FUNDA = ITEMS.register("funda",
             () -> new com.copperslug.armasfuego.cinturon.FundaItem(new Item.Properties().stacksTo(1)));
 
+    /** Granadas de cobre: humo, metralla y pegamento (miel). */
+    public static final RegistryObject<Item> GRANADA_HUMO = ITEMS.register("granada_humo",
+            () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.HUMO, new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> GRANADA_METRALLA = ITEMS.register("granada_metralla",
+            () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.METRALLA, new Item.Properties().stacksTo(16)));
+    public static final RegistryObject<Item> GRANADA_MIEL = ITEMS.register("granada_miel",
+            () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.MIEL, new Item.Properties().stacksTo(16)));
+
     private ModItems() {}
 }

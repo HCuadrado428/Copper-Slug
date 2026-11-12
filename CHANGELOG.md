@@ -107,6 +107,11 @@
   and the holster key (H) draws or holsters it. They go in the Curios/Trinkets belt slot if those mods are installed, or
   anywhere in the inventory, and they show on the player's waist.
 
+- Copper grenades (crafted 2 at a time with copper, gunpowder and charcoal, an iron nugget or a honey bottle; also in
+  pillager outposts, mineshafts and dungeons): they bounce and go off after 3 seconds. Smoke makes a 10-second cloud
+  that blinds and makes mobs lose their target; frag is a small blast that only breaks blocks if the server config says
+  so (`granadas.metralla_rompe_bloques`); glue splashes honey that makes everyone sticky. New advancement "Pull the Pin".
+
 ---
 
 <a id="castellano"></a>
@@ -224,3 +229,8 @@
   munición y las da al recargar; la funda guarda un arma corta (revólver, Derringer, pistola de resonancia, arponera) y
   la tecla de la funda (H) la saca o la enfunda. Van en el hueco de cinturón de Curios/Trinkets si están instalados, o en
   cualquier parte del inventario, y se ven en la cintura del jugador.
+- Granadas de cobre (se fabrican de dos en dos con cobre, pólvora y carbón vegetal, una pepita de hierro o un bote de
+  miel; también salen en puestos de saqueadores, minas y mazmorras): rebotan y estallan a los 3 segundos. La de humo
+  deja una nube de 10 segundos que ciega y hace que los mobs pierdan su objetivo; la de metralla es una explosión pequeña
+  que solo rompe bloques si lo dice la config del servidor (`granadas.metralla_rompe_bloques`); la de pegamento salpica
+  miel y deja pringado a todo el que pilla. Logro nuevo «Quita la anilla».

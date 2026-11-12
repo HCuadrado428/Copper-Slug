@@ -33,7 +33,9 @@ public final class BotinFabric {
         TIPO = Registry.register(BuiltInRegistries.LOOT_POOL_ENTRY_TYPE, new ResourceLocation(CopperSlug.MOD_ID, "armas_fuego"),
                 new LootPoolEntryType(new Entrada.Serializador()));
         LootTableEvents.MODIFY.register((recursos, gestor, id, tabla, fuente) -> {
-            if (!fuente.isBuiltin() || BotinArmas.arma(id) == null && !id.getPath().startsWith("chests/village/")) return;
+            if (!fuente.isBuiltin() || BotinArmas.arma(id) == null && !id.getPath().startsWith("chests/village/")
+                    && !id.getPath().equals("chests/simple_dungeon") && !id.getPath().equals("chests/abandoned_mineshaft")
+                    && !id.getPath().equals("chests/pillager_outpost")) return;   // (los tres últimos, también por las granadas)
             tabla.withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1)).add(Entrada.de(id)));
         });
     }
