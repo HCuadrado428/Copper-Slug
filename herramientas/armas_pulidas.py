@@ -473,15 +473,15 @@ def thompson(con_tambor=True):
         P('cantonera', 20, 20.5, 5, 10.5, 2, 'negro'),
     ]
     if con_tambor:
-        # el tambor de la mafia («Chicago typewriter»): un disco de 7 px en escalones (como los círculos de Minecraft),
-        # plano a los lados, con su buje de latón y la llave de cuerda
+        # el tambor de la mafia: un disco de 7 px en escalones (como los círculos de Minecraft), con la cara redonda
+        # mirando hacia delante y hacia atrás, su buje de latón y la llave de cuerda
         el += [
-            P('cuello_tambor', 3.5, 5.5, 7.25, 8, 1.5, 'cobre'),
-            P('tambor_a', 1, 8, 2.25, 5.25, 2.5, 'cobre'),
-            P('tambor_b', 1.5, 7.5, 1.25, 6.25, 2.5, 'cobre'),
-            P('tambor_c', 2.5, 6.5, 0.25, 7.25, 2.5, 'cobre'),
-            P('buje', 3.75, 5.25, 3, 4.5, 3.25, 'laton'),
-            C('llave', (6.125, 4.5, 4.25), (6.375, 5.75, 4.75), 'hierro'),
+            P('cuello_tambor', 3.75, 5.25, 7.25, 8, 1.5, 'cobre'),
+            C('tambor_a', (4.5, 2.25, 3.25), (11.5, 5.25, 5.75), 'cobre'),
+            C('tambor_b', (5, 1.25, 3.25), (11, 6.25, 5.75), 'cobre'),
+            C('tambor_c', (6, 0.25, 3.25), (10, 7.25, 5.75), 'cobre'),
+            C('buje', (7.25, 3, 3), (8.75, 4.5, 6), 'laton'),
+            C('llave', (7.75, 4.5, 2.75), (8.25, 5.75, 3.25), 'hierro'),
         ]
     return el
 
