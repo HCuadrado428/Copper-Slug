@@ -155,7 +155,7 @@ def boca(z, y1, y2, ancho, tex='negro'):
 
 def revolver(abierto=False):
     el = [
-        P('canon', 1, 8.4, 9, 11, 2, 'cobre'),
+        P('canon', 1, 8.4, 9, 11, 2, 'hierro'),
         boca(1, 9.5, 10.5, 1),
         P('funda_eyector', 2.5, 8.4, 8, 9, 1, 'cobre'),
         P('punto_de_mira', 1.5, 2.5, 11, 11.5, 0.5, 'hierro'),
@@ -188,23 +188,23 @@ def revolver(abierto=False):
 
 def winchester(palanca=False):
     el = [
-        P('canon', -14, 3.5, 9.5, 10.5, 1, 'cobre'),
+        P('canon', -14, 3.5, 9.25, 10.75, 1.5, 'hierro'),
         boca(-14, 9.75, 10.25, 0.5),
-        P('punto_de_mira', -13.5, -13, 10.5, 11, 0.5, 'hierro'),
-        P('abrazadera', -11.5, -11, 8.25, 10.75, 1.5, 'hierro'),
-        P('deposito', -12, 3.5, 8.5, 9.5, 1, 'cobre'),
-        P('tapon_deposito', -12.5, -12, 8.5, 9.5, 1, 'hierro'),
-        P('tapa_guardamano', -4.5, -4, 8, 10, 2, 'cobre'),
-        P('guardamano', -4, 3.5, 8, 10, 2, 'madera'),
-        P('alza', 0, 1, 10.5, 11, 1, 'hierro'),
-        P('cajon', 3.5, 10.5, 7, 11, 2, 'cobre'),
-        C('ventana_carga', (9, 8, 5), (9.02, 9, 8), 'negro', caras=('east',)),
-        P('martillo', 9.5, 10.5, 11, 12, 1, 'hierro'),
-        P('gatillo', 7.5, 8, 6, 7, 0.5, 'hierro'),
-        P('cuello', 10.5, 13, 6.5, 9.5, 2, 'madera'),
-        P('culata_1', 13, 16.5, 5.5, 9.5, 2, 'madera'),
-        P('culata_2', 16.5, 20, 4.5, 9.5, 2, 'madera'),
-        P('cantonera', 20, 20.5, 4.5, 9.5, 2, 'cobre'),
+        P('punto_de_mira', -13.5, -13, 10.75, 11.25, 0.5, 'laton'),
+        P('abrazadera', -11.5, -10.75, 7.75, 11, 2, 'laton'),
+        P('deposito', -12, 3.5, 8, 9.25, 1.25, 'hierro'),
+        P('tapon_deposito', -12.5, -12, 8, 9.25, 1.25, 'laton'),
+        P('tapa_guardamano', -4.5, -4, 7.75, 10.25, 2.5, 'laton'),
+        P('guardamano', -4, 3.5, 7.75, 10.25, 2.5, 'madera'),
+        P('alza', 0, 1, 10.75, 11.25, 1, 'hierro'),
+        P('cajon', 3.5, 10.5, 6.75, 11.25, 2.5, 'laton'),
+        C('ventana_carga', (9.25, 8, 5), (9.27, 9, 8), 'negro', caras=('east',)),
+        P('martillo', 9.5, 10.5, 11.25, 12.25, 1, 'hierro'),
+        P('gatillo', 7.5, 8, 6, 6.75, 0.5, 'hierro'),
+        P('cuello', 10.5, 13, 6.25, 9.75, 2.5, 'madera'),
+        P('culata_1', 13, 16.5, 5.5, 9.75, 2.5, 'madera'),
+        P('culata_2', 16.5, 20, 4.25, 9.75, 2.5, 'madera'),
+        P('cantonera', 20, 20.5, 4.25, 9.75, 2.5, 'laton'),
     ]
     rot = ((8, 6.75, 5.25), 'x', 45) if palanca else None   # el eje va delante: baja la parte de atrás
     el += [
@@ -302,11 +302,11 @@ def arponera():
 
 def cerbatana():
     return [
-        P('canon', 0.5, 9, 10, 11, 1, 'cobre'),
+        P('canon', 0.5, 9, 9.75, 11.25, 1.5, 'cobre'),
         boca(0.5, 10.25, 10.75, 0.5),
-        P('anillo_boca', 0.5, 1, 9.75, 11.25, 1.5, 'laton'),
-        P('anillo_medio', 5, 5.5, 9.75, 11.25, 1.5, 'laton'),
-        P('guardamano', 4, 9, 9, 10.5, 1.5, 'madera'),
+        P('anillo_boca', 0.5, 1.25, 9.5, 11.5, 2, 'laton'),
+        P('anillo_medio', 5, 5.5, 9.5, 11.5, 2, 'laton'),
+        P('guardamano', 4, 9, 8.75, 10.25, 2, 'madera'),
         # la cámara de aire y la pera de cuero que la carga
         P('camara', 9, 11.5, 8.5, 11.5, 2, 'cobre'),
         P('pera', 8.5, 11, 7, 8.5, 1.5, 'cuero'),
@@ -345,7 +345,7 @@ def rifle(cerrojo=False):
     el = [
         P('corona', -10.5, -9.5, 8.75, 10.25, 1.5, 'cobre'),
         boca(-10.5, 9.25, 9.75, 0.5),
-        P('canon', -9.5, 4, 9, 10, 1, 'cobre'),
+        P('canon', -9.5, 4, 8.75, 10.25, 1.5, 'hierro'),
         P('guardamano', -3, 4, 7.5, 9, 2, 'madera'),
         P('cajon', 4, 10.5, 8, 10.5, 2, 'cobre'),
         # el catalejo: monturas, tubo, objetivo con lente y ocular
@@ -379,7 +379,7 @@ def rifle(cerrojo=False):
 
 def escopeta():
     return [
-        P('canon', -10, 5, 9, 11, 2, 'cobre'),
+        P('canon', -10, 5, 9, 11, 2, 'hierro'),
         C('boca_tolva', (7, 9, -10.02), (9, 11, -10), 'tolva', caras=('north',)),
         P('aro_boca', -10, -9, 8.75, 11.25, 2.5, 'hierro'),
         # el depósito de presión bajo el cañón y el corredor de bombeo
@@ -410,8 +410,8 @@ def escopeta():
 def derringer(abierta=False):
     rot = ((8, 8.3, 8.4), 'x', 22.5) if abierta else None
     canones = [
-        P('canon_sup', 1, 8, 9.75, 11, 1.5, 'cobre', rot=rot),
-        P('canon_inf', 1, 8, 8.5, 9.75, 1.5, 'cobre', rot=rot),
+        P('canon_sup', 1, 8, 9.75, 11, 1.5, 'hierro', rot=rot),
+        P('canon_inf', 1, 8, 8.5, 9.75, 1.5, 'hierro', rot=rot),
         P('costilla', 1.25, 7.75, 11, 11.5, 0.5, 'cobre', rot=rot),
         C('boca_sup', (7.75, 10.125, 0.98), (8.25, 10.625, 1), 'negro', caras=('north',), rot=rot),
         C('boca_inf', (7.75, 8.875, 0.98), (8.25, 9.375, 1), 'negro', caras=('north',), rot=rot),
@@ -435,10 +435,10 @@ def thompson(con_tambor=True):
         P('compensador', -12.5, -9.5, 8.75, 10.25, 1.5, 'hierro'),
         boca(-12.5, 9.25, 9.75, 0.5),
         P('punto_de_mira', -11.5, -10.5, 10.25, 10.75, 0.5, 'hierro'),
-        P('canon', -9.5, 2, 9, 10, 1, 'cobre'),
+        P('canon', -9.5, 2, 8.75, 10.25, 1.5, 'hierro'),
     ]
     for i, z in enumerate((-8, -6.5, -5, -3.5, -2)):
-        el.append(P('aleta_%d' % i, z, z + 0.5, 8.75, 10.25, 1.5, 'cobre'))
+        el.append(P('aleta_%d' % i, z, z + 0.5, 8.5, 10.5, 2, 'cobre'))
     el += [
         P('soporte_delantero', -1, 0.5, 8, 9, 1, 'cobre'),
         P('empunadura_delantera', -1.5, 1, 4.5, 8, 1.5, 'nogal'),
@@ -466,28 +466,28 @@ def thompson(con_tambor=True):
 
 def mosquete(bayoneta=True, etapa=0):
     el = [
-        P('canon', -9, 12, 9.5, 10.5, 1, 'cobre'),
+        P('canon', -9, 12, 9.25, 10.75, 1.5, 'hierro'),
         boca(-9, 9.75, 10.25, 0.5),
-        P('punto_de_mira', -8.5, -8, 10.5, 11, 0.5, 'hierro'),
-        P('caja', -6, 12, 8, 9.75, 1.75, 'madera'),
-        P('punta_caja', -6.5, -6, 8, 9.75, 2, 'laton'),
-        P('abrazadera_1', -3, -2.5, 7.75, 10.75, 2, 'laton'),
-        P('abrazadera_2', 3, 3.5, 7.75, 10.75, 2, 'laton'),
+        P('punto_de_mira', -8.5, -8, 10.75, 11.25, 0.5, 'laton'),
+        P('caja', -6, 12, 7.75, 9.75, 2.25, 'madera'),
+        P('punta_caja', -6.5, -6, 7.75, 9.75, 2.5, 'laton'),
+        P('abrazadera_1', -3, -2.5, 7.5, 11, 2.5, 'laton'),
+        P('abrazadera_2', 3, 3.5, 7.5, 11, 2.5, 'laton'),
         # la llave de chispa en el lado derecho
-        C('pletina', (8.875, 8.5, 9), (9.25, 9.75, 13), 'cobre'),
-        C('rastrillo', (9.25, 9.5, 9.5), (9.75, 11, 10), 'acero'),
-        C('pie_de_gato', (9.25, 10, 11.25), (9.75, 11.5, 12), 'hierro'),
-        C('piedra', (9.25, 11.25, 10.75), (9.75, 11.75, 11.25), 'negro'),
-        P('guarda', 12, 15, 6.5, 7, 0.75, 'laton'),
-        P('gatillo', 13.25, 13.75, 7, 8, 0.5, 'acero'),
-        P('muneca', 12, 15, 7, 9.75, 1.6, 'madera'),
-        P('culata', 15, 24, 5.5, 9, 1.6, 'madera'),
-        P('culata_baja', 19, 24, 4, 5.5, 2, 'madera'),
-        P('cantonera', 24, 24.5, 4, 9, 1.8, 'laton'),
+        C('pletina', (9.125, 8.25, 9), (9.5, 9.75, 13), 'cobre'),
+        C('rastrillo', (9.5, 9.5, 9.5), (10, 11, 10), 'acero'),
+        C('pie_de_gato', (9.5, 10, 11.25), (10, 11.5, 12), 'hierro'),
+        C('piedra', (9.5, 11.25, 10.75), (10, 11.75, 11.25), 'negro'),
+        P('guarda', 12, 15, 6.25, 6.75, 1, 'laton'),
+        P('gatillo', 13.25, 13.75, 6.75, 7.75, 0.5, 'acero'),
+        P('muneca', 12, 15, 6.75, 9.75, 2.25, 'madera'),
+        P('culata', 15, 24, 5.25, 9.25, 2.25, 'madera'),
+        P('culata_baja', 19, 24, 3.75, 5.25, 2.5, 'madera'),
+        P('cantonera', 24, 24.5, 3.75, 9.25, 2.5, 'laton'),
     ]
     # la baqueta: en su sitio (bajo la caja) o fuera, metida en la boca (etapas de la recarga)
     if etapa == 0:
-        el.append(P('baqueta', -8.5, 11, 7.5, 8, 0.5, 'hierro'))
+        el.append(P('baqueta', -8.5, 11, 7.25, 7.75, 0.5, 'hierro'))
     elif etapa in (1, 2):
         el += [P('baqueta', -15.5, -9, 9.75, 10.25, 0.5, 'hierro'), P('cabeza_baqueta', -16, -15.5, 9.5, 10.5, 1, 'hierro')]
     else:
@@ -506,21 +506,21 @@ def mosquete(bayoneta=True, etapa=0):
 
 def canon_mano(encendida=False):
     el = [
-        P('brocal', -8, -7, 8.25, 10.75, 2.5, 'cobre'),
-        boca(-8, 8.75, 10.25, 1.5),
-        P('canon', -7, 2, 8.5, 10.5, 2, 'cobre'),
-        P('refuerzo_1', -4.5, -4, 8.25, 10.75, 2.25, 'cobre'),
-        P('refuerzo_2', -1.5, -1, 8.25, 10.75, 2.25, 'cobre'),
-        P('recamara', 2, 4, 8.25, 10.75, 2.5, 'cobre'),
-        P('gancho', -2, -1, 7.5, 8.25, 0.75, 'hierro'),
-        P('mecha', 2.5, 3, 10.75, 12, 0.5, 'mecha'),
-        P('vara', 4, 24, 9, 10, 1.25, 'madera'),
-        P('anilla_1', 5, 5.5, 8.75, 10.25, 1.5, 'cobre'),
-        P('anilla_2', 7, 7.5, 8.75, 10.25, 1.5, 'cobre'),
-        P('regaton', 24, 24.5, 8.75, 10.25, 1.5, 'hierro'),
+        P('brocal', -8, -6.75, 7.5, 11.5, 4, 'cobre'),
+        boca(-8, 8.5, 10.5, 2),
+        P('canon', -6.75, 2, 8, 11, 3, 'cobre'),
+        P('refuerzo_1', -4.5, -3.75, 7.75, 11.25, 3.5, 'laton'),
+        P('refuerzo_2', -1.5, -0.75, 7.75, 11.25, 3.5, 'laton'),
+        P('recamara', 2, 4.5, 7.5, 11.5, 4, 'cobre'),
+        P('gancho', -2, -1, 6.75, 8, 1, 'hierro'),
+        P('mecha', 3, 3.5, 11.5, 12.75, 0.5, 'mecha'),
+        P('vara', 4.5, 24, 8.5, 10.5, 2, 'madera'),
+        P('anilla_1', 5, 5.75, 8.25, 10.75, 2.5, 'cobre'),
+        P('anilla_2', 7.5, 8.25, 8.25, 10.75, 2.5, 'cobre'),
+        P('regaton', 24, 24.5, 8.25, 10.75, 2.5, 'hierro'),
     ]
     if encendida:
-        el.append(P('chispa', 2.5, 3, 12, 12.5, 0.5, 'brasa'))
+        el.append(P('chispa', 3, 3.5, 12.75, 13.25, 0.5, 'brasa'))
     return el
 
 
@@ -605,7 +605,7 @@ def _silenciador(z1, z2, cy, lado):
 
 ACCESORIOS = {
     'acc_silenciador_rifle': lambda: _silenciador(-14.5, -10, 9.5, 2),
-    'acc_silenciador_winchester': lambda: _silenciador(-15.95, -12, 10, 1.5),   # Minecraft no deja pasar de -16
+    'acc_silenciador_winchester': lambda: _silenciador(-15.95, -12, 10, 2),   # Minecraft no deja pasar de -16
     'acc_silenciador_thompson': lambda: _silenciador(-15.95, -11.5, 9.5, 2),
     'acc_silenciador_derringer': lambda: _silenciador(-3, 1, 10.375, 1.5),
     'acc_compensador_thompson': lambda: [P('compensador', -14, -12.5, 8.5, 10.5, 2, 'cobre'),
@@ -613,17 +613,17 @@ ACCESORIOS = {
     'acc_canon_largo_revolver': lambda: [P('canon_largo', -2, 1, 9, 11, 2, 'cobre'),
                                          P('punto_de_mira', -1.5, -0.5, 11, 11.5, 0.5, 'hierro'),
                                          boca(-2, 9.5, 10.5, 1)],
-    'acc_deposito_winchester': lambda: [P('deposito_largo', -13.5, -12, 8.5, 9.5, 1, 'cobre'),
-                                        P('collar_1', -10, -9.5, 8.25, 9.75, 1.5, 'hierro'),
-                                        P('collar_2', -6.5, -6, 8.25, 9.75, 1.5, 'hierro'),
-                                        P('tapon', -14, -13.5, 8.5, 9.5, 1, 'hierro')],
+    'acc_deposito_winchester': lambda: [P('deposito_largo', -13.5, -12, 8, 9.25, 1.25, 'hierro'),
+                                        P('collar_1', -10, -9.5, 7.75, 9.5, 1.75, 'laton'),
+                                        P('collar_2', -6.5, -6, 7.75, 9.5, 1.75, 'laton'),
+                                        P('tapon', -14, -13.5, 8, 9.25, 1.25, 'laton')],
     'acc_estrangulador_escopeta': lambda: [P('estrangulador', -13, -10, 8.75, 11.25, 2.5, 'cobre'),
                                            P('cono', -14, -13, 9.25, 10.75, 1.5, 'cobre'),
                                            boca(-14, 9.75, 10.25, 0.5)],
-    'acc_mira_mosquete': lambda: [P('base_mira', -7.5, -6.5, 10.5, 11, 1, 'cobre'),
-                                  P('mira', -7.25, -6.75, 11, 11.75, 0.5, 'cobre')],
+    'acc_mira_mosquete': lambda: [P('base_mira', -7.5, -6.5, 10.75, 11.25, 1, 'cobre'),
+                                  P('mira', -7.25, -6.75, 11.25, 12, 0.5, 'cobre')],
     # el ánima rayada: tres estrías de cobre dentro de la boca del cañón de mano
-    'acc_anima_canon': lambda: [C('estria_%d' % i, (7.25, 8.875 + 0.5 * i, -8.04), (8.75, 9.125 + 0.5 * i, -8.02), 'cobre',
+    'acc_anima_canon': lambda: [C('estria_%d' % i, (7.0, 8.875 + 0.5 * i, -8.04), (9.0, 9.125 + 0.5 * i, -8.02), 'cobre',
                                   caras=('north',)) for i in range(3)],
 }
 
@@ -710,6 +710,47 @@ def generar_cinturon(salida):
         with open(os.path.join(salida, n + '.json'), 'w', encoding='utf-8') as fh:
             json.dump(m, fh, ensure_ascii=False, separators=(',', ':'))
 
+
+# ------------------------------------------------------------------------------------------------ tercera persona
+# Más grandes en la mano del personaje (antes, a 0,62-0,75, de frente casi no se veían). Se escala alrededor de la
+# empuñadura (en píxeles del modelo), corrigiendo el traslado, para que siga en la mano.
+
+TERCERA = {
+    'revolver': (1.0, (8, 3, 13)), 'derringer': (0.85, (8, 4, 11)), 'resonancia': (1.0, (8, 4, 11.5)),
+    'lanzallamas': (0.95, (8, 5, 13)), 'arponera': (0.95, (8, 5, 13)), 'cerbatana': (0.95, (8, 8, 12)),
+    'winchester': (0.9, (8, 7, 11)), 'thompson': (0.9, (8, 6, 10)), 'rifle': (0.9, (8, 7, 11)),
+    'escopeta': (0.9, (8, 7, 11)), 'mosquete': (0.85, (8, 7, 13.5)), 'canon_mano': (0.85, (8, 9.5, 6)),
+}
+
+
+def _rot_xyz(rx, ry, rz):
+    import math
+    def eje(e, a):
+        a = math.radians(a)
+        c, s_ = math.cos(a), math.sin(a)
+        return {'x': [[1, 0, 0], [0, c, -s_], [0, s_, c]], 'y': [[c, 0, s_], [0, 1, 0], [-s_, 0, c]],
+                'z': [[c, -s_, 0], [s_, c, 0], [0, 0, 1]]}[e]
+    def mul(a, b):
+        return [[sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)] for i in range(3)]
+    return mul(mul(eje('x', rx), eje('y', ry)), eje('z', rz))
+
+
+def tercera_persona(n, m):
+    arma = next((a for a in sorted(TERCERA, key=len, reverse=True) if n.startswith(a + '_3d')), None)
+    d = m.get('display', {}).get('thirdperson_righthand')
+    if not arma or not d or 'oculta' in n:   # la Derringer escondida en la manga no crece (asomaría)
+        return
+    nueva, g = TERCERA[arma]
+    s0 = d.get('scale', [1, 1, 1])[0]
+    if abs(s0 - nueva) < 1e-4:
+        return
+    r = _rot_xyz(*d.get('rotation', [0, 0, 0]))
+    v = [(s0 - nueva) * (g[k] - 8) for k in range(3)]
+    t = d.get('translation', [0, 0, 0])
+    d['translation'] = [round(t[i] + sum(r[i][k] * v[k] for k in range(3)), 3) for i in range(3)]
+    d['scale'] = [nueva] * 3
+    m['display']['thirdperson_lefthand'] = json.loads(json.dumps(d))
+
 def generar(salida, nombres=None):
     os.makedirs(salida, exist_ok=True)
     for n in nombres or ARMAS:
@@ -725,6 +766,7 @@ def generar(salida, nombres=None):
             tex['cobre'] = 'copperslug:item/armas3d/p_cobre_' + fase
         m['textures'] = tex
         m['elements'] = ARMAS[n]()
+        tercera_persona(n, m)
         with open(os.path.join(salida, n + '.json'), 'w', encoding='utf-8') as fh:
             json.dump(m, fh, ensure_ascii=False, separators=(',', ':'))
         print('%-24s %3d cajas' % (n, len(m['elements'])))

@@ -172,3 +172,102 @@ def main():
 
 if __name__ == '__main__':
     sys.exit(main())
+
+
+# ------------------------------------------------------------------------------------------------ primera persona
+
+def triangulos(modelo):
+    """Los triángulos del modelo (en píxeles de modelo) con su textura y su luz: (puntos 4x3, uvs, textura, luz)."""
+    texs = modelo.get('textures', {})
+    cache = {}
+    out = []
+    for el in modelo.get('elements', []):
+        f, t = el['from'], el['to']
+        R = None
+        if 'rotation' in el:
+            r = el['rotation']
+            R = (np.array(r['origin'], float), rot_eje(r['axis'], r['angle']))
+        for cara, d in el.get('faces', {}).items():
+            ref = resolver(texs, d.get('texture', ''))
+            if ref not in cache:
+                p = ruta_textura(ref)
+                cache[ref] = np.asarray(Image.open(p).convert('RGBA'), float) if os.path.exists(p) else None
+            tex = cache[ref]
+            if tex is None:
+                continue
+            u1, v1, u2, v2 = d.get('uv') or [0, 0, 16, 16]
+            uvs = [(u1, v1), (u2, v1), (u2, v2), (u1, v2)]
+            k = (d.get('rotation', 0) // 90) % 4
+            uvs = uvs[k:] + uvs[:k]
+            pts = np.array(esquinas(cara, f, t), float)
+            if R is not None:
+                pts = (pts - R[0]) @ R[1].T + R[0]
+            out.append((pts, uvs, tex, LUZ[cara]))
+    return out
+
+
+def rot_xyz(rx, ry, rz):
+    """La rotación de un display de Minecraft (Quaternionf.rotationXYZ: primero x, luego y, luego z, intrínsecas)."""
+    return rot_eje('x', rx) @ rot_eje('y', ry) @ rot_eje('z', rz)
+
+
+def render_vista(piezas, W=854, H=480, fov=70.0, fondo=None):
+    """
+    Dibuja en perspectiva lo que ve la cámara de primera persona (en el origen, mirando a -z, y arriba).
+    {@code piezas}: lista de (triángulos, función que lleva puntos del modelo en bloques a la vista).
+    """
+    img = np.zeros((H, W, 4))
+    if fondo is None:
+        img[:, :] = (135, 176, 230, 255)
+        img[H // 2:, :] = (96, 128, 70, 255)
+    else:
+        img[:] = fondo
+    zb = np.full((H, W), -1e9)
+    f = 1 / math.tan(math.radians(fov) / 2)
+    for tris, a_vista in piezas:
+        for pts, uvs, tex, luz in tris:
+            q = a_vista(pts / 16.0)
+            if (q[:, 2] > -0.05).any():
+                continue   # (sin recortar contra el plano cercano: se quita lo que pasa por detrás)
+            sx = (q[:, 0] * f / -q[:, 2] * (H / 2)) + W / 2
+            sy = -(q[:, 1] * f / -q[:, 2] * (H / 2)) + H / 2
+            sz = 1 / q[:, 2]   # mayor = más cerca (z negativa)
+            th, tw = tex.shape[:2]
+            for a, b, c in ((0, 1, 2), (0, 2, 3)):
+                xs = np.array([sx[a], sx[b], sx[c]])
+                ys = np.array([sy[a], sy[b], sy[c]])
+                x0, x1 = int(max(0, math.floor(xs.min()))), int(min(W - 1, math.ceil(xs.max())))
+                y0, y1 = int(max(0, math.floor(ys.min()))), int(min(H - 1, math.ceil(ys.max())))
+                if x1 < x0 or y1 < y0:
+                    continue
+                den = (ys[1] - ys[2]) * (xs[0] - xs[2]) + (xs[2] - xs[1]) * (ys[0] - ys[2])
+                if abs(den) < 1e-9:
+                    continue
+                gx, gy = np.meshgrid(np.arange(x0, x1 + 1) + 0.5, np.arange(y0, y1 + 1) + 0.5)
+                w0 = ((ys[1] - ys[2]) * (gx - xs[2]) + (xs[2] - xs[1]) * (gy - ys[2])) / den
+                w1 = ((ys[2] - ys[0]) * (gx - xs[2]) + (xs[0] - xs[2]) * (gy - ys[2])) / den
+                w2 = 1 - w0 - w1
+                m = (w0 >= -1e-6) & (w1 >= -1e-6) & (w2 >= -1e-6)
+                if not m.any():
+                    continue
+                # interpolación con corrección de perspectiva
+                iz = w0 * sz[a] + w1 * sz[b] + w2 * sz[c]
+                u = (w0 * uvs[a][0] * sz[a] + w1 * uvs[b][0] * sz[b] + w2 * uvs[c][0] * sz[c]) / iz
+                v = (w0 * uvs[a][1] * sz[a] + w1 * uvs[b][1] * sz[b] + w2 * uvs[c][1] * sz[c]) / iz
+                tu = np.clip((u / 16 * tw).astype(int), 0, tw - 1)
+                tv = np.clip((v / 16 * th).astype(int), 0, th - 1)
+                col = tex[tv, tu]
+                m &= col[..., 3] > 8
+                sub = zb[y0:y1 + 1, x0:x1 + 1]
+                m &= (iz < sub) | (sub == -1e9)   # más cerca = 1/z más negativo
+                if not m.any():
+                    continue
+                sub[m] = iz[m]
+                dst = img[y0:y1 + 1, x0:x1 + 1]
+                dst[m, :3] = col[..., :3][m] * luz
+                dst[m, 3] = 255
+    # la cruz del centro
+    cx, cy = W // 2, H // 2
+    img[cy, cx - 8:cx + 9, :3] = 255
+    img[cy - 8:cy + 9, cx, :3] = 255
+    return Image.fromarray(img.clip(0, 255).astype(np.uint8))
