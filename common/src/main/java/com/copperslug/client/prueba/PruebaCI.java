@@ -4035,6 +4035,34 @@ public final class PruebaCI {
                 z.clearFire();
             }
         }));
+        // con shaders (pocos fps) una vez el primer golpe no prendió al zombi: si no se ha visto fuego, otro golpe
+        sin("a2o_bayoneta_otra", 16, () -> {
+            PI.remove("bay_otra");
+            if (Boolean.TRUE.equals(PI.get("bay_fuego"))) return;
+            RESUMEN.add("  armas2: el primer golpe de bayoneta no ha prendido (" + PI.get("bay_diag") + "); otro");
+            PI.put("bay_otra", true);
+            piSrv(sp -> {
+                if (sp.serverLevel().getEntity(a2Diana) instanceof net.minecraft.world.entity.LivingEntity z) z.setHealth(60F);
+            });
+        });
+        sin("a2o_bayoneta_golpe_otra", 1, () -> {
+            if (!Boolean.TRUE.equals(PI.get("bay_otra"))) return;
+            var z = mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, mc.player.getBoundingBox().inflate(6)).stream().findFirst().orElse(null);
+            if (z != null) {
+                mc.gameMode.attack(mc.player, z);
+                mc.player.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+            }
+        });
+        for (int i = 0; i < 4; i++) sin("a2o_bayoneta_otra_vigila" + i, 1, () -> piSrv(sp -> {
+            if (Boolean.TRUE.equals(PI.get("bay_otra")) && sp.serverLevel().getEntity(a2Diana) instanceof net.minecraft.world.entity.LivingEntity le && le.isOnFire())
+                PI.put("bay_fuego", true);
+        }));
+        sin("a2o_bayoneta_otra_fin", 2, () -> piSrv(sp -> {
+            if (Boolean.TRUE.equals(PI.get("bay_otra")) && sp.serverLevel().getEntity(a2Diana) instanceof net.minecraft.world.entity.LivingEntity z) {
+                z.setHealth(1F);
+                z.clearFire();
+            }
+        }));
         sin("a2o_bayoneta_remate", 26, () -> {});
         sin("a2o_bayoneta_golpe2", 6, () -> {
             var z = mc.level.getEntitiesOfClass(net.minecraft.world.entity.monster.Zombie.class, mc.player.getBoundingBox().inflate(6)).stream().findFirst().orElse(null);
