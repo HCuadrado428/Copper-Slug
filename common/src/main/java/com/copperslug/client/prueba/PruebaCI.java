@@ -678,7 +678,25 @@ public final class PruebaCI {
         });
         // ---- las de la segunda tanda
         apArma("winchester", 310, () -> a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6), true);
-        apArma("derringer", 320, () -> a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2), false);
+        // la Derringer, el cañón de mano y el lanzallamas no apuntan: van siempre a la cadera, como la escopeta
+        sin("ap_sin_mira", 10, () -> {
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2));
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true;
+            PI.put("ap_sin_mira", "");
+        });
+        sin("ap_sin_mira_derringer", 6, () -> {
+            PI.put("ap_sin_mira", PI.get("ap_sin_mira") + "derringer " + com.copperslug.armasfuego.comun.Apuntar.apuntando(mc.player) + "; ");
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1));
+        });
+        sin("ap_sin_mira_canon", 6, () -> {
+            PI.put("ap_sin_mira", PI.get("ap_sin_mira") + "cañón " + com.copperslug.armasfuego.comun.Apuntar.apuntando(mc.player) + "; ");
+            a2Mano(new ItemStack(com.copperslug.registry.ModItems.LANZALLAMAS.get()));
+        });
+        vigila("ap_sin_mira_ok", 6, () -> {
+            String r = PI.get("ap_sin_mira") + "lanzallamas " + com.copperslug.armasfuego.comun.Apuntar.apuntando(mc.player);
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
+            a2Comprobar("la Derringer, el cañón de mano y el lanzallamas no apuntan con el clic derecho (van a la cadera)", !r.contains("true"), r);
+        });
         apArma("thompson", 330, () -> a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50), false);
         sin("ap_thompson_suelta_gatillo", 4, () -> com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = false);
         apArma("mosquete", 340, () -> a2Cargada(com.copperslug.registry.ModItems.MOSQUETE, 1), false);
@@ -697,8 +715,7 @@ public final class PruebaCI {
             a2Comprobar("mosquete: con bola el clic izquierdo dispara; sin bola o agachado es la estocada de la bayoneta",
                     "true/true".equals(PI.get("ap_mosq")) && agachado, "con bola dispara/sin bola estocada: " + PI.get("ap_mosq") + "; agachado estocada: " + agachado);
         });
-        apArma("canon", 350, () -> a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1), false);
-        // el cañón: la mira dibuja la parábola del bolaño hasta donde cae
+        // el cañón: con él en la mano (sin apuntar: va a la cadera) se dibuja la parábola del bolaño hasta donde cae
         sin("ap_canon_parabola", 10, () -> {
             a2Camara1p();
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.CANON_MANO, 1));
@@ -711,7 +728,7 @@ public final class PruebaCI {
             int n = com.copperslug.client.armasfuego.comun.Apuntado.parabolaPuntos;
             boolean cae = com.copperslug.client.armasfuego.comun.Apuntado.parabolaCae;
             com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false;
-            a2Comprobar("cañón de mano: apuntando se ve la parábola del bolaño hasta donde cae", n >= 3 && cae, n + " puntos, cae en un bloque: " + cae);
+            a2Comprobar("cañón de mano: en la mano se ve la parábola del bolaño hasta donde cae", n >= 3 && cae, n + " puntos, cae en un bloque: " + cae);
         });
         // ---- el rifle apunta con su catalejo (su zoom): cuenta como apuntar
         sin("ap_rifle", 10, () -> {
