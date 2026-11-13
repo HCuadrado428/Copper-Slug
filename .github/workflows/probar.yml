@@ -171,7 +171,10 @@ jobs:
           mkdir -p run/mods run/config
           case "${{ matrix.cargador }}" in
             fabric) cp fabric/*.jar run/mods/ ;;
-            *) cp forge/*.jar run/mods/ ;;
+            *) cp forge/*.jar run/mods/
+               # sin la ventana de carga temprana: en el runner a veces no llega a abrirse y NeoForge se queda
+               # preguntando «y/n» hasta que salta el límite de 50 minutos
+               printf 'earlyWindowControl = false\n' > run/config/fml.toml ;;
           esac
           printf 'lang:es_es\n' > run/options.txt     # en castellano, como lo juegan
           if [ "${{ matrix.shaders }}" = "true" ]; then
