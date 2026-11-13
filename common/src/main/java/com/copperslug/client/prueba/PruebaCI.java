@@ -597,7 +597,10 @@ public final class PruebaCI {
             piDisparar();
         });
         sin("ap_" + n + "_tiro_espera", 50, () -> {});
-        sin("ap_" + n + "_tiro_ver", 4, () -> apEstado("ap_" + n + "_t"));
+        sin("ap_" + n + "_tiro_ver", 4, () -> {
+            com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = false;   // se suelta el gatillo (ráfaga)
+            apEstado("ap_" + n + "_t");
+        });
         sin("ap_" + n + "_suelta", 8, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false);
         sin("ap_" + n + "_suelta_ver", 4, () -> apEstado("ap_" + n + "_s"));
         vigila("ap_" + n + "_ok", 2, () -> {
@@ -896,7 +899,14 @@ public final class PruebaCI {
     private static void piDisparar() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.options.keyShift.isDown() || mc.player.isShiftKeyDown()) mc.gameMode.useItem(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND);
-        else com.copperslug.client.armasfuego.comun.Apuntado.gatillo();
+        else {
+            // las de ráfaga (Thompson, lanzallamas) disparan mientras se mantiene el gatillo: si solo se aprieta un
+            // instante, el cliente corta la ráfaga al tick siguiente y a veces no llega a salir ninguna bala
+            var i = mc.player.getMainHandItem().getItem();
+            if (i instanceof com.copperslug.armasfuego.oeste.ThompsonItem || i instanceof com.copperslug.armasfuego.nether.LanzallamasItem)
+                com.copperslug.client.armasfuego.comun.Apuntado.gatilloPrueba = true;
+            com.copperslug.client.armasfuego.comun.Apuntado.gatillo();
+        }
     }
 
     private static net.minecraft.world.entity.monster.Husk piHusk(ServerPlayer sp) {
