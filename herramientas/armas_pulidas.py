@@ -197,7 +197,8 @@ def winchester(palanca=False):
         P('tapa_guardamano', -4.5, -4, 7.75, 10.25, 2.5, 'laton'),
         P('guardamano', -4, 3.5, 7.75, 10.25, 2.5, 'madera'),
         P('alza', 0, 1, 10.75, 11.25, 1, 'hierro'),
-        P('cajon', 3.5, 10.5, 6.75, 11.25, 2.5, 'laton'),
+        P('cajon', 3.5, 10.5, 6.75, 11.25, 2.5, 'cobre'),
+        C('placa_lateral', (9.25, 7.5, 4.5), (9.27, 10.5, 9.5), 'laton', caras=('east',)),
         C('ventana_carga', (9.25, 8, 5), (9.27, 9, 8), 'negro', caras=('east',)),
         P('martillo', 9.5, 10.5, 11.25, 12.25, 1, 'hierro'),
         P('gatillo', 7.5, 8, 6, 6.75, 0.5, 'hierro'),
@@ -378,30 +379,49 @@ def rifle(cerrojo=False):
 # ------------------------------------------------------------------------------------------------ escopeta de presión
 
 def escopeta():
+    """
+    Escopeta de aire comprimido: cañón ancho de acero, un depósito de presión grande de cobre debajo (con tapas y
+    remaches de latón) que se carga con la bomba de émbolo de delante, tuberías de latón hasta el cajón, el manómetro
+    grande en el costado (su esfera cambia con la presión), una válvula y un silbato encima y la tolva de los cartuchos.
+    """
     return [
-        P('canon', -10, 5, 9, 11, 2, 'hierro'),
-        C('boca_tolva', (7, 9, -10.02), (9, 11, -10), 'tolva', caras=('north',)),
-        P('aro_boca', -10, -9, 8.75, 11.25, 2.5, 'hierro'),
-        # el depósito de presión bajo el cañón y el corredor de bombeo
-        P('deposito', -7, 5, 6.5, 8.5, 1.5, 'cobre'),
-        P('tapon', -7.5, -7, 6.75, 8.25, 1, 'laton'),
-        P('corredera', -5, 0, 6, 9, 2.5, 'madera'),
-        P('banda_1', -4, -3.5, 5.75, 9.25, 2.75, 'hierro'),
-        P('banda_2', -1.5, -1, 5.75, 9.25, 2.75, 'hierro'),
-        P('cajon', 5, 10, 6, 11.5, 2.5, 'cobre'),
-        # el manómetro en el costado izquierdo
-        C('manometro', (5.75, 7, 6), (6.75, 10, 9), 'laton'),
-        C('esfera', (5.73, 7.5, 6.5), (5.75, 9.5, 8.5), 'esfera', caras=('west',)),
-        # la tolva de arriba
-        P('cuello_tolva', 6.5, 7.5, 11.5, 12, 1, 'hierro'),
-        P('tolva', 6, 8, 12, 13, 2, 'cobre'),
-        P('guarda_frente', 6.5, 7, 5, 6, 1, 'hierro'),
-        P('guarda_bajo', 6.5, 10, 4.5, 5, 1, 'cobre'),
-        P('gatillo', 8, 8.5, 5, 6, 0.5, 'hierro'),
-        P('muneca', 10, 12, 5, 10.5, 2, 'madera'),
-        P('culata', 12, 19, 6.5, 10.5, 2, 'madera'),
-        P('culata_baja', 14, 19, 5, 6.5, 2, 'madera'),
-        P('cantonera', 19, 19.5, 5, 10.5, 2, 'negro'),
+        # cañón y boca
+        P('canon', -10, 4, 8.75, 11.25, 2.5, 'hierro'),
+        C('boca_tolva', (6.75, 8.75, -10.02), (9.25, 11.25, -10), 'tolva', caras=('north',)),
+        P('aro_boca', -10, -9.25, 8.5, 11.5, 3, 'laton'),
+        P('abrazadera_1', -6, -5.5, 8.5, 11.5, 3, 'cobre'),
+        P('abrazadera_2', -1, -0.5, 8.5, 11.5, 3, 'cobre'),
+        # el depósito de presión bajo el cañón
+        P('deposito', -7, 4, 5.25, 8.5, 3, 'cobre'),
+        P('tapa_deposito', -7.5, -7, 5.5, 8.25, 2.5, 'laton'),
+        P('remaches_1', -4, -3.5, 5, 8.75, 3.25, 'laton'),
+        P('remaches_2', 1, 1.5, 5, 8.75, 3.25, 'laton'),
+        P('union', -6, -1, 8.5, 8.75, 1, 'hierro'),
+        # la bomba de émbolo: vástago y mango en T
+        P('vastago', -10.5, -7.5, 6.5, 7.25, 0.75, 'hierro'),
+        P('mango_bomba', -11.5, -10.5, 5.5, 8.25, 3.5, 'madera'),
+        # tuberías de latón hasta el cajón y el manómetro
+        P('tuberia', 4, 5, 6.75, 7.75, 1, 'laton'),
+        C('tuberia_manometro', (6, 7.75, 5.5), (6.75, 9.5, 6.25), 'laton'),
+        P('cajon', 4, 10, 6, 12, 2.5, 'cobre'),
+        # el manómetro, grande, en el costado izquierdo
+        C('caja_manometro', (5.25, 9, 5.25), (6.75, 12.5, 8.75), 'laton'),
+        C('esfera', (5.23, 9.25, 5.5), (5.25, 12.25, 8.5), 'esfera', caras=('west',)),
+        # válvula y silbato encima
+        P('vastago_valvula', 7, 7.5, 12, 12.75, 0.5, 'hierro'),
+        P('volante_valvula', 6.25, 8.25, 12.75, 13.25, 2, 'laton'),
+        P('silbato', 9, 9.5, 12, 13.25, 0.75, 'laton'),
+        # la tolva de los cartuchos
+        P('cuello_tolva', 4.5, 5.5, 12, 12.5, 1, 'hierro'),
+        P('tolva', 4, 6, 12.5, 13.75, 2.5, 'cobre'),
+        # gatillo, culata
+        P('guarda_frente', 6.5, 7, 4.75, 6, 1, 'hierro'),
+        P('guarda_bajo', 6.5, 10, 4.25, 4.75, 1, 'laton'),
+        P('gatillo', 8, 8.5, 4.75, 6, 0.5, 'hierro'),
+        P('muneca', 10, 12, 5, 10.5, 2.25, 'madera'),
+        P('culata', 12, 19, 6, 10.5, 2.25, 'madera'),
+        P('culata_baja', 14, 19, 4.5, 6, 2.25, 'madera'),
+        P('cantonera', 19, 19.5, 4.5, 10.5, 2.5, 'cuero'),
     ]
 
 
@@ -453,11 +473,15 @@ def thompson(con_tambor=True):
         P('cantonera', 20, 20.5, 5, 10.5, 2, 'negro'),
     ]
     if con_tambor:
+        # el tambor de la mafia («Chicago typewriter»): un disco de 7 px en escalones (como los círculos de Minecraft),
+        # plano a los lados, con su buje de latón y la llave de cuerda
         el += [
-            P('cuello_tambor', 5, 7, 6.25, 8, 1.25, 'cobre'),
-            P('tambor', 4, 8, 2.25, 6.25, 2, 'cobre'),
-            C('tambor_izq', (6.98, 2.25, 4), (7, 6.25, 8), 'tambor', caras=('west',)),
-            C('tambor_der', (9, 2.25, 4), (9.02, 6.25, 8), 'tambor', caras=('east',)),
+            P('cuello_tambor', 3.5, 5.5, 7.25, 8, 1.5, 'cobre'),
+            P('tambor_a', 1, 8, 2.25, 5.25, 2.5, 'cobre'),
+            P('tambor_b', 1.5, 7.5, 1.25, 6.25, 2.5, 'cobre'),
+            P('tambor_c', 2.5, 6.5, 0.25, 7.25, 2.5, 'cobre'),
+            P('buje', 3.75, 5.25, 3, 4.5, 3.25, 'laton'),
+            C('llave', (6.125, 4.5, 4.25), (6.375, 5.75, 4.75), 'hierro'),
         ]
     return el
 
@@ -617,8 +641,8 @@ ACCESORIOS = {
                                         P('collar_1', -10, -9.5, 7.75, 9.5, 1.75, 'laton'),
                                         P('collar_2', -6.5, -6, 7.75, 9.5, 1.75, 'laton'),
                                         P('tapon', -14, -13.5, 8, 9.25, 1.25, 'laton')],
-    'acc_estrangulador_escopeta': lambda: [P('estrangulador', -13, -10, 8.75, 11.25, 2.5, 'cobre'),
-                                           P('cono', -14, -13, 9.25, 10.75, 1.5, 'cobre'),
+    'acc_estrangulador_escopeta': lambda: [P('estrangulador', -13, -10, 8.5, 11.5, 3, 'cobre'),
+                                           P('cono', -14, -13, 9, 11, 2, 'laton'),
                                            boca(-14, 9.75, 10.25, 0.5)],
     'acc_mira_mosquete': lambda: [P('base_mira', -7.5, -6.5, 10.75, 11.25, 1, 'cobre'),
                                   P('mira', -7.25, -6.75, 11.25, 12, 0.5, 'cobre')],
