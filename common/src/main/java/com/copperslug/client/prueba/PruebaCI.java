@@ -267,7 +267,16 @@ public final class PruebaCI {
             sinToasts = true;
             com.copperslug.armasfuego.comun.EquilibrioArmas.sinAtascosPrueba = true;
             var srv = mc.getSingleplayerServer();
-            srv.execute(() -> srv.getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(false, srv));
+            srv.execute(() -> {
+                var reglas = srv.getGameRules();
+                reglas.getRule(net.minecraft.world.level.GameRules.RULE_ANNOUNCE_ADVANCEMENTS).set(false, srv);
+                // sin monstruos de la noche ni lluvia por sorpresa: un zombi natural mató al jugador en mitad de varias
+                // pruebas (duelo, bayoneta, cobre) y una lluvia apagó el Aspecto ígneo. La hora la pone cada prueba.
+                reglas.getRule(net.minecraft.world.level.GameRules.RULE_DOMOBSPAWNING).set(false, srv);
+                reglas.getRule(net.minecraft.world.level.GameRules.RULE_DAYLIGHT).set(false, srv);
+                reglas.getRule(net.minecraft.world.level.GameRules.RULE_WEATHER_CYCLE).set(false, srv);
+                srv.overworld().setWeatherParameters(6000, 0, false, false);
+            });
         });
         pistola();
         escopeta();
