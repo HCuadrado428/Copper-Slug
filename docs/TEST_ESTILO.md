@@ -1,10 +1,12 @@
 # Test de estilo de las armas: resultados y recomendaciones
 
-> **Estado (12/11/2026):** elegida la versión **B (bloques de 0,5 px)** para las 13 armas, y ya está en
-> `models/item/armas3d/` (también los accesorios, las piezas de la Gatling y las cuatro fases del óxido). El tambor del
-> revólver y su culote siguen como estaban, porque el código los gira y coloca las balas en posiciones fijas. Test:
-> 0 errores, 0 avisos. Las versiones descartadas siguen en `propuestas/` y la comparación en
-> `docs/estilo/versiones_armas.html`. Las cifras de abajo son de la primera prueba (cañones cuadrados), que se descartó.
+> **Estado (13/11/2026):** todas las armas se han rediseñado desde cero en estilo vanilla pulido
+> (`herramientas/armas_pulidas.py`, texturas de banda `p_*`), con el Winchester de cobre, la escopeta de presión rehecha
+> como arma de aire (depósito, bomba y manómetro) y el tambor redondo de la Thompson mirando adelante. El tambor del
+> revólver ya usa las mismas texturas (`herramientas/tambor_pulido.py`). Los iconos de la escopeta (por fase de presión y
+> de óxido), la Thompson y el Winchester se han redibujado para que se parezcan a los modelos
+> (`herramientas/iconos_armas_viejas.py`), así que las recomendaciones 2 y 7 de abajo ya están hechas, igual que los
+> avisos de la 5. Test: **0 errores, 0 avisos**. Lo de abajo es la primera revisión (12/11), que se deja como historia.
 
 Revisión del 12 de noviembre de 2026. Se han mirado los 14 modelos 3D, sus materiales y los iconos de inventario con
 `herramientas/render_modelo.py` (dibuja los modelos sin abrir el juego) y `herramientas/test_estilo_minecraft.py` (el test

@@ -137,12 +137,16 @@ def arponera(c):
     """Fusil submarino: el arpón encima del cañón, con la punta a la derecha, el carrete debajo y la culata."""
     l = Lienzo()
     # arpón
-    for x in range(2, 14):
-        l.px(x, 5, ACERO[4] if x % 4 else ACERO[3])
+    for x in range(2, 13):
+        l.px(x, 4, ACERO[0])
+        l.px(x, 5, ACERO[3] if x % 4 else ACERO[4])
         l.px(x, 6, ACERO[1])
-    for (x, y) in ((13, 4), (14, 5), (15, 6), (14, 6), (13, 7), (12, 3), (12, 8)):
-        l.px(x, y, ACERO[3] if y <= 5 else ACERO[1])
-    l.px(15, 5, ACERO[0])
+    l.px(1, 5, ACERO[0])
+    # la punta, con contorno oscuro como en vanilla
+    for (x, y, k) in ((12, 2, 0), (13, 3, 0), (14, 4, 0), (15, 5, 0), (15, 6, 0), (14, 7, 0), (13, 8, 0), (12, 9, 0),
+                      (12, 3, 3), (13, 4, 3), (14, 5, 4), (13, 5, 3), (12, 4, 3), (14, 6, 2), (13, 6, 2), (13, 7, 1),
+                      (12, 8, 1), (12, 7, 1), (11, 9, 0), (11, 2, 0)):
+        l.px(x, y, ACERO[k])
     # cañón y cabeza
     l.caja(1, 7, 11, 9, c)
     l.caja(10, 6, 12, 10, c)
