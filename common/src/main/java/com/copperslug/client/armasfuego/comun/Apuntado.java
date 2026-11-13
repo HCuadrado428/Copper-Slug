@@ -106,7 +106,7 @@ public final class Apuntado {
                 while (mc.options.keyAttack.consumeClick()) gatillo();
             return;
         }
-        boolean quiere = !gat && Apuntar.apuntable(s) && mc.screen == null && (mc.options.keyUse.isDown() || apuntarPrueba)
+        boolean quiere = !gat && Apuntar.conMira(s) && mc.screen == null && (mc.options.keyUse.isDown() || apuntarPrueba)
                 && !p.isUsingItem() && (apunta || !p.isShiftKeyDown()) && !p.isSpectator();
         if (quiere != apunta) {
             apunta = quiere;
@@ -235,33 +235,32 @@ public final class Apuntado {
      * Cómo va cada modelo en la mano (su transformación de primera persona) y dónde tiene la mira: con eso se calcula
      * el giro y el traslado que dejan la línea de mira en el eje de la vista.
      * {@code rx, ry}: giro del modelo; {@code tx, ty, tz}: traslado (en píxeles); {@code s}: escala; {@code (yr, zr)}:
-     * el alza (atrás); {@code (yf, zf)}: el punto de mira (delante); {@code prof}: a qué distancia del ojo queda el alza.
+     * el alza (atrás); {@code (yf, zf)}: el punto de mira (delante); {@code prof}: a qué distancia del ojo queda el alza;
+     * {@code baja}: cuánto queda el alza por debajo de la cruz (en bloques). El arma se inclina lo justo para que el punto
+     * de mira siga en la cruz: así se ve la parte de arriba del arma en vez de su culo, y la culata no se mete en la cámara.
+     * Los valores se han probado con herramientas/simular_apuntado.py.
      */
-    private record Mira(float rx, float ry, float tx, float ty, float tz, float s, float yr, float zr, float yf, float zf, float prof) {}
+    private record Mira(float rx, float ry, float tx, float ty, float tz, float s, float yr, float zr, float yf, float zf, float prof, float baja) {}
 
     // Alza y punto de mira medidos sobre los modelos pulidos (herramientas/armas_pulidas.py). Los
     // primeros seis números son el firstperson_righthand de cada modelo: si se cambia en el JSON, hay que cambiarlo aquí.
-    private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 11.5F, 12.35F, 11.5F, 2.15F, 0.55F);
-    private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11F, 1F, 11F, -13.25F, 0.55F);   // el ojo detrás del armazón (con 0,36 quedaba dentro)
-    private static final Mira DERRINGER = new Mira(4, 18, 1.5F, 4.5F, -2, 0.45F, 12.5F, 10.6F, 11.5F, 1.2F, 0.5F);
-    private static final Mira THOMPSON = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 12F, 9.5F, 10.75F, -11F, 0.4F);
-    private static final Mira MOSQUETE = new Mira(2, 14, -1, 2.5F, -9, 0.5F, 10.5F, 12F, 11F, -8.25F, 0.42F);
-    private static final Mira CANON = new Mira(2, 12, -1, 3.0F, -11, 0.58F, 12.5F, 2.75F, 10.75F, -8F, 0.4F);
-    // las cuatro nuevas (antes no tenían: al apuntar se quedaban en la cadera)
-    private static final Mira CERBATANA = new Mira(2, 18, 1.0F, -2.0F, -6.5F, 0.85F, 12F, 10.5F, 11.25F, 0.75F, 0.45F);
-    private static final Mira LANZALLAMAS = new Mira(2, 20, 0.8F, 1.8F, -5.5F, 0.85F, 11.5F, 13F, 11.5F, 0.75F, 0.5F);
-    private static final Mira RESONANCIA = new Mira(2, 20, 0.8F, 3.0F, -5.0F, 0.9F, 12.5F, 13F, 12.5F, 1F, 0.5F);   // por encima de las bobinas y la bocina
-    private static final Mira ARPONERA = new Mira(2, 20, 0.8F, 1.5F, -5.5F, 0.88F, 11.25F, 14F, 11.25F, -5.75F, 0.5F);
+    // Alza y punto de mira medidos sobre los modelos (herramientas/armas_pulidas.py). Los primeros seis números son el
+    // firstperson_righthand de cada modelo: si se cambia en el JSON, hay que cambiarlo aquí (el test de estilo lo mira).
+    private static final Mira REVOLVER = new Mira(2, 20, 0.5F, 1.0F, -5, 0.8F, 11.5F, 12.35F, 11.5F, 2.15F, 0.6F, 0.08F);
+    private static final Mira WINCHESTER = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 11.25F, 0.5F, 11.25F, -13.25F, 0.9F, 0.09F);
+    private static final Mira THOMPSON = new Mira(2, 16, -1, 0.5F, -11, 0.62F, 12F, 9.5F, 10.75F, -11F, 0.85F, 0.09F);
+    private static final Mira MOSQUETE = new Mira(2, 14, -1, 2.5F, -9, 0.5F, 10.75F, 12F, 11.25F, -8.25F, 0.95F, 0.09F);
+    private static final Mira CERBATANA = new Mira(2, 18, 1.0F, -2.0F, -6.5F, 0.85F, 12F, 10.5F, 11.5F, 0.9F, 0.75F, 0.08F);
+    private static final Mira RESONANCIA = new Mira(2, 20, 0.8F, 3.0F, -5.0F, 0.9F, 12.5F, 13F, 12.5F, 1F, 0.6F, 0.08F);   // por encima de las bobinas y la bocina
+    private static final Mira ARPONERA = new Mira(2, 20, 0.8F, 1.5F, -5.5F, 0.88F, 11.25F, 14F, 11.25F, -5.75F, 0.7F, 0.08F);
+    // (el lanzallamas, el cañón de mano y la Derringer no apuntan: van siempre a la cadera, ver Apuntar.conMira)
 
     private static Mira mira(Item i) {
         if (i instanceof RevolverItem) return REVOLVER;
         if (i instanceof WinchesterItem) return WINCHESTER;
-        if (i instanceof DerringerItem) return DERRINGER;
         if (i instanceof ThompsonItem) return THOMPSON;
         if (i instanceof MosqueteItem) return MOSQUETE;
-        if (i instanceof CanonManoItem) return CANON;
         if (i instanceof com.copperslug.armasfuego.selva.CerbatanaItem) return CERBATANA;
-        if (i instanceof com.copperslug.armasfuego.nether.LanzallamasItem) return LANZALLAMAS;
         if (i instanceof com.copperslug.armasfuego.ciudad.ResonanciaItem) return RESONANCIA;
         if (i instanceof com.copperslug.armasfuego.oceano.ArponeraItem) return ARPONERA;
         return null;
@@ -285,9 +284,12 @@ public final class Apuntado {
         float cx = lado * (0.56F + m.tx / 16F) + alza.x, cy = -0.52F + m.ty / 16F + alza.y, cz = -0.72F + m.tz / 16F + alza.z;
         // deshacer ese giro y levantar la boca lo justo para que el punto de mira quede a la altura del alza
         float sube = (float) Math.atan2(m.yr - m.yf, m.zr - m.zf);
-        Quaternionf q = new Quaternionf().rotationX(sube).mul(new Quaternionf(r).invert());
+        // y además inclinarla para que, con el alza «baja» bloques por debajo de la cruz, el punto de mira quede en ella
+        float largo = (m.zr - m.zf) / 16F * m.s;
+        float inclina = largo > 0 ? (float) Math.atan2(m.baja, largo) : 0;
+        Quaternionf q = new Quaternionf().rotationX(sube + inclina).mul(new Quaternionf(r).invert());
         Quaternionf parte = new Quaternionf().slerp(q, kk);
-        ps.translate((0 - cx) * kk, (-0.004F - cy) * kk, (-m.prof - cz) * kk);
+        ps.translate((0 - cx) * kk, (-0.004F - m.baja - cy) * kk, (-m.prof - cz) * kk);
         ps.translate(cx, cy, cz);
         ps.mulPose(parte);
         ps.translate(-cx, -cy, -cz);
@@ -308,6 +310,11 @@ public final class Apuntado {
         Minecraft mc = Minecraft.getInstance();
         LocalPlayer p = mc.player;
         if (p == null || mc.options.hideGui || mc.level == null || !mc.options.getCameraType().isFirstPerson()) return;
+        // el cañón de mano no apunta: su parábola se ve siempre que se lleva en la mano
+        if (p.getMainHandItem().getItem() instanceof CanonManoItem && GatlingEntity.deJugador(p) == null) {
+            parabola(g, mc, p, p.getMainHandItem(), w, h, pt);
+            return;
+        }
         float kk = Mth.lerp(pt, kO, k);
         if (kk < 0.6F) return;
         int cx = w / 2, cy = h / 2;
