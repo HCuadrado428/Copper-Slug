@@ -112,6 +112,13 @@
   that blinds and makes mobs lose their target; frag is a small blast that only breaks blocks if the server config says
   so (`granadas.metralla_rompe_bloques`); glue splashes honey that makes everyone sticky. New advancement "Pull the Pin".
 
+- Guns reworked after looking at in-game screenshots: dark steel barrels and brass fittings (copper stays the body), thicker Winchester, musket, hand cannon and blowgun, and bigger guns in third person. Aiming down the
+  sights now looks along the top of the gun with the front sight on the crosshair (before you saw the back of the gun
+  and long stocks went into the camera); tuned with `herramientas/simular_apuntado.py`. The pressure shotgun is
+  rebuilt as an air gun (big pressure tank, plunger pump, brass pipes, large gauge, valve and whistle) and the Thompson
+  gets the big round mob drum. The flamethrower, the hand cannon
+  and the Derringer no longer aim (hip fire, like the shotgun); the hand cannon shows its arc whenever it is held.
+
 ---
 
 <a id="castellano"></a>
@@ -234,3 +241,10 @@
   deja una nube de 10 segundos que ciega y hace que los mobs pierdan su objetivo; la de metralla es una explosión pequeña
   que solo rompe bloques si lo dice la config del servidor (`granadas.metralla_rompe_bloques`); la de pegamento salpica
   miel y deja pringado a todo el que pilla. Logro nuevo «Quita la anilla».
+- Armas retocadas tras ver las capturas del juego: cañones de acero oscuro y herrajes de latón (el cobre sigue siendo
+  el cuerpo), Winchester, mosquete, cañón de mano y cerbatana más gruesos, y armas más grandes en tercera
+  persona. Al apuntar se mira por encima del arma con el punto de mira en la cruz (antes se veía el culo del arma y las
+  culatas largas se metían en la cámara); ajustado con `herramientas/simular_apuntado.py`. La escopeta de presión,
+  rehecha como arma de aire comprimido (depósito grande, bomba de émbolo, tuberías de latón, manómetro grande, válvula
+  y silbato), y la Thompson lleva el tambor grande y redondo de la mafia. El lanzallamas, el cañón de
+  mano y la Derringer ya no apuntan (van a la cadera, como la escopeta); el cañón enseña su parábola siempre que se lleva.
