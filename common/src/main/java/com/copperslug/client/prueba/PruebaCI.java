@@ -1227,16 +1227,20 @@ public final class PruebaCI {
             piSrv(sp -> {
                 sp.removeAllEffects();
                 sp.setHealth(sp.getMaxHealth());
+                sp.setXRot(88F);   // también en el servidor: si el paquete de giro llega tarde, el tiro no iría a la sien
                 PI.put("vida_sien", sp.getHealth());
             });
             piComprobar("bala imán: lo tirado viene volando hacia ti", (Integer) PI.getOrDefault("iman", 0) >= 4, PI.get("iman") + " objetos recogidos de 6");
         });
         // ---- ruleta rusa a la sien con fogueo
         paso("111_ruleta_sien", 4, piTiro());
-        sin("pistola_sien_ver", 6, () -> piSrv(sp -> PI.put("sien", sp.isAlive() && sp.getHealth() >= (Float) PI.getOrDefault("vida_sien", 20F)
-                && sp.hasEffect(net.minecraft.world.effect.MobEffects.CONFUSION))));
-        vigila("pistola_sien_comprobar", 4, () -> {
-            boolean sien = Boolean.TRUE.equals(PI.get("sien"));
+        // se vuelve a mirar en cada reintento: con el servidor cargado, el tiro (y el mareo) llega unos ticks tarde
+        vigila("pistola_sien_comprobar", 6, () -> {
+            piSrv(sp -> PI.put("sien", sp.isAlive() && sp.getHealth() >= (Float) PI.getOrDefault("vida_sien", 20F)
+                    && sp.hasEffect(net.minecraft.world.effect.MobEffects.CONFUSION)));
+            piComprobar("ruleta a la sien con fogueo (vivo, mareado)", Boolean.TRUE.equals(PI.get("sien")), String.valueOf(PI.get("sien")));
+        });
+        sin("pistola_sien_fin", 2, () -> {
             piSrv(sp -> {
                 sp.removeAllEffects();
                 for (int i = 1; i <= 3; i++) sp.getInventory().setItem(i, piRevolver(i));
@@ -1244,27 +1248,28 @@ public final class PruebaCI {
                 sp.getServer().overworld().setDayTime(6000);
             });
             piApuntar(piPunto(8, 2, 1.0));
-            piComprobar("ruleta a la sien con fogueo (vivo, mareado)", sien, String.valueOf(PI.get("sien")));
         });
         paso("112_oxidado", 10, () -> {});
         // ---- encerar con panal y rascar con hacha (en la otra mano, agachado + clic derecho)
         sin("pistola_panal", 4, () -> piSrv(sp -> sp.getInventory().offhand.set(0, new ItemStack(net.minecraft.world.item.Items.HONEYCOMB))));
         sin("pistola_agachar2", 4, () -> mc.options.keyShift.setDown(true));
         sin("pistola_encerar", 6, () -> piDisparar());
-        sin("pistola_encerado", 4, () -> piSrv(sp -> {
-            PI.put("cera", com.copperslug.armasfuego.pistola.Tambor.encerado(sp.getMainHandItem()));
-            sp.getInventory().offhand.set(0, new ItemStack(net.minecraft.world.item.Items.IRON_AXE));
-        }));
+        vigila("pistola_encerado", 4, () -> {
+            piSrv(sp -> PI.put("cera", com.copperslug.armasfuego.pistola.Tambor.encerado(sp.getMainHandItem())));
+            piComprobar("panal: encera", Boolean.TRUE.equals(PI.get("cera")), String.valueOf(PI.get("cera")));
+        });
+        sin("pistola_hacha", 4, () -> piSrv(sp -> sp.getInventory().offhand.set(0, new ItemStack(net.minecraft.world.item.Items.IRON_AXE))));
         sin("pistola_rascar1", 6, () -> piDisparar());
         sin("pistola_rascar2", 6, () -> piDisparar());
-        sin("pistola_rascado", 4, () -> piSrv(sp -> {
-            ItemStack s = sp.getMainHandItem();
-            PI.put("rascado", "encerado " + com.copperslug.armasfuego.pistola.Tambor.encerado(s) + ", óxido " + com.copperslug.armasfuego.pistola.Tambor.oxido(s));
-        }));
         vigila("pistola_cera_comprobar", 4, () -> {
-            mc.options.keyShift.setDown(false);
-            piComprobar("panal: encera", Boolean.TRUE.equals(PI.get("cera")), String.valueOf(PI.get("cera")));
+            piSrv(sp -> {
+                ItemStack x = sp.getMainHandItem();
+                PI.put("rascado", "encerado " + com.copperslug.armasfuego.pistola.Tambor.encerado(x) + ", óxido " + com.copperslug.armasfuego.pistola.Tambor.oxido(x));
+            });
             piComprobar("hacha: quita la cera y luego un paso de óxido", "encerado false, óxido 2".equals(PI.get("rascado")), String.valueOf(PI.get("rascado")));
+        });
+        sin("pistola_cera_fin", 1, () -> {
+            mc.options.keyShift.setDown(false);
             piApuntar(piPunto(8, 0, 1.4));
         });
         paso("113_tercera_frente", 20, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT));
