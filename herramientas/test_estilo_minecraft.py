@@ -112,9 +112,9 @@ for n in ARMAS:
 # 7. apuntado: cada arma que apunta tiene su Mira y su colocación coincide con el firstperson_righthand del modelo
 #    (si no, al apuntar el arma no queda en el centro de la pantalla)
 JAVA = os.path.join(RAIZ, 'common/src/main/java/com/copperslug/client/armasfuego/comun/Apuntado.java')
-MIRAS = {'REVOLVER': 'revolver', 'WINCHESTER': 'winchester', 'DERRINGER': 'derringer', 'THOMPSON': 'thompson',
-         'MOSQUETE': 'mosquete', 'CANON': 'canon_mano', 'CERBATANA': 'cerbatana', 'LANZALLAMAS': 'lanzallamas',
-         'RESONANCIA': 'resonancia', 'ARPONERA': 'arponera'}
+MIRAS = {'REVOLVER': 'revolver', 'WINCHESTER': 'winchester', 'THOMPSON': 'thompson', 'MOSQUETE': 'mosquete',
+         'CERBATANA': 'cerbatana', 'RESONANCIA': 'resonancia', 'ARPONERA': 'arponera'}
+# (el lanzallamas, el cañón de mano y la Derringer van siempre a la cadera: no tienen Mira)
 if os.path.exists(JAVA):
     java = open(JAVA, encoding='utf-8').read()
     for const, item in MIRAS.items():

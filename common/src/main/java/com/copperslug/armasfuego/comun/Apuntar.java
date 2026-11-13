@@ -43,12 +43,22 @@ public final class Apuntar {
         return s.getItem() instanceof ArmaFuegoItem || s.getItem() instanceof RevolverItem;
     }
 
+    /**
+     * ¿Apunta por la mira con el clic derecho? Todas las apuntables menos las que van siempre a la cadera: el lanzallamas
+     * (chorro en cono), el cañón de mano (tiro en parábola, con su curva en la mira) y la Derringer (a quemarropa).
+     */
+    public static boolean conMira(ItemStack s) {
+        var i = s.getItem();
+        return apuntable(s) && !(i instanceof com.copperslug.armasfuego.nether.LanzallamasItem)
+                && !(i instanceof com.copperslug.armasfuego.oeste.CanonManoItem) && !(i instanceof com.copperslug.armasfuego.oeste.DerringerItem);
+    }
+
     public static boolean apuntando(Player p) {
         GatlingEntity g = GatlingEntity.deJugador(p);
         if (g != null) return g.apuntando();
         ItemStack s = p.getMainHandItem();
         if (s.getItem() instanceof RifleItem) return p.isUsingItem() && p.getUsedItemHand() == InteractionHand.MAIN_HAND;
-        if (!apuntable(s)) return false;
+        if (!conMira(s)) return false;
         AttributeInstance a = p.getAttribute(Attributes.MOVEMENT_SPEED);
         return a != null && a.getModifier(ID) != null;
     }
@@ -58,7 +68,7 @@ public final class Apuntar {
         AttributeInstance a = p.getAttribute(Attributes.MOVEMENT_SPEED);
         if (a == null) return;
         if (a.getModifier(ID) != null) a.removeModifier(ID);
-        boolean vale = si && apuntable(p.getMainHandItem()) && !p.isUsingItem() && !p.isSpectator();
+        boolean vale = si && conMira(p.getMainHandItem()) && !p.isUsingItem() && !p.isSpectator();
         if (vale) a.addTransientModifier(new AttributeModifier(ID, "copperslug.apuntar", -lentitud(p), AttributeModifier.Operation.MULTIPLY_TOTAL));
         if (!p.level().isClientSide) {
             if (vale) APUNTANDO.add(p.getUUID());
@@ -98,7 +108,7 @@ public final class Apuntar {
         for (UUID id : APUNTANDO.toArray(new UUID[0])) {
             ServerPlayer p = srv.getPlayerList().getPlayer(id);
             if (p == null) APUNTANDO.remove(id);
-            else if (!apuntable(p.getMainHandItem()) || p.isUsingItem() || !p.isAlive()) poner(p, false);
+            else if (!conMira(p.getMainHandItem()) || p.isUsingItem() || !p.isAlive()) poner(p, false);
             else {
                 // quieto: ni andar (cambio de posición) ni mover la mira de un tick al siguiente
                 float[] q = QUIETO.computeIfAbsent(id, k -> new float[]{p.getYRot(), p.getXRot(), (float) p.getX(), (float) p.getZ(), 0});
