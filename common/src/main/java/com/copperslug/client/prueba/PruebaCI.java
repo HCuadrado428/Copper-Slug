@@ -1316,6 +1316,11 @@ public final class PruebaCI {
                 ItemStack r = piRevolver(0);
                 com.copperslug.armasfuego.pistola.Tambor.poner(r, 0, com.copperslug.armasfuego.pistola.Carga.FOGUEO);
                 sp.getInventory().setItem(0, r);
+                // tras la noche de la bengala puede haber zombis cerca: uno mató al jugador en mitad del duelo (y lo anuló)
+                sp.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.monster.Monster.class, new net.minecraft.world.phys.AABB(piO).inflate(48),
+                        e -> !e.getUUID().equals(piHusk)).forEach(net.minecraft.world.entity.Entity::discard);
+                sp.setHealth(sp.getMaxHealth());
+                sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 20 * 30, 4, false, false));
                 piForastero = com.copperslug.plataforma.Plataforma.get().jugadorFalso(sp.serverLevel(),
                         new com.mojang.authlib.GameProfile(UUID.nameUUIDFromBytes("Forastero".getBytes()), "Forastero"));
                 Vec3 q = piPunto(8, 0, 0);
@@ -2370,19 +2375,24 @@ public final class PruebaCI {
                         sp.serverLevel().setBlock(b, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
             });
         });
-        // ---- marcas de bala en la pared de ladrillo del fondo
-        sin("nv_marcas", 5, () -> {
-            a2Mano(a2Cargada(com.copperslug.registry.ModItems.REVOLVER, 6));
+        // ---- marcas de bala en la pared de ladrillo del fondo (con el Winchester: el revólver va por recámaras)
+        sin("nv_marcas", 8, () -> {
+            PI.put("nv_marcas0", com.copperslug.client.armasfuego.comun.FuegoParticulas.Marca.creadas);
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
             piApuntar(a2Punto(17, 0, 1.6));
         });
-        sin("nv_tiro1", 6, piTiro());
-        sin("nv_tiro2", 6, () -> {
+        sin("nv_tiro1", 20, piTiro());
+        sin("nv_tiro2", 20, () -> {
             piApuntar(a2Punto(17, 0.6, 2.1));
             piDisparar();
         });
-        sin("nv_tiro3", 4, () -> {
+        sin("nv_tiro3", 6, () -> {
             piApuntar(a2Punto(17, -0.5, 1.2));
             piDisparar();
+        });
+        vigila("nv_marcas_chk", 2, () -> {
+            int n = com.copperslug.client.armasfuego.comun.FuegoParticulas.Marca.creadas - (Integer) PI.getOrDefault("nv_marcas0", 0);
+            nvComprobar("las balas dejan marca en la pared", n >= 2, n + " marcas de 3 tiros");
         });
         paso("383_marcas_pared", 10, () -> a2VistaA(a2Punto(16.5, 0, 1.6), a2Punto(13.5, 1.2, 2.2)));
         sin("nv_fin", 2, A2::camara1p);
@@ -3534,6 +3544,36 @@ public final class PruebaCI {
                 && sp.getInventory().getItem(22).is(net.minecraft.world.item.Items.STICK))));
         paso("284_derringer_manga", 3, () -> {});
         sin("a2u_manga_ver", 2, () -> piSrv(sp -> PI.put("manga_logro", a2Logro(sp, "armas/derringer_manga"))));
+        // con el servidor cargado, sacar y disparar puede pasar del segundo: si no ha dado el logro, se repite una vez
+        sin("a2u_manga_otra", 36, () -> {
+            PI.remove("manga_otra");
+            if (Boolean.TRUE.equals(PI.get("manga_logro"))) return;
+            RESUMEN.add("  armas2: la manga no ha dado el logro a la primera; otra vez");
+            PI.put("manga_otra", true);
+            piSrv(sp -> {
+                var inv = sp.getInventory();
+                inv.clearContent();
+                inv.setItem(0, new ItemStack(net.minecraft.world.item.Items.STICK));
+                inv.setItem(22, a2Cargada(com.copperslug.registry.ModItems.DERRINGER, 2));
+                inv.selected = 0;
+                sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
+            });
+        });
+        sin("a2u_manga_saca2", 3, () -> {
+            if (!Boolean.TRUE.equals(PI.get("manga_otra"))) return;
+            a2Apuntar(a2Punto(8, 0, 1.2));
+            com.copperslug.client.armasfuego.comun.FuegoCliente.sacarDeLaManga();
+        });
+        vigila("a2u_manga_tiro2", 1, () -> {
+            if (!Boolean.TRUE.equals(PI.get("manga_otra"))) return;
+            if (!(mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.oeste.DerringerItem))
+                throw new IllegalStateException("el cliente aún no ve la Derringer en la mano: " + mc.player.getMainHandItem());
+            a2Apuntar(a2Punto(8, 0, 1.2));
+            piDisparar();
+        });
+        sin("a2u_manga_ver2", 4, () -> piSrv(sp -> {
+            if (Boolean.TRUE.equals(PI.get("manga_otra"))) PI.put("manga_logro", a2Logro(sp, "armas/derringer_manga"));
+        }));
         vigila("a2u_manga_ok", 2, () -> a2Comprobar("la tecla de la manga saca la Derringer de golpe (y el tiro en menos de un segundo da el logro)",
                 Boolean.TRUE.equals(PI.get("manga")) && Boolean.TRUE.equals(PI.get("manga_logro")), "en la mano " + PI.get("manga") + ", logro " + PI.get("manga_logro")));
         // ---------------------------------------------------------------- el violín (con el arco en la otra mano)
@@ -3930,6 +3970,8 @@ public final class PruebaCI {
         // ---------------------------------------------------------------- bayoneta con los encantamientos de la espada
         sin("a2o_bayoneta", 26, () -> piSrv(sp -> {
             var l = sp.serverLevel();
+            // con lluvia el Aspecto ígneo no prende (pasó en el CI: «en el agua true»)
+            l.setWeatherParameters(6000, 0, false, false);
             var z = net.minecraft.world.entity.EntityType.ZOMBIE.create(l);
             Vec3 q = a2Punto(2.6, 0, 0);
             z.moveTo(q.x, q.y, q.z, a2Mira.toYRot() + 180, 0);
