@@ -485,7 +485,25 @@ public final class PruebaCI {
         sin("est_camp_poner", 8, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             var o = (net.minecraft.core.BlockPos) PI.get("est_o");
+            // /place no mira el bioma: se busca el sitio más llano de la zona cargada (en el CI una vez cayó en un barranco
+            // de montaña y el cofre quedó enterrado)
             var c = new net.minecraft.core.BlockPos(o.getX() - 400, o.getY(), o.getZ());
+            int mejor = Integer.MAX_VALUE;
+            for (int dx = -40; dx <= 40; dx += 20)
+                for (int dz = -16; dz <= 16; dz += 16) {
+                    int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+                    for (int ax = -8; ax <= 8; ax += 4)
+                        for (int az = -8; az <= 8; az += 4) {
+                            int h = l.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.WORLD_SURFACE, o.getX() - 400 + dx + ax, o.getZ() + dz + az);
+                            min = Math.min(min, h);
+                            max = Math.max(max, h);
+                        }
+                    if (max - min < mejor) {
+                        mejor = max - min;
+                        c = new net.minecraft.core.BlockPos(o.getX() - 400 + dx, o.getY(), o.getZ() + dz);
+                    }
+                }
+            PI.put("est_c_desnivel", mejor);
             PI.put("est_c_cmd", estComando(sp, "place structure copperslug:campamento " + c.getX() + " " + c.getY() + " " + c.getZ()));
             int alto = l.getHeight(net.minecraft.world.level.levelgen.Heightmap.Types.MOTION_BLOCKING, c.getX(), c.getZ());
             PI.put("est_mayfly", sp.getAbilities().mayfly);
@@ -502,7 +520,7 @@ public final class PruebaCI {
         vigila("est_camp_ok", 4, () -> {
             int[] r = (int[]) PI.get("est_c");
             if (r == null) throw new IllegalStateException("el campamento aún no se ha contado");
-            String det = "cofres " + r[1] + ", saqueadores armados " + r[6] + " de " + r[16] + " saqueadores y vindicadores (/place: " + PI.get("est_c_cmd") + ")";
+            String det = "cofres " + r[1] + ", saqueadores armados " + r[6] + " de " + r[16] + " saqueadores y vindicadores (desnivel del sitio " + PI.get("est_c_desnivel") + "; /place: " + PI.get("est_c_cmd") + ")";
             RESUMEN.add("  estructuras: campamento generado: " + det);
             if (det.contains("cargada")) { RESUMEN.add("  estructuras: campamento NO VERIFICADO (chunks sin cargar)"); return; }
             if (r[1] < 1 || r[6] < 2) throw new IllegalStateException("el campamento sale (cofres >= 1, armados >= 2) (" + det + ")");
