@@ -274,6 +274,7 @@ public final class PruebaCI {
         rifle();
         armas3d();
         armas2();
+        novedades();
         estructuras();
         apuntado();
         sin("armas_avisos", 1, () -> {
@@ -2178,6 +2179,210 @@ public final class PruebaCI {
         return a != null && sp.getAdvancements().getOrStartProgress(a).isDone();
     }
 
+    // ------------------------------------------------------------------ cartuchera, funda, granadas, IA y marcas (pasos 380-389)
+    private static void nvComprobar(String que, boolean bien, String detalle) {
+        RESUMEN.add("  novedades: " + que + ": " + detalle);
+        if (!bien) throw new IllegalStateException(que + " (" + detalle + ")");
+    }
+
+    private static net.minecraft.world.entity.LivingEntity nvEnte(ServerPlayer sp, String clave) {
+        Object id = PI.get(clave);
+        return id instanceof UUID u ? (net.minecraft.world.entity.LivingEntity) sp.serverLevel().getEntity(u) : null;
+    }
+
+    /** Un husk quieto en ese punto del campo de armas2 (para las granadas). */
+    private static void nvHusk(ServerPlayer sp, String clave, Vec3 q) {
+        var h = net.minecraft.world.entity.EntityType.HUSK.create(sp.serverLevel());
+        h.moveTo(q.x, q.y, q.z, a2Mira.toYRot() + 180, 0);
+        h.setNoAi(true);
+        h.setPersistenceRequired();
+        h.setSilent(true);
+        sp.serverLevel().addFreshEntity(h);
+        PI.put(clave, h.getUUID());
+    }
+
+    /** Una granada de ese tipo soltada justo encima del mob (estalla a los 3 s). */
+    private static void nvGranada(ServerPlayer sp, com.copperslug.shim.registries.RegistryObject<net.minecraft.world.item.Item> tipo, String clave) {
+        var h = nvEnte(sp, clave);
+        if (h == null) throw new IllegalStateException("no está el husk " + clave);
+        var g = new com.copperslug.armasfuego.granada.GranadaEntity(com.copperslug.registry.ModEntities.GRANADA.get(), sp, sp.serverLevel());
+        g.setItem(new ItemStack(tipo.get()));
+        g.setPos(h.getX() + 0.6, h.getY() + 0.2, h.getZ());
+        g.setDeltaMovement(Vec3.ZERO);
+        sp.serverLevel().addFreshEntity(g);
+    }
+
+    /**
+     * Lo nuevo de las armas: la cartuchera repone munición, la funda enfunda y desenfunda solo armas cortas, las tres
+     * granadas hacen lo suyo (metralla hiere sin romper bloques, miel pringa, humo ciega), un mob armado que no ve al
+     * jugador acude al oír un disparo y las balas dejan marca en la pared.
+     */
+    private static void novedades() {
+        Minecraft mc = Minecraft.getInstance();
+        var BALA = com.copperslug.registry.ModItems.REVOLVER_BALA;
+        sin("nv_preparar", 20, () -> {
+            mc.setScreen(null);
+            a2Camara1p();
+            piSrv(sp -> {
+                var l = sp.serverLevel();
+                l.setDayTime(6000);
+                l.getEntitiesOfClass(net.minecraft.world.entity.Entity.class, new net.minecraft.world.phys.AABB(a2O).inflate(30),
+                        e -> !(e instanceof net.minecraft.world.entity.player.Player)).forEach(net.minecraft.world.entity.Entity::discard);
+                sp.setGameMode(GameType.SURVIVAL);
+                sp.removeAllEffects();
+                sp.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 20 * 300, 4, false, false));
+                sp.setHealth(sp.getMaxHealth());
+                var inv = sp.getInventory();
+                inv.clearContent();
+                ItemStack cart = new ItemStack(com.copperslug.registry.ModItems.CARTUCHERA.get());
+                com.copperslug.armasfuego.cinturon.CartucheraItem.meter(cart, new ItemStack(BALA.get(), 32));
+                inv.setItem(8, cart);
+                inv.setItem(7, new ItemStack(com.copperslug.registry.ModItems.FUNDA.get()));
+                inv.setItem(0, a2Cargada(com.copperslug.registry.ModItems.REVOLVER, 0));
+                inv.selected = 0;
+                sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
+                sp.connection.teleport(a2O.getX() + 0.5, a2O.getY(), a2O.getZ() + 0.5, a2Mira.toYRot(), 0F);
+            });
+        });
+        // ---- cartuchera: saca la munición al inventario
+        sin("nv_cartuchera", 5, () -> piSrv(sp -> {
+            ItemStack cart = sp.getInventory().getItem(8);
+            PI.put("nv_cart_antes", com.copperslug.armasfuego.cinturon.CartucheraItem.total(cart));
+            PI.put("nv_cart_ok", com.copperslug.armasfuego.cinturon.CartucheraItem.reponer(sp, x -> x.is(BALA.get())));
+            PI.put("nv_cart_inv", sp.getInventory().countItem(BALA.get()));
+            PI.put("nv_cart_resto", com.copperslug.armasfuego.cinturon.CartucheraItem.total(cart));
+        }));
+        sin("nv_cartuchera_chk", 1, () -> nvComprobar("la cartuchera repone balas", Boolean.TRUE.equals(PI.get("nv_cart_ok"))
+                        && Integer.valueOf(32).equals(PI.get("nv_cart_inv")) && Integer.valueOf(0).equals(PI.get("nv_cart_resto")),
+                "en la cartuchera " + PI.get("nv_cart_antes") + " → " + PI.get("nv_cart_resto") + ", en el inventario " + PI.get("nv_cart_inv")));
+        // ---- funda: enfunda el revólver (se ve en el cinturón) y lo desenfunda
+        sin("nv_funda", 5, () -> piSrv(sp -> {
+            com.copperslug.armasfuego.cinturon.FundaItem.tecla(sp);
+            PI.put("nv_funda_mano", sp.getMainHandItem().isEmpty());
+            PI.put("nv_funda_llena", !com.copperslug.armasfuego.cinturon.FundaItem.arma(sp.getInventory().getItem(7)).isEmpty());
+        }));
+        paso("380_funda_cinturon_3p", 15, () -> {
+            nvComprobar("la funda guarda el revólver", Boolean.TRUE.equals(PI.get("nv_funda_mano")) && Boolean.TRUE.equals(PI.get("nv_funda_llena")),
+                    "mano vacía " + PI.get("nv_funda_mano") + ", funda llena " + PI.get("nv_funda_llena"));
+            mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
+        });
+        sin("nv_desenfundar", 5, () -> piSrv(sp -> {
+            com.copperslug.armasfuego.cinturon.FundaItem.tecla(sp);
+            PI.put("nv_desenf", sp.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.pistola.RevolverItem
+                    && com.copperslug.armasfuego.cinturon.FundaItem.arma(sp.getInventory().getItem(7)).isEmpty());
+            // un arma larga no cabe: el Winchester se queda en la mano
+            sp.getInventory().setItem(1, a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 0));
+            sp.getInventory().selected = 1;
+            sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(1));
+            com.copperslug.armasfuego.cinturon.FundaItem.tecla(sp);
+            PI.put("nv_larga", sp.getMainHandItem().getItem() == com.copperslug.registry.ModItems.WINCHESTER.get()
+                    && com.copperslug.armasfuego.cinturon.FundaItem.arma(sp.getInventory().getItem(7)).isEmpty());
+        }));
+        sin("nv_funda_chk", 1, () -> {
+            mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            nvComprobar("se desenfunda el revólver", Boolean.TRUE.equals(PI.get("nv_desenf")), String.valueOf(PI.get("nv_desenf")));
+            nvComprobar("el Winchester no cabe en la funda", Boolean.TRUE.equals(PI.get("nv_larga")), String.valueOf(PI.get("nv_larga")));
+        });
+        // ---- granadas: metralla primero (sola, que empuja) y luego miel y humo
+        sin("nv_granadas", 10, () -> {
+            piSrv(sp -> {
+                sp.getInventory().selected = 0;
+                sp.connection.send(new net.minecraft.network.protocol.game.ClientboundSetCarriedItemPacket(0));
+                nvHusk(sp, "nv_h_metralla", a2Punto(12, -5, 0));
+                nvHusk(sp, "nv_h_miel", a2Punto(12, 0, 0));
+                nvHusk(sp, "nv_h_humo", a2Punto(12, 5, 0));
+            });
+            piApuntar(a2Punto(12, -3, 0.5));
+        });
+        sin("nv_metralla", 52, () -> piSrv(sp -> {
+            PI.put("nv_suelo", sp.serverLevel().getBlockState(net.minecraft.core.BlockPos.containing(a2Punto(12, -5, -0.5))).isAir());
+            nvGranada(sp, com.copperslug.registry.ModItems.GRANADA_METRALLA, "nv_h_metralla");
+        }));
+        paso("381_granada_metralla", 12, () -> {});
+        sin("nv_metralla_mira", 3, () -> piSrv(sp -> {
+            var h = nvEnte(sp, "nv_h_metralla");
+            PI.put("nv_metralla_vida", h == null || !h.isAlive() ? 0F : h.getHealth());
+            PI.put("nv_suelo_tras", sp.serverLevel().getBlockState(net.minecraft.core.BlockPos.containing(a2Punto(12, -5, -0.5))).isAir());
+        }));
+        sin("nv_metralla_chk", 1, () -> {
+            float v = PI.get("nv_metralla_vida") instanceof Float f ? f : 20F;
+            nvComprobar("la metralla hiere", v < 20F, "vida del husk " + v + "/20");
+            nvComprobar("la metralla no rompe bloques (config por defecto)", Boolean.FALSE.equals(PI.get("nv_suelo_tras")),
+                    "suelo antes aire=" + PI.get("nv_suelo") + ", después aire=" + PI.get("nv_suelo_tras"));
+        });
+        sin("nv_miel_humo", 62, () -> {
+            piApuntar(a2Punto(12, 2.5, 0.8));
+            piSrv(sp -> {
+                nvGranada(sp, com.copperslug.registry.ModItems.GRANADA_MIEL, "nv_h_miel");
+                nvGranada(sp, com.copperslug.registry.ModItems.GRANADA_HUMO, "nv_h_humo");
+            });
+        });
+        paso("382_granadas_miel_humo", 15, () -> {});
+        sin("nv_miel_humo_mira", 3, () -> piSrv(sp -> {
+            var m = nvEnte(sp, "nv_h_miel");
+            var h = nvEnte(sp, "nv_h_humo");
+            PI.put("nv_pringado", m != null && m.hasEffect(com.copperslug.registry.ModEffects.PRINGADO.holder()));
+            PI.put("nv_ciego", h != null && h.hasEffect(net.minecraft.world.effect.MobEffects.BLINDNESS));
+        }));
+        sin("nv_miel_humo_chk", 1, () -> {
+            nvComprobar("la granada de miel pringa", Boolean.TRUE.equals(PI.get("nv_pringado")), String.valueOf(PI.get("nv_pringado")));
+            nvComprobar("la granada de humo ciega", Boolean.TRUE.equals(PI.get("nv_ciego")), String.valueOf(PI.get("nv_ciego")));
+        });
+        // ---- IA: un zombi con revólver encerrado (no ve al jugador) acude al oír un disparo
+        sin("nv_ia_preparar", 30, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, new net.minecraft.world.phys.AABB(a2O).inflate(30)).forEach(net.minecraft.world.entity.Entity::discard);
+            var c = net.minecraft.core.BlockPos.containing(a2Punto(14, 0, 0));
+            for (var b : net.minecraft.core.BlockPos.betweenClosed(c.offset(-1, 0, -1), c.offset(1, 3, 1)))
+                l.setBlock(b, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState(), 2);
+            l.setBlock(c, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+            l.setBlock(c.above(), net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+            PI.put("nv_caja", c.immutable());
+            var z = net.minecraft.world.entity.EntityType.ZOMBIE.create(l);
+            z.moveTo(c.getX() + 0.5, c.getY(), c.getZ() + 0.5, a2Mira.toYRot() + 180, 0);
+            z.setItemSlot(net.minecraft.world.entity.EquipmentSlot.MAINHAND, a2Cargada(com.copperslug.registry.ModItems.REVOLVER, 6));
+            z.setPersistenceRequired();
+            z.setSilent(true);
+            l.addFreshEntity(z);
+            PI.put("nv_zombi", z.getUUID());
+        }));
+        sin("nv_ia_oir", 5, () -> piSrv(sp -> {
+            var z = (net.minecraft.world.entity.Mob) nvEnte(sp, "nv_zombi");
+            if (z == null) throw new IllegalStateException("no está el zombi");
+            PI.put("nv_ia_antes", z.getTarget() == null ? "nadie" : z.getTarget().getName().getString());
+            z.setTarget(null);
+            com.copperslug.armasfuego.comun.MobsArmados.oirDisparo(sp.serverLevel(), sp, sp.position());
+            PI.put("nv_ia_despues", z.getTarget() == sp);
+        }));
+        sin("nv_ia_chk", 1, () -> {
+            nvComprobar("un mob armado acude al oír un disparo", Boolean.TRUE.equals(PI.get("nv_ia_despues")),
+                    "objetivo antes: " + PI.get("nv_ia_antes") + ", después de oír el tiro va a por el jugador: " + PI.get("nv_ia_despues"));
+            piSrv(sp -> {
+                var z = nvEnte(sp, "nv_zombi");
+                if (z != null) z.discard();
+                if (PI.get("nv_caja") instanceof net.minecraft.core.BlockPos c)
+                    for (var b : net.minecraft.core.BlockPos.betweenClosed(c.offset(-1, 0, -1), c.offset(1, 3, 1)))
+                        sp.serverLevel().setBlock(b, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState(), 2);
+            });
+        });
+        // ---- marcas de bala en la pared de ladrillo del fondo
+        sin("nv_marcas", 5, () -> {
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.REVOLVER, 6));
+            piApuntar(a2Punto(17, 0, 1.6));
+        });
+        sin("nv_tiro1", 6, piTiro());
+        sin("nv_tiro2", 6, () -> {
+            piApuntar(a2Punto(17, 0.6, 2.1));
+            piDisparar();
+        });
+        sin("nv_tiro3", 4, () -> {
+            piApuntar(a2Punto(17, -0.5, 1.2));
+            piDisparar();
+        });
+        paso("383_marcas_pared", 10, () -> a2VistaA(a2Punto(16.5, 0, 1.6), a2Punto(13.5, 1.2, 2.2)));
+        sin("nv_fin", 2, A2::camara1p);
+    }
+
     /**
      * Las seis armas nuevas (Gatling, Winchester, Derringer, Thompson con su estuche, mosquete y cañón de mano) y la
      * munición nueva de las tres primeras (tiempo bala, goma y pintura): se disparan de verdad contra un husk con mucha
@@ -3970,6 +4175,19 @@ public final class PruebaCI {
             escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.GRAVA, 100, escHuskPos());
         });
         paso("123_grava", 12, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
+        // con shaders (pocos fotogramas) a veces el tiro sale antes de que llegue la puntería: si no ha dado, otro tiro
+        sin("esc_grava_otra", 5, () -> {
+            var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
+            if (escVida - h.getHealth() < 3) {
+                RESUMEN.add("  escopeta: el primer tiro de grava no ha dado bien; otro");
+                PI.put("grava_otra", true);
+                escServidor(sp -> h.setHealth(h.getMaxHealth()));
+                escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.GRAVA, 100, escHuskPos());
+            } else PI.remove("grava_otra");
+        });
+        sin("esc_grava_tiro2", 12, () -> {
+            if (Boolean.TRUE.equals(PI.get("grava_otra"))) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
+        });
         vigila("esc_grava_chk", 5, () -> {
             var h = (net.minecraft.world.entity.LivingEntity) escEntidad(escHusk);
             ItemStack s = escJugador().getMainHandItem();
@@ -3988,6 +4206,18 @@ public final class PruebaCI {
             escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.INCENDIARIO, 100, Vec3.atCenterOf(escHoguera).add(0, -0.25, 0));
         });
         paso("125_hoguera", 15, com.copperslug.client.armasfuego.escopeta.EscopetaCliente::disparar);
+        sin("esc_hoguera_otra", 5, () -> {
+            var l = escJugador().serverLevel();
+            if (!l.getBlockState(escHoguera).getValue(net.minecraft.world.level.block.CampfireBlock.LIT)
+                    && !l.getBlockState(escVela).getValue(net.minecraft.world.level.block.CandleBlock.LIT)) {
+                RESUMEN.add("  escopeta: el primer incendiario no ha encendido nada; otro");
+                PI.put("hoguera_otra", true);
+                escCargar(com.copperslug.armasfuego.escopeta.TipoCartucho.INCENDIARIO, 100, Vec3.atCenterOf(escHoguera).add(0, -0.25, 0));
+            } else PI.remove("hoguera_otra");
+        });
+        sin("esc_hoguera_tiro2", 15, () -> {
+            if (Boolean.TRUE.equals(PI.get("hoguera_otra"))) com.copperslug.client.armasfuego.escopeta.EscopetaCliente.disparar();
+        });
         vigila("esc_hoguera_chk", 5, () -> {
             var l = escJugador().serverLevel();
             boolean hog = l.getBlockState(escHoguera).getValue(net.minecraft.world.level.block.CampfireBlock.LIT);
