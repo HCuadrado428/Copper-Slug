@@ -176,6 +176,8 @@ public final class FuegoParticulas {
      * 10 segundos y se desvanece el último. La normal de la cara llega en la velocidad.
      */
     public static class Marca extends TextureSheetParticle {
+        /** Las marcas creadas desde que se abrió el juego (la prueba del CI mira que salen). */
+        public static volatile int creadas;
         private final float nx, ny, nz;
 
         protected Marca(ClientLevel l, double x, double y, double z, double vx, double vy, double vz, SpriteSet s) {
@@ -183,6 +185,7 @@ public final class FuegoParticulas {
             nx = (float) vx;
             ny = (float) vy;
             nz = (float) vz;
+            creadas++;
             xd = yd = zd = 0;
             lifetime = 200;
             quadSize = 0.07F + random.nextFloat() * 0.02F;
