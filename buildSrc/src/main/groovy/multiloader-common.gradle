@@ -43,6 +43,21 @@ repositories {
     }
 }
 
+// Bloomberto (animación, cámara, partículas): se compila contra su jar con nombres de Mojang, que deja
+// herramientas/bloomberto.sh en libs/bloomberto/ (el de Fabric para common, el de cada cargador para el suyo). En el
+// juego va como mod aparte: Copper Slug lo pide en fabric.mod.json y mods.toml.
+def bloombertoCargador = project.name == 'common' ? 'fabric' : project.name
+def bloombertoDev = fileTree(dir: rootProject.file('libs/bloomberto'), include: "bloomberto-*-${bloombertoCargador}-dev.jar")
+dependencies {
+    compileOnly bloombertoDev
+}
+tasks.withType(JavaCompile).configureEach {
+    doFirst {
+        if (bloombertoDev.isEmpty())
+            throw new GradleException("Falta Bloomberto para ${bloombertoCargador}: ejecuta herramientas/bloomberto.sh")
+    }
+}
+
 // Declare capabilities on the outgoing configurations.
 // Read more about capabilities here: https://docs.gradle.org/current/userguide/component_capabilities.html#sec:declaring-additional-capabilities-for-a-local-component
 ['apiElements', 'runtimeElements'].each { variant ->
@@ -78,6 +93,7 @@ processResources {
             'version'                      : version,
             'group'                        : project.group, //Else we target the task's group.
             'minecraft_version'            : minecraft_version,
+            'bloomberto_version'           : rootProject.file('bloomberto.properties').readLines().find { it.startsWith('version=') }.substring(8),
             'minecraft_version_range'      : minecraft_version_range,
             'fabric_version'               : fabric_version,
             'fabric_loader_version'        : fabric_loader_version,

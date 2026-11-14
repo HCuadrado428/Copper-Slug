@@ -1,5 +1,7 @@
 package com.copperslug.client.armasfuego.comun;
 
+import com.dougg865.bloomberto.api.animation.Easing;
+import com.dougg865.bloomberto.api.render.CameraZoom;
 import com.copperslug.CopperSlug;
 import com.copperslug.armasfuego.comun.Apuntar;
 import com.copperslug.armasfuego.comun.ApuntarPacket;
@@ -96,6 +98,10 @@ public final class Apuntado {
         if (p == null || mc.level == null) {
             apunta = rafaga = gatlingApunta = false;
             k = kO = 0;
+            if (fovPuesto != 1F) {
+                fovPuesto = 1F;
+                CameraZoom.shared().reset(0, Easing.LINEAR);
+            }
             return;
         }
         ItemStack s = p.getMainHandItem();
@@ -120,6 +126,7 @@ public final class Apuntado {
         gatlingApunta = gat && mc.screen == null && (mc.options.keyUse.isDown() || apuntarPrueba);
         kO = k;
         k = Mth.clamp(k + (apunta || gatlingApunta ? 0.25F : -0.25F), 0F, 1F);
+        zoom(mc, p);
         // al sacar el mosquete con su bayoneta: un destello en la punta de la hoja (solo en primera persona)
         Item actual = s.getItem();
         if (actual != ultimoObjeto) {
@@ -213,15 +220,33 @@ public final class Apuntado {
         return 1F;   // Winchester y mosquete
     }
 
+    /** El multiplicador del campo de visión que se le ha pedido a CameraZoom (1 = sin zoom). */
+    private static float fovPuesto = 1F;
+
     /**
-     * Por cuánto se multiplica el campo de visión del jugador (lo usa el mixin de {@code getFieldOfViewModifier}). El
-     * juego ya lo cierra un poco por andar más lento: se descuenta para que mande el valor de la config.
+     * El zoom de la mira con {@code CameraZoom} de Bloomberto (cambia el campo de visión del mundo, no el de la mano,
+     * así que el arma sigue alineada): al poner la mira se acerca en 5 ticks y al soltarla vuelve en 4, con easing.
+     * El cuánto es lo de siempre: el multiplicador del campo de visión de la config por lo que pesa cada arma. El juego
+     * ya lo cierra un poco por andar más lento apuntando: se descuenta para que mande el valor de la config.
      */
-    public static float fov(LocalPlayer p) {
-        if (k <= 0F) return 1F;
-        float f = 1F - (1F - EquilibrioArmas.apuntarFov()) * pesoFov(p) * k;
-        if (apunta && Apuntar.apuntando(p)) f /= (float) (2.0 - Apuntar.lentitud(p)) / 2F;
-        return f;
+    private static void zoom(Minecraft mc, LocalPlayer p) {
+        float f = 1F;
+        if (apunta || gatlingApunta) {
+            f = 1F - (1F - EquilibrioArmas.apuntarFov()) * pesoFov(p);
+            if (apunta && Apuntar.apuntando(p)) f /= (float) (2.0 - Apuntar.lentitud(p)) / 2F;
+        }
+        if (Math.abs(f - fovPuesto) < 1e-3F) return;
+        boolean acerca = f < fovPuesto;
+        fovPuesto = f;
+        // el multiplicador f del campo de visión, como aumento de la imagen (lo que pide CameraZoom)
+        double medio = Math.toRadians(mc.options.fov().get()) / 2;
+        float aumento = f >= 1F ? 1F : (float) (Math.tan(medio) / Math.tan(medio * f));
+        CameraZoom.shared().zoomTo(aumento, acerca ? 5 : 4, acerca ? Easing.OUT_CUBIC : Easing.IN_OUT_SINE);
+    }
+
+    /** El zoom que se ha pedido ahora (1 = sin zoom); para la prueba. */
+    public static float zoomPedido() {
+        return fovPuesto;
     }
 
     /** El retroceso se nota menos apuntando (el arma va encarada). */
