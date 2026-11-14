@@ -33,7 +33,7 @@ TEX = os.path.join(ASSETS, 'textures', 'geo')
 K = 4                     # texels del atlas por píxel de modelo
 CX, CY = 8.0, 8.9         # el eje del tambor (RevolverTambor.CX/CY)
 GRUA = (8.0, 5.4)         # el eje de la grúa: debajo del tambor, paralelo al cañón
-ABIERTA = -55.0           # grados que gira la grúa al abrir (sale hacia el centro de la pantalla y un poco abajo)
+ABIERTA = 55.0            # grados que gira la grúa al abrir (sale hacia el centro de la pantalla y un poco abajo)
 
 
 def caras_geo(f, t):
@@ -151,13 +151,13 @@ def animacion():
                 'animation_length': 0.3, 'loop': 'hold_on_last_frame',
                 'bones': {'grua': {'rotation': {
                     '0.0': [0, 0, 0],
-                    '0.15': {'post': [0, 0, ABIERTA - 6], 'lerp_mode': 'catmullrom'},
+                    '0.15': {'post': [0, 0, ABIERTA + 6], 'lerp_mode': 'catmullrom'},
                     '0.3': {'post': [0, 0, ABIERTA], 'lerp_mode': 'catmullrom'}}}}},
             'animation.revolver_tambor.cerrar': {
                 'animation_length': 0.25, 'loop': 'hold_on_last_frame',
                 'bones': {'grua': {'rotation': {
                     '0.0': [0, 0, ABIERTA],
-                    '0.12': [0, 0, 1.5],
+                    '0.12': [0, 0, -1.5],
                     '0.25': {'post': [0, 0, 0], 'lerp_mode': 'catmullrom'}}}}},
         }}
 
