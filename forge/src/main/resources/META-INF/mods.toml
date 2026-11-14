@@ -14,6 +14,12 @@ versionRange = "${forge_version_range}"
 ordering = "NONE"
 side = "BOTH"
 [[dependencies.${mod_id}]]
+modId = "bloomberto"
+mandatory = true
+versionRange = "*"  # sus versiones llevan «+1.20.1-forge», que el rango de Maven no compara bien
+ordering = "AFTER"
+side = "BOTH"
+[[dependencies.${mod_id}]]
 modId = "minecraft"
 mandatory = true
 versionRange = "${minecraft_version_range}"

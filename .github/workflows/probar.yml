@@ -49,6 +49,8 @@ jobs:
           ls -la jars
           cp jars/*forge-${MC}*.jar forge/
           cp jars/*fabric-${MC}*.jar fabric/
+          cp jars/bloomberto-*${MC}-forge.jar forge/
+          cp jars/bloomberto-*${MC}-fabric.jar fabric/
           bajar() {  # bajar <slug> <cargador> <carpeta>: la última versión para ese cargador y MC en Modrinth
             url=$(curl -sf "https://api.modrinth.com/v2/project/$1/version?loaders=%5B%22$2%22%5D&game_versions=%5B%22${MC}%22%5D" \
                   | jq -r '(([.[] | select(.version_type=="release")] + .)[0].files // []) | ((map(select(.primary))[0] // .[0]).url // "null")' || true)

@@ -256,6 +256,7 @@ public final class FuegoParticulas {
             quadSize = 0.07F;
             setColor(r, g, b);
             pickSprite(s);
+            Trazadoras.nueva(new net.minecraft.world.phys.Vec3(x, y, z), new net.minecraft.world.phys.Vec3(xd, yd, zd), lifetime, r, g, b);
         }
 
         @Override
