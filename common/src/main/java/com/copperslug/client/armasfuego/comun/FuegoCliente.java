@@ -10,9 +10,6 @@ import com.copperslug.armasfuego.oeste.MosqueteItem;
 import com.copperslug.armasfuego.oeste.ThompsonItem;
 import com.copperslug.armasfuego.oeste.WinchesterItem;
 import com.copperslug.network.ModNetwork;
-import com.dougg865.bloomberto.api.animation.Easing;
-import com.dougg865.bloomberto.api.animation.KeyframeTrack;
-import com.dougg865.bloomberto.api.render.CameraShake;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.ChatFormatting;
@@ -62,13 +59,10 @@ public final class FuegoCliente {
         LocalPlayer p = Minecraft.getInstance().player;
         if (p == null) return;
         if (sube != 0) p.setXRot(Mth.clamp(p.getXRot() - sube, -90F, 90F));
-        float t = ticksPatada(0);
-        camPitch = Math.min((t < CAMARA.length() ? camPitch : 0F) + sacude, 14F);
+        camPitch = Math.min(camPitch + sacude, 14F);
         camRoll = (p.getRandom().nextFloat() - 0.5F) * sacude * 0.6F;
         manoPatada = Math.max(manoPatada * fadeMano(), mano);
         tPatada = Util.getMillis();
-        // las armas gordas además sacuden la cámara (Bloomberto: mueve la vista de verdad, también con shaders)
-        if (sacude >= 4F) CameraShake.shared().shake(Math.min(1F, sacude / 10F), 4 + Math.round(sacude), 2.5F);
         patadas++;
     }
 
@@ -78,21 +72,9 @@ public final class FuegoCliente {
         patada(sube * r, sacude * r, mano * r);
     }
 
-    /**
-     * Las curvas del retroceso (Bloomberto): la cámara da el golpe en un tick y vuelve con un pequeño rebote; el arma
-     * culatea en un tick y vuelve a su sitio pasándose un poco, como un muelle.
-     */
-    private static final KeyframeTrack CAMARA = KeyframeTrack.create().at(0, 0F).at(1, 1F, Easing.OUT_CUBIC).at(6, 0F, Easing.OUT_BACK);
-    private static final KeyframeTrack MANO = KeyframeTrack.create().at(0, 0.35F).at(1, 1F, Easing.OUT_QUAD).at(5, 0F, Easing.OUT_BACK);
-
-    /** Ticks (con fracción) desde la última patada. */
-    private static float ticksPatada(float extra) {
-        return (Util.getMillis() - tPatada) / 50F + extra;
-    }
-
     private static float fadeMano() {
-        float t = ticksPatada(0);
-        return t >= MANO.length() ? 0F : MANO.sample(t);
+        long ms = Util.getMillis() - tPatada;
+        return ms > 220 ? 0 : (1 - ms / 220F) * (1 - ms / 220F);
     }
 
     /** El retroceso de cada arma de la segunda tanda al disparar (lo pide el objeto en el cliente). */
@@ -115,14 +97,16 @@ public final class FuegoCliente {
 
     @SubscribeEvent
     public static void camara(ViewportEvent.ComputeCameraAngles e) {
-        float t = ticksPatada(0);
-        if (t >= CAMARA.length()) {
+        long ms = Util.getMillis() - tPatada;
+        if (ms > 260) {
             camPitch = 0;
             return;
         }
-        float k = CAMARA.sample(t);
+        float k = 1 - ms / 260F;
+        k = k * k;
         e.setPitch(e.getPitch() - camPitch * k);
         e.setRoll(e.getRoll() + camRoll * k);
+        // la Gatling vibra mientras dispara
     }
 
     // ------------------------------------------------------------------ en la mano
@@ -206,7 +190,7 @@ public final class FuegoCliente {
         }
         // culatazo
         float k = fadeMano() * manoPatada;
-        if (k != 0) {   // al final pasa un poco de 0: el arma rebota hacia delante
+        if (k > 0) {
             ps.translate(0, 0.02F * k, 0.12F * k);
             girar(ps, lado, Axis.XP.rotationDegrees(7F * k));
         }
@@ -229,7 +213,7 @@ public final class FuegoCliente {
     /** El culatazo también para las tres primeras (revólver y escopeta, que no tenían animación de disparo). */
     public static void culatazo(PoseStack ps) {
         float k = fadeMano() * manoPatada;
-        if (k != 0) {   // al final pasa un poco de 0: el arma rebota hacia delante
+        if (k > 0) {
             ps.translate(0, 0.02F * k, 0.12F * k);
             girar(ps, 1, Axis.XP.rotationDegrees(7F * k));
         }

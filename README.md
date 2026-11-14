@@ -78,7 +78,6 @@ There are no versioned releases yet: every CI build is published as a `build-N` 
 
 ## Requirements
 
-- **All loaders:** [Bloomberto](https://github.com/HCuadrado428/Bloomberto) (recoil animations, camera shake, aiming zoom, bullet trails and particle patterns). Its jar for your version and loader comes with every Copper Slug build (`bloomberto-*.jar`); put it in `mods/` too.
 - **Forge / NeoForge:** nothing else.
 - **Fabric:** [Fabric API](https://modrinth.com/mod/fabric-api).
 - Optional: [JEI](https://modrinth.com/mod/jei) shows where each weapon is found and the bayonet recipe.
@@ -172,7 +171,6 @@ Todavía no hay versiones publicadas: cada compilación del CI sale como prerele
 
 ## Requisitos
 
-- **Todos los cargadores:** [Bloomberto](https://github.com/HCuadrado428/Bloomberto) (animaciones del retroceso, temblor de cámara, zoom de la mira, estelas de las balas y patrones de partículas). Su jar para tu versión y cargador va con cada build de Copper Slug (`bloomberto-*.jar`); ponlo también en `mods/`.
 - **Forge / NeoForge:** nada más.
 - **Fabric:** [Fabric API](https://modrinth.com/mod/fabric-api).
 - Opcional: [JEI](https://modrinth.com/mod/jei), que enseña dónde se encuentra cada arma y la receta de la bayoneta.
