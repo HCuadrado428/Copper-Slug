@@ -1,5 +1,6 @@
 package com.copperslug.armasfuego.granada;
 
+import com.dougg865.bloomberto.api.effects.Particles;
 import com.copperslug.ConfigServidor;
 import com.copperslug.armasfuego.comun.ArmasFuegoRegistro;
 import com.copperslug.registry.ModEffects;
@@ -102,6 +103,10 @@ public class GranadaEntity extends ThrowableItemProjectile {
                     double a = random.nextDouble() * Math.PI * 2, s = 0.25 + random.nextDouble() * 0.25;
                     l.sendParticles(ArmasFuegoRegistro.CHISPA.get(), getX(), getY() + 0.2, getZ(), 0, Math.cos(a) * s, 0.15 + random.nextDouble() * 0.2, Math.sin(a) * s, 1.0);
                 }
+                // la metralla: una esfera de chispas que sale disparada y un anillo de polvo a ras de suelo (Bloomberto)
+                Vec3 c = position().add(0, 0.3, 0);
+                Particles.of(ArmasFuegoRegistro.CHISPA.get()).sphere(c, 0.4, 28).speed(0.45).spawn(l);
+                Particles.of(ParticleTypes.POOF).ring(c.add(0, -0.2, 0), 1.2, 20).speed(0.12).spawn(l);
                 logro(l);
                 discard();
             }
@@ -110,6 +115,8 @@ public class GranadaEntity extends ThrowableItemProjectile {
                 l.playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 0.5F, 1.6F);
                 l.sendParticles(ParticleTypes.LANDING_HONEY, getX(), getY() + 0.3, getZ(), 40, 1.6, 0.4, 1.6, 0);
                 l.sendParticles(ParticleTypes.FALLING_HONEY, getX(), getY() + 0.8, getZ(), 30, 1.2, 0.6, 1.2, 0);
+                // el charco: un anillo de miel justo del radio que pringa (3,5 bloques)
+                Particles.of(ParticleTypes.LANDING_HONEY).ring(position().add(0, 0.15, 0), 3.5, 36).spawn(l);
                 for (LivingEntity e : l.getEntitiesOfClass(LivingEntity.class, new AABB(blockPosition()).inflate(3.5)))
                     e.addEffect(new MobEffectInstance(ModEffects.PRINGADO.holder(), 160, 1), getOwner());
                 logro(l);
@@ -117,6 +124,8 @@ public class GranadaEntity extends ThrowableItemProjectile {
             }
             case HUMO -> {
                 l.playSound(null, getX(), getY(), getZ(), SoundEvents.FIRE_EXTINGUISH, SoundSource.PLAYERS, 1.0F, 0.6F);
+                // el primer golpe de humo: una espiral que sube y se abre
+                Particles.of(ParticleTypes.CAMPFIRE_COSY_SMOKE).spiral(position(), 1.2, 2.5, 1.5, 18).speed(0.02).spawn(l);
                 logro(l);
                 humo = 0;
                 setNoGravity(true);
