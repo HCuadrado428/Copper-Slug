@@ -13,6 +13,8 @@ public final class ConfigServidor {
     private static final ForgeConfigSpec.DoubleValue BOTIN_REVOLVER_HERREROS, BOTIN_REVOLVER_CASAS, BOTIN_ESCOPETA, BOTIN_RIFLE, BOTIN_ENCANTADA;
     private static final ForgeConfigSpec.BooleanValue MOBS_ACTIVADO, MOBS_TACTICA;
     private static final ForgeConfigSpec.IntValue MOBS_ALERTA;
+    private static final ForgeConfigSpec.BooleanValue RUIDO_ACTIVADO, RUIDO_ASUSTA;
+    private static final ForgeConfigSpec.DoubleValue RUIDO_MULT, RUIDO_SILENCIADOR;
     private static final ForgeConfigSpec.BooleanValue GRANADA_ROMPE;
     private static final ForgeConfigSpec.DoubleValue GRANADA_BOTIN;
     private static final ForgeConfigSpec.DoubleValue MOBS_PROB, MOBS_PROB_CAPITAN, MOBS_DANO, MOBS_SUELTA, MOBS_FALLO;
@@ -30,6 +32,12 @@ public final class ConfigServidor {
         BOTIN_RIFLE = b.comment("Rifle de catalejo: cofres de los puestos de saqueadores.").defineInRange("rifle_puesto_saqueadores", 0.25, 0.0, 1.0);
         BOTIN_ENCANTADA = b.comment("Probabilidad de que el arma encontrada lleve uno de sus encantamientos propios.").defineInRange("encantada", 0.25, 0.0, 1.0);
         b.pop();
+        b.pop();
+        b.comment("Ruido de los disparos: cada arma se oye a una distancia distinta; los monstruos van a ver de dónde viene y los animales y aldeanos huyen.").push("ruido");
+        RUIDO_ACTIVADO = b.comment("Apagar esto hace que los disparos no alerten a nadie (salvo al sculk, al Warden y a los mobs armados).").define("activado", true);
+        RUIDO_MULT = b.comment("Multiplica la distancia a la que se oyen todas las armas (1 = normal, 0,5 = la mitad, 2 = el doble).").defineInRange("distancia", 1.0, 0.0, 4.0);
+        RUIDO_SILENCIADOR = b.comment("Qué fracción de su distancia se oye un arma con Silenciador (0,15 = casi nada).").defineInRange("silenciador", 0.15, 0.0, 1.0);
+        RUIDO_ASUSTA = b.comment("Si los animales y aldeanos que oyen un disparo echan a correr.").define("asusta_animales", true);
         b.pop();
         b.comment("Mobs con armas: algunos saqueadores salen con una Winchester y disparan de verdad.").push("mobs_armados");
         MOBS_ACTIVADO = b.comment("Apagar esto deja a todos los mobs como en vanilla.").define("activado", true);
@@ -59,6 +67,10 @@ public final class ConfigServidor {
     private static boolean b(ForgeConfigSpec.BooleanValue v) { try { return SPEC.isLoaded() ? v.get() : v.getDefault(); } catch (Exception e) { return v.getDefault(); } }
     private static double d(ForgeConfigSpec.DoubleValue v) { try { return SPEC.isLoaded() ? v.get() : v.getDefault(); } catch (Exception e) { return v.getDefault(); } }
     private static int i(ForgeConfigSpec.IntValue v) { try { return SPEC.isLoaded() ? v.get() : v.getDefault(); } catch (Exception e) { return v.getDefault(); } }
+    public static boolean ruido() { return b(RUIDO_ACTIVADO); }
+    public static boolean ruidoAsusta() { return b(RUIDO_ASUSTA); }
+    public static double ruidoMultiplicador() { return d(RUIDO_MULT); }
+    public static double ruidoSilenciador() { return d(RUIDO_SILENCIADOR); }
     public static boolean mobsArmados() { return b(MOBS_ACTIVADO); }
     public static double mobsProb() { return d(MOBS_PROB); }
     public static double mobsProbCapitan() { return d(MOBS_PROB_CAPITAN); }

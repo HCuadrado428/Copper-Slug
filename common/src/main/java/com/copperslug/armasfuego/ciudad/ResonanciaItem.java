@@ -92,5 +92,6 @@ public class ResonanciaItem extends ArmaFuegoItem {
             l.sendParticles(ParticleTypes.SCULK_SOUL, boca.x + dir.x * d, boca.y + dir.y * d, boca.z + dir.z * d, 1, 0.05, 0.05, 0.05, 0.01);
         l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 1.0F, 1.5F);
         l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, boca);
+        com.copperslug.armasfuego.comun.Ruido.disparo(l, p, boca);
     }
 }
