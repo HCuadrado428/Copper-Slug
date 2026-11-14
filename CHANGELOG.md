@@ -87,6 +87,10 @@
 - New weapon, the Resonance Pistol (ancient cities): fires a sound wave through blocks and armor that hurts everything on its line
   (24 blocks, 9 damage) and runs on vanilla echo shards, one charge each, four at most. It is loud on purpose: the sculk hears it.
   3D model with turquoise coils, rust like the rest, loot in ancient city chests, JEI note and config values (`resonancia_*`).
+- New weapon, the Copper Harpoon Gun (underwater ruins): one harpoon on a rope. It hits a creature for 8 and pulls it towards you, or pulls you
+  towards a block, 1.6 times harder underwater; the harpoon can sometimes be picked up again. Harpoons are crafted (copper ingot, iron
+  nugget and a stick; two per craft). 3D model with a rope reel, rust like the rest, loot in underwater ruin chests, JEI note and config
+  values (`arponera_*`).
 - Minecraft-style look for the guns: the model materials (copper in its four phases, iron, steel, brass, wood and leather)
   are redrawn with five-tone vanilla ramps and brushed-metal and wood-grain patterns instead of flat random blotches;
   exposed and weathered copper keep specks of the previous phase, like vanilla copper. The 3D models are rebuilt on a half-pixel grid
@@ -218,6 +222,10 @@
   todo lo que haya en su línea (24 bloques, 9 de daño); funciona con fragmentos de eco normales, una carga cada uno y cuatro como
   máximo. Es ruidosa a propósito: el sculk la oye. Modelo 3D con bobinas turquesa, se oxida como el resto, botín en los cofres de
   la ciudad antigua, nota de JEI y valores de config (`resonancia_*`).
+- Arma nueva, la arponera de cobre (ruinas submarinas): un arpón con cuerda. Hiere a una criatura (8) y tira de ella hacia ti, o de ti
+  hacia un bloque, 1,6 veces más fuerte bajo el agua; el arpón a veces se puede recoger de nuevo. Los arpones se fabrican (lingote de
+  cobre, pepita de hierro y un palo; salen dos). Modelo 3D con carrete de cuerda, se oxida como el resto, botín en los cofres de las
+  ruinas submarinas, nota de JEI y valores de config (`arponera_*`).
 - Estilo Minecraft en las armas: los materiales de los modelos (el cobre en sus cuatro fases, hierro, acero, latón, madera y
   cuero) se han redibujado con rampas de cinco tonos como las de vanilla y vetas de metal cepillado y de madera, en vez de
   manchas planas al azar; el cobre expuesto y el erosionado conservan pintas de la fase anterior, como el de vanilla. Los

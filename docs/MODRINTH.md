@@ -3,15 +3,18 @@
 Text for the Modrinth project page (1.0.0), English only. Summary first, then the description, then the list of
 advancements as they are in the code.
 
+Before publishing: Bloomberto is a required dependency (`mods.toml` and `fabric.mod.json`) and is not published yet, so it has to go
+up first or nobody will be able to start the mod.
+
 ## Summary (250 characters max)
 
-Twelve copper firearms with their own ammo and enchantments, three new structures to loot, and pillagers that shoot back. Copper rusts: wax it or scrape it. Forge, Fabric and NeoForge.
+Thirteen copper firearms with their own ammo and enchantments, three new structures to loot, and pillagers that shoot back. Copper rusts: wax it or scrape it. Forge, Fabric and NeoForge.
 
 ## Description
 
-Copper Slug adds twelve guns to Minecraft, all made of copper. There's a roulette revolver, a spyglass rifle, a pressure
+Copper Slug adds thirteen guns to Minecraft, all made of copper. There's a roulette revolver, a spyglass rifle, a pressure
 shotgun, a Gatling, a Winchester, a Derringer, a Thompson that lives in a violin case, a bayonet musket, a hand
-cannon, a silent blowgun, a flamethrower and a pistol that fires sound waves through walls. Each one has its own ammo, its own enchantments and its own quirks.
+cannon, a silent blowgun, a flamethrower, a pistol that fires sound waves through walls and a harpoon gun. Each one has its own ammo, its own enchantments and its own quirks.
 
 Because they're copper, they rust. A rusty gun jams more and sprays wider, but hits harder, so you get to decide if
 you'd rather keep it shiny (wax it with honeycomb) or let it age (scrape it off with an axe when you've had enough).
@@ -25,6 +28,8 @@ A few things worth knowing:
 - Guns turn up in chests, and most of the ammo can be crafted.
 - Left click shoots, hold right click to aim, sneak + right click reloads.
 - 57 advancements, in their own tab.
+
+Needs [Bloomberto](https://github.com/HCuadrado428/Bloomberto), the animation and camera library it is built on (all loaders).
 
 Works on Minecraft 1.20.1 (Forge, Fabric) and 1.21.1 (NeoForge, Forge, Fabric). Fabric needs Fabric API, and JEI is
 optional. Settings are in `serverconfig/copperslug-server.toml`.
