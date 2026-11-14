@@ -6,17 +6,25 @@ import com.copperslug.armasfuego.pistola.Revolver;
 import com.copperslug.armasfuego.pistola.Tambor;
 import com.copperslug.plataforma.ClienteComun;
 import com.copperslug.plataforma.PlataformaCliente;
+import com.dougg865.bloomberto.api.animation.model.AnimationController;
+import com.dougg865.bloomberto.api.animation.model.GeoModel;
+import com.dougg865.bloomberto.api.animation.model.GeoRenderer;
+import com.dougg865.bloomberto.api.animation.model.ModelLibrary;
+import com.dougg865.bloomberto.api.animation.model.Pose;
+import com.dougg865.bloomberto.api.client.ClientEvents;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
 
 /**
  * El tambor del revólver, dibujado por código encima del armazón (que es el modelo 3D del objeto, sin tambor): así gira de
@@ -24,7 +32,10 @@ import net.minecraft.world.item.ItemStack;
  * culote de su tipo de bala, tintado del mismo color que en el HUD. Con el tambor girado no se enseña ninguna bala.
  * <p>
  * Se llama desde el mixin de ItemRenderer.render, así que vale en la mano (primera y tercera persona), en el suelo y en
- * los marcos. El tambor y el culote son modelos adicionales (ModelEvent.RegisterAdditional); la geometría (el centro del
+ * los marcos. El tambor es un modelo de Bloomberto (geo/revolver_tambor.geo.json, de herramientas/tambor_geo.py) con
+ * dos huesos: la grúa, que al cargar saca el tambor hacia la izquierda con la animación «abrir» y lo devuelve con
+ * «cerrar» (animations/revolver_tambor.animation.json), y el tambor, que gira. Si ese modelo no se pudiera leer se dibuja
+ * el de objeto de antes, con el tambor desplazado al abrir. El culote es un modelo adicional; la geometría (el centro del
  * tambor y el anillo de recámaras) es la de herramientas/generar_tambor.py.
  */
 public final class RevolverTambor {
@@ -41,6 +52,66 @@ public final class RevolverTambor {
 
     // la geometría del modelo (píxeles de modelo): centro del tambor, anillo de recámaras y cara de atrás
     private static final double CX = 8.0, CY = 8.9, ANILLO = 1.0, Z_ATRAS = 11.0, DESPLAZA_ABIERTO = 3.4;
+    // la grúa (herramientas/tambor_geo.py): su eje y cuánto gira abierta
+    private static final double GX = 8.0, GY = 5.4;
+    private static final float ABIERTA = 55F;
+
+    private static final ResourceLocation GEO = new ResourceLocation(CopperSlug.MOD_ID, "geo/revolver_tambor.geo.json");
+    private static final ResourceLocation ANIM = new ResourceLocation(CopperSlug.MOD_ID, "animations/revolver_tambor.animation.json");
+    private static final ResourceLocation[] ATLAS = {atlas(0), atlas(1), atlas(2), atlas(3)};
+
+    private static ResourceLocation atlas(int ox) {
+        return new ResourceLocation(CopperSlug.MOD_ID, "textures/item/armas3d/tambor_atlas_" + ox + ".png");
+    }
+
+    /** La grúa del revólver de la mano (primera persona): abrir y cerrar con la animación de Bloomberto. */
+    private static AnimationController grua;
+    private static boolean gruaAbierta;
+    /** Para la prueba: cuántas veces se ha abierto y cerrado la grúa con la animación, y el último ángulo dibujado. */
+    public static volatile int aperturas, cierres;
+    public static volatile float gruaVista;
+    private static boolean registrado;
+
+    /** Engancha el tick de la animación a Bloomberto (una vez, al arrancar el cliente). */
+    public static void registrar() {
+        if (registrado) return;
+        registrado = true;
+        ClientEvents.CLIENT_TICK.register(RevolverTambor::tick);
+        ClientEvents.DISCONNECT.register(() -> {
+            grua = null;
+            gruaAbierta = false;
+        });
+    }
+
+    private static void tick() {
+        Minecraft mc = Minecraft.getInstance();
+        Player p = mc.player;
+        if (p == null || mc.level == null) return;
+        ItemStack s = p.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.pistola.RevolverItem ? p.getMainHandItem() : p.getOffhandItem();
+        if (!(s.getItem() instanceof com.copperslug.armasfuego.pistola.RevolverItem)) return;
+        if (grua == null) {
+            grua = ModelLibrary.animations(ANIM).controller();
+            try {
+                grua.play("animation.revolver_tambor.cerrar");
+            } catch (IllegalArgumentException e) {
+                return;   // sin el archivo de animaciones: se queda con el tambor de antes
+            }
+        }
+        boolean abierto = abierto(s, mc);
+        if (abierto != gruaAbierta) {
+            gruaAbierta = abierto;
+            grua.play(abierto ? "animation.revolver_tambor.abrir" : "animation.revolver_tambor.cerrar");
+            if (abierto) aperturas++;
+            else cierres++;
+        }
+        grua.tick();
+    }
+
+    private static boolean abierto(ItemStack s, Minecraft mc) {
+        if (!s.hasTag()) return false;
+        long t = mc.level.getGameTime() - s.getTag().getLong(Revolver.CARGA_T);
+        return t >= 0 && t < 12;
+    }
 
     /** Animación del giro (solo la mano de primera persona): el ángulo que se ve y cuándo se dibujó la última vez. */
     private static float angVisto = Float.NaN;
@@ -74,17 +145,32 @@ public final class RevolverTambor {
                 ang += 720F * k * k;
             }
         }
-        boolean abierto = s.hasTag() && mc.level.getGameTime() - s.getTag().getLong(Revolver.CARGA_T) < 12 && mc.level.getGameTime() - s.getTag().getLong(Revolver.CARGA_T) >= 0;
+        boolean abierto = abierto(s, mc);
         BakedModel real = PlataformaCliente.P.modeloPara(m, ctx);
+        GeoModel geo = ModelLibrary.model(GEO);
+        boolean conGeo = geo != ModelLibrary.EMPTY_MODEL;
         ps.pushPose();
         // la misma colocación que hace el ItemRenderer con el modelo: la transformación de la perspectiva y el origen en la esquina
         real.getTransforms().getTransform(ctx).apply(izq, ps);
         ps.translate(-0.5, -0.5, -0.5);
-        if (abierto) ps.translate(-DESPLAZA_ABIERTO / 16.0, 0, 0);
+        if (conGeo) {
+            // la grúa: en la mano de primera persona, la animación; en lo demás, abierta o cerrada sin más
+            float g = abierto ? ABIERTA : 0F;
+            if (primera && grua != null) {
+                Pose pose = grua.pose(mc.getFrameTime());
+                if (pose.has("grua")) g = pose.get("grua").rotation[2];
+                gruaVista = g;
+            }
+            ps.translate(GX / 16.0, GY / 16.0, 0);
+            ps.mulPose(Axis.ZP.rotationDegrees(g));
+            ps.translate(-GX / 16.0, -GY / 16.0, 0);
+        } else if (abierto) ps.translate(-DESPLAZA_ABIERTO / 16.0, 0, 0);
         ps.translate(CX / 16.0, CY / 16.0, 0);
         ps.mulPose(Axis.ZP.rotationDegrees(ang));
         ps.translate(-CX / 16.0, -CY / 16.0, 0);
-        modelo(CILINDRO[Mth.clamp(Tambor.oxido(s), 0, 3)], ps, buf, luz, overlay, 1F, 1F, 1F);
+        int ox = Mth.clamp(Tambor.oxido(s), 0, 3);
+        if (conGeo) GeoRenderer.render(geo, new Pose(), ps, buf.getBuffer(RenderType.entityCutoutNoCull(ATLAS[ox])), luz, overlay, 0xFFFFFFFF);
+        else modelo(CILINDRO[ox], ps, buf, luz, overlay, 1F, 1F, 1F);
         if (!girado) {
             for (int j = 0; j < Tambor.N; j++) {
                 Carga c = Tambor.en(s, j);
