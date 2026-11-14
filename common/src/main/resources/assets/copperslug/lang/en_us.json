@@ -571,5 +571,13 @@
   "item.copperslug.granada_miel.desc": "Splashes honey: everyone caught gets sticky",
   "entity.copperslug.granada": "Copper Grenade",
   "advancements.copperslug.armas.granada.title": "Pull the Pin",
-  "advancements.copperslug.armas.granada.description": "Throw a copper grenade and wait the three seconds."
+  "advancements.copperslug.armas.granada.description": "Throw a copper grenade and wait the three seconds.",
+  "item.copperslug.sombrero_vaquero": "Cowboy Hat",
+  "item.copperslug.chaleco_vaquero": "Sheriff's Vest",
+  "item.copperslug.chaparreras_vaquero": "Cowboy Chaps",
+  "item.copperslug.botas_vaquero": "Spurred Boots",
+  "item.copperslug.sombrero_bandido": "Bandit Hat and Bandana",
+  "item.copperslug.poncho_bandido": "Bandit Poncho",
+  "item.copperslug.pantalon_bandido": "Bandit Trousers",
+  "item.copperslug.botas_bandido": "Bandit Boots"
 }

@@ -237,6 +237,7 @@ public final class Rifle {
         b.setXRot(xr);
         l.addFreshEntity(b);
 
+        com.copperslug.armasfuego.comun.Ruido.disparo(l, p, p.position());
         // ruido: se oye a lo lejos y lo notan el sculk y el Warden (salvo con Silenciador)
         if (silencio) {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), com.copperslug.registry.ModSounds.SILENCIADOR_DISPARO.get(), SoundSource.PLAYERS, 1.2F, 0.9F + p.getRandom().nextFloat() * 0.1F);
@@ -244,6 +245,7 @@ public final class Rifle {
             l.playSound(null, p.getX(), p.getY(), p.getZ(), com.copperslug.registry.ModSounds.RIFLE_CATALEJO_DISPARO.get(), SoundSource.PLAYERS, 4.0F, 0.95F + p.getRandom().nextFloat() * 0.1F);
             com.copperslug.armasfuego.comun.ArmaFuegoItem.sonidoExtra(l, p, com.copperslug.registry.ModSounds.RIFLE_CATALEJO_DISPARO.get(), 4.0F, 0.95F);
             l.gameEvent(p, GameEvent.PROJECTILE_SHOOT, p.position());
+            com.copperslug.armasfuego.comun.MobsArmados.oirDisparo(l, p, p.position());
             Vec3 boca = ojo.add(dir.scale(1.2)).add(0, -0.15, 0);
             l.sendParticles(ParticleTypes.SMOKE, boca.x, boca.y, boca.z, 4, 0.04, 0.04, 0.04, 0.01);
             Vec3 fg = ojo.add(dir.scale(1.6)).add(0, -0.15, 0);
