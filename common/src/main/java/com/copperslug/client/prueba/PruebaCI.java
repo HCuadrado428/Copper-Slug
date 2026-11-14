@@ -2802,7 +2802,7 @@ public final class PruebaCI {
         sin("ruido_poner", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             Vec3 yo = sp.position();
-            var g = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(l);
+            var g = net.minecraft.world.entity.EntityType.SPIDER.create(l);   // un monstruo que no ataca a los husks de la prueba (el golem de hierro sí, y dejaba de ir al ruido)
             Vec3 gp = a2Punto(-16, 4, 0);
             g.moveTo(gp.x, gp.y, gp.z, 0, 0);
             g.setPersistenceRequired();
@@ -2840,9 +2840,9 @@ public final class PruebaCI {
         }));
         vigila("ruido_ok", 2, () -> {
             float g0 = a2F("rn_g0"), g1 = a2F("rn_g1"), v0 = a2F("rn_v0"), v1 = a2F("rn_v1");
-            a2Comprobar("un disparo fuerte: el golem va a ver de dónde viene, la vaca huye, y cada arma se oye a lo suyo (el Silenciador casi nada)",
+            a2Comprobar("un disparo fuerte: el monstruo va a ver de dónde viene, la vaca huye, y cada arma se oye a lo suyo (el Silenciador casi nada)",
                     Boolean.TRUE.equals(PI.get("rn_radios")) && Boolean.TRUE.equals(PI.get("rn_investiga")) && g1 >= 0 && g0 - g1 > 3 && v1 >= 0 && v1 - v0 > 2,
-                    "golem " + g0 + " → " + g1 + " (investiga " + PI.get("rn_investiga") + "), vaca " + v0 + " → " + v1 + ", radios " + PI.get("rn_radios"));
+                    "monstruo " + g0 + " → " + g1 + " (investiga " + PI.get("rn_investiga") + "), vaca " + v0 + " → " + v1 + ", radios " + PI.get("rn_radios"));
         });
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
