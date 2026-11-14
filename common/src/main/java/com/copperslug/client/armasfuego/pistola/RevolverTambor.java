@@ -54,7 +54,7 @@ public final class RevolverTambor {
     private static final double CX = 8.0, CY = 8.9, ANILLO = 1.0, Z_ATRAS = 11.0, DESPLAZA_ABIERTO = 3.4;
     // la grúa (herramientas/tambor_geo.py): su eje y cuánto gira abierta
     private static final double GX = 8.0, GY = 5.4;
-    private static final float ABIERTA = -55F;
+    private static final float ABIERTA = 55F;
 
     private static final ResourceLocation GEO = ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "geo/revolver_tambor.geo.json");
     private static final ResourceLocation ANIM = ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "animations/revolver_tambor.animation.json");
