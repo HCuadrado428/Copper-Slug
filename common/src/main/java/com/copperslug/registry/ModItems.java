@@ -152,5 +152,19 @@ public final class ModItems {
     public static final RegistryObject<Item> GRANADA_MIEL = ITEMS.register("granada_miel",
             () -> new com.copperslug.armasfuego.granada.GranadaItem(com.copperslug.armasfuego.granada.TipoGranada.MIEL, new Item.Properties().stacksTo(16)));
 
+    // ---- Ropa cosmética: dos juegos (vaquero y bandido), de cuero y con otro aspecto
+    public static final RegistryObject<Item> SOMBRERO_VAQUERO = ropa("sombrero_vaquero", com.copperslug.ropa.Ropa.VAQUERO, ArmorItem.Type.HELMET);
+    public static final RegistryObject<Item> CHALECO_VAQUERO = ropa("chaleco_vaquero", com.copperslug.ropa.Ropa.VAQUERO, ArmorItem.Type.CHESTPLATE);
+    public static final RegistryObject<Item> CHAPARRERAS_VAQUERO = ropa("chaparreras_vaquero", com.copperslug.ropa.Ropa.VAQUERO, ArmorItem.Type.LEGGINGS);
+    public static final RegistryObject<Item> BOTAS_VAQUERO = ropa("botas_vaquero", com.copperslug.ropa.Ropa.VAQUERO, ArmorItem.Type.BOOTS);
+    public static final RegistryObject<Item> SOMBRERO_BANDIDO = ropa("sombrero_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.HELMET);
+    public static final RegistryObject<Item> PONCHO_BANDIDO = ropa("poncho_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.CHESTPLATE);
+    public static final RegistryObject<Item> PANTALON_BANDIDO = ropa("pantalon_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.LEGGINGS);
+    public static final RegistryObject<Item> BOTAS_BANDIDO = ropa("botas_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.BOOTS);
+
+    private static RegistryObject<Item> ropa(String id, com.copperslug.ropa.Ropa material, ArmorItem.Type tipo) {
+        return ITEMS.register(id, () -> new ArmorItem(material, tipo, new Item.Properties()));
+    }
+
     private ModItems() {}
 }
