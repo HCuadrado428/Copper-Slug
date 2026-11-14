@@ -1655,8 +1655,12 @@ public final class PruebaCI {
             if (!(mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.rifle.RifleItem)) throw new IllegalStateException("no tiene el rifle en la mano");
         });
         // primer clic: la recámara está vacía, así que acciona el cerrojo (y mete una bala)
+        sin("rifle_cerrojo_cero", 1, () -> com.copperslug.client.armasfuego.comun.PiezasAnimadas.cerrojoMax = 0F);
         paso("141_cerrojo", 5, RifleCI::clic);
         sin("rifle_cargado", 25, () -> {});
+        sin("rifle_cerrojo_animado", 1, () -> nvComprobar("el cerrojo se abre, se tira atrás y se cierra (animación de Bloomberto)",
+                com.copperslug.client.armasfuego.comun.PiezasAnimadas.cerrojoMax > 1F,
+                "lo más atrás: " + com.copperslug.client.armasfuego.comun.PiezasAnimadas.cerrojoMax + " px"));
         paso("142_mira", 50, () -> {
             if (!com.copperslug.armasfuego.rifle.Rifle.lista(mc.player.getMainHandItem()))
                 throw new IllegalStateException("el cerrojo no ha metido la bala: " + mc.player.getMainHandItem().getTag());
@@ -2674,7 +2678,10 @@ public final class PruebaCI {
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
             piApuntar(a2Punto(8, 0, 1.2));
         });
-        paso("210_winchester_1p", 4, () -> a2Vida("w0"));
+        paso("210_winchester_1p", 4, () -> {
+            a2Vida("w0");
+            com.copperslug.client.armasfuego.comun.PiezasAnimadas.palancaMax = 0F;
+        });
         paso("211_winchester_disparo", 2, piTiro());
         paso("212_winchester_palanca", 3, () -> {});
         sin("a2_winchester_ver", 10, () -> {
@@ -2683,6 +2690,9 @@ public final class PruebaCI {
         });
         vigila("a2_winchester_ok", 2, () -> a2Comprobar("la Winchester dispara, hiere y gasta una bala", a2F("w0") - a2F("w1") > 3 && Integer.valueOf(5).equals(PI.get("w_balas")),
                 "vida " + a2F("w0") + " → " + a2F("w1") + ", balas " + PI.get("w_balas")));
+        sin("a2_winchester_palanca_ok", 1, () -> a2Comprobar("tras el tiro la palanca se abre y se cierra (animación de Bloomberto)",
+                com.copperslug.client.armasfuego.comun.PiezasAnimadas.palancaMax > 30F,
+                "lo más abierta: " + com.copperslug.client.armasfuego.comun.PiezasAnimadas.palancaMax + "°"));
         sin("a2_winchester_agachar", 4, () -> mc.options.keyShift.setDown(true));
         sin("a2_winchester_recargar", 2, () -> rifleUsar(true));
         paso("213_winchester_recargando", 22, () -> {});
