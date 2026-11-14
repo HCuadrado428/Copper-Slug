@@ -2418,6 +2418,7 @@ public final class PruebaCI {
         // ---- marcas de bala en la pared de ladrillo del fondo (con el Winchester: el revólver va por recámaras)
         sin("nv_marcas", 8, () -> {
             PI.put("nv_marcas0", com.copperslug.client.armasfuego.comun.FuegoParticulas.Marca.creadas);
+            PI.put("nv_traz0", com.copperslug.client.armasfuego.comun.Trazadoras.creadas);
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
             piApuntar(a2Punto(17, 0, 1.6));
         });
@@ -2435,6 +2436,34 @@ public final class PruebaCI {
             nvComprobar("las balas dejan marca en la pared", n >= 2, n + " marcas de 3 tiros");
         });
         paso("383_marcas_pared", 10, () -> a2VistaA(a2Punto(16.5, 0, 1.6), a2Punto(13.5, 1.2, 2.2)));
+        // ---- Bloomberto: estelas de las balas, zoom de la mira (CameraZoom) y temblor de cámara (CameraShake)
+        sin("nv_estelas_chk", 1, () -> {
+            int n = com.copperslug.client.armasfuego.comun.Trazadoras.creadas - (Integer) PI.getOrDefault("nv_traz0", 0);
+            nvComprobar("las balas dejan estela (Bloomberto)", n >= 2, n + " estelas de 3 tiros");
+        });
+        sin("nv_zoom", 12, () -> {
+            A2.camara1p();
+            a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
+            piApuntar(a2Punto(17, 0, 1.6));
+            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true;
+        });
+        paso("384_zoom_mira_bloomberto", 4, () -> {
+            float f = com.dougg865.bloomberto.api.render.CameraZoom.shared().factor(0F);
+            PI.put("nv_zoom_f", f);
+            nvComprobar("apuntar acerca la vista (CameraZoom)", f > 1.05F && com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido() < 1F,
+                    "aumento " + f + ", campo de visión pedido x" + com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido());
+        });
+        sin("nv_zoom_suelta", 12, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false);
+        sin("nv_zoom_suelta_chk", 1, () -> {
+            float f = com.dougg865.bloomberto.api.render.CameraZoom.shared().factor(0F);
+            nvComprobar("al soltar la mira vuelve la vista normal", Math.abs(f - 1F) < 0.01F, "aumento " + f);
+        });
+        sin("nv_temblor", 2, () -> {
+            com.copperslug.client.armasfuego.comun.FuegoCliente.patada(0F, 8F, 0F);
+            PI.put("nv_tiembla", com.dougg865.bloomberto.api.render.CameraShake.shared().isShaking());
+        });
+        sin("nv_temblor_chk", 1, () -> nvComprobar("un arma gorda sacude la cámara (CameraShake)", Boolean.TRUE.equals(PI.get("nv_tiembla")),
+                String.valueOf(PI.get("nv_tiembla"))));
         sin("nv_fin", 2, A2::camara1p);
     }
 
