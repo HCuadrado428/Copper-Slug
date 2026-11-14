@@ -2830,7 +2830,7 @@ public final class PruebaCI {
             PI.put("rn_v0", (float) v.position().distanceTo(yo));
             com.copperslug.armasfuego.comun.Ruido.alertar(l, sp, yo, 60, true);   // un disparo fuerte
         }));
-        sin("ruido_esperar", 50, () -> {});
+        sin("ruido_esperar", 120, () -> {});   // NeoForge 1.21.1 va mas lento en la prueba: 50 ticks no le bastaban
         sin("ruido_ver", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
             Vec3 yo = sp.position();
