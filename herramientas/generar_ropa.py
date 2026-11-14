@@ -50,120 +50,249 @@ def moteado(im, x, y, w, h, base, tonos, seed):
             im.putpixel((xx, yy), rnd.choice(tonos) if rnd.random() < 0.28 else base)
 
 
-# ---------------------------------------------------------------- cabeza: (0,0). Cara delante en (8,8), lados en (0,8) y (16,8), atrás en (24,8), arriba en (8,0)
-def sombrero_vaquero(im):
-    cu = [FIELTRO_OSC, c(126, 90, 54)]
-    moteado(im, 8, 0, 8, 8, FIELTRO, cu, 1)                 # la copa, de arriba
-    rect(im, 11, 1, 2, 6, FIELTRO_OSC)                        # la hendidura de la copa
-    for x0 in (0, 8, 16, 24):
-        moteado(im, x0, 8, 8, 3, FIELTRO, cu, x0)            # la copa (tres filas)
-        rect(im, x0, 10, 8, 1, c(52, 36, 22))                # la cinta
-        rect(im, x0, 11, 8, 1, FIELTRO_OSC)                  # el ala, en sombra
-    rect(im, 11, 10, 2, 1, ORO)                               # la hebilla
-    rect(im, 11, 8, 2, 0, ORO)
+# ================================================================ las capas de armadura, a mano (sin ruido: bisel de luz y sombra, costuras y puntadas)
+# Las cajas del humanoide (64x32). Cada cara es (x, y, ancho, alto).
+CABEZA = dict(arriba=(8, 0, 8, 8), der=(0, 8, 8, 8), frente=(8, 8, 8, 8), izq=(16, 8, 8, 8), atras=(24, 8, 8, 8))
+CUERPO = dict(arriba=(20, 16, 8, 4), der=(16, 20, 4, 12), frente=(20, 20, 8, 12), izq=(28, 20, 4, 12), atras=(32, 20, 8, 12))
+BRAZO = dict(arriba=(44, 16, 4, 4), fuera=(40, 20, 4, 12), frente=(44, 20, 4, 12), dentro=(48, 20, 4, 12), atras=(52, 20, 4, 12))
+PIERNA = dict(arriba=(4, 16, 4, 4), abajo=(8, 16, 4, 4), fuera=(0, 20, 4, 12), frente=(4, 20, 4, 12), dentro=(8, 20, 4, 12), atras=(12, 20, 4, 12))
+
+# materiales: (oscuro, medio, claro, brillo)
+PIEL_CUERO = (c(70, 44, 26), c(126, 86, 50), c(166, 118, 70), c(204, 156, 100))
+FIELTRO_M = (c(52, 36, 22), c(102, 70, 42), c(140, 100, 62), c(176, 134, 88))
+FIELTRO_N = (c(14, 12, 16), c(34, 32, 38), c(60, 56, 66), c(92, 86, 100))
+TELA_ROJA = (c(88, 18, 24), c(146, 32, 34), c(190, 54, 48), c(228, 100, 86))
+LANA = (c(88, 72, 54), c(136, 114, 84), c(176, 152, 114), c(212, 190, 150))
+VAQUERA = (c(28, 30, 42), c(50, 54, 72), c(74, 80, 104), c(104, 112, 140))
+METAL = (c(84, 88, 100), c(140, 144, 158), c(196, 200, 214), c(240, 242, 250))
+DORADO = (c(132, 94, 22), c(204, 158, 40), c(244, 202, 78), c(255, 238, 150))
 
 
-def sombrero_bandido(im):
-    ne = [NEGRO_CLARO, c(48, 44, 48)]
-    moteado(im, 8, 0, 8, 8, NEGRO, ne, 2)
-    rect(im, 11, 1, 2, 6, NEGRO_CLARO)
-    for x0 in (0, 8, 16, 24):
-        moteado(im, x0, 8, 8, 3, NEGRO, ne, x0 + 5)
-        rect(im, x0, 10, 8, 1, ROJO)                         # la cinta roja
-        rect(im, x0, 11, 8, 1, c(24, 22, 24))
-    # el pañuelo sobre la nariz y la boca: delante, de lado y el nudo atrás
-    rect(im, 8, 13, 8, 3, ROJO)
-    for x in range(8, 16, 2):
-        im.putpixel((x, 14), c(236, 232, 226))              # lunares
-    rect(im, 8, 13, 8, 1, ROJO_OSC)
-    rect(im, 0, 13, 8, 3, ROJO)
-    rect(im, 16, 13, 8, 3, ROJO)
-    rect(im, 24, 13, 8, 3, ROJO)
-    rect(im, 28, 12, 2, 4, ROJO_OSC)                          # el nudo
+def px(im, x, y, col):
+    if 0 <= x < 64 and 0 <= y < 32:
+        im.putpixel((x, y), col)
 
 
-# ---------------------------------------------------------------- cuerpo: (16,16). Delante (20,20), atrás (32,20), lados (16,20) y (28,20), arriba (20,16)
-def chaleco_vaquero(im):
-    cu = [CUERO_OSC, CUERO_CLARO]
-    moteado(im, 20, 16, 8, 4, CUERO, cu, 3)                  # hombros (arriba)
-    moteado(im, 20, 20, 8, 12, CUERO, cu, 4)                 # delante
-    moteado(im, 32, 20, 8, 12, CUERO, cu, 5)                 # atrás
-    moteado(im, 16, 20, 4, 12, CUERO, cu, 6)
-    moteado(im, 28, 20, 4, 12, CUERO, cu, 7)
-    rect(im, 23, 20, 2, 12, CUERO_OSC)                        # la abertura del centro
-    for y in (22, 25, 28):
-        rect(im, 22, y, 1, 1, ORO)                            # botones
-    rect(im, 26, 22, 1, 1, ORO)                               # la estrella de sheriff, en el pecho
-    rect(im, 25, 23, 3, 1, ORO)
-    rect(im, 26, 24, 1, 1, ORO)
-    rect(im, 25, 22, 1, 1, ORO_OSC)
-    rect(im, 27, 22, 1, 1, ORO_OSC)
-    rect(im, 20, 31, 8, 1, CUERO_OSC)                         # el borde de abajo
+def relleno(im, cara, mat, bisel=True):
+    """Un panel con bisel: arriba y a la izquierda se aclara, abajo y a la derecha se oscurece."""
+    x, y, w, h = cara
+    rect(im, x, y, w, h, mat[1])
+    if bisel and w > 2 and h > 2:
+        rect(im, x, y, w, 1, mat[2])
+        rect(im, x, y, 1, h, mat[2])
+        rect(im, x, y + h - 1, w, 1, mat[0])
+        rect(im, x + w - 1, y, 1, h, mat[0])
+        px(im, x, y, mat[3])
 
 
-def poncho_bandido(im):
-    for (x, y, w, h, seed) in ((20, 16, 8, 4, 8), (20, 20, 8, 12, 9), (32, 20, 8, 12, 10), (16, 20, 4, 12, 11), (28, 20, 4, 12, 12)):
-        moteado(im, x, y, w, h, LONA, [LONA_OSC, c(170, 146, 112)], seed)
-    for (x, y, w, h) in ((20, 20, 8, 12), (32, 20, 8, 12), (16, 20, 4, 12), (28, 20, 4, 12)):
-        for yy, col in ((y + 3, ROJO), (y + 4, ROJO), (y + 7, NEGRO_CLARO), (y + 10, ROJO), (y + 11, ROJO_OSC)):
-            rect(im, x, yy, w, 1, col)                        # las rayas del poncho
-    for x in range(20, 28, 2):
-        im.putpixel((x + 1, 31), c(0, 0, 0, 0))               # el flequillo del borde
-    for x in range(32, 40, 2):
-        im.putpixel((x + 1, 31), c(0, 0, 0, 0))
-    # los hombros: la parte de arriba de los dos brazos
-    for x0 in (40, 48, 44, 52):
-        pass
-    for (x, y, w) in ((40, 20, 4), (44, 20, 4), (48, 20, 4), (52, 20, 4)):
-        moteado(im, x, y, w, 5, LONA, [LONA_OSC], x)
-        rect(im, x, y + 3, w, 1, ROJO)
-    rect(im, 44, 16, 4, 4, LONA)
-    # la bandolera de balas, en diagonal sobre el pecho
-    for i in range(8):
-        im.putpixel((20 + i, 20 + i), c(70, 46, 28))
-        if i % 2 == 0:
-            im.putpixel((20 + i, 21 + i), ORO)
+def puntadas(im, x, y, largo, col, vertical=False, paso=2):
+    for i in range(0, largo, paso):
+        px(im, x + (0 if vertical else i), y + (i if vertical else 0), col)
 
 
-# ---------------------------------------------------------------- piernas: (0,16). Delante (4,20), atrás (12,20), lados (0,20) y (8,20), abajo (8,16)
-def botas(im, cuero, cuero_osc, cuero_claro, espuela):
-    for (x, y, w) in ((4, 20, 4), (12, 20, 4), (0, 20, 4), (8, 20, 4)):
-        rect(im, x, y + 7, w, 5, cuero)                       # la caña
-        rect(im, x, y + 7, w, 1, cuero_claro)                 # el borde de arriba
-        rect(im, x, y + 11, w, 1, cuero_osc)                  # la suela
-    rect(im, 8, 16, 4, 4, cuero_osc)                           # la planta
+def hueco(im, x, y):
+    px(im, x, y, c(0, 0, 0, 0))
+
+
+def estrella(im, cx, cy):
+    """La estrella de sheriff: cruz de 3x3 con las puntas y un punto de luz."""
+    for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+        px(im, cx + dx, cy + dy, DORADO[1])
+    px(im, cx, cy, DORADO[2])
+    px(im, cx - 1, cy - 1, DORADO[0]); px(im, cx + 1, cy - 1, DORADO[0])
+    px(im, cx - 1, cy + 1, DORADO[0]); px(im, cx + 1, cy + 1, DORADO[0])
+    px(im, cx, cy, DORADO[3])
+
+
+def sombrero(im, fieltro, cinta, hebilla, pluma=None):
+    """Un sombrero de ala ancha sobre la cabeza: la copa con su hendidura, la cinta y el ala (con el modelo de vanilla no hay ala de verdad)."""
+    x, y, w, h = CABEZA['arriba']
+    rect(im, x, y, w, h, fieltro[0])                       # el ala, vista desde arriba
+    rect(im, x + 1, y + 1, 6, 6, fieltro[1])
+    rect(im, x + 2, y + 2, 4, 4, fieltro[2])               # la copa
+    rect(im, x + 3, y + 2, 2, 4, fieltro[1])               # la hendidura central
+    rect(im, x + 3, y + 3, 2, 2, fieltro[0])
+    px(im, x + 2, y + 2, fieltro[3]); px(im, x + 1, y + 1, fieltro[2])
+    for nombre in ('der', 'frente', 'izq', 'atras'):
+        fx, fy, fw, fh = CABEZA[nombre]
+        rect(im, fx, fy, fw, 1, fieltro[2])                 # fila 0: la copa por arriba, con la hendidura
+        rect(im, fx + 3, fy, 2, 1, fieltro[1])
+        rect(im, fx, fy + 1, fw, 1, fieltro[1])             # fila 1: el cuerpo de la copa
+        px(im, fx, fy + 1, fieltro[2]); px(im, fx + fw - 1, fy + 1, fieltro[0])
+        rect(im, fx, fy + 2, fw, 1, cinta[1])               # fila 2: la cinta
+        rect(im, fx, fy + 2, fw, 1, cinta[1]); px(im, fx, fy + 2, cinta[2])
+        rect(im, fx, fy + 3, fw, 1, fieltro[0])             # fila 3: el ala, que da sombra
+        px(im, fx, fy + 3, fieltro[1]); px(im, fx + fw - 1, fy + 3, fieltro[1])
+    hx, hy, hw, hh = CABEZA['frente']
+    rect(im, hx + 3, hy + 2, 2, 1, hebilla[2])             # la hebilla
+    px(im, hx + 3, hy + 2, hebilla[3]); px(im, hx + 4, hy + 2, hebilla[1])
+    if pluma:
+        fx, fy, fw, fh = CABEZA['izq']
+        for i, (dx, dy) in enumerate(((1, 2), (2, 1), (3, 0), (2, 2), (3, 1))):
+            px(im, fx + dx, fy + dy, pluma[1 if i < 3 else 2])
+        px(im, fx + 3, fy, pluma[3])
+
+
+def pantalon_cintura(im, correa, hebilla, balas=False):
+    """El cinturón en la parte baja del cuerpo (capa 2): delante, detrás y a los lados."""
+    for nombre, (fx, fy, fw, fh) in (('frente', CUERPO['frente']), ('atras', CUERPO['atras']), ('der', CUERPO['der']), ('izq', CUERPO['izq'])):
+        rect(im, fx, fy + 8, fw, 2, correa[1])
+        rect(im, fx, fy + 8, fw, 1, correa[2])
+        rect(im, fx, fy + 9, fw, 1, correa[0])
+        rect(im, fx, fy + 10, fw, 2, correa[1])              # lo que asoma del pantalón bajo la correa
+    fx, fy, fw, fh = CUERPO['frente']
+    rect(im, fx + 3, fy + 7, 2, 4, hebilla[1])               # la hebilla
+    rect(im, fx + 3, fy + 7, 2, 1, hebilla[3]); rect(im, fx + 3, fy + 10, 2, 1, hebilla[0])
+    px(im, fx + 3, fy + 8, correa[0]); px(im, fx + 4, fy + 9, correa[0])
+    if balas:
+        for x in (1, 6):
+            rect(im, fx + x, fy + 8, 1, 2, DORADO[2])
+            px(im, fx + x, fy + 8, DORADO[3])
+
+
+def botas_capa(im, cuero, puno, espuela):
+    """Las botas (capa 1, piernas): puño doblado de dos filas, caña lisa con la luz de un lado, puntera y suela; atrás, la espuela."""
+    for nombre in ('fuera', 'frente', 'dentro', 'atras'):
+        fx, fy, fw, fh = PIERNA[nombre]
+        rect(im, fx, fy + 7, fw, 5, cuero[1])
+        rect(im, fx, fy + 7, fw, 1, puno[3]); rect(im, fx, fy + 8, fw, 1, puno[2])     # el puño, claro
+        rect(im, fx, fy + 9, 1, 2, cuero[2]); rect(im, fx + fw - 1, fy + 9, 1, 2, cuero[0])   # luz a un lado, sombra al otro
+        rect(im, fx, fy + 11, fw, 1, c(22, 16, 12))                                  # la suela
+    fx, fy, fw, fh = PIERNA['frente']
+    rect(im, fx + 1, fy + 10, 2, 1, cuero[2])                                        # la puntera, con un poco de brillo
+    rect(im, *PIERNA['abajo'], c(22, 16, 12))
     if espuela:
-        rect(im, 13, y_espuela := 30, 2, 1, ACERO)            # la espuela, atrás en el talón
-        im.putpixel((15, 30), ACERO)
-        im.putpixel((13, 29), c(120, 122, 132))
+        fx, fy, fw, fh = PIERNA['atras']
+        rect(im, fx + 1, fy + 10, 2, 1, METAL[2]); px(im, fx + 1, fy + 10, METAL[3])   # la espuela, atrás en el talón
+        px(im, fx + 1, fy + 9, METAL[1]); px(im, fx + 2, fy + 9, METAL[0])
+
+
+def chaleco_vaquero(im):
+    cu = PIEL_CUERO
+    for nombre in ('arriba', 'der', 'izq', 'atras', 'frente'):
+        relleno(im, CUERPO[nombre], cu)
+    fx, fy, fw, fh = CUERPO['frente']
+    for dx in (2, 3, 4, 5):
+        hueco(im, fx + dx, fy)                                # el cuello en V, abierto
+    hueco(im, fx + 3, fy + 1); hueco(im, fx + 4, fy + 1)
+    rect(im, fx + 3, fy + 2, 1, 9, cu[0]); rect(im, fx + 4, fy + 2, 1, 9, cu[2])    # la costura del centro, con relieve
+    for dy in (3, 6, 9):                                      # los botones
+        px(im, fx + 4, fy + dy, DORADO[2]); px(im, fx + 4, fy + dy + 1 - 1, DORADO[3]); px(im, fx + 3, fy + dy, DORADO[0])
+    estrella(im, fx + 6, fy + 4)                              # la estrella de sheriff
+    rect(im, fx + 1, fy + 6, 2, 3, cu[0]); rect(im, fx + 1, fy + 6, 2, 1, cu[2])      # un bolsillo con puntadas
+    puntadas(im, fx + 1, fy + 8, 2, cu[3], paso=1)
+    rect(im, fx, fy + 10, fw, 2, cu[0]); puntadas(im, fx + 1, fy + 10, 6, cu[2])       # el dobladillo
+    fx, fy, fw, fh = CUERPO['atras']
+    rect(im, fx + 3, fy, 2, 12, cu[0])                        # la costura de la espalda
+    rect(im, fx, fy + 4, fw, 1, cu[0]); puntadas(im, fx + 1, fy + 5, 6, cu[3])        # la yugo
+    rect(im, fx + 1, fy + 8, 6, 1, cu[0]); rect(im, fx + 3, fy + 8, 2, 1, DORADO[2])  # la correa de ajuste con su hebilla
+    rect(im, fx, fy + 10, fw, 2, cu[0]); puntadas(im, fx + 1, fy + 10, 6, cu[2])
+    for nombre in ('der', 'izq'):
+        fx, fy, fw, fh = CUERPO[nombre]
+        rect(im, fx, fy + 10, fw, 2, cu[0])
+        rect(im, fx + 1, fy, 2, 4, c(0, 0, 0, 0)) if False else None
 
 
 def chaparreras(im):
-    cu = [CUERO_OSC, CUERO_CLARO]
-    for (x, y, w) in ((4, 20, 4), (12, 20, 4), (0, 20, 4), (8, 20, 4)):
-        moteado(im, x, y, w, 8, CUERO, cu, x + 20)
-    for y in range(20, 28, 2):                                 # el flequillo del lado de fuera
-        im.putpixel((0, y), c(0, 0, 0, 0))
-    rect(im, 0, 27, 4, 1, CUERO_OSC)
-    # el cinturón y la hebilla, en la parte de abajo del cuerpo
-    rect(im, 20, 28, 8, 2, c(70, 46, 28))
-    rect(im, 32, 28, 8, 2, c(70, 46, 28))
-    rect(im, 16, 28, 4, 2, c(70, 46, 28))
-    rect(im, 28, 28, 4, 2, c(70, 46, 28))
-    rect(im, 23, 28, 2, 2, ORO)
+    cu = PIEL_CUERO
+    for nombre in ('fuera', 'frente', 'atras'):
+        relleno(im, PIERNA[nombre], cu)
+    fx, fy, fw, fh = PIERNA['fuera']
+    for dy in (2, 5, 8):
+        px(im, fx + 2, fy + dy, DORADO[2]); px(im, fx + 2, fy + dy - 0, DORADO[3])      # los remaches dorados
+    for dy in range(1, 11, 2):
+        hueco(im, fx, fy + dy)                                # el fleco del borde de fuera
+    fx, fy, fw, fh = PIERNA['frente']
+    rect(im, fx + 1, fy + 3, 2, 2, cu[0]); rect(im, fx + 1, fy + 3, 2, 1, cu[2])     # la rodillera
+    puntadas(im, fx, fy + 10, 4, cu[3], paso=1)
+    fx, fy, fw, fh = PIERNA['atras']
+    puntadas(im, fx + 1, fy + 1, 9, cu[0], vertical=True)
+    # el interior de la pierna se deja abierto: se ve el pantalón de debajo
+    pantalon_cintura(im, c(60, 38, 22), None) if False else None
+    corr = (c(48, 30, 18), c(86, 56, 32), c(128, 90, 52), c(160, 120, 76))
+    pantalon_cintura(im, corr, DORADO)
 
 
 def pantalon_bandido(im):
-    for (x, y, w) in ((4, 20, 4), (12, 20, 4), (0, 20, 4), (8, 20, 4)):
-        moteado(im, x, y, w, 8, TELA, [c(56, 56, 66)], x + 30)
-    rect(im, 0, 27, 4, 1, c(48, 48, 56))
-    rect(im, 20, 28, 8, 2, NEGRO)
-    rect(im, 32, 28, 8, 2, NEGRO)
-    rect(im, 16, 28, 4, 2, NEGRO)
-    rect(im, 28, 28, 4, 2, NEGRO)
-    rect(im, 23, 28, 2, 2, ACERO)
-    for x in (21, 26):
-        im.putpixel((x, 29), ORO)                               # dos balas en el cinturón
+    v = VAQUERA
+    for nombre in ('fuera', 'frente', 'atras', 'dentro'):
+        relleno(im, PIERNA[nombre], v)
+    fx, fy, fw, fh = PIERNA['frente']
+    rect(im, fx + 1, fy + 5, 2, 2, v[2]); puntadas(im, fx + 1, fy + 7, 2, v[0], paso=1)     # un parche en la rodilla
+    px(im, fx + 1, fy + 5, v[3])
+    fx, fy, fw, fh = PIERNA['fuera']
+    rect(im, fx + 3, fy, 1, 12, v[0])                          # la costura del lado
+    puntadas(im, fx + 2, fy + 1, 10, v[3], vertical=True, paso=2)
+    corr = (c(10, 10, 12), c(32, 30, 36), c(58, 56, 64), c(88, 84, 96))
+    pantalon_cintura(im, corr, METAL, balas=True)
+
+
+def poncho_bandido(im):
+    la = LANA
+    caras = [CUERPO[n] for n in ('arriba', 'der', 'izq', 'atras', 'frente')]
+    for cara in caras:
+        relleno(im, cara, la, bisel=False)
+    for nombre in ('der', 'frente', 'izq', 'atras'):
+        x, y, w, h = CUERPO[nombre]
+        rect(im, x, y + 3, w, 2, TELA_ROJA[1]); rect(im, x, y + 3, w, 1, TELA_ROJA[2])   # la franja roja de arriba
+        rect(im, x, y + 6, w, 1, FIELTRO_N[1])                                            # la raya negra
+        rect(im, x, y + 8, w, 2, TELA_ROJA[1]); rect(im, x, y + 9, w, 1, TELA_ROJA[0])    # la franja roja de abajo
+        if w == 8:
+            for i in range(0, w, 2):
+                px(im, x + i, y + 4, TELA_ROJA[0]); px(im, x + i + 1, y + 7, la[3])      # el zigzag del tejido
+        for i in range(w):
+            if i % 2 == 1:
+                hueco(im, x + i, y + 11)                                                  # el fleco de abajo
+            else:
+                px(im, x + i, y + 11, la[0])
+    x, y, w, h = CUERPO['frente']
+    for dx in (2, 3, 4, 5):
+        hueco(im, x + dx, y)
+    hueco(im, x + 3, y + 1); hueco(im, x + 4, y + 1)
+    # la bandolera de balas, en diagonal sobre el pecho
+    for i in range(8):
+        px(im, x + i, y + 1 + i, PIEL_CUERO[0]); px(im, x + i, y + 2 + i, PIEL_CUERO[1]) if y + 2 + i < y + 11 else None
+        if i % 2 == 1 and i < 7:
+            px(im, x + i, y + 1 + i, DORADO[2]); px(im, x + i, y + i, DORADO[3])
+    # los hombros del poncho: la parte de arriba de los dos brazos
+    for nombre in ('fuera', 'frente', 'dentro', 'atras'):
+        x, y, w, h = BRAZO[nombre]
+        rect(im, x, y, w, 6, la[1]); rect(im, x, y, w, 1, la[2]); rect(im, x, y + 2, w, 1, TELA_ROJA[1]); rect(im, x, y + 3, w, 1, TELA_ROJA[0])
+        for i in range(w):
+            if i % 2 == 1:
+                hueco(im, x + i, y + 5)
+            else:
+                px(im, x + i, y + 5, la[0])
+    rect(im, *BRAZO['arriba'], la[2])
+
+
+def sombrero_vaquero(im):
+    sombrero(im, FIELTRO_M, PIEL_CUERO, DORADO)
+
+
+def sombrero_bandido(im):
+    sombrero(im, FIELTRO_N, TELA_ROJA, METAL, pluma=TELA_ROJA)
+    # el pañuelo sobre la boca y la nariz (no sobre los ojos): delante y de lado; atrás, el nudo
+    fx, fy, fw, fh = CABEZA['frente']
+    rect(im, fx, fy + 6, fw, 2, TELA_ROJA[1]); rect(im, fx, fy + 6, fw, 1, TELA_ROJA[2])
+    hueco(im, fx, fy + 7); hueco(im, fx + fw - 1, fy + 7)
+    for i in (1, 3, 5):
+        px(im, fx + i, fy + 6, c(236, 232, 226)); px(im, fx + i + 1, fy + 7, TELA_ROJA[0])
+    for nombre in ('der', 'izq'):
+        sx, sy, sw, sh = CABEZA[nombre]
+        rect(im, sx, sy + 5, sw, 3, TELA_ROJA[1]); rect(im, sx, sy + 5, sw, 1, TELA_ROJA[2])
+        rect(im, sx, sy + 7, sw, 1, TELA_ROJA[0])
+    sx, sy, sw, sh = CABEZA['atras']
+    rect(im, sx, sy + 5, sw, 3, TELA_ROJA[1]); rect(im, sx + 3, sy + 4, 2, 4, TELA_ROJA[0])     # el nudo
+    px(im, sx + 3, sy + 4, TELA_ROJA[2])
+    for i in range(0, sw, 2):
+        px(im, sx + i, sy + 7, TELA_ROJA[0])
+
+
+def botas(im, cuero, cuero_osc, cuero_claro, espuela):
+    mat = PIEL_CUERO if espuela else FIELTRO_N
+    puno = PIEL_CUERO if espuela else TELA_ROJA
+    botas_capa(im, mat, puno, espuela)
 
 
 # ---------------------------------------------------------------- iconos 16x16
