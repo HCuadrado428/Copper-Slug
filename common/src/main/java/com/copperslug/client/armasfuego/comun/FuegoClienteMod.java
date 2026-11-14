@@ -117,6 +117,7 @@ public final class FuegoClienteMod {
         for (ResourceLocation r : com.copperslug.client.armasfuego.pistola.RevolverTambor.MODELOS) e.register(r);
         for (ResourceLocation r : AccesoriosVisibles.MODELOS) e.register(r);
         for (ResourceLocation r : com.copperslug.client.armasfuego.cinturon.CinturonCapa.MODELOS) e.register(r);
+        for (ResourceLocation r : com.copperslug.client.armasfuego.cinturon.RopaCapa.MODELOS) e.register(r);
     }
 
     @SubscribeEvent

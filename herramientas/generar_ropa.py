@@ -178,7 +178,6 @@ def chaleco_vaquero(im):
     rect(im, fx + 3, fy + 2, 1, 9, cu[0]); rect(im, fx + 4, fy + 2, 1, 9, cu[2])    # la costura del centro, con relieve
     for dy in (3, 6, 9):                                      # los botones
         px(im, fx + 4, fy + dy, DORADO[2]); px(im, fx + 4, fy + dy + 1 - 1, DORADO[3]); px(im, fx + 3, fy + dy, DORADO[0])
-    estrella(im, fx + 6, fy + 4)                              # la estrella de sheriff
     rect(im, fx + 1, fy + 6, 2, 3, cu[0]); rect(im, fx + 1, fy + 6, 2, 1, cu[2])      # un bolsillo con puntadas
     puntadas(im, fx + 1, fy + 8, 2, cu[3], paso=1)
     rect(im, fx, fy + 10, fw, 2, cu[0]); puntadas(im, fx + 1, fy + 10, 6, cu[2])       # el dobladillo
@@ -267,11 +266,11 @@ def poncho_bandido(im):
 
 
 def sombrero_vaquero(im):
-    sombrero(im, FIELTRO_M, PIEL_CUERO, DORADO)
+    pass   # el sombrero es un modelo 3D (RopaCapa): la capa de armadura de la cabeza queda vacía
 
 
 def sombrero_bandido(im):
-    sombrero(im, FIELTRO_N, TELA_ROJA, METAL, pluma=TELA_ROJA)
+    # el sombrero es un modelo 3D (RopaCapa); aquí solo el pañuelo
     # el pañuelo sobre la boca y la nariz (no sobre los ojos): delante y de lado; atrás, el nudo
     fx, fy, fw, fh = CABEZA['frente']
     rect(im, fx, fy + 6, fw, 2, TELA_ROJA[1]); rect(im, fx, fy + 6, fw, 1, TELA_ROJA[2])

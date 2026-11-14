@@ -21,5 +21,6 @@ public abstract class PlayerRendererCinturonMixin extends LivingEntityRenderer<A
     @Inject(method = "<init>", at = @At("TAIL"))
     private void copperslug$cinturon(EntityRendererProvider.Context c, boolean fino, CallbackInfo ci) {
         addLayer(new CinturonCapa(this));
+        addLayer(new com.copperslug.client.armasfuego.cinturon.RopaCapa(this));
     }
 }
