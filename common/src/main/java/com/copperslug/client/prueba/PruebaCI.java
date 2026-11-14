@@ -2450,7 +2450,8 @@ public final class PruebaCI {
         paso("384_zoom_mira_bloomberto", 4, () -> {
             float f = com.dougg865.bloomberto.api.render.CameraZoom.shared().factor(0F);
             PI.put("nv_zoom_f", f);
-            nvComprobar("apuntar acerca la vista (CameraZoom)", f > 1.05F && com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido() < 1F,
+            // el juego ya cierra algo la vista por andar despacio apuntando: el zoom solo pone lo que falta hasta la config
+            nvComprobar("apuntar acerca la vista (CameraZoom)", f > 1.01F && com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido() < 1F,
                     "aumento " + f + ", campo de visión pedido x" + com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido());
         });
         sin("nv_zoom_suelta", 12, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false);
