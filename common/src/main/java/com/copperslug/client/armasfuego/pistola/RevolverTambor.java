@@ -69,7 +69,7 @@ public final class RevolverTambor {
     private static boolean gruaAbierta;
     /** Para la prueba: cuántas veces se ha abierto y cerrado la grúa con la animación, y el último ángulo dibujado. */
     public static volatile int aperturas, cierres;
-    public static volatile float gruaVista;
+    public static volatile float gruaVista, gruaMax;
     private static boolean registrado;
 
     /** Engancha el tick de la animación a Bloomberto (una vez, al arrancar el cliente). */
@@ -160,6 +160,7 @@ public final class RevolverTambor {
                 Pose pose = grua.pose(mc.getFrameTime());
                 if (pose.has("grua")) g = pose.get("grua").rotation[2];
                 gruaVista = g;
+                gruaMax = Math.max(gruaMax, g);
             }
             ps.translate(GX / 16.0, GY / 16.0, 0);
             ps.mulPose(Axis.ZP.rotationDegrees(g));
