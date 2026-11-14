@@ -2,10 +2,10 @@
 
 **English** · [Castellano](#castellano)
 
-Twelve copper firearms for Minecraft, from the Wild West and beyond: the Russian-roulette **revolver**, the **scoped
+Thirteen copper firearms for Minecraft, from the Wild West and beyond: the Russian-roulette **revolver**, the **scoped
 rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Winchester 1873**, the **Derringer**, the
 **Thompson** (in its violin case), the **musket** with bayonet, the **hand cannon**, the silent **blowgun**, the
-**flamethrower** and the **resonance pistol**. Each one has its own special ammo and enchantments.
+**flamethrower**, the **resonance pistol** and the **harpoon gun**. Each one has its own special ammo and enchantments.
 
 - Guns are not crafted: they are found in vanilla structure chests. Most ammo, the violin case and the bayonet fitting
   can be crafted.
@@ -37,6 +37,7 @@ rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Wi
 | Copper blowgun | Silent: the sculk and the Warden do not hear it. One dart at a time; plain, poison and sleep darts (crafted). Found in jungle temples. |
 | Copper flamethrower | A short, wide jet of fire that burns everything in the cone. Fuel canisters (crafted), swapped whole; it does not light underwater. Found in Nether fortresses. |
 | Resonance pistol | A sound wave that goes through blocks and armor and hurts everything on its line. Runs on echo shards (one charge each); loud, the sculk hears it. Found in ancient cities. |
+| Copper harpoon gun | Fires a harpoon on a rope: it hurts what it hits and pulls it towards you, or pulls you towards a block, much harder underwater. Harpoons (crafted) can sometimes be picked up again. Found in underwater ruins. |
 
 ## Controls
 
@@ -49,13 +50,14 @@ narrows the field of view, tightens the spread and slows you down; other players
 | Spyglass rifle | Shoot, or work the bolt if no round is ready | Aim through the spyglass (zoom and rangefinder) | Left click works the bolt by hand; while aiming, it takes a photo |
 | Pressure shotgun | Shoot, from the hip only: it does not aim | Pump | Hold right click to suck in items and pull mobs |
 | Winchester 1873 | Shoot | Aim (the sight shows the round about to leave) | Hold right click to reload round by round, or to clear a jam |
-| Derringer | Shoot | Aim | Hold right click to reload. The sleeve key (K) draws it from anywhere in the inventory |
+| Derringer | Shoot | Nothing: it is always fired from the hip | Hold right click to reload. The sleeve key (K) draws it from anywhere in the inventory |
 | Thompson | Hold for burst fire | Aim (the sight opens up as the burst goes on) | Hold right click to change the drum |
 | Bayonet musket | Shoot. With no ball loaded, jammed or sneaking, it is a bayonet thrust | Aim | Hold right click to reload (powder, ball, ramrod) |
-| Hand cannon | Light the fuse | Aim. The sight draws the arc of the ball | Hold right click to reload |
+| Hand cannon | Light the fuse | Nothing: it is always fired from the hip | Hold right click to reload |
 | Copper blowgun | Shoot a dart | Aim | Hold right click to load the next dart |
-| Copper flamethrower | Hold to spray fire | Aim | Hold right click to swap the fuel canister |
+| Copper flamethrower | Hold to spray fire | Nothing: it is always fired from the hip | Hold right click to swap the fuel canister |
 | Resonance pistol | Shoot | Aim | Hold right click to load echo shards |
+| Copper harpoon gun | Shoot the harpoon | Aim | Hold right click to load the next harpoon |
 | Crank Gatling Gun (at the controls) | Hold to turn the crank and fire | Aim. The sight shows the barrel heat | Right click picks it up |
 
 Every copper gun: sneak + right click with a honeycomb or an axe in the other hand waxes or scrapes it. The aiming values
@@ -89,10 +91,10 @@ Miscelánea.
 
 ## Castellano
 
-Doce armas de fuego de cobre para Minecraft, del Oeste y de más allá: el **revólver** de ruleta rusa, el **rifle de
+Trece armas de fuego de cobre para Minecraft, del Oeste y de más allá: el **revólver** de ruleta rusa, el **rifle de
 catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Winchester 1873**, la **Derringer**, la
 **Thompson** (en su estuche de violín), el **mosquete** con bayoneta, el **cañón de mano**, la **cerbatana** silenciosa, el
-**lanzallamas** y la **pistola de resonancia**. Cada una con su munición especial y sus encantamientos.
+**lanzallamas**, la **pistola de resonancia** y la **arponera**. Cada una con su munición especial y sus encantamientos.
 
 - Las armas no se fabrican: se encuentran en los cofres de estructuras vanilla. La mayor parte de la munición, el estuche
   de violín y la forma de calar la bayoneta sí se fabrican.
@@ -128,6 +130,7 @@ catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Wi
 | Cerbatana de cobre | Silenciosa: el sculk y el Warden no la oyen. Un dardo cada vez; dardos normales, de veneno y somníferos (se fabrican). Se encuentra en los templos de la jungla. |
 | Lanzallamas de cobre | Un chorro de fuego corto y ancho que quema todo lo que cae en el cono. Bidones de combustible (se fabrican), que se cambian enteros; no prende bajo el agua. Se encuentra en las fortalezas del Nether. |
 | Pistola de resonancia | Una onda de sonido que atraviesa bloques y armadura y hiere a todo lo de su línea. Funciona con fragmentos de eco (una carga cada uno); es ruidosa, el sculk la oye. Se encuentra en las ciudades antiguas. |
+| Arponera de cobre | Dispara un arpón con cuerda: hiere lo que alcanza y tira de ello hacia ti, o de ti hacia un bloque, mucho más fuerte bajo el agua. Los arpones (se fabrican) a veces se pueden recoger. Se encuentra en las ruinas submarinas. |
 
 ## Controles
 
@@ -141,13 +144,14 @@ ven que encaras el arma.
 | Rifle de catalejo | Disparar, o accionar el cerrojo si no hay bala lista | Apuntar por el catalejo (zoom y telémetro) | El clic izquierdo acciona el cerrojo a mano; apuntando, saca una foto |
 | Escopeta de presión | Disparar, solo desde la cadera: no apunta | Bombear | Mantener clic derecho aspira objetos y tira de los mobs |
 | Winchester 1873 | Disparar | Apuntar (la mira enseña la bala que va a salir) | Mantener clic derecho recarga bala a bala, o la desatasca |
-| Derringer | Disparar | Apuntar | Mantener clic derecho recarga. La tecla de la manga (K) la saca de cualquier hueco del inventario |
+| Derringer | Disparar | Nada: se dispara siempre desde la cadera | Mantener clic derecho recarga. La tecla de la manga (K) la saca de cualquier hueco del inventario |
 | Thompson | Mantener: ráfaga | Apuntar (la mira se abre según dura la ráfaga) | Mantener clic derecho cambia el tambor |
 | Mosquete con bayoneta | Disparar. Sin bola, encasquillado o agachado, es la estocada de la bayoneta | Apuntar | Mantener clic derecho recarga (pólvora, bola y baqueta) |
-| Cañón de mano | Prender la mecha | Apuntar. La mira dibuja la parábola del bolaño | Mantener clic derecho recarga |
+| Cañón de mano | Prender la mecha | Nada: se dispara siempre desde la cadera | Mantener clic derecho recarga |
 | Cerbatana de cobre | Disparar un dardo | Apuntar | Mantener clic derecho para cargar el siguiente dardo |
-| Lanzallamas de cobre | Mantener para echar fuego | Apuntar | Mantener clic derecho para cambiar el bidón |
+| Lanzallamas de cobre | Mantener para echar fuego | Nada: se dispara siempre desde la cadera | Mantener clic derecho para cambiar el bidón |
 | Pistola de resonancia | Disparar | Apuntar | Mantener clic derecho para cargar fragmentos de eco |
+| Arponera de cobre | Disparar el arpón | Apuntar | Mantener clic derecho para cargar el siguiente arpón |
 | Gatling de manivela (a los mandos) | Mantener: girar la manivela y disparar | Apuntar. La mira enseña el calor del cañón | El clic derecho la recoge |
 
 Todas las armas de cobre: agachado + clic derecho con un panal o un hacha en la otra mano la encera o la rasca. Los
