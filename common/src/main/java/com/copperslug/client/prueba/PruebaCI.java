@@ -1063,8 +1063,17 @@ public final class PruebaCI {
                 sin("pistola_mano_" + i, 4, () -> piSrv(sp -> sp.getInventory().offhand.set(0, new ItemStack((net.minecraft.world.item.Item) mun.get(), 3))));
             sin("pistola_cargar_" + i, 6, () -> {
                 if (!mc.player.isShiftKeyDown()) throw new IllegalStateException("no está agachado");
+                if (PI.get("grua_ap0") == null) PI.put("grua_ap0", com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas);
                 piDisparar();
             });
+            if (i == 0) {
+                // la grúa de Bloomberto saca el tambor al cargar (la animación «abrir» dura 6 ticks)
+                paso("100b_tambor_abierto", 2, () -> PI.put("grua_abierta", com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaVista));
+                sin("pistola_grua_chk", 1, () -> piComprobar("al cargar la grúa saca el tambor (animación de Bloomberto)",
+                        PI.get("grua_abierta") instanceof Float g && g > 30F
+                                && com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas > (Integer) PI.get("grua_ap0"),
+                        "grúa a " + PI.get("grua_abierta") + "°, aperturas " + com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas));
+            }
         }
         // se reintenta hasta que la última recámara llega (el paquete del último clic puede tardar unos ticks)
         vigila("pistola_cargado", 4, () -> {
@@ -1075,6 +1084,9 @@ public final class PruebaCI {
             String t = String.valueOf(PI.get("tambor"));
             piComprobar("cargar 5 recámaras agachado (bala, bala, bengala, dardo, fogueo, vacía)", t.equals("[1, 1, 2, 3, 4, 0]"), t);
         });
+        vigila("pistola_grua_cerrada", 6, () -> piComprobar("después de cargar la grúa vuelve el tambor a su sitio",
+                com.copperslug.client.armasfuego.pistola.RevolverTambor.cierres > 0 && Math.abs(com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaVista) < 2F,
+                "grúa a " + com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaVista + "°, cierres " + com.copperslug.client.armasfuego.pistola.RevolverTambor.cierres));
         // ---- girar el tambor: agachado + clic izquierdo
         vigila("pistola_girar", 5, () -> pulsar(mc.options.keyAttack));
         paso("102_ruleta_girando", 20, () -> {
