@@ -15,7 +15,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
  * El tambor del revólver no está en su modelo 3D: se dibuja aparte (girándolo y con los culotes de cada bala) justo después
- * del armazón, en todo menos en el inventario (que usa el icono plano). Ver {@link RevolverTambor}.
+ * del armazón, en todo menos en el inventario (que usa el icono plano). Ver {@link RevolverTambor}. Lo mismo la palanca
+ * del Winchester y el cerrojo del rifle (PiezasAnimadas).
  */
 @Mixin(ItemRenderer.class)
 public abstract class ItemRendererTamborMixin {
@@ -24,6 +25,7 @@ public abstract class ItemRendererTamborMixin {
                                    BakedModel m, CallbackInfo ci) {
         if (ctx == ItemDisplayContext.GUI) return;
         if (s.getItem() instanceof RevolverItem) RevolverTambor.dibujar(s, ctx, izq, ps, buf, luz, overlay, m);
+        com.copperslug.client.armasfuego.comun.PiezasAnimadas.dibujar(s, ctx, izq, ps, buf, luz, overlay, m);
         com.copperslug.client.armasfuego.comun.AccesoriosVisibles.dibujar(s, ctx, izq, ps, buf, luz, overlay, m);
     }
 }
