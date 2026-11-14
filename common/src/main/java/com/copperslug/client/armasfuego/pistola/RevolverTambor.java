@@ -61,7 +61,7 @@ public final class RevolverTambor {
     private static final ResourceLocation[] ATLAS = {atlas(0), atlas(1), atlas(2), atlas(3)};
 
     private static ResourceLocation atlas(int ox) {
-        return new ResourceLocation(CopperSlug.MOD_ID, "textures/item/armas3d/tambor_atlas_" + ox + ".png");
+        return new ResourceLocation(CopperSlug.MOD_ID, "textures/geo/revolver_tambor_" + ox + ".png");
     }
 
     /** La grúa del revólver de la mano (primera persona): abrir y cerrar con la animación de Bloomberto. */
