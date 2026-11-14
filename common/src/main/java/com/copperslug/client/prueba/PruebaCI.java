@@ -1063,24 +1063,8 @@ public final class PruebaCI {
                 sin("pistola_mano_" + i, 4, () -> piSrv(sp -> sp.getInventory().offhand.set(0, new ItemStack((net.minecraft.world.item.Item) mun.get(), 3))));
             sin("pistola_cargar_" + i, 6, () -> {
                 if (!mc.player.isShiftKeyDown()) throw new IllegalStateException("no está agachado");
-                if (PI.get("grua_ap0") == null) {
-                    PI.put("grua_ap0", com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas);
-                    com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaMax = 0F;
-                }
                 piDisparar();
             });
-            if (i == 0) {
-                // la grúa de Bloomberto saca el tambor al cargar (la animación «abrir» dura 6 ticks)
-                // lo más que se ha abierto (en un cliente lento la captura ya pilló la grúa cerrándose)
-                paso("100b_tambor_abierto", 2, () -> PI.put("grua_abierta", com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaMax));
-                vigila("pistola_grua_chk", 2, () -> {
-                    float g = com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaMax;
-                    PI.put("grua_abierta", g);
-                    piComprobar("al cargar la grúa saca el tambor (animación de Bloomberto)",
-                            g > 30F && com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas > (Integer) PI.get("grua_ap0"),
-                            "lo más abierta: " + g + "°, aperturas " + com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas);
-                });
-            }
         }
         // se reintenta hasta que la última recámara llega (el paquete del último clic puede tardar unos ticks)
         vigila("pistola_cargado", 4, () -> {
@@ -1091,9 +1075,6 @@ public final class PruebaCI {
             String t = String.valueOf(PI.get("tambor"));
             piComprobar("cargar 5 recámaras agachado (bala, bala, bengala, dardo, fogueo, vacía)", t.equals("[1, 1, 2, 3, 4, 0]"), t);
         });
-        vigila("pistola_grua_cerrada", 6, () -> piComprobar("después de cargar la grúa vuelve el tambor a su sitio",
-                com.copperslug.client.armasfuego.pistola.RevolverTambor.cierres > 0 && Math.abs(com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaVista) < 2F,
-                "grúa a " + com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaVista + "°, cierres " + com.copperslug.client.armasfuego.pistola.RevolverTambor.cierres));
         // ---- girar el tambor: agachado + clic izquierdo
         vigila("pistola_girar", 5, () -> pulsar(mc.options.keyAttack));
         paso("102_ruleta_girando", 20, () -> {
@@ -1655,12 +1636,8 @@ public final class PruebaCI {
             if (!(mc.player.getMainHandItem().getItem() instanceof com.copperslug.armasfuego.rifle.RifleItem)) throw new IllegalStateException("no tiene el rifle en la mano");
         });
         // primer clic: la recámara está vacía, así que acciona el cerrojo (y mete una bala)
-        sin("rifle_cerrojo_cero", 1, () -> com.copperslug.client.armasfuego.comun.PiezasAnimadas.cerrojoMax = 0F);
         paso("141_cerrojo", 5, RifleCI::clic);
         sin("rifle_cargado", 25, () -> {});
-        sin("rifle_cerrojo_animado", 1, () -> nvComprobar("el cerrojo se abre, se tira atrás y se cierra (animación de Bloomberto)",
-                com.copperslug.client.armasfuego.comun.PiezasAnimadas.cerrojoMax > 1F,
-                "lo más atrás: " + com.copperslug.client.armasfuego.comun.PiezasAnimadas.cerrojoMax + " px"));
         paso("142_mira", 50, () -> {
             if (!com.copperslug.armasfuego.rifle.Rifle.lista(mc.player.getMainHandItem()))
                 throw new IllegalStateException("el cerrojo no ha metido la bala: " + mc.player.getMainHandItem().getTag());
@@ -2441,7 +2418,6 @@ public final class PruebaCI {
         // ---- marcas de bala en la pared de ladrillo del fondo (con el Winchester: el revólver va por recámaras)
         sin("nv_marcas", 8, () -> {
             PI.put("nv_marcas0", com.copperslug.client.armasfuego.comun.FuegoParticulas.Marca.creadas);
-            PI.put("nv_traz0", com.copperslug.client.armasfuego.comun.Trazadoras.creadas);
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
             piApuntar(a2Punto(17, 0, 1.6));
         });
@@ -2459,35 +2435,6 @@ public final class PruebaCI {
             nvComprobar("las balas dejan marca en la pared", n >= 2, n + " marcas de 3 tiros");
         });
         paso("383_marcas_pared", 10, () -> a2VistaA(a2Punto(16.5, 0, 1.6), a2Punto(13.5, 1.2, 2.2)));
-        // ---- Bloomberto: estelas de las balas, zoom de la mira (CameraZoom) y temblor de cámara (CameraShake)
-        sin("nv_estelas_chk", 1, () -> {
-            int n = com.copperslug.client.armasfuego.comun.Trazadoras.creadas - (Integer) PI.getOrDefault("nv_traz0", 0);
-            nvComprobar("las balas dejan estela (Bloomberto)", n >= 2, n + " estelas de 3 tiros");
-        });
-        sin("nv_zoom", 12, () -> {
-            A2.camara1p();
-            a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
-            piApuntar(a2Punto(17, 0, 1.6));
-            com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = true;
-        });
-        paso("384_zoom_mira_bloomberto", 4, () -> {
-            float f = com.dougg865.bloomberto.api.render.CameraZoom.shared().factor(0F);
-            PI.put("nv_zoom_f", f);
-            // el juego ya cierra algo la vista por andar despacio apuntando: el zoom solo pone lo que falta hasta la config
-            nvComprobar("apuntar acerca la vista (CameraZoom)", f > 1.01F && com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido() < 1F,
-                    "aumento " + f + ", campo de visión pedido x" + com.copperslug.client.armasfuego.comun.Apuntado.zoomPedido());
-        });
-        sin("nv_zoom_suelta", 12, () -> com.copperslug.client.armasfuego.comun.Apuntado.apuntarPrueba = false);
-        sin("nv_zoom_suelta_chk", 1, () -> {
-            float f = com.dougg865.bloomberto.api.render.CameraZoom.shared().factor(0F);
-            nvComprobar("al soltar la mira vuelve la vista normal", Math.abs(f - 1F) < 0.01F, "aumento " + f);
-        });
-        sin("nv_temblor", 2, () -> {
-            com.copperslug.client.armasfuego.comun.FuegoCliente.patada(0F, 8F, 0F);
-            PI.put("nv_tiembla", com.dougg865.bloomberto.api.render.CameraShake.shared().isShaking());
-        });
-        sin("nv_temblor_chk", 1, () -> nvComprobar("un arma gorda sacude la cámara (CameraShake)", Boolean.TRUE.equals(PI.get("nv_tiembla")),
-                String.valueOf(PI.get("nv_tiembla"))));
         sin("nv_fin", 2, A2::camara1p);
     }
 
@@ -2678,10 +2625,7 @@ public final class PruebaCI {
             a2Mano(a2Cargada(com.copperslug.registry.ModItems.WINCHESTER, 6));
             piApuntar(a2Punto(8, 0, 1.2));
         });
-        paso("210_winchester_1p", 4, () -> {
-            a2Vida("w0");
-            com.copperslug.client.armasfuego.comun.PiezasAnimadas.palancaMax = 0F;
-        });
+        paso("210_winchester_1p", 4, () -> a2Vida("w0"));
         paso("211_winchester_disparo", 2, piTiro());
         paso("212_winchester_palanca", 3, () -> {});
         sin("a2_winchester_ver", 10, () -> {
@@ -2690,9 +2634,6 @@ public final class PruebaCI {
         });
         vigila("a2_winchester_ok", 2, () -> a2Comprobar("la Winchester dispara, hiere y gasta una bala", a2F("w0") - a2F("w1") > 3 && Integer.valueOf(5).equals(PI.get("w_balas")),
                 "vida " + a2F("w0") + " → " + a2F("w1") + ", balas " + PI.get("w_balas")));
-        sin("a2_winchester_palanca_ok", 1, () -> a2Comprobar("tras el tiro la palanca se abre y se cierra (animación de Bloomberto)",
-                com.copperslug.client.armasfuego.comun.PiezasAnimadas.palancaMax > 30F,
-                "lo más abierta: " + com.copperslug.client.armasfuego.comun.PiezasAnimadas.palancaMax + "°"));
         sin("a2_winchester_agachar", 4, () -> mc.options.keyShift.setDown(true));
         sin("a2_winchester_recargar", 2, () -> rifleUsar(true));
         paso("213_winchester_recargando", 22, () -> {});

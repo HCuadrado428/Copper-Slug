@@ -12,6 +12,7 @@
   "client": [
     "CreativeScreenAccessor",
     "ItemPropertiesAccessor",
+    "FovApuntadoMixin",
     "ItemRendererTamborMixin",
     "PlayerRendererCinturonMixin"
   ],
