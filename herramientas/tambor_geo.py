@@ -5,7 +5,7 @@ objeto revolver_cilindro_0.json, para que la grúa del tambor se abra y se cierr
 Genera:
 - assets/copperslug/geo/revolver_tambor.geo.json: los mismos cubos que el modelo de objeto, en dos huesos: «grua» (el
   brazo que saca el tambor hacia la izquierda, pivota bajo el tambor) y «tambor» (gira sobre su eje).
-- textures/item/armas3d/tambor_atlas_N.png (N = fase de óxido): cada cara del modelo copiada a su propio rectángulo,
+- textures/geo/revolver_tambor_N.png (N = fase de óxido): cada cara del modelo copiada a su propio rectángulo,
   porque la geometría Bedrock lleva una sola textura y sin rotación de cara.
 - assets/copperslug/animations/revolver_tambor.animation.json: abrir y cerrar la grúa.
 
@@ -29,7 +29,7 @@ import render_modelo as rm  # noqa: E402
 
 ASSETS = os.path.join(rm.RAIZ, 'copperslug')
 MODELOS = os.path.join(ASSETS, 'models', 'item', 'armas3d')
-TEX = os.path.join(ASSETS, 'textures', 'item', 'armas3d')
+TEX = os.path.join(ASSETS, 'textures', 'geo')
 K = 4                     # texels del atlas por píxel de modelo
 CX, CY = 8.0, 8.9         # el eje del tambor (RevolverTambor.CX/CY)
 GRUA = (8.0, 5.4)         # el eje de la grúa: debajo del tambor, paralelo al cañón
@@ -244,7 +244,7 @@ def main():
     os.makedirs(os.path.join(ASSETS, 'animations'), exist_ok=True)
     for ox in range(4):
         geo, atlas = generar(ox)
-        atlas.save(os.path.join(TEX, 'tambor_atlas_%d.png' % ox))
+        atlas.save(os.path.join(TEX, 'revolver_tambor_%d.png' % ox))
         if ox == 0:
             json.dump(geo, open(os.path.join(ASSETS, 'geo', 'revolver_tambor.geo.json'), 'w'), indent=1)
     json.dump(animacion(), open(os.path.join(ASSETS, 'animations', 'revolver_tambor.animation.json'), 'w'), indent=1)
