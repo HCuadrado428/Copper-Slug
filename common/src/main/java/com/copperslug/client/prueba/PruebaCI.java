@@ -2849,6 +2849,26 @@ public final class PruebaCI {
         });
         vigila("a2_arponera_ok", 2, () -> a2Comprobar("la arponera hiere y tira del husk, y gasta el arpón", a2F("a0") - a2F("a1") > 3 && Integer.valueOf(0).equals(PI.get("a_balas")),
                 "vida " + a2F("a0") + " → " + a2F("a1") + ", arpones " + PI.get("a_balas")));
+        // ================================================================ Ropa cosmética
+        for (String juego : new String[]{"vaquero", "bandido"}) {
+            var piezas = juego.equals("vaquero")
+                    ? java.util.List.of(com.copperslug.registry.ModItems.SOMBRERO_VAQUERO, com.copperslug.registry.ModItems.CHALECO_VAQUERO, com.copperslug.registry.ModItems.CHAPARRERAS_VAQUERO, com.copperslug.registry.ModItems.BOTAS_VAQUERO)
+                    : java.util.List.of(com.copperslug.registry.ModItems.SOMBRERO_BANDIDO, com.copperslug.registry.ModItems.PONCHO_BANDIDO, com.copperslug.registry.ModItems.PANTALON_BANDIDO, com.copperslug.registry.ModItems.BOTAS_BANDIDO);
+            sin("ropa_" + juego + "_poner", 4, () -> piSrv(sp -> {
+                var slots = new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                        net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET};
+                for (int i = 0; i < 4; i++) sp.setItemSlot(slots[i], new ItemStack(piezas.get(i).get()));
+            }));
+            paso("23" + (juego.equals("vaquero") ? "5" : "6") + "_ropa_" + juego + "_3p", 14, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT));
+            sin("ropa_" + juego + "_quitar", 4, () -> piSrv(sp -> {
+                PI.put("ropa_def_" + juego, sp.getArmorValue());   // los modificadores de armadura entran en el tick siguiente a ponerla
+                for (var slot : new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                        net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) sp.setItemSlot(slot, ItemStack.EMPTY);
+            }));
+            vigila("ropa_" + juego + "_ok", 2, () -> a2Comprobar("la ropa de " + juego + " se pone y protege como el cuero (7 de armadura)",
+                    Integer.valueOf(7).equals(PI.get("ropa_def_" + juego)), "armadura " + PI.get("ropa_def_" + juego)));
+        }
+        sin("ropa_fin", 2, () -> mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON));
         // ================================================================ Ruido de los disparos
         sin("ruido_poner", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
