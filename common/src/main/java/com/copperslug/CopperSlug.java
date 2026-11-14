@@ -51,6 +51,7 @@ public final class CopperSlug {
 
     /** Al cargar el mod (en Forge, en el constructor; en Fabric, en onInitialize). */
     public static void iniciar() {
+        ComprobarBloomberto.verificar();   // un Bloomberto viejo con el mismo numero de version: parar aqui, con un mensaje claro
         cargar(ModItems.class, com.copperslug.registry.ModSounds.class, com.copperslug.registry.ModEntities.class, ModEnchantments.class,
                 com.copperslug.registry.ModEffects.class, com.copperslug.registry.ModRecipes.class,
                 com.copperslug.armasfuego.comun.ArmasFuegoRegistro.class, ConfigServidor.class);
