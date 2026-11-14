@@ -3,8 +3,6 @@
 Text for the Modrinth project page (1.0.0), English only. Summary first, then the description, then the list of
 advancements as they are in the code.
 
-Before publishing: Bloomberto is a required dependency (`mods.toml` and `fabric.mod.json`) and is not published yet, so it has to go
-up first or nobody will be able to start the mod.
 
 ## Summary (250 characters max)
 
@@ -28,8 +26,6 @@ A few things worth knowing:
 - Guns turn up in chests, and most of the ammo can be crafted.
 - Left click shoots, hold right click to aim, sneak + right click reloads.
 - 57 advancements, in their own tab.
-
-Needs [Bloomberto](https://github.com/HCuadrado428/Bloomberto), the animation and camera library it is built on (all loaders).
 
 Works on Minecraft 1.20.1 (Forge, Fabric) and 1.21.1 (NeoForge, Forge, Fabric). Fabric needs Fabric API, and JEI is
 optional. Settings are in `serverconfig/copperslug-server.toml`.
