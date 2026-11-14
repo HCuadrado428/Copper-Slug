@@ -1,0 +1,64 @@
+{
+ "format_version": "1.8.0",
+ "animations": {
+  "animation.revolver_tambor.abrir": {
+   "animation_length": 0.3,
+   "loop": "hold_on_last_frame",
+   "bones": {
+    "grua": {
+     "rotation": {
+      "0.0": [
+       0,
+       0,
+       0
+      ],
+      "0.15": {
+       "post": [
+        0,
+        0,
+        61.0
+       ],
+       "lerp_mode": "catmullrom"
+      },
+      "0.3": {
+       "post": [
+        0,
+        0,
+        55.0
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     }
+    }
+   }
+  },
+  "animation.revolver_tambor.cerrar": {
+   "animation_length": 0.25,
+   "loop": "hold_on_last_frame",
+   "bones": {
+    "grua": {
+     "rotation": {
+      "0.0": [
+       0,
+       0,
+       55.0
+      ],
+      "0.12": [
+       0,
+       0,
+       -1.5
+      ],
+      "0.25": {
+       "post": [
+        0,
+        0,
+        0
+       ],
+       "lerp_mode": "catmullrom"
+      }
+     }
+    }
+   }
+  }
+ }
+}
