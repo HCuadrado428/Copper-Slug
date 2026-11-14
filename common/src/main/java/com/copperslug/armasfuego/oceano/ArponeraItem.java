@@ -104,6 +104,7 @@ public class ArponeraItem extends ArmaFuegoItem {
             if (agua) l.sendParticles(ParticleTypes.BUBBLE, q.x, q.y - 0.2, q.z, 1, 0.05, 0.05, 0.05, 0.01);
         }
         l.playSound(null, p.getX(), p.getY(), p.getZ(), ModSounds.ARPON.get(), SoundSource.PLAYERS, 1.2F, 0.85F);
+        com.copperslug.armasfuego.comun.Ruido.disparo(l, p, ojo);
     }
 
     /** El arpón se queda donde da y se puede recoger. */

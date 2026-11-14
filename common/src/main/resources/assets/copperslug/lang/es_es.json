@@ -571,5 +571,13 @@
   "item.copperslug.granada_miel.desc": "Salpica miel: deja pringado a todo el que pilla",
   "entity.copperslug.granada": "Granada de cobre",
   "advancements.copperslug.armas.granada.title": "Quita la anilla",
-  "advancements.copperslug.armas.granada.description": "Lanza una granada de cobre y espera los tres segundos."
+  "advancements.copperslug.armas.granada.description": "Lanza una granada de cobre y espera los tres segundos.",
+  "item.copperslug.sombrero_vaquero": "Sombrero de vaquero",
+  "item.copperslug.chaleco_vaquero": "Chaleco de sheriff",
+  "item.copperslug.chaparreras_vaquero": "Chaparreras de vaquero",
+  "item.copperslug.botas_vaquero": "Botas con espuelas",
+  "item.copperslug.sombrero_bandido": "Sombrero y pañuelo de bandido",
+  "item.copperslug.poncho_bandido": "Poncho de bandido",
+  "item.copperslug.pantalon_bandido": "Pantalón de bandido",
+  "item.copperslug.botas_bandido": "Botas de bandido"
 }

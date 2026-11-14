@@ -125,6 +125,9 @@ public final class CopperSlug {
             out.accept(new ItemStack(ModItems.RESONANCIA.get()));
             out.accept(new ItemStack(ModItems.ARPONERA.get()));
             out.accept(new ItemStack(ModItems.ARPON_COBRE.get()));
+            for (var ropa : java.util.List.of(ModItems.SOMBRERO_VAQUERO, ModItems.CHALECO_VAQUERO, ModItems.CHAPARRERAS_VAQUERO, ModItems.BOTAS_VAQUERO,
+                    ModItems.SOMBRERO_BANDIDO, ModItems.PONCHO_BANDIDO, ModItems.PANTALON_BANDIDO, ModItems.BOTAS_BANDIDO))
+                out.accept(new ItemStack(ropa.get()));
             out.accept(com.copperslug.armasfuego.oeste.EstucheViolinItem.con(new ItemStack(ModItems.THOMPSON.get())));
             out.accept(new ItemStack(ModItems.THOMPSON.get()));
             out.accept(new ItemStack(ModItems.ESTUCHE_VIOLIN.get()));

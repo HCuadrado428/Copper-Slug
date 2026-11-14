@@ -2837,6 +2837,72 @@ public final class PruebaCI {
         });
         vigila("a2_arponera_ok", 2, () -> a2Comprobar("la arponera hiere y tira del husk, y gasta el arpón", a2F("a0") - a2F("a1") > 3 && Integer.valueOf(0).equals(PI.get("a_balas")),
                 "vida " + a2F("a0") + " → " + a2F("a1") + ", arpones " + PI.get("a_balas")));
+        // ================================================================ Ropa cosmética
+        for (String juego : new String[]{"vaquero", "bandido"}) {
+            var piezas = juego.equals("vaquero")
+                    ? java.util.List.of(com.copperslug.registry.ModItems.SOMBRERO_VAQUERO, com.copperslug.registry.ModItems.CHALECO_VAQUERO, com.copperslug.registry.ModItems.CHAPARRERAS_VAQUERO, com.copperslug.registry.ModItems.BOTAS_VAQUERO)
+                    : java.util.List.of(com.copperslug.registry.ModItems.SOMBRERO_BANDIDO, com.copperslug.registry.ModItems.PONCHO_BANDIDO, com.copperslug.registry.ModItems.PANTALON_BANDIDO, com.copperslug.registry.ModItems.BOTAS_BANDIDO);
+            sin("ropa_" + juego + "_poner", 4, () -> piSrv(sp -> {
+                var slots = new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                        net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET};
+                for (int i = 0; i < 4; i++) sp.setItemSlot(slots[i], new ItemStack(piezas.get(i).get()));
+            }));
+            paso("23" + (juego.equals("vaquero") ? "5" : "6") + "_ropa_" + juego + "_3p", 14, () -> mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT));
+            sin("ropa_" + juego + "_quitar", 4, () -> piSrv(sp -> {
+                PI.put("ropa_def_" + juego, sp.getArmorValue());   // los modificadores de armadura entran en el tick siguiente a ponerla
+                for (var slot : new net.minecraft.world.entity.EquipmentSlot[]{net.minecraft.world.entity.EquipmentSlot.HEAD, net.minecraft.world.entity.EquipmentSlot.CHEST,
+                        net.minecraft.world.entity.EquipmentSlot.LEGS, net.minecraft.world.entity.EquipmentSlot.FEET}) sp.setItemSlot(slot, ItemStack.EMPTY);
+            }));
+            vigila("ropa_" + juego + "_ok", 2, () -> a2Comprobar("la ropa de " + juego + " se pone y protege como el cuero (7 de armadura)",
+                    Integer.valueOf(7).equals(PI.get("ropa_def_" + juego)), "armadura " + PI.get("ropa_def_" + juego)));
+        }
+        sin("ropa_fin", 2, () -> mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON));
+        // ================================================================ Ruido de los disparos
+        sin("ruido_poner", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            Vec3 yo = sp.position();
+            var g = net.minecraft.world.entity.EntityType.IRON_GOLEM.create(l);
+            Vec3 gp = a2Punto(-16, 4, 0);
+            g.moveTo(gp.x, gp.y, gp.z, 0, 0);
+            g.setPersistenceRequired();
+            l.addFreshEntity(g);
+            var v = net.minecraft.world.entity.EntityType.COW.create(l);
+            Vec3 vp = a2Punto(-8, -6, 0);
+            v.moveTo(vp.x, vp.y, vp.z, 0, 0);
+            v.setPersistenceRequired();
+            l.addFreshEntity(v);
+            PI.put("rn_golem", g.getUUID());
+            PI.put("rn_vaca", v.getUUID());
+            PI.put("rn_g0", (float) g.position().distanceTo(yo));
+            PI.put("rn_v0", (float) v.position().distanceTo(yo));
+            com.copperslug.armasfuego.comun.Ruido.alertar(l, sp, yo, 60, true);   // un disparo fuerte
+        }));
+        sin("ruido_esperar", 50, () -> {});
+        sin("ruido_ver", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            Vec3 yo = sp.position();
+            var g = l.getEntity((UUID) PI.get("rn_golem"));
+            var v = l.getEntity((UUID) PI.get("rn_vaca"));
+            PI.put("rn_g1", g == null ? -1F : (float) g.position().distanceTo(yo));
+            PI.put("rn_v1", v == null ? -1F : (float) v.position().distanceTo(yo));
+            PI.put("rn_investiga", g instanceof net.minecraft.world.entity.Mob gm && com.copperslug.armasfuego.comun.InvestigarRuido.investigando(gm));
+            // los radios: el cañón de mano, mucho más que la Derringer; la cerbatana, nada; y el Silenciador, casi nada
+            var winchester = new ItemStack(com.copperslug.registry.ModItems.WINCHESTER.get());
+            var sil = new ItemStack(com.copperslug.registry.ModItems.WINCHESTER.get());
+            com.copperslug.shim.Enc.poner(sil, com.copperslug.registry.ModEnchantments.SILENCIADOR, 1);
+            PI.put("rn_radios", com.copperslug.armasfuego.comun.Ruido.radio(new ItemStack(com.copperslug.registry.ModItems.CANON_MANO.get()))
+                    > com.copperslug.armasfuego.comun.Ruido.radio(new ItemStack(com.copperslug.registry.ModItems.DERRINGER.get()))
+                    && com.copperslug.armasfuego.comun.Ruido.radio(new ItemStack(com.copperslug.registry.ModItems.CERBATANA.get())) == 0
+                    && com.copperslug.armasfuego.comun.Ruido.radio(sil) < com.copperslug.armasfuego.comun.Ruido.radio(winchester) * 0.3);
+            if (g != null) g.discard();
+            if (v != null) v.discard();
+        }));
+        vigila("ruido_ok", 2, () -> {
+            float g0 = a2F("rn_g0"), g1 = a2F("rn_g1"), v0 = a2F("rn_v0"), v1 = a2F("rn_v1");
+            a2Comprobar("un disparo fuerte: el golem va a ver de dónde viene, la vaca huye, y cada arma se oye a lo suyo (el Silenciador casi nada)",
+                    Boolean.TRUE.equals(PI.get("rn_radios")) && Boolean.TRUE.equals(PI.get("rn_investiga")) && g1 >= 0 && g0 - g1 > 3 && v1 >= 0 && v1 - v0 > 2,
+                    "golem " + g0 + " → " + g1 + " (investiga " + PI.get("rn_investiga") + "), vaca " + v0 + " → " + v1 + ", radios " + PI.get("rn_radios"));
+        });
         // ================================================================ Thompson y su estuche
         sin("a2_estuche", 8, () -> {
             ItemStack t = a2Cargada(com.copperslug.registry.ModItems.THOMPSON, 50);
