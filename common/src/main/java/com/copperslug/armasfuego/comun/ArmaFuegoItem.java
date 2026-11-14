@@ -539,6 +539,7 @@ public abstract class ArmaFuegoItem extends Item {
             sonidoExtra(l, p, snd, vol, tono);
             MobsArmados.oirDisparo(l, p, boca);
         }
+        Ruido.disparo(l, p, boca);   // el ruido para el resto de mobs (con Silenciador casi nada)
         if (casquillo) casquillo(l, p, boca.subtract(mira.scale(0.45)));
     }
 

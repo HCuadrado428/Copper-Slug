@@ -122,6 +122,7 @@ public class LanzallamasItem extends ArmaFuegoItem {
             l.sendParticles(ParticleTypes.FLAME, boca.x + dir.x * d, boca.y + dir.y * d, boca.z + dir.z * d, 2, sp, sp, sp, 0.012);
             if (l.random.nextFloat() < 0.25F) l.sendParticles(ParticleTypes.SMOKE, boca.x + dir.x * d, boca.y + dir.y * d, boca.z + dir.z * d, 1, sp, sp, sp, 0.01);
         }
+        com.copperslug.armasfuego.comun.Ruido.disparo(l, p, boca);
         if (l.random.nextInt(3) == 0)
             l.playSound(null, p.getX(), p.getY(), p.getZ(), SoundEvents.BLAZE_SHOOT, SoundSource.PLAYERS, 0.3F, 0.6F + l.random.nextFloat() * 0.2F);
         // lo que cae en el cono, arde
