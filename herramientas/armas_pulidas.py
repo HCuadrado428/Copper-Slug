@@ -207,13 +207,21 @@ def winchester(palanca=False):
         P('culata_2', 16.5, 20, 4.25, 9.75, 2.5, 'madera'),
         P('cantonera', 20, 20.5, 4.25, 9.75, 2.5, 'laton'),
     ]
-    rot = ((8, 6.75, 5.25), 'x', 45) if palanca else None   # el eje va delante: baja la parte de atrás
-    el += [
-        P('palanca_frente', 5, 5.5, 4.5, 7, 1, 'hierro', rot=rot),
-        P('palanca_bajo', 5, 9.5, 4.5, 5, 1, 'hierro', rot=rot),
-        P('palanca_atras', 9, 9.5, 5, 7, 1, 'hierro', rot=rot),
-    ]
+    # la palanca no va en el modelo: es una pieza de Bloomberto que se anima (herramientas/piezas_geo.py)
     return el
+
+
+# el eje de la palanca va delante: al abrirla baja la parte de atrás
+EJE_PALANCA = (8, 6.75, 5.25)
+
+
+def palanca_winchester():
+    """La palanca cerrada (la pieza animada del Winchester)."""
+    return [
+        P('palanca_frente', 5, 5.5, 4.5, 7, 1, 'hierro'),
+        P('palanca_bajo', 5, 9.5, 4.5, 5, 1, 'hierro'),
+        P('palanca_atras', 9, 9.5, 5, 7, 1, 'hierro'),
+    ]
 
 
 # ------------------------------------------------------------------------------------------------ lanzallamas (tipo fusil)
@@ -365,15 +373,20 @@ def rifle(cerrojo=False):
         P('culata_baja', 15, 20, 5, 6.5, 2, 'madera'),
         P('cantonera', 20, 20.5, 5, 10, 2, 'negro'),
     ]
-    if cerrojo:
-        # cerrojo abierto: la manilla arriba y atrás, y el cuerpo del cerrojo fuera del cajón
-        el += [P('cerrojo', 10.5, 12, 9.25, 10.25, 1.5, 'cobre'),
-               C('manilla', (9, 9.5, 10.5), (10.5, 10, 11), 'hierro', rot=((9, 9.75, 10.75), 'z', 45)),
-               C('bola', (10, 10.25, 10.25), (11, 11.25, 11.25), 'hierro', rot=((9, 9.75, 10.75), 'z', 45))]
-    else:
-        el += [C('manilla', (9, 9.25, 9), (11, 9.75, 9.5), 'hierro', rot=((9, 9.5, 9.25), 'z', -22.5)),
-               C('bola', (10.75, 9, 8.75), (11.75, 10, 9.75), 'hierro', rot=((9, 9.5, 9.25), 'z', -22.5))]
+    # el cerrojo no va en el modelo: es una pieza de Bloomberto que se anima (herramientas/piezas_geo.py)
     return el
+
+
+# el eje de la manilla del cerrojo (gira hacia arriba antes de tirar atrás)
+EJE_MANILLA = (9, 9.5, 9.25)
+
+
+def cerrojo_rifle():
+    """El cerrojo cerrado: el cuerpo (dentro del cajón hasta que se tira de él) y la manilla con su bola."""
+    cuerpo = [P('cerrojo', 8.9, 10.4, 9.25, 10.25, 1.5, 'cobre')]
+    manilla = [C('manilla', (9, 9.25, 9), (11, 9.75, 9.5), 'hierro', rot=(EJE_MANILLA, 'z', -22.5)),
+               C('bola', (10.75, 9, 8.75), (11.75, 10, 9.75), 'hierro', rot=(EJE_MANILLA, 'z', -22.5))]
+    return cuerpo, manilla
 
 
 # ------------------------------------------------------------------------------------------------ escopeta de presión
