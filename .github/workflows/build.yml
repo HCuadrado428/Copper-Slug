@@ -44,6 +44,15 @@ jobs:
         run: |
           python3 -m pip install --quiet pillow
           python3 herramientas/test_estilo_minecraft.py
+      - name: Bloomberto en caché
+        uses: actions/cache@v4
+        with:
+          path: libs/bloomberto
+          key: bloomberto-${{ hashFiles('bloomberto.properties') }}
+      - name: Bloomberto (la librería de la que depende)
+        run: |
+          # la descarga de Gradle o de los Maven a veces falla: se reintenta
+          for i in 1 2 3; do bash herramientas/bloomberto.sh && break; [ $i = 3 ] && exit 1; echo "reintento en 30 s"; sleep 30; done
       - name: Compilar
         run: |
           chmod +x gradlew
@@ -60,6 +69,8 @@ jobs:
               case "$j" in *-sources.jar|*-javadoc.jar|*-dev*.jar) ;; *) cp "$j" jars/ ;; esac
             done
           done
+          # Bloomberto va con los jars: hace falta para jugar (y la prueba en el juego lo baja de aquí)
+          for j in libs/bloomberto/*.jar; do case "$j" in *-dev.jar) ;; *) cp "$j" jars/ ;; esac; done
           ls -la jars
       - name: Guardar el registro de errores
         if: failure()

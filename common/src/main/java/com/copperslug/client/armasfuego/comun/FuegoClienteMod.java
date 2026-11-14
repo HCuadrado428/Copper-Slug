@@ -49,6 +49,7 @@ public final class FuegoClienteMod {
 
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent e) {
+        Trazadoras.registrar();
         e.enqueueWork(() -> {
             // Winchester: la palanca abierta en la primera mitad del ciclo
             ItemProperties.register(ModItems.WINCHESTER.get(), rl("palanca"), (s, l, en, seed) -> {
