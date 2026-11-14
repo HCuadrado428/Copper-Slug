@@ -1056,16 +1056,23 @@ public final class PruebaCI {
                 sin("pistola_mano_" + i, 4, () -> piSrv(sp -> sp.getInventory().offhand.set(0, new ItemStack((net.minecraft.world.item.Item) mun.get(), 3))));
             sin("pistola_cargar_" + i, 6, () -> {
                 if (!mc.player.isShiftKeyDown()) throw new IllegalStateException("no está agachado");
-                if (PI.get("grua_ap0") == null) PI.put("grua_ap0", com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas);
+                if (PI.get("grua_ap0") == null) {
+                    PI.put("grua_ap0", com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas);
+                    com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaMax = 0F;
+                }
                 piDisparar();
             });
             if (i == 0) {
                 // la grúa de Bloomberto saca el tambor al cargar (la animación «abrir» dura 6 ticks)
-                paso("100b_tambor_abierto", 2, () -> PI.put("grua_abierta", com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaVista));
-                sin("pistola_grua_chk", 1, () -> piComprobar("al cargar la grúa saca el tambor (animación de Bloomberto)",
-                        PI.get("grua_abierta") instanceof Float g && g > 30F
-                                && com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas > (Integer) PI.get("grua_ap0"),
-                        "grúa a " + PI.get("grua_abierta") + "°, aperturas " + com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas));
+                // lo más que se ha abierto (en un cliente lento la captura ya pilló la grúa cerrándose)
+                paso("100b_tambor_abierto", 2, () -> PI.put("grua_abierta", com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaMax));
+                vigila("pistola_grua_chk", 2, () -> {
+                    float g = com.copperslug.client.armasfuego.pistola.RevolverTambor.gruaMax;
+                    PI.put("grua_abierta", g);
+                    piComprobar("al cargar la grúa saca el tambor (animación de Bloomberto)",
+                            g > 30F && com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas > (Integer) PI.get("grua_ap0"),
+                            "lo más abierta: " + g + "°, aperturas " + com.copperslug.client.armasfuego.pistola.RevolverTambor.aperturas);
+                });
             }
         }
         // se reintenta hasta que la última recámara llega (el paquete del último clic puede tardar unos ticks)

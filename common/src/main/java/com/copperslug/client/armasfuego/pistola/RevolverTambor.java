@@ -54,7 +54,7 @@ public final class RevolverTambor {
     private static final double CX = 8.0, CY = 8.9, ANILLO = 1.0, Z_ATRAS = 11.0, DESPLAZA_ABIERTO = 3.4;
     // la grúa (herramientas/tambor_geo.py): su eje y cuánto gira abierta
     private static final double GX = 8.0, GY = 5.4;
-    private static final float ABIERTA = 55F;
+    private static final float ABIERTA = -55F;
 
     private static final ResourceLocation GEO = ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "geo/revolver_tambor.geo.json");
     private static final ResourceLocation ANIM = ResourceLocation.fromNamespaceAndPath(CopperSlug.MOD_ID, "animations/revolver_tambor.animation.json");
@@ -67,9 +67,10 @@ public final class RevolverTambor {
     /** La grúa del revólver de la mano (primera persona): abrir y cerrar con la animación de Bloomberto. */
     private static AnimationController grua;
     private static boolean gruaAbierta;
+    private static int abiertoTicks;
     /** Para la prueba: cuántas veces se ha abierto y cerrado la grúa con la animación, y el último ángulo dibujado. */
     public static volatile int aperturas, cierres;
-    public static volatile float gruaVista;
+    public static volatile float gruaVista, gruaMax;
     private static boolean registrado;
 
     /** Engancha el tick de la animación a Bloomberto (una vez, al arrancar el cliente). */
@@ -97,7 +98,11 @@ public final class RevolverTambor {
                 return;   // sin el archivo de animaciones: se queda con el tambor de antes
             }
         }
-        boolean abierto = abierto(s, mc);
+        // la marca de carga del objeto puede durar solo un tick en el cliente (lo que predice y lo que manda el servidor no
+        // siempre coinciden): la grúa se queda abierta al menos 12 ticks desde la última vez que se vio
+        if (abierto(s, mc)) abiertoTicks = 12;
+        else if (abiertoTicks > 0) abiertoTicks--;
+        boolean abierto = abiertoTicks > 0;
         if (abierto != gruaAbierta) {
             gruaAbierta = abierto;
             grua.play(abierto ? "animation.revolver_tambor.abrir" : "animation.revolver_tambor.cerrar");
@@ -160,6 +165,7 @@ public final class RevolverTambor {
                 Pose pose = grua.pose(mc.getTimer().getGameTimeDeltaPartialTick(false));
                 if (pose.has("grua")) g = pose.get("grua").rotation[2];
                 gruaVista = g;
+                gruaMax = Math.max(gruaMax, Math.abs(g));
             }
             ps.translate(GX / 16.0, GY / 16.0, 0);
             ps.mulPose(Axis.ZP.rotationDegrees(g));
