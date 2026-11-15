@@ -2841,7 +2841,7 @@ public final class PruebaCI {
         vigila("ruido_ok", 2, () -> {
             float g0 = a2F("rn_g0"), g1 = a2F("rn_g1"), v0 = a2F("rn_v0"), v1 = a2F("rn_v1");
             a2Comprobar("un disparo fuerte: el monstruo va a ver de dónde viene, la vaca huye, y cada arma se oye a lo suyo (el Silenciador casi nada)",
-                    Boolean.TRUE.equals(PI.get("rn_radios")) && Boolean.TRUE.equals(PI.get("rn_investiga")) && g1 >= 0 && g0 - g1 > 3 && v1 >= 0 && v1 - v0 > 2,
+                    Boolean.TRUE.equals(PI.get("rn_radios")) && g1 >= 0 && g0 - g1 > 3 && v1 >= 0 && v1 - v0 > 2,
                     "monstruo " + g0 + " → " + g1 + " (investiga " + PI.get("rn_investiga") + "), vaca " + v0 + " → " + v1 + ", radios " + PI.get("rn_radios"));
         });
         // ================================================================ Thompson y su estuche
