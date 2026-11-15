@@ -19,6 +19,8 @@ rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Wi
   **Raiders' Camp** (plains, savannas, taigas, forests). Labyrinths, traps, loot and armed mobs.
 - Armed mobs: some pillagers (and the husks and zombies of those structures) carry a gun and really shoot: they react,
   aim, miss, jam, reload and back away. Rare and configurable (`mobs_armados`); off means vanilla.
+- Noise: shots are heard. Monsters go to look, animals flee; the Suppressor mutes it (`ruido`).
+- Cosmetic cowboy and bandit clothing with 3D hats, star, spurs and poncho.
 - Synthesised sounds with a character per gun, a muffled far version for shots heard from afar and an echo indoors.
 
 ## Weapons
@@ -110,6 +112,8 @@ catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Wi
 - Mobs armados: algunos saqueadores (y los husks y zombis de esas estructuras) llevan un arma y disparan de verdad:
   reaccionan, apuntan, fallan, se encasquillan, recargan y retroceden. Raros y configurables (`mobs_armados`); apagado es
   vanilla.
+- Ruido: los disparos se oyen. Los monstruos van a mirar, los animales huyen; el Silenciador lo apaga (`ruido`).
+- Ropa cosmética de vaquero y de bandido con sombreros, estrella, espuelas y poncho en 3D.
 - Sonidos sintetizados con un carácter por arma, una versión lejana amortiguada para los disparos que se oyen de lejos y
   eco en interiores.
 
