@@ -108,8 +108,8 @@ def sombrero_vaquero():
     el = []
     # el ala: un disco octogonal con los dos lados levantados (como un sombrero de verdad)
     el += redondo(8, 8, 7.4, 6.0, 6.8, MAT['ropa_fieltro_m'], 'ala', 2.4)
-    el.append(caja_rot(0.2, 6.5, 2.6, 2.8, 7.3, 13.4, MAT['ropa_fieltro_m'], 'ala_izq', 'z', 22, (2.8, 6.7, 8)))
-    el.append(caja_rot(13.2, 6.5, 2.6, 15.8, 7.3, 13.4, MAT['ropa_fieltro_m'], 'ala_der', 'z', -22, (13.2, 6.7, 8)))
+    el.append(caja_rot(0.2, 6.5, 2.6, 2.8, 7.3, 13.4, MAT['ropa_fieltro_m'], 'ala_izq', 'z', 22.5, (2.8, 6.7, 8)))
+    el.append(caja_rot(13.2, 6.5, 2.6, 15.8, 7.3, 13.4, MAT['ropa_fieltro_m'], 'ala_der', 'z', -22.5, (13.2, 6.7, 8)))
     # la copa: octógono más estrecho arriba, con la hendidura del centro
     el += redondo(8, 8, 5.0, 6.7, 10.8, MAT['ropa_fieltro_m'], 'copa', 1.0)
     el += redondo(8, 8, 4.3, 10.8, 11.7, MAT['ropa_fieltro_m'], 'copa_arriba', 1.0)
@@ -125,15 +125,15 @@ def sombrero_bandido():
     el = []
     el += redondo(8, 8, 7.9, 6.0, 6.8, MAT['ropa_fieltro_n'], 'ala', 2.6)
     # el ala se dobla hacia abajo por delante y hacia arriba por detrás: un sombrero de cara tapada
-    el.append(caja_rot(2.4, 5.6, 13.0, 13.6, 6.4, 15.6, MAT['ropa_fieltro_n'], 'ala_frente', 'x', -14, (8, 6.0, 13.0)))
+    el.append(caja_rot(2.4, 5.6, 13.0, 13.6, 6.4, 15.6, MAT['ropa_fieltro_n'], 'ala_frente', 'x', -22.5, (8, 6.0, 13.0)))
     el += redondo(8, 8, 5.0, 6.7, 11.6, MAT['ropa_fieltro_n'], 'copa', 1.0)
     el += redondo(8, 8, 4.6, 11.6, 12.4, MAT['ropa_fieltro_n'], 'copa_arriba', 1.0)
     el += redondo(8, 8, 5.12, 6.8, 8.3, MAT['ropa_tela_roja'], 'cinta', 1.0)
     el.append(caja(6.9, 6.8, 13.0, 9.1, 7.7, 13.4, MAT['ropa_metal'], 'hebilla'))
     # la pluma roja, clavada en el lado izquierdo de la cinta y echada hacia atrás
-    el.append(caja_rot(12.7, 7.6, 7.2, 13.3, 13.4, 8.4, MAT['ropa_tela_roja'], 'pluma', 'z', -24, (13.0, 7.6, 7.8)))
-    el.append(caja_rot(13.0, 7.8, 7.55, 13.18, 13.2, 8.05, MAT['ropa_fieltro_n'], 'pluma_astil', 'z', -24, (13.0, 7.6, 7.8)))
-    el.append(caja_rot(12.4, 7.6, 7.6, 12.8, 11.6, 8.2, MAT['ropa_tela_roja'], 'pluma_b', 'z', -24, (13.0, 7.6, 7.8)))
+    el.append(caja_rot(12.7, 7.6, 7.2, 13.3, 13.4, 8.4, MAT['ropa_tela_roja'], 'pluma', 'z', -22.5, (13.0, 7.6, 7.8)))
+    el.append(caja_rot(13.0, 7.8, 7.55, 13.18, 13.2, 8.05, MAT['ropa_fieltro_n'], 'pluma_astil', 'z', -22.5, (13.0, 7.6, 7.8)))
+    el.append(caja_rot(12.4, 7.6, 7.6, 12.8, 11.6, 8.2, MAT['ropa_tela_roja'], 'pluma_b', 'z', -22.5, (13.0, 7.6, 7.8)))
     return el
 
 
@@ -168,7 +168,7 @@ def esclavina():
     w, r, n = MAT['ropa_lana'], MAT['ropa_tela_roja'], MAT['ropa_fieltro_n']
     el.append(caja(3.3, -0.6, 3.0, 12.7, 1.9, 13.0, w, 'cuello'))                           # el cuello, alto
     el.append(caja(3.9, 1.7, 3.6, 12.1, 2.3, 12.4, r, 'cuello_borde'))
-    for lado, x0, ang, sg in (('izq', 12.0, -26, 1), ('der', 4.0, 26, -1)):
+    for lado, x0, ang, sg in (('izq', 12.0, -22.5, 1), ('der', 4.0, 22.5, -1)):
         xa, xb = (x0, x0 + 6.6) if sg > 0 else (x0 - 6.6, x0)
         el.append(caja_rot(xa, -0.9, 2.5, xb, 0.9, 13.5, w, 'hombro_' + lado, 'z', ang, (x0, 0.0, 8)))
         xr1, xr2 = (x0 + 4.6, x0 + 6.9) if sg > 0 else (x0 - 6.9, x0 - 4.6)
