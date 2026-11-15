@@ -122,6 +122,11 @@
   rebuilt as an air gun (big pressure tank, plunger pump, brass pipes, large gauge, valve and whistle) and the Thompson
   gets the big round mob drum. The flamethrower, the hand cannon
   and the Derringer no longer aim (hip fire, like the shotgun); the hand cannon shows its arc whenever it is held.
+- Noise: every shot is heard. Hostile mobs without a target walk to where it came from, and animals and villagers flee. Loudness
+  depends on the gun (the blowgun is silent, the Derringer is quiet, the rifle and the hand cannon are heard from far
+  away) and the Suppressor enchantment makes it almost silent. Config section `ruido`.
+- Cosmetic clothing: Cowboy set (hat, Sheriff's Vest, chaps, spurred boots) and Bandit set (hat and bandana, poncho,
+  trousers, boots). They protect like leather and have real 3D parts: a brimmed hat, a sheriff star, spurs and a poncho cape.
 
 ---
 
@@ -256,3 +261,9 @@
   rehecha como arma de aire comprimido (depósito grande, bomba de émbolo, tuberías de latón, manómetro grande, válvula
   y silbato), y la Thompson lleva el tambor grande y redondo de la mafia. El lanzallamas, el cañón de
   mano y la Derringer ya no apuntan (van a la cadera, como la escopeta); el cañón enseña su parábola siempre que se lleva.
+- Ruido: todo disparo se oye. Los monstruos sin objetivo van hacia donde sonó, y los animales y los aldeanos huyen. El
+  volumen depende del arma (la cerbatana es silenciosa, la Derringer suena poco, el rifle y el cañón de mano se oyen de muy
+  lejos) y el encantamiento Silenciador lo deja casi mudo. Sección `ruido` de la config.
+- Ropa cosmética: conjunto de vaquero (sombrero, chaleco de sheriff, chaparreras, botas con espuelas) y de bandido (sombrero
+  y pañuelo, poncho, pantalón, botas). Protegen como el cuero y llevan piezas en 3D: sombrero con ala, estrella de sheriff,
+  espuelas y esclavina del poncho.
