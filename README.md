@@ -21,6 +21,7 @@ rifle** (with ziplines), the **pressure shotgun**, the **Gatling** gun, the **Wi
   aim, miss, jam, reload and back away. Rare and configurable (`mobs_armados`); off means vanilla.
 - Noise: shots are heard. Monsters go to look, animals flee; the Suppressor mutes it (`ruido`).
 - Cosmetic cowboy and bandit clothing with 3D hats, star, spurs and poncho.
+- Wanted posters: hunt named outlaws and their gang, take their unique gun and collect the bounty from a villager.
 - Synthesised sounds with a character per gun, a muffled far version for shots heard from afar and an echo indoors.
 
 ## Weapons
@@ -114,6 +115,7 @@ catalejo** (con tirolinas), la **escopeta de presión**, la **Gatling**, la **Wi
   vanilla.
 - Ruido: los disparos se oyen. Los monstruos van a mirar, los animales huyen; el Silenciador lo apaga (`ruido`).
 - Ropa cosmética de vaquero y de bandido con sombreros, estrella, espuelas y poncho en 3D.
+- Carteles de «Se busca»: caza forajidos con nombre y su banda, quédate su arma única y cobra la recompensa a un aldeano.
 - Sonidos sintetizados con un carácter por arma, una versión lejana amortiguada para los disparos que se oyen de lejos y
   eco en interiores.
 
