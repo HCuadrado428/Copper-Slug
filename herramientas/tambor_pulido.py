@@ -89,6 +89,9 @@ def modelo(ox):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from historico import seguro
+    seguro('tambor_pulido')
     for ox in range(4):
         modelo(ox)
         recolorear('tambor_frente_%d' % ox, COBRE[ox])

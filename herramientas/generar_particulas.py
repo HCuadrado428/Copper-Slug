@@ -11,6 +11,7 @@
 Uso: herramientas/generar_particulas.py
 """
 import os
+import sys
 
 from PIL import Image
 
@@ -171,4 +172,7 @@ def generar():
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from historico import seguro
+    seguro('generar_particulas')
     generar()
