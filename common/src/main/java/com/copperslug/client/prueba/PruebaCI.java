@@ -2810,6 +2810,60 @@ public final class PruebaCI {
                     Integer.valueOf(7).equals(PI.get("ropa_def_" + juego)), "armadura " + PI.get("ropa_def_" + juego)));
         }
         sin("ropa_fin", 2, () -> mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON));
+        // ================================================================ Carteles de «Se busca»
+        sin("cartel_nuevo", 4, () -> piSrv(sp -> {
+            var c = new ItemStack(com.copperslug.registry.ModItems.CARTEL_SE_BUSCA.get());
+            PI.put("cartel_blanco", com.copperslug.recompensas.CartelItem.estado(c) == com.copperslug.recompensas.Forajidos.Estado.EN_BLANCO);
+            com.copperslug.recompensas.Forajidos.nuevo(sp.serverLevel(), sp, c, sp.blockPosition().offset(10, 0, 0));
+            PI.put("cartel_buscado", com.copperslug.recompensas.CartelItem.estado(c) == com.copperslug.recompensas.Forajidos.Estado.BUSCADO);
+            if (!sp.getInventory().add(c)) sp.getInventory().offhand.set(0, c);
+        }));
+        sin("cartel_esperar", 40, () -> {});
+        paso("237_forajido", 6, () -> piSrv(sp -> {
+            var jefes = sp.serverLevel().getEntitiesOfClass(net.minecraft.world.entity.Mob.class, sp.getBoundingBox().inflate(48),
+                    m -> m.getTags().contains(com.copperslug.recompensas.Forajidos.JEFE));
+            PI.put("cartel_jefes", jefes.size());
+            if (!jefes.isEmpty()) {
+                var j = jefes.get(0);
+                PI.put("cartel_vida", j.getMaxHealth());
+                PI.put("cartel_arma", j.getMainHandItem().hasCustomHoverName() && !j.getMainHandItem().getAllEnchantments().isEmpty());
+                sp.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, j.getEyePosition());
+            }
+        }));
+        sin("cartel_matar", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            // la banda se quita (no tiene que liarse a tiros con el resto de la prueba) y al jefe se le mata de un golpe
+            for (var b : l.getEntitiesOfClass(net.minecraft.world.entity.monster.Pillager.class, sp.getBoundingBox().inflate(48),
+                    m -> m.getTags().contains("copperslug_arma_revolver") && !m.getTags().contains(com.copperslug.recompensas.Forajidos.JEFE))) b.discard();
+            for (var j : l.getEntitiesOfClass(net.minecraft.world.entity.Mob.class, sp.getBoundingBox().inflate(48),
+                    m -> m.getTags().contains(com.copperslug.recompensas.Forajidos.JEFE))) j.hurt(sp.damageSources().playerAttack(sp), 1000F);
+        }));
+        sin("cartel_esperar2", 30, () -> {});
+        sin("cartel_cobrar", 4, () -> piSrv(sp -> {
+            var l = sp.serverLevel();
+            ItemStack c = ItemStack.EMPTY;
+            for (ItemStack s : sp.getInventory().items) if (s.getItem() instanceof com.copperslug.recompensas.CartelItem) c = s;
+            if (c.isEmpty()) c = sp.getInventory().offhand.get(0);
+            PI.put("cartel_cazado", com.copperslug.recompensas.CartelItem.estado(c) == com.copperslug.recompensas.Forajidos.Estado.CAZADO);
+            PI.put("cartel_suelta", !l.getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, sp.getBoundingBox().inflate(48),
+                    i -> i.getItem().hasCustomHoverName()).isEmpty());
+            var v = net.minecraft.world.entity.EntityType.VILLAGER.create(l);
+            v.moveTo(sp.getX() + 1, sp.getY(), sp.getZ(), 0, 0);
+            l.addFreshEntity(v);
+            int antes = sp.getInventory().countItem(net.minecraft.world.item.Items.EMERALD);
+            var r = com.copperslug.recompensas.Forajidos.cobrar(sp, c, v);
+            PI.put("cartel_pago", sp.getInventory().countItem(net.minecraft.world.item.Items.EMERALD) - antes);
+            PI.put("cartel_res", String.valueOf(r));
+            v.discard();
+        }));
+        vigila("cartel_ok", 4, () -> a2Comprobar("el cartel de «Se busca»: en blanco se rellena, el forajido aparece al llegar (80 de vida, arma única), "
+                        + "muerto el cartel queda cazado, suelta su arma y un aldeano paga entre 12 y 24 esmeraldas",
+                Boolean.TRUE.equals(PI.get("cartel_blanco")) && Boolean.TRUE.equals(PI.get("cartel_buscado")) && Integer.valueOf(1).equals(PI.get("cartel_jefes"))
+                        && Float.valueOf(80F).equals(PI.get("cartel_vida")) && Boolean.TRUE.equals(PI.get("cartel_arma")) && Boolean.TRUE.equals(PI.get("cartel_cazado"))
+                        && Boolean.TRUE.equals(PI.get("cartel_suelta")) && PI.get("cartel_pago") instanceof Integer n && n >= 12 && n <= 24,
+                "blanco " + PI.get("cartel_blanco") + ", buscado " + PI.get("cartel_buscado") + ", jefes " + PI.get("cartel_jefes") + ", vida " + PI.get("cartel_vida")
+                        + ", arma " + PI.get("cartel_arma") + ", cazado " + PI.get("cartel_cazado") + ", suelta " + PI.get("cartel_suelta") + ", pago " + PI.get("cartel_pago")
+                        + " (" + PI.get("cartel_res") + ")"));
         // ================================================================ Ruido de los disparos
         sin("ruido_poner", 4, () -> piSrv(sp -> {
             var l = sp.serverLevel();
