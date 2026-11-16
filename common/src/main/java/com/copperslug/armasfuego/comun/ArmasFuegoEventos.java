@@ -31,6 +31,13 @@ public final class ArmasFuegoEventos {
     public static void montarGatling(com.copperslug.shim.event.entity.player.PlayerInteractEvent.EntityInteract e) {
         var p = e.getEntity();
         var s = e.getItemStack();
+        // cobrar un cartel de «Se busca» a un aldeano
+        var cobro = com.copperslug.recompensas.Forajidos.cobrar(p, s, e.getTarget());
+        if (cobro != null) {
+            e.setCanceled(true);
+            e.setCancellationResult(cobro);
+            return;
+        }
         if (!(s.getItem() instanceof com.copperslug.armasfuego.gatling.GatlingItem)) return;
         var v = e.getTarget();
         boolean vagoneta = v instanceof net.minecraft.world.entity.vehicle.AbstractMinecart c
@@ -68,6 +75,7 @@ public final class ArmasFuegoEventos {
         Apuntar.tick(e.getServer());
         ArmaFuegoItem.tickRafagas(e.getServer());
         MobsArmados.tick(e.getServer());
+        com.copperslug.recompensas.Forajidos.tick(e.getServer());
     }
 
     /** Reparación en la espada calada del mosquete. */

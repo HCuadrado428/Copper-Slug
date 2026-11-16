@@ -129,6 +129,31 @@ DARDOS = {'dardo_cerbatana': (((210, 214, 222, 255), (140, 144, 154, 255)), ((23
           'dardo_somnifero': (((176, 146, 236, 255), (110, 80, 176, 255)), ((160, 130, 220, 255), (100, 74, 160, 255)))}
 
 
+# el cartel de «Se busca»: papel viejo, el titular en tinta, la cara del forajido con su sombrero y la recompensa en rojo
+CARTEL = ['................',
+          '.......nn.......',
+          '.oooooooooooooo.',
+          '.o443333333332o.',
+          '.o3kk3kk3kk3k2o.',
+          '.o333333333322o.',
+          '.o3333hhhh3322o.',
+          '.o33hhhhhhhh22o.',
+          '.o3333ffff3322o.',
+          '.o3333kffk3322o.',
+          '.o3333ffff3222o.',
+          '.o333ssssss222o.',
+          '.o332222222221o.',
+          '.o3rr3rrr3rr21o.',
+          '.o222222222111o.',
+          '.oooooooooooooo.']
+
+
+def cartel():
+    papel = (c(150, 124, 84), c(196, 170, 122), c(222, 202, 156), c(240, 226, 188))
+    return pinta(CARTEL, mat(papel, c(92, 70, 44), k=c(52, 38, 28), h=c(46, 34, 26), f=c(200, 150, 110), s=c(90, 66, 46),
+                             r=c(160, 40, 34), n=c(110, 112, 120)))
+
+
 if __name__ == '__main__':
     import os
     import sys
@@ -136,6 +161,7 @@ if __name__ == '__main__':
     d = os.path.join(raiz, 'common/src/main/resources/assets/copperslug/textures/item')
     funda().save(os.path.join(d, 'funda.png'))
     metralla().save(os.path.join(d, 'metralla.png'))
+    cartel().save(os.path.join(d, 'cartel_se_busca.png'))
     for n, (punta, plumas) in DARDOS.items():
         dardo(punta, plumas).save(os.path.join(d, n + '.png'))
     print('iconos: funda, metralla y dardos')

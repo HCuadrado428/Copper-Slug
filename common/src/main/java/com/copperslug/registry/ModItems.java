@@ -161,6 +161,8 @@ public final class ModItems {
     public static final RegistryObject<Item> PONCHO_BANDIDO = ropa("poncho_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.CHESTPLATE);
     public static final RegistryObject<Item> PANTALON_BANDIDO = ropa("pantalon_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.LEGGINGS);
     public static final RegistryObject<Item> BOTAS_BANDIDO = ropa("botas_bandido", com.copperslug.ropa.Ropa.BANDIDO, ArmorItem.Type.BOOTS);
+    public static final RegistryObject<Item> CARTEL_SE_BUSCA = ITEMS.register("cartel_se_busca",
+            () -> new com.copperslug.recompensas.CartelItem(new Item.Properties().stacksTo(1)));
 
     private static RegistryObject<Item> ropa(String id, net.minecraft.core.Holder<net.minecraft.world.item.ArmorMaterial> material, ArmorItem.Type tipo) {
         return ITEMS.register(id, () -> new ArmorItem(material, tipo, new Item.Properties().durability(tipo.getDurability(com.copperslug.ropa.Ropa.DURABILIDAD))));
