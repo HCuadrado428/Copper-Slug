@@ -2826,7 +2826,7 @@ public final class PruebaCI {
             if (!jefes.isEmpty()) {
                 var j = jefes.get(0);
                 PI.put("cartel_vida", j.getMaxHealth());
-                PI.put("cartel_arma", j.getMainHandItem().hasCustomHoverName() && !j.getMainHandItem().getAllEnchantments().isEmpty());
+                PI.put("cartel_arma", j.getMainHandItem().hasCustomHoverName() && j.getMainHandItem().isEnchanted());
                 sp.lookAt(net.minecraft.commands.arguments.EntityAnchorArgument.Anchor.EYES, j.getEyePosition());
             }
         }));
