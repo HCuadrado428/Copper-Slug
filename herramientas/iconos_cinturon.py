@@ -37,35 +37,9 @@ def cartuchera():
 
 
 def funda():
-    """La funda de cuero vista de lado, con la culata de un revólver asomando."""
-    l = Lienzo()
-    # culata y martillo
-    l.caja(8, 1, 11, 5, MADERA)
-    l.px(9, 2, MADERA[4])
-    l.px(7, 4, HIERRO[2])
-    l.px(7, 5, HIERRO[0])
-    l.caja(8, 0, 11, 1, COBRE[0])
-    # la funda: ancha arriba y estrecha abajo
-    for y in range(5, 15):
-        x1 = 4 + (y - 5) // 3
-        x2 = 11 - (y - 5) // 4
-        for x in range(x1, x2 + 1):
-            if x in (x1, x2) or y == 14:
-                c = CUERO[0]
-            elif x == x1 + 1:
-                c = CUERO[3]
-            else:
-                c = CUERO[2]
-            l.px(x, y, c)
-    # costura y remache
-    for y in range(7, 13, 2):
-        l.px(9, y, CUERO[4])
-    l.px(6, 7, LATON[3])
-    # la correa del cinto
-    for x in range(1, 15):
-        l.px(x, 5, CUERO[1] if x in (1, 14) else CUERO[3])
-        l.px(x, 6, CUERO[0] if x in (1, 14) else CUERO[1])
-    return l.imagen()
+    """La funda de cuero inclinada, con la culata de un revólver asomando (dibujada en iconos_varios.py)."""
+    from iconos_varios import funda as dibujo
+    return dibujo()
 
 
 if __name__ == '__main__':
