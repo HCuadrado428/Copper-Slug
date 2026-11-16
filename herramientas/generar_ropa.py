@@ -304,32 +304,9 @@ def pinta(filas, paleta):
     return im
 
 
-ICONOS = {
-    'sombrero_vaquero': (['................', '................', '.....bbbbb......', '....bBBBBBb.....', '....bBBBBBb.....', '....bBBBBBb.....', '....bcgcccb.....', '...bbBBBBBbb....',
-                          '.bbBBBBBBBBBbb..', 'bBBBBBBBBBBBBBb.', 'bbBBBBBBBBBBbb..', '.bbbbbbbbbbbb...', '................', '................', '................', '................'],
-                         {'b': FIELTRO_OSC, 'B': FIELTRO, 'c': c(52, 36, 22), 'g': ORO}),
-    'chaleco_vaquero': (['................', '..bbb......bbb..', '.bCCCb....bCCCb.', '.bCCCCb..bCCCCb.', '.bCCCCCbbCCCCCb.', '..bCCCCoCCCCCb..', '..bCCgCoCCEECb..', '..bCCCCoCEEEEb..',
-                         '..bCCgCoCCEECb..', '..bCCCCoCCCCCb..', '..bCCgCoCCCCCb..', '..bCCCCoCCCCCb..', '..bbbbbbbbbbbb..', '................', '................', '................'],
-                        {'b': CUERO_OSC, 'C': CUERO, 'o': c(72, 48, 30), 'g': ORO, 'E': ORO_OSC}),
-    'chaparreras_vaquero': (['................', '..bbbbbbbbbbbb..', '..bgggBBBBgggb..', '..bBBBBBBBBBBb..', '..bBBBBbbBBBBb..', '..bBBBBb.bBBBb..', '..bBBBb...bBBb..', '..bBBBb...bBBb..',
-                             '..bBBBb...bBBb..', '..bBBBb...bBBb..', '..bBBBb...bBBb..', '..bBbBb...bBbBb.', '..b.b.b...b.b.b.', '................', '................', '................'],
-                            {'b': CUERO_OSC, 'B': CUERO, 'g': ORO}),
-    'botas_vaquero': (['................', '................', '................', '..bbbb....bbbb..', '..bBBb....bBBb..', '..bBBb....bBBb..', '..bBBb....bBBb..', '..bBBb....bBBb..',
-                       '..bBBbb...bBBbb.', '.bBBBBBb.bBBBBBb', '.bbbbbbb.bbbbbbb', '..s.......s.....', '................', '................', '................', '................'],
-                      {'b': CUERO_OSC, 'B': CUERO, 's': ACERO}),
-    'sombrero_bandido': (['................', '................', '.....kkkkk......', '....kNNNNNk.....', '....kNNNNNk.....', '....kNNNNNk.....', '....krrrrrk.....', '...kkNNNNNkk....',
-                          '.kkNNNNNNNNNkk..', 'kNNNNNNNNNNNNNk.', 'kkNNNNNNNNNNkk..', '.kkkkkkkkkkkk...', '................', '................', '................', '................'],
-                         {'k': c(24, 22, 24), 'N': NEGRO, 'r': ROJO}),
-    'poncho_bandido': (['................', '....bbbbbbbb....', '..bbLLLLLLLLbb..', '.bLLLLLbbLLLLLb.', '.bLLLLb..bLLLLb.', '.bRRRRRRRRRRRRb.', '.bLLLLLLLLLLLLb.', '.bNNNNNNNNNNNNb.',
-                        '.bLLLLLLLLLLLLb.', '.bRRRRRRRRRRRRb.', '.bLLLLLLLLLLLLb.', '.bRrRrRrRrRrRrb.', '..b.b.b.b.b.b...', '................', '................', '................'],
-                       {'b': LONA_OSC, 'L': LONA, 'R': ROJO, 'r': ROJO_OSC, 'N': NEGRO_CLARO}),
-    'pantalon_bandido': (['................', '..bbbbbbbbbbbb..', '..bgbgBBBBbgbb..', '..bTTTTTTTTTTb..', '..bTTTTbbTTTTb..', '..bTTTTb.bTTTb..', '..bTTTb...bTTb..', '..bTTTb...bTTb..',
-                          '..bTTTb...bTTb..', '..bTTTb...bTTb..', '..bTTTb...bTTb..', '..bTTTb...bTTb..', '..bbbbb...bbbb..', '................', '................', '................'],
-                         {'b': NEGRO, 'T': TELA, 'g': ORO, 'B': ACERO}),
-    'botas_bandido': (['................', '................', '................', '..bbbb....bbbb..', '..bRRb....bRRb..', '..bNNb....bNNb..', '..bNNb....bNNb..', '..bNNb....bNNb..',
-                       '..bNNbb...bNNbb.', '.bNNNNNb.bNNNNNb', '.bbbbbbb.bbbbbbb', '................', '................', '................', '................', '................'],
-                      {'b': c(24, 22, 24), 'N': NEGRO, 'R': ROJO}),
-}
+# los iconos están en iconos_ropa.py (contorno, luz arriba a la izquierda, cuatro tonos por material)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from iconos_ropa import ICONOS  # noqa: E402
 
 PIEZAS = {'vaquero': ('sombrero_vaquero', 'chaleco_vaquero', 'chaparreras_vaquero', 'botas_vaquero'),
           'bandido': ('sombrero_bandido', 'poncho_bandido', 'pantalon_bandido', 'botas_bandido')}
