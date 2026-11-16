@@ -113,6 +113,9 @@ def modelos_objeto():
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from historico import seguro
+    seguro('generar_arponera')
     for n, tonos in enumerate(cobres()):
         icono(tonos).save(os.path.join(TEX, 'arponera' + ('' if n == 0 else '_ox%d' % n) + '.png'))
     arpon().save(os.path.join(TEX, 'arpon_cobre.png'))

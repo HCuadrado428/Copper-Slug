@@ -77,5 +77,8 @@ def procesar(nombre):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from historico import seguro
+    seguro('generar_derringer')
     for n in MODELOS:
         print(n, procesar(n), 'elementos')

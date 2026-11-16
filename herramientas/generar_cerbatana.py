@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from generar_tambor import caja  # noqa: E402
 from modelos_armas_nuevas import MODELOS, con_mano  # noqa: E402
 
-RAIZ = sys.argv[1] if len(sys.argv) > 1 else '.'
+RAIZ = next((a for a in sys.argv[1:] if not a.startswith('--')), '.')
 TEX = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/textures/item')
 MOD = os.path.join(RAIZ, 'common/src/main/resources/assets/copperslug/models/item')
 A3D = os.path.join(MOD, 'armas3d')
@@ -105,6 +105,9 @@ if __name__ == '__main__':
         dardo(*t).save(os.path.join(TEX, d + '.png'))
     for d in ('dardo_cerbatana', 'dardo_veneno', 'dardo_somnifero'):
         modelo_plano(d, d)
-    tubo_3d()
-    modelos_objeto()
+    # el modelo 3D y los modelos del objeto los genera armas_pulidas.py (los de aquí son la primera versión);
+    # solo se rehacen con --modelos
+    if '--modelos' in sys.argv:
+        tubo_3d()
+        modelos_objeto()
     print('cerbatana: texturas y modelos generados')

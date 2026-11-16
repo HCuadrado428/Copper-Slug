@@ -797,6 +797,9 @@ def generar(salida, nombres=None):
 
 
 if __name__ == '__main__':
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    from historico import seguro
+    seguro('armas_pulidas')
     ap = argparse.ArgumentParser()
     ap.add_argument('--salida', default=DIR_MOD)
     ap.add_argument('--texturas', default=DIR_TEX)
