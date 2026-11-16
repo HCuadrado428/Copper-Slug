@@ -23,7 +23,7 @@ RES = os.path.join(RAIZ, 'common/src/main/resources')
 ARM = os.path.join(RES, 'assets/copperslug/textures/models/armor')
 ICO = os.path.join(RES, 'assets/copperslug/textures/item')
 MOD = os.path.join(RES, 'assets/copperslug/models/item')
-REC = os.path.join(RES, 'data/copperslug/recipes')
+REC = os.path.join(RES, 'data/copperslug/recipe')
 
 
 def c(r, g, b, a=255):
@@ -347,7 +347,7 @@ def iconos_y_datos():
             json.dump({'parent': 'minecraft:item/generated', 'textures': {'layer0': 'copperslug:item/' + nombre}}, f, indent=1)
         patron, claves = ing[nombre]
         receta = {'type': 'minecraft:crafting_shaped', 'category': 'equipment', 'pattern': patron,
-                  'key': {k: {'item': v} for k, v in claves.items()}, 'result': {'item': 'copperslug:' + nombre, 'count': 1}}
+                  'key': {k: {'item': v} for k, v in claves.items()}, 'result': {'id': 'copperslug:' + nombre, 'count': 1}}
         with open(os.path.join(REC, nombre + '.json'), 'w', encoding='utf-8') as f:
             json.dump(receta, f, indent=2)
             f.write('\n')
