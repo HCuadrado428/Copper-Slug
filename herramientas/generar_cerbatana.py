@@ -61,52 +61,8 @@ CUERO_OSC = (84, 58, 36, 255)
 
 
 def icono(tonos):
-    oscuro, medio, claro = tonos
-    im = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
-    n = 12
-    for i in range(n):
-        x, y = 2 + i, 13 - i
-        im.putpixel((x, y), claro)             # el lomo, arriba a la izquierda de la diagonal
-        im.putpixel((x + 1, y), medio)
-        if y + 1 < 16:
-            im.putpixel((x, y + 1), oscuro if i % 2 else medio)   # la sombra de abajo
-    # la boquilla (abajo a la izquierda): cuero oscuro
-    for i in (0, 1):
-        x, y = 2 + i, 13 - i
-        im.putpixel((x, y), CUERO)
-        im.putpixel((x + 1, y), CUERO_OSC)
-        im.putpixel((x, y + 1), CUERO_OSC)
-    # el agarre de cuero
-    for i in (4, 5):
-        x, y = 2 + i, 13 - i
-        im.putpixel((x, y), CUERO)
-        im.putpixel((x + 1, y), CUERO_OSC)
-        im.putpixel((x, y + 1), CUERO_OSC)
-    # dos anillos de hierro
-    for i in (3, 8):
-        x, y = 2 + i, 13 - i
-        im.putpixel((x, y), HIERRO_CLARO)
-        im.putpixel((x + 1, y), HIERRO)
-        im.putpixel((x, y + 1), HIERRO)
-    # la boca del tubo, oscura
-    x, y = 2 + n - 1, 13 - (n - 1)
-    im.putpixel((x + 1, y), NEGRO)
-    return im
-
-
-def dardo(punta, plumas, plumas2):
-    im = Image.new('RGBA', (16, 16), (0, 0, 0, 0))
-    for i in range(9):
-        im.putpixel((3 + i, 12 - i), CUERO)
-        im.putpixel((4 + i, 12 - i), CUERO_OSC)
-    im.putpixel((12, 3), punta[0])
-    im.putpixel((13, 2), punta[1])
-    im.putpixel((12, 2), punta[1])
-    im.putpixel((13, 3), punta[0])
-    # las plumas del final
-    for (x, y), c in (((2, 13), plumas), ((3, 13), plumas2), ((2, 12), plumas2), ((4, 13), plumas), ((2, 11), plumas)):
-        im.putpixel((x, y), c)
-    return im
+    from iconos_varios import cerbatana
+    return cerbatana(tonos)
 
 
 def modelo_plano(nombre, tex):
@@ -144,9 +100,9 @@ if __name__ == '__main__':
     fases = cobres()
     for n, tonos in enumerate(fases):
         icono(tonos).save(os.path.join(TEX, 'cerbatana' + ('' if n == 0 else '_ox%d' % n) + '.png'))
-    dardo(((150, 154, 160, 255), (200, 204, 210, 255)), (225, 225, 225, 255), (180, 180, 180, 255)).save(os.path.join(TEX, 'dardo_cerbatana.png'))
-    dardo(((70, 170, 70, 255), (120, 220, 90, 255)), (90, 170, 80, 255), (60, 120, 55, 255)).save(os.path.join(TEX, 'dardo_veneno.png'))
-    dardo(((120, 90, 190, 255), (170, 140, 230, 255)), (150, 120, 210, 255), (100, 75, 160, 255)).save(os.path.join(TEX, 'dardo_somnifero.png'))
+    from iconos_varios import DARDOS, dardo  # los dardos, dibujados como la flecha de vanilla
+    for d, t in DARDOS.items():
+        dardo(*t).save(os.path.join(TEX, d + '.png'))
     for d in ('dardo_cerbatana', 'dardo_veneno', 'dardo_somnifero'):
         modelo_plano(d, d)
     tubo_3d()
