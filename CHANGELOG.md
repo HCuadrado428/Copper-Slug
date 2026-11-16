@@ -127,6 +127,10 @@
   away) and the Suppressor enchantment makes it almost silent. Config section `ruido`.
 - Cosmetic clothing: Cowboy set (hat, Sheriff's Vest, chaps, spurred boots) and Bandit set (hat and bandana, poncho,
   trousers, boots). They protect like leather and have real 3D parts: a brimmed hat, a sheriff star, spurs and a poncho cape.
+- Wanted posters (paper, ink sac and an iron nugget). Use one to take a bounty: an outlaw with a name and a nickname, last
+  seen at the nearest Raiders' Camp. Get close and he shows up with two of his gang and a boss bar. He carries a one-of-a-kind
+  gun with his name on it, Steady Hand II and an enchantment of its own, and always drops it. Once he is dead the poster is
+  marked as hunted down, and any villager pays 12 to 24 emeralds for it.
 
 ---
 
@@ -267,3 +271,7 @@
 - Ropa cosmética: conjunto de vaquero (sombrero, chaleco de sheriff, chaparreras, botas con espuelas) y de bandido (sombrero
   y pañuelo, poncho, pantalón, botas). Protegen como el cuero y llevan piezas en 3D: sombrero con ala, estrella de sheriff,
   espuelas y esclavina del poncho.
+- Carteles de «Se busca» (papel, saco de tinta y una pepita de hierro). Al usar uno aceptas una recompensa: un forajido con
+  nombre y apodo, visto por última vez en el campamento de saqueadores más cercano. Al acercarte aparece con dos de su banda
+  y una barra de jefe. Lleva un arma única con su nombre, Pulso firme II y un encantamiento propio, y siempre la suelta.
+  Muerto, el cartel queda cazado y cualquier aldeano paga entre 12 y 24 esmeraldas por él.
